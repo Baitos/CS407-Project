@@ -4,6 +4,4 @@
 *.exe
 *.dll
 .vscode
-/Makefile
-**/Makefile
 Makefile
