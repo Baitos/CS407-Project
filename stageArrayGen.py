@@ -22,19 +22,19 @@ pixels = np.array(png)
 colorIdDict = {}
 idCounter = int(sys.argv[2])
 
-resultArray = np.zeros((width,height), dtype=int)
+resultArray = np.zeros((height,width), dtype=int)
 
-for x in range(width):
-    for y in range(height):
-        color = tuple(pixels[x,y])
+for y in range(height):
+    for x in range(width):
+        color = tuple(pixels[y,x])
 
         if color not in colorIdDict:
-            colorIdDict[color] = (idCounter, (y,x))
+            colorIdDict[color] = (idCounter, (x,y))
             idCounter += 1
         
-        resultArray[x,y] = colorIdDict[color][0]
+        resultArray[y,x] = colorIdDict[color][0]
 
-filename = "C:/Users/hohma/OneDrive/Desktop/CS 407/Stage Design/City/" + "StageArray.txt"
+filename = "C:/Users/hohma/OneDrive/Desktop/CS 407/Stage Design/Spaceship/" + "StageArray.txt"
 
 with open(filename, 'w') as outputFile:
     for row in resultArray:
