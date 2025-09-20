@@ -34,9 +34,21 @@ for x in range(width):
         
         resultArray[x,y] = colorIdDict[color][0]
 
-print("Here is your resulting array:")
-print(resultArray)
-print("\nHere is your colorID Dictionary:")
+filename = "C:/Users/hohma/OneDrive/Desktop/CS 407/Stage Design/City/" + "StageArray.txt"
+
+with open(filename, 'w') as outputFile:
+    for row in resultArray:
+        # Convert each element in the row to a string and join them with a space
+        # You can use other delimiters like ',' or '\t' if preferred
+        row_string = ','.join(map(str, row))
+        # Write the row string to the file, followed by a newline character
+        outputFile.write(row_string + ',\n')
+    
+
+
+#print("Here is your resulting array:")
+#print(resultArray)
+print("Here is your colorID Dictionary:")
 for color in colorIdDict:
 #print(colorIdDict[color][0])
     print("Color ID: " + str(colorIdDict[color][0]) + " Coordinates: " + str(colorIdDict[color][1]))
