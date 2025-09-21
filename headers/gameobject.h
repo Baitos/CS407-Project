@@ -14,6 +14,9 @@ enum class BulletState {
 enum class EnemyState {
     idle, damaged, dead
 };
+enum class LevelState {
+    ground, portal
+};
 
 struct PlayerData {
     PlayerState state;
@@ -26,7 +29,16 @@ struct PlayerData {
         healthPoints = 1;
     }
 };
-struct LevelData {};
+struct LevelData {
+    LevelState state;
+    bool isEntrance;
+    LevelData()
+    {
+        state = LevelState::ground;
+        isEntrance = false;
+        
+    }
+};
 struct EnemyData {
     EnemyState state;
     Timer damagedTimer;
