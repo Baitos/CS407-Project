@@ -71,8 +71,8 @@ struct Resources {
     const int ANIM_ENEMY = 0;
     const int ANIM_ENEMY_DEAD = 1;
     std::vector<Animation> enemyAnims;
-    const int PORTAL_IDLE = 0;
-    std::vector<Animation> portalAnims;
+    //const int PORTAL_IDLE = 0;
+    //std::vector<Animation> portalAnims;
     
 
     std::vector<SDL_Texture *> textures;
@@ -104,8 +104,8 @@ struct Resources {
         enemyAnims.resize(2);
         enemyAnims[ANIM_ENEMY] = Animation(2, 0.6f);
         enemyAnims[ANIM_ENEMY_DEAD] = Animation(1, 1.0f);
-        portalAnims.resize(1);
-        portalAnims[PORTAL_IDLE] = Animation(1, 1.f);
+        //portalAnims.resize(1);
+        //portalAnims[PORTAL_IDLE] = Animation(1, 1.f);
 
         if (real) {
             texIdle = loadTexture(state.renderer, "data/IdleL.png");
@@ -689,7 +689,7 @@ void collisionResponse(const SDLState &state, GameState &gs, const Resources &re
                         if (b.data.level.isEntrance == true){
                             a.pos = gs.ExitPortal;
                         }
-                    } else if  (b.data.level.state == LevelState::laser){
+                    } /*else if  (b.ty == ObjectType::obstacle){
                         if(b.data.level.laserActive){
                             //printf("FALLING");
                             a.texture = res.texDie;
@@ -708,8 +708,28 @@ void collisionResponse(const SDLState &state, GameState &gs, const Resources &re
                     
                             
                         }
-                    }
+                   }*/
                     break;
+                }
+                case ObjectType::obstacle: {
+                        if(b.data.obstacle.laserActive){
+                            //printf("FALLING");
+                            a.texture = res.texDie;
+                            a.curAnimation = res.ANIM_PLAYER_DIE;
+                            
+                            a.vel.x = -(a.vel.x);
+                            
+                            if(b.pos.y < a.pos.y ){
+                                a.vel.y = (200.f);
+                            } else {
+                                a.vel.y = -(400.f);
+                            }
+
+                            //printf("x=%d, y=%d\n", a.pos.x, a.pos.y);
+                            a.data.player.state = PlayerState::falling;
+                    
+                            break;
+                        }
                 }
                 case ObjectType::enemy: {
                     printf("Here");
@@ -973,11 +993,12 @@ void createTiles(const SDLState &state, GameState &gs, const Resources &res) { /
                     }
                     case 6: //Laser
                     {
-                        GameObject o = createObject(r, c, res.texLaser, ObjectType::level);
+                        GameObject o = createObject(r, c, res.texLaser, ObjectType::obstacle);
                         o.collider.y = 15;
                         o.collider.h = 4;
-                        o.data.level.state = LevelState::laser;
-                        o.data.level.laserActive = true;
+                        
+                        o.data.obstacle.laserActive = true;
+
                         gs.layers[LAYER_IDX_LEVEL].push_back(o);
                         break; 
                     }

@@ -15,7 +15,19 @@ enum class EnemyState {
     idle, damaged, dead
 };
 enum class LevelState {
-    ground, portal, laser
+    ground, portal
+};
+enum class ObstacleState {
+    laser
+};
+
+struct ObstacleData {
+    bool laserActive;
+    Timer laserTimer;
+    ObstacleData() : laserTimer(2.1f)
+    {
+        laserActive = false; 
+    }
 };
 
 struct PlayerData {
@@ -32,13 +44,10 @@ struct PlayerData {
 struct LevelData {
     LevelState state;
     bool isEntrance;
-    bool laserActive;
-    LevelData()
+    LevelData() 
     {
         state = LevelState::ground;
         isEntrance = false;
-        laserActive = false;
-        
     }
 };
 struct EnemyData {
@@ -62,10 +71,11 @@ union ObjectData {
     LevelData level;
     EnemyData enemy;
     BulletData bullet;
+    ObstacleData obstacle;
 };
 
 enum class ObjectType {
-    player, level, enemy, bullet
+    player, level, enemy, bullet, obstacle
 };
 
 struct GameObject {
