@@ -6,13 +6,16 @@
 #include "../headers/animation.h"
 
 enum class PlayerState {
-    idle, running, jumping, dead
+    idle, running, jumping, dead, falling
 };
 enum class BulletState {
     moving, colliding, inactive
 };
 enum class EnemyState {
     idle, damaged, dead
+};
+enum class LevelState {
+    ground, portal, laser
 };
 
 struct PlayerData {
@@ -26,7 +29,18 @@ struct PlayerData {
         healthPoints = 1;
     }
 };
-struct LevelData {};
+struct LevelData {
+    LevelState state;
+    bool isEntrance;
+    bool laserActive;
+    LevelData()
+    {
+        state = LevelState::ground;
+        isEntrance = false;
+        laserActive = false;
+        
+    }
+};
 struct EnemyData {
     EnemyState state;
     Timer damagedTimer;
