@@ -50,6 +50,5 @@ with open(filename, 'w') as outputFile:
 #print(resultArray)
 print("Here is your colorID Dictionary:")
 for color in colorIdDict:
-#print(colorIdDict[color][0])
     print("Color ID: " + str(colorIdDict[color][0]) + " Coordinates: " + str(colorIdDict[color][1]))
 
