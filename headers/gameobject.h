@@ -24,9 +24,11 @@ enum class ObstacleState {
 struct ObstacleData {
     bool laserActive;
     Timer laserTimer;
+    ObstacleState state;
     ObstacleData() : laserTimer(2.1f)
     {
-        laserActive = false; 
+        state = ObstacleState::laser;
+        laserActive = true; 
     }
 };
 

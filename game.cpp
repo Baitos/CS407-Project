@@ -40,6 +40,7 @@ struct GameState {
     float bg2Scroll, bg3Scroll, bg4Scroll;
     bool debugMode;
     glm::vec2 ExitPortal;
+    std::vector<GameObject> lasers;
 
     GameState(const SDLState &state) {
         playerIndex = -1; // will change when map is loaded
@@ -71,8 +72,8 @@ struct Resources {
     const int ANIM_ENEMY = 0;
     const int ANIM_ENEMY_DEAD = 1;
     std::vector<Animation> enemyAnims;
-    //const int PORTAL_IDLE = 0;
-    //std::vector<Animation> portalAnims;
+    const int PORTAL_IDLE = 0;
+    std::vector<Animation> portalAnims;
     
 
     std::vector<SDL_Texture *> textures;
@@ -104,8 +105,8 @@ struct Resources {
         enemyAnims.resize(2);
         enemyAnims[ANIM_ENEMY] = Animation(2, 0.6f);
         enemyAnims[ANIM_ENEMY_DEAD] = Animation(1, 1.0f);
-        //portalAnims.resize(1);
-        //portalAnims[PORTAL_IDLE] = Animation(1, 1.f);
+        portalAnims.resize(2);
+        portalAnims[PORTAL_IDLE] = Animation(3, 1.0f);
 
         if (real) {
             texIdle = loadTexture(state.renderer, "data/IdleL.png");
@@ -237,6 +238,12 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                 update(state, gs, res, obj, deltaTime);
             }
         }
+
+        // update lasers
+        for (GameObject &laser : gs.lasers) {
+            update(state, gs, res, laser, deltaTime);
+        }
+
         // update bullets
         for (GameObject &bullet : gs.bullets) {
             update(state, gs, res, bullet, deltaTime);
@@ -282,6 +289,13 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         for (auto &layer : gs.layers) {
             for (GameObject &obj : layer) {
                 drawObject(state, gs, obj, TILE_SIZE, TILE_SIZE, deltaTime);                       
+            }
+        }
+
+        // Draw Lasers
+        for(GameObject &laser : gs.lasers){
+            if(laser.data.obstacle.laserActive){
+                drawObject(state, gs, laser, TILE_SIZE, TILE_SIZE, deltaTime);
             }
         }
 
@@ -358,9 +372,7 @@ void cleanup(SDLState &state) {
 }
 
 void drawObject(const SDLState &state, GameState &gs, GameObject &obj, float width, float height, float deltaTime) {
-        float srcX = obj.curAnimation != -1 
-                     ? obj.animations[obj.curAnimation].currentFrame() * width 
-                     : (obj.spriteFrame - 1) * width;
+        float srcX = obj.curAnimation != -1 ? obj.animations[obj.curAnimation].currentFrame() * width : (obj.spriteFrame - 1) * width;
         SDL_FRect src {
             .x = srcX,
             .y = 0,
@@ -432,6 +444,7 @@ void update(const SDLState &state, GameState &gs, Resources &res, GameObject &ob
             }
             Timer &weaponTimer = obj.data.player.weaponTimer;
             weaponTimer.step(deltaTime);
+
             const auto handleShooting = [&state, &gs, &res, &obj, &weaponTimer]() {
                 if (state.keys[SDL_SCANCODE_J]) {
                     // bullets!
@@ -596,6 +609,15 @@ void update(const SDLState &state, GameState &gs, Resources &res, GameObject &ob
                 break;
             }
         }
+    } else if (obj.type == ObjectType::obstacle) {
+        //Timer for Laser
+        Timer &laserTimer = obj.data.obstacle.laserTimer;
+        laserTimer.step(deltaTime);
+        if (laserTimer.isTimeOut()){
+            //Resets the timer and switches tHe LaSeR
+            laserTimer.reset();
+            obj.data.obstacle.laserActive = !obj.data.obstacle.laserActive;
+        }
     }
     if (currentDirection) {
         obj.dir = currentDirection;
@@ -612,7 +634,7 @@ void update(const SDLState &state, GameState &gs, Resources &res, GameObject &ob
         for (GameObject &objB : layer) {
             if (&obj != &objB) {
                 checkCollision(state, gs, res, obj, objB, deltaTime);
-                if (objB.type == ObjectType::level && objB.data.level.state != LevelState::portal) {
+                if ((objB.type == ObjectType::level  && objB.data.level.state != LevelState::portal)|| objB.type == ObjectType::obstacle) {
                     // grounded sensor
                     const float inset = 2.0;
                     SDL_FRect sensor {
@@ -633,6 +655,9 @@ void update(const SDLState &state, GameState &gs, Resources &res, GameObject &ob
                     }
                 }    
             }
+        }
+        for (GameObject &objB : gs.lasers){
+            checkCollision(state, gs, res, obj, objB, deltaTime);     
         }
     }
     if (obj.grounded != foundGround) { // changing state
@@ -689,26 +714,7 @@ void collisionResponse(const SDLState &state, GameState &gs, const Resources &re
                         if (b.data.level.isEntrance == true){
                             a.pos = gs.ExitPortal;
                         }
-                    } /*else if  (b.ty == ObjectType::obstacle){
-                        if(b.data.level.laserActive){
-                            //printf("FALLING");
-                            a.texture = res.texDie;
-                            a.curAnimation = res.ANIM_PLAYER_DIE;
-                            
-                            a.vel.x = -(a.vel.x);
-                            
-                            if(b.pos.y < a.pos.y ){
-                                a.vel.y = (200.f);
-                            } else {
-                                a.vel.y = -(400.f);
-                            }
-
-                            //printf("x=%d, y=%d\n", a.pos.x, a.pos.y);
-                            a.data.player.state = PlayerState::falling;
-                    
-                            
-                        }
-                   }*/
+                    } 
                     break;
                 }
                 case ObjectType::obstacle: {
@@ -728,11 +734,10 @@ void collisionResponse(const SDLState &state, GameState &gs, const Resources &re
                             //printf("x=%d, y=%d\n", a.pos.x, a.pos.y);
                             a.data.player.state = PlayerState::falling;
                     
-                            break;
-                        }
+                        } 
+                        break;
                 }
                 case ObjectType::enemy: {
-                    printf("Here");
                     if (b.data.enemy.state != EnemyState::dead) {
                         PlayerData &d = a.data.player;
                         d.healthPoints -= 1;
@@ -867,22 +872,22 @@ void createTiles(const SDLState &state, GameState &gs, const Resources &res) { /
         0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,2,0,0,0,0,0,0,0,5,5,5,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,2,0,6,6,7,7,7,7,3,7,7,7,7,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,2,0,0,0,0,0,0,0,5,5,5,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,2,6,6,6,7,7,7,7,3,7,7,7,7,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,2,0,0,0,0,0,0,0,3,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,2,0,0,0,0,0,0,0,3,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,2,0,0,0,0,0,0,0,3,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,0,0,0,0,4,0,0,0,0,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,2,0,0,0,0,0,0,0,3,0,0,0,0,2,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,2,0,0,0,0,0,0,3,0,2,7,7,7,7,6,6,0,3,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,8,0,3,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,2,0,0,0,0,0,0,3,0,2,7,7,7,7,6,6,6,3,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,8,0,3,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,5,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,3,0,2,0,0,0,0,0,0,0,3,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,3,0,2,0,0,0,0,0,0,0,3,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,5,5,5,0,0,0,0,0,0,0,0,0,5,5,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,3,0,2,0,0,0,0,0,0,0,3,0,0,0,0,2,0,0,0,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,3,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,0,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,0,0,1,1,1,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,5,5,0,0,0,0,3,0,2,0,0,0,0,0,0,0,3,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,0,0,0,4,4,4,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,3,0,2,0,6,6,7,7,7,7,3,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,3,0,2,6,6,6,7,7,7,7,3,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,5,5,5,0,0,0,0,0,0,0,0,0,0,3,7,7,7,7,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,3,0,2,0,0,0,0,0,0,0,3,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,3,0,2,0,0,0,0,0,0,0,3,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,4,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,0,2,0,9,0,0,0,0,0,3,7,7,7,7,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,5,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,3,0,2,0,0,0,0,0,0,0,3,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,0,2,0,0,0,10,0,0,0,3,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,3,0,2,0,0,0,0,0,0,0,3,0,0,0,0,2,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,2,0,0,0,0,0,0,0,3,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,5,5,3,7,2,7,7,7,7,6,6,0,3,0,0,0,0,2,0,0,0,0,0,0,0,0,0,4,0,0,0,0,0,0,4,0,4,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,2,0,0,0,0,0,0,0,3,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,5,5,3,7,2,7,7,7,7,6,6,6,3,0,0,0,0,2,0,0,0,0,0,0,0,0,0,4,0,0,0,0,0,0,4,0,4,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,0,0,7,7,7,7,7,7,7,0,0,0,0,0,0,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -993,13 +998,16 @@ void createTiles(const SDLState &state, GameState &gs, const Resources &res) { /
                     }
                     case 6: //Laser
                     {
+                         
                         GameObject o = createObject(r, c, res.texLaser, ObjectType::obstacle);
+                        o.data.obstacle = ObstacleData(); // init obstacle data
                         o.collider.y = 15;
                         o.collider.h = 4;
                         
-                        o.data.obstacle.laserActive = true;
-
-                        gs.layers[LAYER_IDX_LEVEL].push_back(o);
+                        //o.data.obstacle.laserActive = true;
+                        
+                        gs.lasers.push_back(o);
+                        //gs.layers[LAYER_IDX_LEVEL].push_back(o);
                         break; 
                     }
                     case 7: 
@@ -1011,7 +1019,10 @@ void createTiles(const SDLState &state, GameState &gs, const Resources &res) { /
                     case 8: //Entrance Portal
                     {
                         GameObject o = createObject(r, c, res.texRPortal, ObjectType::level);
-                        //o.curAnimation = res.PORTAL_IDLE;
+                        //o.data.level = ObstacleData(); // init obs data 
+                        o.animations = res.portalAnims;
+                        o.curAnimation = res.PORTAL_IDLE;
+                        
                         o.collider.h = 64;
                         o.data.level.state = LevelState::portal;
                         o.data.level.isEntrance = true;
