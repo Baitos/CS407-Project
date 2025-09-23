@@ -144,7 +144,7 @@ struct Resources {
         texOnStage = loadTexture(state.renderer, "data/spaceship/OnStage.png");
         texOffStage = loadTexture(state.renderer, "data/spaceship/OffStage.png");
         texBg5 = loadTexture(state.renderer, "data/spaceship/Bg5.png");
-        texLPortal = loadTexture(state.renderer, "data/fence.png");
+        texLPortal = loadTexture(state.renderer, "data/spaceship/LPortal.png");
         texRPortal = loadTexture(state.renderer, "data/spaceship/RPortal.png");
         texLaser = loadTexture(state.renderer, "data/spaceship/Laser.png");
 

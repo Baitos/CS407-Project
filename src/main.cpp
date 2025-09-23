@@ -135,7 +135,11 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         // draw objs
         for (auto &layer : gs.layers) {
             for (GameObject &obj : layer) {
-                drawObject(state, gs, obj, TILE_SIZE, TILE_SIZE, deltaTime);                       
+                if (obj.data.level.state == LevelState::portal && obj.type == ObjectType::level){
+                    drawObject(state, gs, obj, 32, 64, deltaTime); 
+                } else{
+                    drawObject(state, gs, obj, TILE_SIZE, TILE_SIZE, deltaTime); 
+                }            
             }
         }
 

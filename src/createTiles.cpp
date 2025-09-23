@@ -195,6 +195,11 @@ void createTiles(const SDLState &state, GameState &gs, const Resources &res) { /
                     case 9: // Exit Portal
                     {
                         GameObject o = createObject(r, c, res.texLPortal, ObjectType::level);
+                        o.animations = res.portalAnims;
+                        o.curAnimation = res.PORTAL_IDLE;
+                        o.data.level.state = LevelState::portal;
+                        o.collider.h = 64;
+                        
                         o.data.level.state = LevelState::portal;
                         gs.ExitPortal = glm::vec2(o.pos.x, o.pos.y);
                         gs.layers[LAYER_IDX_LEVEL].push_back(o);
