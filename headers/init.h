@@ -95,7 +95,7 @@ struct Resources {
     void load(SDLState &state, bool real) {
         playerAnims.resize(6); // 
         playerAnims[ANIM_PLAYER_IDLE] = Animation(1, 1.6f); // 1 frames, 1.6 seconds
-        playerAnims[ANIM_PLAYER_RUN] = Animation(3, 0.3f);
+        playerAnims[ANIM_PLAYER_RUN] = Animation(8, 0.3f);
         playerAnims[ANIM_PLAYER_SLIDE] = Animation(1, 1.0f);
         playerAnims[ANIM_PLAYER_SHOOT] = Animation(1, 0.3f);
         playerAnims[ANIM_PLAYER_JUMP] = Animation(1, 1.0f); 
@@ -119,10 +119,10 @@ struct Resources {
             texBullet = loadTexture(state.renderer, "data/fireballL.png");
             texBulletHit = loadTexture(state.renderer, "data/fireballHitL.png");
         } else {
-            texIdle = loadTexture(state.renderer, "data/IdleM.png");
-            texRun = loadTexture(state.renderer, "data/WalkLRM.png");
+            texIdle = loadTexture(state.renderer, "data/CharacterSprites/Shotgun/idle_shotgun.png");
+            texRun = loadTexture(state.renderer, "data/CharacterSprites/Shotgun/running_shotgun.png");
             texJump = loadTexture(state.renderer, "data/JumpM.png");
-            texSlide = loadTexture(state.renderer, "data/SlideM.png");
+            texSlide = loadTexture(state.renderer, "data/CharacterSprites/Shotgun/turning_shotgun.png");
             texShoot = loadTexture(state.renderer, "data/ShootM.png");
             texDie = loadTexture(state.renderer, "data/DieM.png");
             texBullet = loadTexture(state.renderer, "data/fireballM.png");
