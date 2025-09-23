@@ -74,6 +74,10 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                     if (event.key.scancode == SDL_SCANCODE_F12) {
                         gs.debugMode = !gs.debugMode;
                     }
+                    if (event.key.scancode == SDL_SCANCODE_F11) {
+                        gs.player().pos = gs.EntrancePortal;
+                         gs.player().pos.x -= 32;
+                    }
                     break;
                 }
             }
