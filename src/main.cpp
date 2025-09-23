@@ -16,6 +16,8 @@
 
 using namespace std;
 
+bool running = true;
+
 int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; include argv/argc
     SDLState state;
     state.width = 1600;
@@ -42,7 +44,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     uint64_t prevTime = SDL_GetTicks();
 
     // start game loop
-    while (run) {
+    while (running) {
         uint64_t nowTime = SDL_GetTicks(); // take time from previous frame to calculate delta
         float deltaTime = (nowTime - prevTime) / 1000.0f; // convert to seconds from ms
         SDL_Event event { 0 };
@@ -50,7 +52,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
             switch (event.type) {
                 case SDL_EVENT_QUIT:
                 {
-                    run = false;
+                    running = false;
                     break;
                 }
                 case SDL_EVENT_WINDOW_RESIZED: 
@@ -83,6 +85,12 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                 update(state, gs, res, obj, deltaTime);
             }
         }
+
+        // update lasers
+        for (GameObject &laser : gs.lasers) {
+            update(state, gs, res, laser, deltaTime);
+        }
+
         // update bullets
         for (GameObject &bullet : gs.bullets) {
             update(state, gs, res, bullet, deltaTime);
@@ -128,6 +136,13 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         for (auto &layer : gs.layers) {
             for (GameObject &obj : layer) {
                 drawObject(state, gs, obj, TILE_SIZE, TILE_SIZE, deltaTime);                       
+            }
+        }
+
+        // Draw Lasers
+        for(GameObject &laser : gs.lasers){
+            if(laser.data.obstacle.laserActive){
+                drawObject(state, gs, laser, TILE_SIZE, TILE_SIZE, deltaTime);
             }
         }
 

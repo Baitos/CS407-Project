@@ -10,6 +10,8 @@
 #include "../headers/update.h"
 #include "../headers/collision.h"
 
+extern bool running;
+
 void update(const SDLState &state, GameState &gs, Resources &res, GameObject &obj, float deltaTime) {
     // update animation
     if (obj.curAnimation != -1) {
@@ -30,6 +32,7 @@ void update(const SDLState &state, GameState &gs, Resources &res, GameObject &ob
             }
             Timer &weaponTimer = obj.data.player.weaponTimer;
             weaponTimer.step(deltaTime);
+
             const auto handleShooting = [&state, &gs, &res, &obj, &weaponTimer]() {
                 if (state.keys[SDL_SCANCODE_J]) {
                     // bullets!
@@ -134,10 +137,8 @@ void update(const SDLState &state, GameState &gs, Resources &res, GameObject &ob
                     break;
                 }
             }
-            if (obj.pos.y > 1000) { // lol hardcoding
+            if (obj.pos.y - gs.mapViewport.y > state.logH) {
                 obj.data.player.state = PlayerState::dead; // die if you fall off
-                obj.texture = res.texDie;
-                obj.curAnimation = res.ANIM_PLAYER_DIE;
                 obj.vel.x = 0;
             }
             //printf("Player x = %f, Player y = %f\n", obj.pos.x, obj.pos.y);
@@ -145,7 +146,7 @@ void update(const SDLState &state, GameState &gs, Resources &res, GameObject &ob
             Timer &deathTimer = obj.data.player.deathTimer;
             deathTimer.step(deltaTime);
             if (deathTimer.isTimeOut()) {
-                run = false; // exit program
+                running = false; // exit program
             }
         }
         
@@ -196,6 +197,15 @@ void update(const SDLState &state, GameState &gs, Resources &res, GameObject &ob
                 break;
             }
         }
+    } else if (obj.type == ObjectType::obstacle) {
+        //Timer for Laser
+        Timer &laserTimer = obj.data.obstacle.laserTimer;
+        laserTimer.step(deltaTime);
+        if (laserTimer.isTimeOut()){
+            //Resets the timer and switches tHe LaSeR
+            laserTimer.reset();
+            obj.data.obstacle.laserActive = !obj.data.obstacle.laserActive;
+        }
     }
     if (currentDirection) {
         obj.dir = currentDirection;
@@ -212,7 +222,7 @@ void update(const SDLState &state, GameState &gs, Resources &res, GameObject &ob
         for (GameObject &objB : layer) {
             if (&obj != &objB) {
                 checkCollision(state, gs, res, obj, objB, deltaTime);
-                if (objB.type == ObjectType::level && objB.data.level.state != LevelState::portal) {
+                if ((objB.type == ObjectType::level  && objB.data.level.state != LevelState::portal)|| objB.type == ObjectType::obstacle) {
                     // grounded sensor
                     const float inset = 2.0;
                     SDL_FRect sensor {
@@ -233,6 +243,9 @@ void update(const SDLState &state, GameState &gs, Resources &res, GameObject &ob
                     }
                 }    
             }
+        }
+        for (GameObject &objB : gs.lasers){
+            checkCollision(state, gs, res, obj, objB, deltaTime);     
         }
     }
     if (obj.grounded != foundGround) { // changing state

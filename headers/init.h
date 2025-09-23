@@ -41,6 +41,7 @@ struct GameState {
     float bg2Scroll, bg3Scroll, bg4Scroll;
     bool debugMode;
     glm::vec2 ExitPortal;
+    std::vector<GameObject> lasers;
 
     GameState(const SDLState &state) {
         playerIndex = -1; // will change when map is loaded
@@ -105,8 +106,8 @@ struct Resources {
         enemyAnims.resize(2);
         enemyAnims[ANIM_ENEMY] = Animation(2, 0.6f);
         enemyAnims[ANIM_ENEMY_DEAD] = Animation(1, 1.0f);
-        portalAnims.resize(1);
-        portalAnims[PORTAL_IDLE] = Animation(1, 1.f);
+        portalAnims.resize(2);
+        portalAnims[PORTAL_IDLE] = Animation(3, 1.0f);
 
         if (real) {
             texIdle = loadTexture(state.renderer, "data/IdleL.png");
