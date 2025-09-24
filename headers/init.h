@@ -28,8 +28,8 @@ inline bool playing = true;
 const size_t LAYER_IDX_LEVEL = 0;
 const size_t LAYER_IDX_CHARACTERS = 1;
 
-const int MAP_ROWS = 40;
-const int MAP_COLS = 140;
+const int MAP_ROWS = 60;
+const int MAP_COLS = 280;
 const int TILE_SIZE = 32;
 
 struct GameState {
@@ -42,6 +42,7 @@ struct GameState {
     float bg2Scroll, bg3Scroll, bg4Scroll;
     bool debugMode;
     glm::vec2 ExitPortal;
+    glm::vec2 EntrancePortal;
     std::vector<GameObject> lasers;
 
     GameState(const SDLState &state) {
@@ -146,7 +147,7 @@ struct Resources {
         //Spaceship
         texOnStage = loadTexture(state.renderer, "data/spaceship/OnStage.png");
         texOffStage = loadTexture(state.renderer, "data/spaceship/OffStage.png");
-        texBg5 = loadTexture(state.renderer, "data/spaceship/Bg5.png");
+        texBg5 = loadTexture(state.renderer, "data/spaceship/Background2.png");
         texLPortal = loadTexture(state.renderer, "data/spaceship/LPortal.png");
         texRPortal = loadTexture(state.renderer, "data/spaceship/RPortal.png");
         texLaser = loadTexture(state.renderer, "data/spaceship/Laser.png");
