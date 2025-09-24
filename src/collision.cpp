@@ -22,12 +22,13 @@ void collisionResponse(const SDLState &state, GameState &gs, const Resources &re
             else if (a.vel.x < 0) { // going left
                 a.pos.x += rectC.w;
             }
-            if (a.type == ObjectType::enemy) {
+            a.vel.x = 0;
+            /*if (a.type == ObjectType::enemy) {
                 a.vel.x = -a.vel.x; // turn enemy around when it hits a wall
                 a.dir = -a.dir;
             } else {
                 a.vel.x = 0;
-            }
+            }*/
             
         } 
         else { // vert col
