@@ -16,8 +16,6 @@
 
 using namespace std;
 
-bool running = true;
-
 int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; include argv/argc
     SDLState state;
     state.width = 1600;
@@ -25,8 +23,6 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     state.logW = 640;
     state.logH = 480;
 
-    // go to result when you die, should probably change!!!!
-    //main_loop: absolutely do not use this holy shit my computer almost crashed. fork bomb!
     bool l = false;
     if (argc > 1 && !strcmp(argv[1], "l")) {
         l = true;
@@ -44,7 +40,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     uint64_t prevTime = SDL_GetTicks();
 
     // start game loop
-    while (running) {
+    while (run) {
         uint64_t nowTime = SDL_GetTicks(); // take time from previous frame to calculate delta
         float deltaTime = (nowTime - prevTime) / 1000.0f; // convert to seconds from ms
         SDL_Event event { 0 };
@@ -52,7 +48,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
             switch (event.type) {
                 case SDL_EVENT_QUIT:
                 {
-                    running = false;
+                    run = false;
                     break;
                 }
                 case SDL_EVENT_WINDOW_RESIZED: 
@@ -65,15 +61,12 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                 }
                 case SDL_EVENT_KEY_DOWN:
                 {
-                    handleKeyInput(state, gs, gs.player(), event.key.scancode, true);
+                    handleKeyInput(state, gs, res, gs.player(), event.key, true, deltaTime);
                     break;
                 }
                 case SDL_EVENT_KEY_UP:
                 {
-                    handleKeyInput(state, gs, gs.player(), event.key.scancode, false);
-                    if (event.key.scancode == SDL_SCANCODE_F12) {
-                        gs.debugMode = !gs.debugMode;
-                    }
+                    handleKeyInput(state, gs, res, gs.player(), event.key, false, deltaTime);
                     break;
                 }
             }
@@ -172,8 +165,8 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         // debug info
             SDL_SetRenderDrawColor(state.renderer, 255, 255, 255, 255);
             SDL_RenderDebugText(state.renderer, 5, 5,
-                            std::format("State: {}, Bullet: {}, Grounded: {}", 
-                            static_cast<int>(gs.player().data.player.state), gs.bullets.size(), gs.player().grounded).c_str());
+                            std::format("State: {}, Bullet: {}, Grounded: {}, playerX: {}, playerY: {}", 
+                            static_cast<int>(gs.player().data.player.state), gs.bullets.size(), gs.player().grounded, static_cast<int>(gs.player().pos.x), static_cast<int>(gs.player().pos.y)).c_str());
         }
         //swap buffers and present
         SDL_RenderPresent(state.renderer);

@@ -23,6 +23,7 @@ struct SDLState
 };
 
 inline bool run = true;
+inline bool playing = true;
 
 const size_t LAYER_IDX_LEVEL = 0;
 const size_t LAYER_IDX_CHARACTERS = 1;
@@ -61,11 +62,12 @@ struct GameState {
 
 struct Resources {
     const int ANIM_PLAYER_IDLE = 0;
-    const int ANIM_PLAYER_RUN = 1;
-    const int ANIM_PLAYER_SLIDE = 2;
+    const int ANIM_PLAYER_WALK = 1;
+    const int ANIM_PLAYER_RUN = 2;
     const int ANIM_PLAYER_SHOOT = 3;
     const int ANIM_PLAYER_JUMP = 4;
     const int ANIM_PLAYER_DIE = 5;
+    const int ANIM_PLAYER_SLIDE = 6;
     std::vector<Animation> playerAnims;
     const int ANIM_BULLET_MOVING = 0;
     const int ANIM_BULLET_HIT = 1;
@@ -92,9 +94,10 @@ struct Resources {
         return tex;
     }
 
-    void load(SDLState &state, bool real) {
-        playerAnims.resize(6); // 
-        playerAnims[ANIM_PLAYER_IDLE] = Animation(1, 1.6f); // 1 frames, 1.6 seconds
+    void load(SDLState &state, bool real) { // First variable controls how many frames there are, second is how long each frame lasts (in seconds)
+        playerAnims.resize(7); // 
+        playerAnims[ANIM_PLAYER_IDLE] = Animation(1, 1.6f);
+        playerAnims[ANIM_PLAYER_WALK] = Animation(3, 0.6f);
         playerAnims[ANIM_PLAYER_RUN] = Animation(3, 0.3f);
         playerAnims[ANIM_PLAYER_SLIDE] = Animation(1, 1.0f);
         playerAnims[ANIM_PLAYER_SHOOT] = Animation(1, 0.3f);

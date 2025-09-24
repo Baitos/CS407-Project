@@ -6,7 +6,7 @@
 #include "../headers/animation.h"
 
 enum class PlayerState {
-    idle, running, jumping, dead, falling
+    idle, moving, sprinting, jumping, dead, falling
 };
 enum class BulletState {
     moving, colliding, inactive
@@ -37,10 +37,17 @@ struct PlayerData {
     Timer weaponTimer;
     Timer deathTimer;
     int healthPoints;
+    float maxWalkX; // walking
+    float maxRunX; // running 
+    float maxSprintX; // sprinting
+    bool fastfalling;
+    bool canDoubleJump; // can double jump?
     PlayerData() : weaponTimer(0.3f), deathTimer(3.0f)
     {
         state = PlayerState::idle;
         healthPoints = 1;
+        fastfalling = false;
+        canDoubleJump = true;
     }
 };
 struct LevelData {
@@ -85,7 +92,8 @@ struct GameObject {
     ObjectData data;
     glm::vec2 pos, vel, acc;
     float dir;
-    float maxSpeedX;
+    float maxSpeedX; // maximum (sprinting)
+    float maxSpeedY;
     std::vector<Animation> animations;
     int curAnimation;
     SDL_Texture *texture;
@@ -100,6 +108,7 @@ struct GameObject {
         type = ObjectType::level;
         dir = 1;
         maxSpeedX = 0;
+        maxSpeedY = 0;
         pos = vel = acc = glm::vec2(0);
         curAnimation = -1;
         texture = nullptr;
