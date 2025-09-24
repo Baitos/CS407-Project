@@ -22,12 +22,13 @@ void collisionResponse(const SDLState &state, GameState &gs, const Resources &re
             else if (a.vel.x < 0) { // going left
                 a.pos.x += rectC.w;
             }
-            if (a.type == ObjectType::enemy) {
+            a.vel.x = 0;
+            /*if (a.type == ObjectType::enemy) {
                 a.vel.x = -a.vel.x; // turn enemy around when it hits a wall
                 a.dir = -a.dir;
             } else {
                 a.vel.x = 0;
-            }
+            }*/
             
         } 
         else { // vert col
@@ -55,8 +56,11 @@ void collisionResponse(const SDLState &state, GameState &gs, const Resources &re
                         if (b.data.level.isEntrance == true){
                             a.pos = gs.ExitPortal;
                         }
-                    } else if  (b.data.level.state == LevelState::laser){
-                        if(b.data.level.laserActive){
+                    } 
+                    break;
+                }
+                case ObjectType::obstacle: {
+                        if(b.data.obstacle.laserActive){
                             //printf("FALLING");
                             a.texture = res.texDie;
                             a.curAnimation = res.ANIM_PLAYER_DIE;
@@ -72,13 +76,10 @@ void collisionResponse(const SDLState &state, GameState &gs, const Resources &re
                             //printf("x=%d, y=%d\n", a.pos.x, a.pos.y);
                             a.data.player.state = PlayerState::falling;
                     
-                            
-                        }
-                    }
-                    break;
+                        } 
+                        break;
                 }
                 case ObjectType::enemy: {
-                    printf("Here");
                     if (b.data.enemy.state != EnemyState::dead) {
                         PlayerData &d = a.data.player;
                         d.healthPoints -= 1;

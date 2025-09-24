@@ -45,6 +45,7 @@ bool initialize(SDLState &state) {
     return initSuccess;
 }
 
+
 void cleanup(SDLState &state) {
     SDL_DestroyRenderer(state.renderer);
     SDL_DestroyWindow(state.window);

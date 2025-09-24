@@ -23,12 +23,13 @@ struct SDLState
 };
 
 inline bool run = true;
+inline bool playing = true;
 
 const size_t LAYER_IDX_LEVEL = 0;
 const size_t LAYER_IDX_CHARACTERS = 1;
 
-const int MAP_ROWS = 40;
-const int MAP_COLS = 140;
+const int MAP_ROWS = 60;
+const int MAP_COLS = 280;
 const int TILE_SIZE = 32;
 
 struct GameState {
@@ -41,6 +42,8 @@ struct GameState {
     float bg2Scroll, bg3Scroll, bg4Scroll;
     bool debugMode;
     glm::vec2 ExitPortal;
+    glm::vec2 EntrancePortal;
+    std::vector<GameObject> lasers;
 
     GameState(const SDLState &state) {
         playerIndex = -1; // will change when map is loaded
@@ -60,11 +63,12 @@ struct GameState {
 
 struct Resources {
     const int ANIM_PLAYER_IDLE = 0;
-    const int ANIM_PLAYER_RUN = 1;
-    const int ANIM_PLAYER_SLIDE = 2;
+    const int ANIM_PLAYER_WALK = 1;
+    const int ANIM_PLAYER_RUN = 2;
     const int ANIM_PLAYER_SHOOT = 3;
     const int ANIM_PLAYER_JUMP = 4;
     const int ANIM_PLAYER_DIE = 5;
+    const int ANIM_PLAYER_SLIDE = 6;
     std::vector<Animation> playerAnims;
     const int ANIM_BULLET_MOVING = 0;
     const int ANIM_BULLET_HIT = 1;
@@ -91,9 +95,10 @@ struct Resources {
         return tex;
     }
 
-    void load(SDLState &state, bool real) {
-        playerAnims.resize(6); // 
-        playerAnims[ANIM_PLAYER_IDLE] = Animation(1, 1.6f); // 1 frames, 1.6 seconds
+    void load(SDLState &state, bool real) { // First variable controls how many frames there are, second is how long each frame lasts (in seconds)
+        playerAnims.resize(7); // 
+        playerAnims[ANIM_PLAYER_IDLE] = Animation(1, 1.6f);
+        playerAnims[ANIM_PLAYER_WALK] = Animation(3, 0.6f);
         playerAnims[ANIM_PLAYER_RUN] = Animation(3, 0.3f);
         playerAnims[ANIM_PLAYER_SLIDE] = Animation(1, 1.0f);
         playerAnims[ANIM_PLAYER_SHOOT] = Animation(1, 0.3f);
@@ -105,8 +110,8 @@ struct Resources {
         enemyAnims.resize(2);
         enemyAnims[ANIM_ENEMY] = Animation(2, 0.6f);
         enemyAnims[ANIM_ENEMY_DEAD] = Animation(1, 1.0f);
-        portalAnims.resize(1);
-        portalAnims[PORTAL_IDLE] = Animation(1, 1.f);
+        portalAnims.resize(2);
+        portalAnims[PORTAL_IDLE] = Animation(3, 1.0f);
 
         if (real) {
             texIdle = loadTexture(state.renderer, "data/IdleL.png");
@@ -142,8 +147,8 @@ struct Resources {
         //Spaceship
         texOnStage = loadTexture(state.renderer, "data/spaceship/OnStage.png");
         texOffStage = loadTexture(state.renderer, "data/spaceship/OffStage.png");
-        texBg5 = loadTexture(state.renderer, "data/spaceship/Bg5.png");
-        texLPortal = loadTexture(state.renderer, "data/fence.png");
+        texBg5 = loadTexture(state.renderer, "data/spaceship/Background2.png");
+        texLPortal = loadTexture(state.renderer, "data/spaceship/LPortal.png");
         texRPortal = loadTexture(state.renderer, "data/spaceship/RPortal.png");
         texLaser = loadTexture(state.renderer, "data/spaceship/Laser.png");
 
