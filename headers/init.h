@@ -163,3 +163,4 @@ struct Resources {
 
 bool initialize(SDLState &state);
 void cleanup(SDLState &state);
+bool isOnscreen(const SDLState &state, GameState &gs, GameObject &obj);

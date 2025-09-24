@@ -118,7 +118,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         for (GameObject &obj : gs.bgTiles) {
             SDL_FRect dst {
                 .x = obj.pos.x - gs.mapViewport.x,
-                .y = obj.pos.y- gs.mapViewport.y,
+                .y = obj.pos.y - gs.mapViewport.y,
                 .w = static_cast<float>(obj.texture->w),
                 .h = static_cast<float>(obj.texture->h)
             };
@@ -128,17 +128,19 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         // draw objs
         for (auto &layer : gs.layers) {
             for (GameObject &obj : layer) {
-                if (obj.data.level.state == LevelState::portal && obj.type == ObjectType::level){
-                    drawObject(state, gs, obj, 32, 64, deltaTime); 
-                } else{
-                    drawObject(state, gs, obj, TILE_SIZE, TILE_SIZE, deltaTime); 
-                }            
+                if (isOnscreen(state, gs, obj)) {
+                    if (obj.data.level.state == LevelState::portal && obj.type == ObjectType::level){
+                        drawObject(state, gs, obj, 32, 64, deltaTime); 
+                    } else{
+                        drawObject(state, gs, obj, TILE_SIZE, TILE_SIZE, deltaTime); 
+                    }    
+                }        
             }
         }
 
         // Draw Lasers
         for(GameObject &laser : gs.lasers){
-            if(laser.data.obstacle.laserActive){
+            if (laser.data.obstacle.laserActive && isOnscreen(state, gs, laser)) {
                 drawObject(state, gs, laser, TILE_SIZE, TILE_SIZE, deltaTime);
             }
         }
@@ -151,7 +153,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         }
 
         // draw fg tiles
-        for (GameObject &obj : gs.fgTiles) {
+        /*for (GameObject &obj : gs.fgTiles) {
             SDL_FRect dst {
                 .x = obj.pos.x - gs.mapViewport.x,
                 .y = obj.pos.y - gs.mapViewport.y,
@@ -159,7 +161,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                 .h = static_cast<float>(obj.texture->h)
             };
             SDL_RenderTexture(state.renderer, obj.texture, nullptr, &dst);
-        }
+        }*/ // turned off for now we dont have any
 
         if (gs.debugMode) {
         // debug info
