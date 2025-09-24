@@ -307,7 +307,7 @@ void handleKeyInput(const SDLState &state, GameState &gs, Resources &res, GameOb
     if (key.scancode == SDL_SCANCODE_F12 && keyDown && !key.repeat) { // debug
             gs.debugMode = !gs.debugMode;
     }
-    if (key.scancode == SDL_SCANCODE_F11) {
+    if (key.scancode == SDL_SCANCODE_F11 && keyDown && !key.repeat) {
         gs.player().pos = gs.EntrancePortal;
         gs.player().pos.x -= 32;
     }
