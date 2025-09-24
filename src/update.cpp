@@ -337,6 +337,18 @@ void handleKeyInput(const SDLState &state, GameState &gs, Resources &res, GameOb
                 }
             }
         };
+        const auto handleFalling = [&state, &gs, &obj, &res, key, keyDown, deltaTime]() {
+            if (key.scancode == SDL_SCANCODE_S && keyDown && !obj.grounded) { // fastfall
+                if (!key.repeat && !obj.data.player.fastfalling) {
+                    obj.vel.y = -250.0f;
+                    obj.data.player.fastfalling = true;
+                    obj.data.player.canDoubleJump = false;
+                }
+                if (std::abs(obj.vel.y) < obj.maxSpeedY) {
+                    obj.vel += glm::vec2(0, 700) * 6.0f * deltaTime;
+                }
+            }
+        };
         switch (obj.data.player.state) {
             case PlayerState::idle:
             {
@@ -348,22 +360,14 @@ void handleKeyInput(const SDLState &state, GameState &gs, Resources &res, GameOb
             {
                 handleJumping();
                 handleRunning();
+                handleFalling();
                 break;
             }
             case PlayerState::jumping:
             {
                 handleRunning();
                 handleJumping();
-                if (key.scancode == SDL_SCANCODE_S && keyDown) { // fastfall
-                    if (!key.repeat && !obj.data.player.fastfalling) {
-                        obj.vel.y = -250.0f;
-                        obj.data.player.fastfalling = true;
-                        obj.data.player.canDoubleJump = false;
-                    }
-                    if (std::abs(obj.vel.y) < obj.maxSpeedY) {
-                        obj.vel += glm::vec2(0, 700) * 6.0f * deltaTime;
-                    }
-                }
+                handleFalling();
                 break;               
             }
         }
