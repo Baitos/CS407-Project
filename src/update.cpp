@@ -137,6 +137,21 @@ float updatePlayer(const SDLState &state, GameState &gs, Resources &res, GameObj
                 obj.curAnimation = res.ANIM_PLAYER_DIE;
                 break;
             }
+            case PlayerState::jumpLaunch:
+            {
+                obj.texture = res.texLaunch;
+                obj.curAnimation = res.ANIM_PLAYER_LAUNCH;
+
+                // once the launch animation finishes, switch to normal in-air "jump"
+                if (obj.animations[obj.curAnimation].isDone()) {
+                    obj.data.player.state = PlayerState::jumping;
+                    obj.texture = res.texJump;
+                    obj.curAnimation = res.ANIM_PLAYER_JUMP;
+                    obj.animations[obj.curAnimation].reset();
+                }
+                handleShooting();
+                break;
+            }
         }
         if (obj.pos.y > 1000) { // hard coded, lol!
             obj.data.player.state = PlayerState::dead; // die if you fall off
@@ -320,10 +335,15 @@ void handleKeyInput(const SDLState &state, GameState &gs, Resources &res, GameOb
     }
     if (obj.type == ObjectType::player) {
         const float JUMP_FORCE = -450.f;
-        const auto handleJumping = [&state, &gs, &obj, key, keyDown, JUMP_FORCE]() {
+        const auto handleJumping = [&state, &gs, &obj, res, key, keyDown, JUMP_FORCE]() {
             if (key.scancode == SDL_SCANCODE_SPACE && keyDown && !key.repeat) { // jumping
                 if (obj.grounded) { // single jump
-                    obj.data.player.state = PlayerState::jumping;
+                    //add something for jump animation before going up
+                    //obj.data.player.state = PlayerState::jumping;
+                     obj.data.player.state = PlayerState::jumpLaunch; // <-- use launch state
+                     obj.texture = res.texLaunch;
+                     obj.curAnimation = res.ANIM_PLAYER_LAUNCH; 
+                     obj.animations[obj.curAnimation].reset();
                     obj.vel.y = JUMP_FORCE;
                 } else if (obj.data.player.canDoubleJump) { // double jump
                     obj.data.player.state = PlayerState::jumping;

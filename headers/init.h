@@ -69,6 +69,7 @@ struct Resources {
     const int ANIM_PLAYER_JUMP = 4;
     const int ANIM_PLAYER_DIE = 5;
     const int ANIM_PLAYER_SLIDE = 6;
+    const int ANIM_PLAYER_LAUNCH = 7;
     std::vector<Animation> playerAnims;
     const int ANIM_BULLET_MOVING = 0;
     const int ANIM_BULLET_HIT = 1;
@@ -81,7 +82,7 @@ struct Resources {
     
 
     std::vector<SDL_Texture *> textures;
-    SDL_Texture *texIdle, *texRun, *texJump, *texSlide, *texShoot, *texDie, 
+    SDL_Texture *texIdle, *texRun, *texJump, *texLaunch, *texSlide, *texShoot, *texDie, 
                 *texGrass, *texStone, *texBrick, *texFence, *texBush, 
                 *texBullet, *texBulletHit, *texSpiny, *texSpinyDead,
                 *texBg1, *texBg2, *texBg3, *texBg4, *texOnStage, *texOffStage, *texBg5, 
@@ -96,7 +97,7 @@ struct Resources {
     }
 
     void load(SDLState &state, bool real) { // First variable controls how many frames there are, second is how long each frame lasts (in seconds)
-        playerAnims.resize(7); // 
+        playerAnims.resize(8); // 
         playerAnims[ANIM_PLAYER_IDLE] = Animation(1, 1.6f);
         playerAnims[ANIM_PLAYER_WALK] = Animation(8, 1.0f);
         playerAnims[ANIM_PLAYER_RUN] = Animation(8, 0.5f);
@@ -104,6 +105,7 @@ struct Resources {
         playerAnims[ANIM_PLAYER_SHOOT] = Animation(1, 0.8f);
         playerAnims[ANIM_PLAYER_JUMP] = Animation(1, 0.3f); 
         playerAnims[ANIM_PLAYER_DIE] = Animation(1, 1.0f);
+        playerAnims[ANIM_PLAYER_LAUNCH] = Animation (3, 0.2f);
         bulletAnims.resize(2); // 
         bulletAnims[ANIM_BULLET_MOVING] = Animation(4, 0.5f);
         bulletAnims[ANIM_BULLET_HIT] = Animation(3, 0.5f);
@@ -129,6 +131,7 @@ struct Resources {
             texSlide = loadTexture(state.renderer, "data/CharacterSprites/Shotgun/turning_shotgun.png");
             texShoot = loadTexture(state.renderer, "data/CharacterSprites/Shotgun/shooting_shotgun.png");
             texDie = loadTexture(state.renderer, "data/CharacterSprites/Shotgun/shot_shotgun.png");
+            texLaunch = loadTexture(state.renderer, "data/CharacterSprites/Shotgun/jumping_shotgun.png");
             texBullet = loadTexture(state.renderer, "data/fireballM.png");
             texBulletHit = loadTexture(state.renderer, "data/fireballHitM.png");
         }
