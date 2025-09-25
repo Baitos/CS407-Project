@@ -30,6 +30,11 @@ float updatePlayer(const SDLState &state, GameState &gs, Resources &res, GameObj
                         obj.texture = res.texShoot;
                         obj.curAnimation = res.ANIM_PLAYER_SHOOT;
                     }*/
+                    if(obj.curAnimation == res.ANIM_PLAYER_SLIDE) {
+                        return;
+                    }
+                    obj.texture = res.texShoot;
+                    obj.curAnimation=res.ANIM_PLAYER_SHOOT;
                     weaponTimer.reset();
                     GameObject bullet;
                     bullet.data.bullet = BulletData();

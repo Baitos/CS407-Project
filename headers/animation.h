@@ -24,4 +24,7 @@ class Animation {
         bool isDone() const {
             return timer.isTimeOut();
         }
+        void reset() {
+           timer.reset();
+        }
 };

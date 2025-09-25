@@ -98,11 +98,11 @@ struct Resources {
     void load(SDLState &state, bool real) { // First variable controls how many frames there are, second is how long each frame lasts (in seconds)
         playerAnims.resize(7); // 
         playerAnims[ANIM_PLAYER_IDLE] = Animation(1, 1.6f);
-        playerAnims[ANIM_PLAYER_WALK] = Animation(3, 0.6f);
-        playerAnims[ANIM_PLAYER_RUN] = Animation(3, 0.3f);
+        playerAnims[ANIM_PLAYER_WALK] = Animation(8, 1.0f);
+        playerAnims[ANIM_PLAYER_RUN] = Animation(8, 0.5f);
         playerAnims[ANIM_PLAYER_SLIDE] = Animation(1, 1.0f);
-        playerAnims[ANIM_PLAYER_SHOOT] = Animation(1, 0.3f);
-        playerAnims[ANIM_PLAYER_JUMP] = Animation(1, 1.0f); 
+        playerAnims[ANIM_PLAYER_SHOOT] = Animation(1, 0.8f);
+        playerAnims[ANIM_PLAYER_JUMP] = Animation(1, 0.3f); 
         playerAnims[ANIM_PLAYER_DIE] = Animation(1, 1.0f);
         bulletAnims.resize(2); // 
         bulletAnims[ANIM_BULLET_MOVING] = Animation(4, 0.5f);
@@ -125,10 +125,10 @@ struct Resources {
         } else {
             texIdle = loadTexture(state.renderer, "data/CharacterSprites/Shotgun/idle_shotgun.png");
             texRun = loadTexture(state.renderer, "data/CharacterSprites/Shotgun/running_shotgun.png");
-            texJump = loadTexture(state.renderer, "data/JumpM.png");
+            texJump = loadTexture(state.renderer, "data/CharacterSprites/Shotgun/jumped_shotgun.png");
             texSlide = loadTexture(state.renderer, "data/CharacterSprites/Shotgun/turning_shotgun.png");
-            texShoot = loadTexture(state.renderer, "data/ShootM.png");
-            texDie = loadTexture(state.renderer, "data/DieM.png");
+            texShoot = loadTexture(state.renderer, "data/CharacterSprites/Shotgun/shooting_shotgun.png");
+            texDie = loadTexture(state.renderer, "data/CharacterSprites/Shotgun/shot_shotgun.png");
             texBullet = loadTexture(state.renderer, "data/fireballM.png");
             texBulletHit = loadTexture(state.renderer, "data/fireballHitM.png");
         }
