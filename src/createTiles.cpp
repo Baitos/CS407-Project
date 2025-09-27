@@ -303,8 +303,9 @@ void createTiles(const SDLState &state, GameState &gs, const Resources &res) { /
                         gs.bgTiles.push_back(o);
                         break;
                     }
-                    case 12:
+                    case 12: //Backwall
                     {
+                        //WILL REMOVE IF UGLY
                         GameObject o = createObject(r, c, res.texBackWall, ObjectType::level);
                         gs.bgTiles.push_back(o);
                         break;
