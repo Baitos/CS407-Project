@@ -261,28 +261,30 @@ void update(const SDLState &state, GameState &gs, Resources &res, GameObject &ob
     bool foundGround = false;
     for (auto &layer : gs.layers) {
         for (GameObject &objB : layer) {
-            if (&obj != &objB) {
-                checkCollision(state, gs, res, obj, objB, deltaTime);
-                if ((objB.type == ObjectType::level && objB.data.level.state != LevelState::portal) || objB.type == ObjectType::obstacle) {
-                    // grounded sensor
-                    const float inset = 2.0;
-                    SDL_FRect sensor {
-                        .x = obj.pos.x + obj.collider.x + 1,
-                        .y = obj.pos.y + obj.collider.y + obj.collider.h,
-                        .w = obj.collider.w - inset,
-                        .h = 1
-                    };
-                    SDL_FRect rectB {
-                        .x = objB.pos.x + objB.collider.x,
-                        .y = objB.pos.y + objB.collider.y,
-                        .w = objB.collider.w,
-                        .h = objB.collider.h
-                    };
-                    SDL_FRect rectC { 0 };
-                    if (SDL_GetRectIntersectionFloat(&sensor, &rectB, &rectC)) {
-                        foundGround = true;
-                    }
-                }    
+            if (isOnscreen(state, gs, obj) && isOnscreen(state, gs, objB)) {
+                if (&obj != &objB) {
+                    checkCollision(state, gs, res, obj, objB, deltaTime);
+                    if ((objB.type == ObjectType::level && objB.data.level.state != LevelState::portal) || objB.type == ObjectType::obstacle) {
+                        // grounded sensor
+                        const float inset = 2.0;
+                        SDL_FRect sensor {
+                            .x = obj.pos.x + obj.collider.x + 1,
+                            .y = obj.pos.y + obj.collider.y + obj.collider.h,
+                            .w = obj.collider.w - inset,
+                            .h = 1
+                        };
+                        SDL_FRect rectB {
+                            .x = objB.pos.x + objB.collider.x,
+                            .y = objB.pos.y + objB.collider.y,
+                            .w = objB.collider.w,
+                            .h = objB.collider.h
+                        };
+                        SDL_FRect rectC { 0 };
+                        if (SDL_GetRectIntersectionFloat(&sensor, &rectB, &rectC)) {
+                            foundGround = true;
+                        }
+                    }    
+                }
             }
         }
         for (GameObject &objB : gs.lasers){
@@ -323,7 +325,7 @@ void handleKeyInput(const SDLState &state, GameState &gs, Resources &res, GameOb
                     obj.vel.y = JUMP_FORCE;  
                     obj.data.player.canDoubleJump = false;
                 }
-                printf("canDoubleJump = %d\n" , obj.data.player.canDoubleJump);
+                //printf("canDoubleJump = %d\n" , obj.data.player.canDoubleJump);
             }
         };
         const auto handleRunning = [&state, &gs, &obj, &res, key, keyDown]() {

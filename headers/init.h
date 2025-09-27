@@ -85,7 +85,10 @@ struct Resources {
                 *texGrass, *texStone, *texBrick, *texFence, *texBush, 
                 *texBullet, *texBulletHit, *texSpiny, *texSpinyDead,
                 *texBg1, *texBg2, *texBg3, *texBg4, *texOnStage, *texOffStage, *texBg5, 
-                *texLPortal, *texRPortal, *texLaser;
+                *texLPortal, *texRPortal, *texLaser, *texFloor, *texTRCorner, *texRWall, *texBRCorner,
+                *texLWall, *texBLCorner, *texTLCorner, *texCeiling, *texITLCorner, *texITRCorner,
+                *texIBRCorner, *texIBLCorner, *texPlatform, *texFan, *texPanelOne, *texPanelTwo, *texPanelThree,
+                *texVentOne, *texVentTwo, *texBackWall;
 
     SDL_Texture *loadTexture(SDL_Renderer *renderer, const std::string &filepath) { // load texture from filepath
         // load game assets
@@ -151,6 +154,28 @@ struct Resources {
         texLPortal = loadTexture(state.renderer, "data/spaceship/LPortal.png");
         texRPortal = loadTexture(state.renderer, "data/spaceship/RPortal.png");
         texLaser = loadTexture(state.renderer, "data/spaceship/Laser.png");
+        texFloor = loadTexture(state.renderer, "data/spaceship/floor.png");
+        texTRCorner = loadTexture(state.renderer, "data/spaceship/TRCorner.png");
+        texRWall = loadTexture(state.renderer, "data/spaceship/RightWall.png");
+        texBRCorner = loadTexture(state.renderer, "data/spaceship/BRCorner.png");
+        texLWall = loadTexture(state.renderer, "data/spaceship/LeftWall.png");
+        texBLCorner = loadTexture(state.renderer, "data/spaceship/BLCorner.png");
+        texTLCorner = loadTexture(state.renderer, "data/spaceship/TLCorner.png");
+        texCeiling = loadTexture(state.renderer, "data/spaceship/Ceiling.png");
+        texIBLCorner = loadTexture(state.renderer, "data/spaceship/IBLCorner.png");
+        texITLCorner = loadTexture(state.renderer, "data/spaceship/ITLCorner.png");
+        texITRCorner = loadTexture(state.renderer, "data/spaceship/ITRCorner.png");
+        texIBRCorner = loadTexture(state.renderer, "data/spaceship/IBRCorner.png");
+        texPlatform = loadTexture(state.renderer, "data/spaceship/platform.png");
+
+        //Spaceship Background
+        texFan = loadTexture(state.renderer, "data/spaceship/BackgroundTiles/Fan.png");
+        texPanelOne = loadTexture(state.renderer, "data/spaceship/BackgroundTiles/PanelOne.png");
+        texPanelTwo = loadTexture(state.renderer, "data/spaceship/BackgroundTiles/PanelTwo.png");
+        texPanelThree = loadTexture(state.renderer, "data/spaceship/BackgroundTiles/PanelThree.png");
+        texVentOne = loadTexture(state.renderer, "data/spaceship/BackgroundTiles/VentOne.png");
+        texVentTwo = loadTexture(state.renderer, "data/spaceship/BackgroundTiles/VentTwo.png");
+        texBackWall = loadTexture(state.renderer, "data/spaceship/BackgroundTiles/BackWall.png");
 
     }
 
@@ -163,3 +188,4 @@ struct Resources {
 
 bool initialize(SDLState &state);
 void cleanup(SDLState &state);
+bool isOnscreen(const SDLState &state, GameState &gs, GameObject &obj);

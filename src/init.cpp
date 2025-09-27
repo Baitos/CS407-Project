@@ -51,3 +51,15 @@ void cleanup(SDLState &state) {
     SDL_DestroyWindow(state.window);
     SDL_Quit();
 }
+
+bool isOnscreen(const SDLState &state, GameState &gs, GameObject &obj) { // checks if obj is onscreen (with some leeway)
+    bool onscreen = true;
+    if (obj.pos.x - gs.mapViewport.x + TILE_SIZE < 0 || // left side
+        obj.pos.x - gs.mapViewport.x - TILE_SIZE > state.logW || // right side
+        obj.pos.y - gs.mapViewport.y + TILE_SIZE < 0 || // up
+        obj.pos.y - gs.mapViewport.y - TILE_SIZE > state.logH) // down
+    {
+        onscreen = false;
+    }
+    return onscreen;
+}
