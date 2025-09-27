@@ -92,7 +92,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         gs.mapViewport.x = (gs.player().pos.x + TILE_SIZE / 2) - (gs.mapViewport.w / 2); 
         gs.mapViewport.y = (gs.player().pos.y + TILE_SIZE / 2) - (gs.mapViewport.h / 2); 
         //draw stuff
-        SDL_SetRenderDrawColor(state.renderer, 37, 37, 84, 255);
+        SDL_SetRenderDrawColor(state.renderer, 64, 51, 83, 255);
         SDL_RenderClear(state.renderer);
 
         // draw background
@@ -121,6 +121,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                 .y = obj.pos.y - gs.mapViewport.y,
                 .w = static_cast<float>(obj.texture->w),
                 .h = static_cast<float>(obj.texture->h)
+               
             };
             SDL_RenderTexture(state.renderer, obj.texture, nullptr, &dst);
         }

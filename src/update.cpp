@@ -325,7 +325,7 @@ void handleKeyInput(const SDLState &state, GameState &gs, Resources &res, GameOb
                     obj.vel.y = JUMP_FORCE;  
                     obj.data.player.canDoubleJump = false;
                 }
-                printf("canDoubleJump = %d\n" , obj.data.player.canDoubleJump);
+                //printf("canDoubleJump = %d\n" , obj.data.player.canDoubleJump);
             }
         };
         const auto handleRunning = [&state, &gs, &obj, &res, key, keyDown]() {
