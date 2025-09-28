@@ -336,7 +336,6 @@ void update(const SDLState &state, GameState &gs, Resources &res, GameObject &ob
     if (obj.grounded != foundGround) { // changing state
         obj.grounded = foundGround;
         if (foundGround && obj.type == ObjectType::player && obj.data.player.state != PlayerState::dead) {
-            cout << "velocity" << obj.vel.y;
             if ((obj.data.player.state == PlayerState::jumping && obj.data.player.fastfalling)|| obj.data.player.state == PlayerState::falling) {
                 obj.data.player.state = PlayerState::roll;
                 obj.texture = res.texRoll;
