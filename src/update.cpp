@@ -10,6 +10,8 @@
 #include "../headers/update.h"
 #include "../headers/collision.h"
 
+using namespace std;
+
 float updatePlayer(const SDLState &state, GameState &gs, Resources &res, GameObject &obj, float deltaTime, float currentDirection) {
     if (obj.data.player.state != PlayerState::dead) {
         if (state.keys[SDL_SCANCODE_A]) {
@@ -155,6 +157,21 @@ float updatePlayer(const SDLState &state, GameState &gs, Resources &res, GameObj
                     obj.animations[obj.curAnimation].reset();
                 }
                 handleShooting();
+                break;
+            }
+            case PlayerState::roll:
+            {
+                obj.texture = res.texRoll;
+                obj.curAnimation = res.ANIM_PLAYER_ROLL;
+
+                // when roll animation finishes, switch to moving
+                if (obj.animations[obj.curAnimation].isDone()) {
+                    obj.data.player.state = PlayerState::moving;
+                    obj.texture = res.texRun;
+                    obj.curAnimation = res.ANIM_PLAYER_WALK;
+                    obj.animations[obj.curAnimation].reset();
+                }
+                handleShooting(); // optional: allow shooting while rolling
                 break;
             }
         }
@@ -319,7 +336,16 @@ void update(const SDLState &state, GameState &gs, Resources &res, GameObject &ob
     if (obj.grounded != foundGround) { // changing state
         obj.grounded = foundGround;
         if (foundGround && obj.type == ObjectType::player && obj.data.player.state != PlayerState::dead) {
-            obj.data.player.state = PlayerState::moving;
+            cout << "velocity" << obj.vel.y;
+            if ((obj.data.player.state == PlayerState::jumping && obj.data.player.fastfalling)|| obj.data.player.state == PlayerState::falling) {
+                obj.data.player.state = PlayerState::roll;
+                obj.texture = res.texRoll;
+                obj.curAnimation = res.ANIM_PLAYER_ROLL;
+                obj.animations[obj.curAnimation].reset();
+            } else {
+                obj.data.player.state = PlayerState::moving;
+            }
+
             obj.data.player.fastfalling = false;
             obj.data.player.canDoubleJump = true;
         }

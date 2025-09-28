@@ -71,6 +71,7 @@ struct Resources {
     const int ANIM_PLAYER_SLIDE = 6;
     const int ANIM_PLAYER_LAUNCH = 7;
     const int ANIM_PLAYER_SHOOT_JUMP = 8;
+    const int ANIM_PLAYER_ROLL = 9;
     std::vector<Animation> playerAnims;
     const int ANIM_BULLET_MOVING = 0;
     const int ANIM_BULLET_HIT = 1;
@@ -83,7 +84,7 @@ struct Resources {
     
 
     std::vector<SDL_Texture *> textures;
-    SDL_Texture *texIdle, *texRun, *texJump, *texLaunch, *texSlide, *texShoot, *texDie, *texShootJump,
+    SDL_Texture *texIdle, *texRun, *texJump, *texLaunch, *texSlide, *texShoot, *texDie, *texShootJump, *texRoll,
                 *texGrass, *texStone, *texBrick, *texFence, *texBush, 
                 *texBullet, *texBulletHit, *texSpiny, *texSpinyDead,
                 *texBg1, *texBg2, *texBg3, *texBg4, *texOnStage, *texOffStage, *texBg5, 
@@ -101,7 +102,7 @@ struct Resources {
     }
 
     void load(SDLState &state, bool real) { // First variable controls how many frames there are, second is how long each frame lasts (in seconds)
-        playerAnims.resize(9); // 
+        playerAnims.resize(10); // 
         playerAnims[ANIM_PLAYER_IDLE] = Animation(1, 1.6f);
         playerAnims[ANIM_PLAYER_WALK] = Animation(8, 1.0f);
         playerAnims[ANIM_PLAYER_RUN] = Animation(8, 0.5f);
@@ -111,6 +112,7 @@ struct Resources {
         playerAnims[ANIM_PLAYER_DIE] = Animation(1, 1.0f);
         playerAnims[ANIM_PLAYER_LAUNCH] = Animation(3, 0.2f);
         playerAnims[ANIM_PLAYER_SHOOT_JUMP] = Animation(1, 0.8f);
+        playerAnims[ANIM_PLAYER_ROLL] = Animation(5, 0.1f);
         bulletAnims.resize(2); // 
         bulletAnims[ANIM_BULLET_MOVING] = Animation(4, 0.5f);
         bulletAnims[ANIM_BULLET_HIT] = Animation(3, 0.5f);
@@ -123,6 +125,7 @@ struct Resources {
         if (real) {
             texIdle = loadTexture(state.renderer, "data/IdleL.png");
             texRun = loadTexture(state.renderer, "data/WalkLRL.png");
+            texRoll = loadTexture(state.renderer, "data/WalkLRL.png");
             texJump = loadTexture(state.renderer, "data/JumpL.png");
             texSlide = loadTexture(state.renderer, "data/SlideL.png");
             texShoot = loadTexture(state.renderer, "data/ShootL.png");
@@ -140,6 +143,7 @@ struct Resources {
             texDie = loadTexture(state.renderer, "data/CharacterSprites/Shotgun/shot_shotgun.png");
             texShootJump = loadTexture(state.renderer, "data/CharacterSprites/Shotgun/shooting_jumped_shotgun.png");
             texLaunch = loadTexture(state.renderer, "data/CharacterSprites/Shotgun/jumping_shotgun.png");
+            texRoll = loadTexture(state.renderer, "data/CharacterSprites/Shotgun/rolling_shotgun.png");
             texBullet = loadTexture(state.renderer, "data/fireballM.png");
             texBulletHit = loadTexture(state.renderer, "data/fireballHitM.png");
         }
