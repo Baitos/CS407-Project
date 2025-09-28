@@ -99,6 +99,8 @@ struct GameObject {
     SDL_Texture *texture;
     bool dynamic;
     bool grounded;
+    float gravityScale; // how fast they fall
+    float flip; // anti gravity
     SDL_FRect collider; // rectangle for collision
     Timer flashTimer;
     bool shouldFlash;
@@ -116,5 +118,7 @@ struct GameObject {
         grounded = false;
         shouldFlash = false;   
         spriteFrame = 1;
+        gravityScale = 1.0f;
+        flip = 1.0f;
     }
 };

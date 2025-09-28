@@ -40,6 +40,9 @@ bool initialize(SDLState &state) {
 
     SDL_SetRenderVSync(state.renderer, 1); // turn this SHIT off
 
+    SDL_SetWindowRelativeMouseMode(state.window, true); // mouse 
+    //SDL_SetWindowMouseGrab(state.window, true); // dont let mouse go past
+
     // configure presentation
     SDL_SetRenderLogicalPresentation(state.renderer, state.logW, state.logH, SDL_LOGICAL_PRESENTATION_LETTERBOX);
     return initSuccess;
@@ -62,4 +65,8 @@ bool isOnscreen(const SDLState &state, GameState &gs, GameObject &obj) { // chec
         onscreen = false;
     }
     return onscreen;
+}
+
+float changeVel(float vel, GameObject &obj) { // this is for ease of accounting for obj_flip without having to have it every time, use when you change/need vel/pos
+    return vel * obj.flip; 
 }

@@ -44,6 +44,7 @@ struct GameState {
     glm::vec2 ExitPortal;
     glm::vec2 EntrancePortal;
     std::vector<GameObject> lasers;
+    glm::vec2 mouseCoords; // X and Y of mouse
 
     GameState(const SDLState &state) {
         playerIndex = -1; // will change when map is loaded
@@ -81,7 +82,7 @@ struct Resources {
     
 
     std::vector<SDL_Texture *> textures;
-    SDL_Texture *texIdle, *texRun, *texJump, *texSlide, *texShoot, *texDie, 
+    SDL_Texture *texCrosshair, *texIdle, *texRun, *texJump, *texSlide, *texShoot, *texDie, 
                 *texGrass, *texStone, *texBrick, *texFence, *texBush, 
                 *texBullet, *texBulletHit, *texSpiny, *texSpinyDead,
                 *texBg1, *texBg2, *texBg3, *texBg4, *texOnStage, *texOffStage, *texBg5, 
@@ -135,6 +136,7 @@ struct Resources {
             texBullet = loadTexture(state.renderer, "data/fireballM.png");
             texBulletHit = loadTexture(state.renderer, "data/fireballHitM.png");
         }
+        texCrosshair = loadTexture(state.renderer, "data/crosshair.png");
         texGrass = loadTexture(state.renderer, "data/grass.png");
         texBrick = loadTexture(state.renderer, "data/brick.png");
         texStone = loadTexture(state.renderer, "data/stone.png");
@@ -189,3 +191,4 @@ struct Resources {
 bool initialize(SDLState &state);
 void cleanup(SDLState &state);
 bool isOnscreen(const SDLState &state, GameState &gs, GameObject &obj);
+float changeVel(float vel, GameObject &obj);

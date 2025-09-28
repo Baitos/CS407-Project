@@ -65,17 +65,17 @@ void collisionResponse(const SDLState &state, GameState &gs, const Resources &re
                             a.texture = res.texDie;
                             a.curAnimation = res.ANIM_PLAYER_DIE;
                             
-                            a.vel.x = -(a.vel.x);
-                            
-                            if(b.pos.y < a.pos.y ){
-                                a.vel.y = (200.f);
+                            a.vel.x = changeVel(-a.vel.x, a);
+                            float shouldFlip = a.flip; // there might be a more modular way to do this. idk if we will actually use the gravity flip but having it is nice and cool
+                            if(shouldFlip * b.pos.y < shouldFlip * a.pos.y ){
+                                a.vel.y = changeVel(200.f, a);
                             } else {
-                                a.vel.y = -(400.f);
+                                a.vel.y = changeVel(-400.f, a);
                             }
 
                             //printf("x=%d, y=%d\n", a.pos.x, a.pos.y);
                             a.data.player.state = PlayerState::falling;
-                    
+                            a.gravityScale = 1.0f;
                         } 
                         break;
                 }

@@ -20,8 +20,8 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     SDLState state;
     state.width = 1600;
     state.height = 900;
-    state.logW = 640;
-    state.logH = 480;
+    state.logW = 800;
+    state.logH = 450;
 
     bool l = false;
     if (argc > 1 && !strcmp(argv[1], "l")) {
@@ -88,10 +88,11 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         for (GameObject &bullet : gs.bullets) {
             update(state, gs, res, bullet, deltaTime);
         }
+
         // used for camera system
         gs.mapViewport.x = (gs.player().pos.x + TILE_SIZE / 2) - (gs.mapViewport.w / 2); 
         gs.mapViewport.y = (gs.player().pos.y + TILE_SIZE / 2) - (gs.mapViewport.h / 2); 
-        //draw stuff
+        //draw bg
         SDL_SetRenderDrawColor(state.renderer, 64, 51, 83, 255);
         SDL_RenderClear(state.renderer);
 
@@ -171,6 +172,10 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                             std::format("State: {}, Bullet: {}, Grounded: {}, playerX: {}, playerY: {}", 
                             static_cast<int>(gs.player().data.player.state), gs.bullets.size(), gs.player().grounded, static_cast<int>(gs.player().pos.x), static_cast<int>(gs.player().pos.y)).c_str());
         }
+
+        // handle the mouse
+        handleMouse(state, gs, res, gs.player(), deltaTime);
+
         //swap buffers and present
         SDL_RenderPresent(state.renderer);
         prevTime = nowTime;
