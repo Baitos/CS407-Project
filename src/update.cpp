@@ -378,6 +378,8 @@ void handleKeyInput(const SDLState &state, GameState &gs, Resources &res, GameOb
                 if (!key.repeat && !obj.data.player.fastfalling) {
                     obj.vel.y = changeVel(-250.0f, obj);
                     obj.data.player.fastfalling = true;
+                    obj.data.player.state = PlayerState::jumping;
+                    obj.curAnimation = res.ANIM_PLAYER_JUMP;
                     //obj.data.player.canDoubleJump = false;
                 }
                 obj.gravityScale = 3.0f;
