@@ -40,30 +40,45 @@ void groundedCheck(const SDLState &state, GameState &gs, const Resources &res, G
     }
 }
 
-void collisionResponse(const SDLState &state, GameState &gs, const Resources &res, 
-                       const SDL_FRect &rectA, const SDL_FRect &rectB, 
-                       const SDL_FRect &rectC, GameObject &a, GameObject &b, float deltaTime) 
+void collisionResponse(const SDLState &state, GameState &gs, Resources &res,
+	const SDL_FRect &rectA, const SDL_FRect &rectB, const glm::vec2 &overlap,
+	GameObject &a, GameObject &b, float deltaTime)
 {
-    const auto genericResponse = [&]() {
-        if (rectC.w < rectC.h) { // horizontal col
-            if (a.vel.x > 0) { // going right
-                a.pos.x -= rectC.w;
-            }
-            else if (a.vel.x < 0) { // going left
-                a.pos.x += rectC.w;
-            }
-            a.vel.x = 0;            
-        } 
-        else { // vertical col
-            if (a.vel.y > 0) { // going down
-                a.pos.y -= rectC.h;
-            }
-            else if (a.vel.y < 0)  { // going up
-                a.pos.y += rectC.h;
-            }
-            a.vel.y = 0;
-        }
-    };
+	const auto genericResponse = [&]()
+	{
+		// horiz collision
+		if (overlap.x < overlap.y)
+		{
+			if (a.pos.x < b.pos.x) // left
+			{
+				a.pos.x -= overlap.x;
+			}
+			else // right
+			{
+				a.pos.x += overlap.x;
+			}
+			a.vel.x = 0;
+		}
+        // vert collision
+		else
+		{
+			if (a.pos.y < b.pos.y) // top
+			{
+				a.pos.y -= overlap.y;
+                if (a.flip == 1) {
+				    a.grounded = true;
+                }
+			}
+			else // bottom
+			{
+				a.pos.y += overlap.y;
+                if (a.flip == -1) {
+				    a.grounded = true;
+                }
+			}
+			a.vel.y = 0;
+		}
+	};
     // obj we are checking
     if (a.type == ObjectType::player) {
         if (a.data.player.state != PlayerState::dead) {
@@ -189,23 +204,47 @@ void collisionResponse(const SDLState &state, GameState &gs, const Resources &re
     } 
 }
 
-void checkCollision(const SDLState &state, GameState &gs, const Resources &res, GameObject &a, GameObject &b, float deltaTime) {
-    SDL_FRect rectA { // create rectangle c by intersecting a and b; if c exists, its height is y coordinates overlapping and width is x coordinates overlapping
-        .x = a.pos.x + a.collider.x, 
-        .y = a.pos.y + a.collider.y,
-        .w = a.collider.w, 
-        .h = a.collider.h
-    };
-    SDL_FRect rectB {
-        .x = b.pos.x + b.collider.x, 
-        .y = b.pos.y + b.collider.y,
-        .w = b.collider.w, 
-        .h = b.collider.h
-    };
-    SDL_FRect rectC{ 0 };
-    if (SDL_GetRectIntersectionFloat(&rectA, &rectB, &rectC)) {
-        // found intersection, respond accordingly
-        collisionResponse(state, gs, res, rectA, rectB, rectC, a, b, deltaTime);
-    }
-    //groundedCheck(state, gs, res, a, b, deltaTime);
+bool intersectAABB(const SDL_FRect &a, const SDL_FRect &b, glm::vec2 &overlap)
+{
+	const float minXA = a.x;
+	const float maxXA = a.x + a.w;
+	const float minYA = a.y;
+	const float maxYA = a.y + a.h;
+	const float minXB = b.x;
+	const float maxXB = b.x + b.w;
+	const float minYB = b.y;
+	const float maxYB = b.y + b.h;
+
+	if ((minXA < maxXB && maxXA > minXB) &&
+		(minYA <= maxYB && maxYA >= minYB))
+	{
+		overlap.x = std::min(maxXA - minXB, maxXB - minXA);
+		overlap.y = std::min(maxYA - minYB, maxYB - minYA);
+		return true;
+	}
+	return false;
+}
+
+void checkCollision(const SDLState &state, GameState &gs, Resources &res,
+	GameObject &a, GameObject &b, float deltaTime)
+{
+	SDL_FRect rectA{
+		.x = a.pos.x + a.collider.x,
+		.y = a.pos.y + a.collider.y,
+		.w = a.collider.w,
+		.h = a.collider.h
+	};
+	SDL_FRect rectB{
+		.x = b.pos.x + b.collider.x,
+		.y = b.pos.y + b.collider.y,
+		.w = b.collider.w,
+		.h = b.collider.h
+	};
+
+	glm::vec2 resolution{ 0 };
+	if (intersectAABB(rectA, rectB, resolution))
+	{
+		// found intersection, respond accordingly
+		collisionResponse(state, gs, res, rectA, rectB, resolution, a, b, deltaTime);
+	}
 }

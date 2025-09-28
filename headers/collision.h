@@ -12,8 +12,9 @@
 #include "init.h"
 #include "gameobject.h"
 
-void checkCollision(const SDLState &state, GameState &gs, const Resources &res, GameObject &a, GameObject &b, float deltaTime);
-void collisionResponse(const SDLState &state, GameState &gs, const Resources &res, 
-                       const SDL_FRect &rectA, const SDL_FRect &rectB, 
-                       const SDL_FRect &rectC, GameObject &a, GameObject &b, float deltaTime);
+bool intersectAABB(const SDL_FRect &a, const SDL_FRect &b, glm::vec2 &overlap);
+void checkCollision(const SDLState &state, GameState &gs, Resources &res, GameObject &a, GameObject &b, float deltaTime);
+void collisionResponse(const SDLState &state, GameState &gs, Resources &res,
+                       const SDL_FRect &rectA, const SDL_FRect &rectB, const glm::vec2 &overlap,
+                       GameObject &a, GameObject &b, float deltaTime);
 void groundedCheck(const SDLState &state, GameState &gs, const Resources &res, GameObject &a, GameObject &b, float deltaTime);

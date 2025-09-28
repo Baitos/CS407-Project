@@ -286,30 +286,11 @@ void update(const SDLState &state, GameState &gs, Resources &res, GameObject &ob
     // add vel to pos
     obj.pos += obj.vel * deltaTime;
     // collision
-    bool foundGround = false;
+    bool foundGround = obj.grounded;
+    obj.grounded = false;
     for (GameObject &objB : gs.mapTiles) { // check if player is touching any map tiles, currently no enemy collision
         if (obj.dynamic && isOnscreen(state, gs, obj) && isOnscreen(state, gs, objB)) {
             checkCollision(state, gs, res, obj, objB, deltaTime);
-            if ((objB.type == ObjectType::level && objB.data.level.state != LevelState::portal) || objB.type == ObjectType::obstacle) {
-                // grounded sensor
-                const float inset = 2.0;
-                SDL_FRect sensor {
-                    .x = obj.pos.x + obj.collider.x + 1,
-                    .y = obj.flip == -1 ? obj.pos.y : obj.pos.y + obj.collider.y + obj.collider.h, // flip checker if flipped
-                    .w = obj.collider.w - inset,
-                    .h = 1
-                };
-                SDL_FRect rectB {
-                    .x = objB.pos.x + objB.collider.x,
-                    .y = objB.pos.y + objB.collider.y,
-                    .w = objB.collider.w,
-                    .h = objB.collider.h
-                };
-                SDL_FRect rectC { 0 };
-                if (SDL_GetRectIntersectionFloat(&sensor, &rectB, &rectC)) {
-                    foundGround = true;
-                }
-            }
         } else if (obj.type == ObjectType::bullet) {
             checkCollision(state, gs, res, obj, objB, deltaTime);
         }
@@ -317,9 +298,8 @@ void update(const SDLState &state, GameState &gs, Resources &res, GameObject &ob
     for (GameObject &objB : gs.lasers){
         checkCollision(state, gs, res, obj, objB, deltaTime);     
     }
-    if (obj.grounded != foundGround) { // changing state
-        obj.grounded = foundGround;
-        if (foundGround && obj.type == ObjectType::player && obj.data.player.state != PlayerState::dead) {
+    if (obj.grounded && !foundGround) {
+        if (obj.grounded && obj.type == ObjectType::player) {
             obj.data.player.state = PlayerState::moving;
             obj.data.player.fastfalling = false;
             obj.data.player.canDoubleJump = true;
