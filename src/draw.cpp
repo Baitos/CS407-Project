@@ -10,6 +10,9 @@
 #include "../headers/draw.h"
 
 void drawObject(const SDLState &state, GameState &gs, GameObject &obj, float width, float height, float deltaTime) {
+        if (!isOnscreen(state, gs, obj)) {
+            return;
+        }
         float srcX = obj.curAnimation != -1 ? obj.animations[obj.curAnimation].currentFrame() * width : (obj.spriteFrame - 1) * width;
         SDL_FRect src {
             .x = srcX,

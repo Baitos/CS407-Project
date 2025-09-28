@@ -16,3 +16,4 @@ void checkCollision(const SDLState &state, GameState &gs, const Resources &res, 
 void collisionResponse(const SDLState &state, GameState &gs, const Resources &res, 
                        const SDL_FRect &rectA, const SDL_FRect &rectB, 
                        const SDL_FRect &rectC, GameObject &a, GameObject &b, float deltaTime);
+void groundedCheck(const SDLState &state, GameState &gs, const Resources &res, GameObject &a, GameObject &b, float deltaTime);

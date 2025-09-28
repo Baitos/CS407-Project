@@ -33,9 +33,12 @@ const int MAP_COLS = 280;
 const int TILE_SIZE = 32;
 
 struct GameState {
-    std::array<std::vector<GameObject>, 2> layers;
+    //std::array<std::vector<GameObject>, 2> layers;
     std::vector<GameObject> bgTiles;
     std::vector<GameObject> fgTiles;
+    std::vector<GameObject> mapTiles;
+    std::vector<GameObject> characters;
+
     std::vector<GameObject> bullets;
     int playerIndex;
     SDL_FRect mapViewport;
@@ -45,6 +48,7 @@ struct GameState {
     glm::vec2 EntrancePortal;
     std::vector<GameObject> lasers;
     glm::vec2 mouseCoords; // X and Y of mouse
+    int FPS = 60; // for now, we can change it later or set an option to change it later
 
     GameState(const SDLState &state) {
         playerIndex = -1; // will change when map is loaded
@@ -58,7 +62,7 @@ struct GameState {
         debugMode = false;
     }
     GameObject &player() {
-        return layers[LAYER_IDX_CHARACTERS][playerIndex];
+        return characters[playerIndex];
     }
 };
 

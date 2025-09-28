@@ -259,37 +259,35 @@ void update(const SDLState &state, GameState &gs, Resources &res, GameObject &ob
     obj.pos += obj.vel * deltaTime;
     // collision
     bool foundGround = false;
-    for (auto &layer : gs.layers) {
-        for (GameObject &objB : layer) {
-            if (isOnscreen(state, gs, obj) && isOnscreen(state, gs, objB)) {
-                if (&obj != &objB) {
-                    checkCollision(state, gs, res, obj, objB, deltaTime);
-                    if ((objB.type == ObjectType::level && objB.data.level.state != LevelState::portal) || objB.type == ObjectType::obstacle) {
-                        // grounded sensor
-                        const float inset = 2.0;
-                        SDL_FRect sensor {
-                            .x = obj.pos.x + obj.collider.x + 1,
-                            .y = obj.flip == -1 ? obj.pos.y : obj.pos.y + obj.collider.y + obj.collider.h, // flip checker if flipped
-                            .w = obj.collider.w - inset,
-                            .h = 1
-                        };
-                        SDL_FRect rectB {
-                            .x = objB.pos.x + objB.collider.x,
-                            .y = objB.pos.y + objB.collider.y,
-                            .w = objB.collider.w,
-                            .h = objB.collider.h
-                        };
-                        SDL_FRect rectC { 0 };
-                        if (SDL_GetRectIntersectionFloat(&sensor, &rectB, &rectC)) {
-                            foundGround = true;
-                        }
-                    }    
+    for (GameObject &objB : gs.mapTiles) { // check if player is touching any map tiles, currently no enemy collision
+        if (obj.dynamic && isOnscreen(state, gs, obj) && isOnscreen(state, gs, objB)) {
+            checkCollision(state, gs, res, obj, objB, deltaTime);
+            if ((objB.type == ObjectType::level && objB.data.level.state != LevelState::portal) || objB.type == ObjectType::obstacle) {
+                // grounded sensor
+                const float inset = 2.0;
+                SDL_FRect sensor {
+                    .x = obj.pos.x + obj.collider.x + 1,
+                    .y = obj.flip == -1 ? obj.pos.y : obj.pos.y + obj.collider.y + obj.collider.h, // flip checker if flipped
+                    .w = obj.collider.w - inset,
+                    .h = 1
+                };
+                SDL_FRect rectB {
+                    .x = objB.pos.x + objB.collider.x,
+                    .y = objB.pos.y + objB.collider.y,
+                    .w = objB.collider.w,
+                    .h = objB.collider.h
+                };
+                SDL_FRect rectC { 0 };
+                if (SDL_GetRectIntersectionFloat(&sensor, &rectB, &rectC)) {
+                    foundGround = true;
                 }
             }
+        } else if (obj.type == ObjectType::bullet) {
+            checkCollision(state, gs, res, obj, objB, deltaTime);
         }
-        for (GameObject &objB : gs.lasers){
-            checkCollision(state, gs, res, obj, objB, deltaTime);     
-        }
+    }
+    for (GameObject &objB : gs.lasers){
+        checkCollision(state, gs, res, obj, objB, deltaTime);     
     }
     if (obj.grounded != foundGround) { // changing state
         obj.grounded = foundGround;
@@ -317,7 +315,7 @@ void handleMouse(const SDLState &state, GameState &gs, Resources &res, GameObjec
         .w = CROSSHAIR_SIZE,
         .h = CROSSHAIR_SIZE
     };
-    printf("mouseX: %f, mouseY: %f\n", gs.mouseCoords.x, gs.mouseCoords.y);
+    //printf("mouseX: %f, mouseY: %f\n", gs.mouseCoords.x, gs.mouseCoords.y);
     SDL_RenderTexture(state.renderer, res.texCrosshair, nullptr, &dst); // src is for sprite stripping, dest is for where sprite should be drawn
 }
 

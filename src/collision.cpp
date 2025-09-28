@@ -9,30 +9,52 @@
 
 #include "../headers/collision.h"
 
+void groundedCheck(const SDLState &state, GameState &gs, const Resources &res, GameObject &a, GameObject &b, float deltaTime) {
+    bool foundGround = false;
+    // grounded sensor
+    const float inset = 2.0;
+    SDL_FRect sensor {
+        .x = a.pos.x + a.collider.x + 1,
+        .y = a.flip == -1 ? a.pos.y : a.pos.y + a.collider.y + a.collider.h, // flip checker if flipped
+        .w = a.collider.w - inset,
+        .h = 1
+    };
+    SDL_FRect rectB {
+        .x = b.pos.x + b.collider.x,
+        .y = b.pos.y + b.collider.y,
+        .w = b.collider.w,
+        .h = b.collider.h
+    };
+    SDL_FRect rectC { 0 };
+    if (SDL_GetRectIntersectionFloat(&sensor, &rectB, &rectC)) {
+        foundGround = true;
+    }
+    if (a.grounded != foundGround) { // changing state
+        a.grounded = foundGround;
+        if (foundGround && a.data.player.state != PlayerState::dead) {
+            a.data.player.state = PlayerState::moving;
+            a.data.player.fastfalling = false;
+            a.data.player.canDoubleJump = true;
+            a.gravityScale = 1.0f;
+        }
+    }
+}
+
 void collisionResponse(const SDLState &state, GameState &gs, const Resources &res, 
                        const SDL_FRect &rectA, const SDL_FRect &rectB, 
                        const SDL_FRect &rectC, GameObject &a, GameObject &b, float deltaTime) 
 {
     const auto genericResponse = [&]() {
         if (rectC.w < rectC.h) { // horizontal col
-            //printf("Horizontal Collision, %f = rectC.w, %f = rectC.h\n", rectC.w, rectC.h);
             if (a.vel.x > 0) { // going right
                 a.pos.x -= rectC.w;
             }
             else if (a.vel.x < 0) { // going left
                 a.pos.x += rectC.w;
             }
-            a.vel.x = 0;
-            /*if (a.type == ObjectType::enemy) {
-                a.vel.x = -a.vel.x; // turn enemy around when it hits a wall
-                a.dir = -a.dir;
-            } else {
-                a.vel.x = 0;
-            }*/
-            
+            a.vel.x = 0;            
         } 
-        else { // vert col
-            //printf("Vertical Collision, %f = rectC.w, %f = rectC.h\n", rectC.w, rectC.h);
+        else { // vertical col
             if (a.vel.y > 0) { // going down
                 a.pos.y -= rectC.h;
             }
@@ -56,7 +78,7 @@ void collisionResponse(const SDLState &state, GameState &gs, const Resources &re
                         if (b.data.level.isEntrance == true){
                             a.pos = gs.ExitPortal;
                         }
-                    } 
+                    }
                     break;
                 }
                 case ObjectType::obstacle: {
@@ -100,7 +122,6 @@ void collisionResponse(const SDLState &state, GameState &gs, const Resources &re
                 }
             }
         }
-        
     } else if (a.type == ObjectType::bullet) {
         bool passthrough = false;
         switch (a.data.bullet.state) {
@@ -186,4 +207,5 @@ void checkCollision(const SDLState &state, GameState &gs, const Resources &res, 
         // found intersection, respond accordingly
         collisionResponse(state, gs, res, rectA, rectB, rectC, a, b, deltaTime);
     }
+    //groundedCheck(state, gs, res, a, b, deltaTime);
 }

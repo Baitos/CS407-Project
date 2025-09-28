@@ -38,7 +38,7 @@ bool initialize(SDLState &state) {
         initSuccess = false;
     }
 
-    SDL_SetRenderVSync(state.renderer, 1); // turn this SHIT off
+    //SDL_SetRenderVSync(state.renderer, 1); // turn this SHIT off
 
     SDL_SetWindowRelativeMouseMode(state.window, true); // mouse 
     //SDL_SetWindowMouseGrab(state.window, true); // dont let mouse go past

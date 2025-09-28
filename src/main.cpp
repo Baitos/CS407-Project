@@ -39,9 +39,19 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     createTiles(state, gs, res);
     uint64_t prevTime = SDL_GetTicks();
 
+    uint64_t frames = 0;
+    uint64_t FPS = 0;
+    uint64_t lastTime = 0;
+
     // start game loop
     while (run) {
         uint64_t nowTime = SDL_GetTicks(); // take time from previous frame to calculate delta
+        frames++;
+        if (nowTime > lastTime + 1000) { // fps counter
+            lastTime = nowTime;
+            FPS = frames;           
+            frames = 0;
+        }
         float deltaTime = (nowTime - prevTime) / 1000.0f; // convert to seconds from ms
         SDL_Event event { 0 };
         while (SDL_PollEvent(&event)) {
@@ -72,11 +82,13 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
             }
         }
 
-        // update objs
-        for (auto &layer : gs.layers) {
-            for (GameObject &obj : layer) {
-                update(state, gs, res, obj, deltaTime);
-            }
+        // update tiles
+        for (GameObject &tile : gs.mapTiles) {
+            update(state, gs, res, tile, deltaTime);
+        }
+        // update chars
+        for (GameObject &chars : gs.characters) {
+            update(state, gs, res, chars, deltaTime);
         }
 
         // update lasers
@@ -127,8 +139,24 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
             SDL_RenderTexture(state.renderer, obj.texture, nullptr, &dst);
         }
 
-        // draw objs
-        for (auto &layer : gs.layers) {
+        // draw level tiles
+        for(GameObject &level : gs.mapTiles){
+            if (isOnscreen(state, gs, level)) {
+                if (level.data.level.state == LevelState::portal){
+                    drawObject(state, gs, level, 32, 64, deltaTime); 
+                } else{
+                    drawObject(state, gs, level, TILE_SIZE, TILE_SIZE, deltaTime); 
+                } 
+            }
+        }
+
+        // draw chars
+        for(GameObject &chars : gs.characters){
+            if (isOnscreen(state, gs, chars)) {
+                drawObject(state, gs, chars, TILE_SIZE, TILE_SIZE, deltaTime);
+            }
+        }
+        /*for (auto &layer : gs.layers) {
             for (GameObject &obj : layer) {
                 if (isOnscreen(state, gs, obj)) {
                     if (obj.data.level.state == LevelState::portal && obj.type == ObjectType::level){
@@ -138,7 +166,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                     }    
                 }        
             }
-        }
+        }*/
 
         // Draw Lasers
         for(GameObject &laser : gs.lasers){
@@ -169,8 +197,8 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         // debug info
             SDL_SetRenderDrawColor(state.renderer, 255, 255, 255, 255);
             SDL_RenderDebugText(state.renderer, 5, 5,
-                            std::format("State: {}, Bullet: {}, Grounded: {}, playerX: {}, playerY: {}", 
-                            static_cast<int>(gs.player().data.player.state), gs.bullets.size(), gs.player().grounded, static_cast<int>(gs.player().pos.x), static_cast<int>(gs.player().pos.y)).c_str());
+                            std::format("FPS: {}, State: {}, Bullet: {}, Grounded: {}, X: {}, Y: {}", 
+                            static_cast<int>(FPS), static_cast<int>(gs.player().data.player.state), gs.bullets.size(), gs.player().grounded, static_cast<int>(gs.player().pos.x), static_cast<int>(gs.player().pos.y)).c_str());
         }
 
         // handle the mouse
