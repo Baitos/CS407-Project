@@ -249,10 +249,10 @@ void createTiles(const SDLState &state, GameState &gs, const Resources &res) { /
                         player.animations = res.playerAnims; // load anims
                         player.curAnimation = res.ANIM_PLAYER_IDLE; // set player anim to idle
                         player.acc = glm::vec2(300, 0);
-                        player.maxSpeedY = 550;
+                        //player.maxSpeedY = 550;
                         player.data.player.maxWalkX = player.maxSpeedX = 250;
                         player.data.player.maxRunX = 650;
-                        player.data.player.maxSprintX = 750;
+                        player.data.player.maxSprintX = 850;
                         player.dynamic = true;
                         player.collider = { 
                             .x = 1,

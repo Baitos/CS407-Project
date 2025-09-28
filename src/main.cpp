@@ -20,8 +20,8 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     SDLState state;
     state.width = 1600;
     state.height = 900;
-    state.logW = 800;
-    state.logH = 450;
+    state.logW = 640;
+    state.logH = 480;
 
     bool l = false;
     if (argc > 1 && !strcmp(argv[1], "l")) {
@@ -65,7 +65,6 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                 {
                     state.width = event.window.data1;
                     state.height = event.window.data2;
-                    
                     //printf("Width = %d, Height = %d", state.width, state.height);
                     break;
                 }
@@ -79,13 +78,18 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                     handleKeyInput(state, gs, res, gs.player(), event.key, false, deltaTime);
                     break;
                 }
+                case SDL_EVENT_MOUSE_BUTTON_DOWN:
+                {
+                    //handleClick(state, gs, res, gs.player(), deltaTime);
+                    break;
+                }
             }
         }
 
-        // update tiles
-        for (GameObject &tile : gs.mapTiles) {
+        // update tiles, we don't need to currently
+        /*for (GameObject &tile : gs.mapTiles) {
             update(state, gs, res, tile, deltaTime);
-        }
+        }*/
         // update chars
         for (GameObject &chars : gs.characters) {
             update(state, gs, res, chars, deltaTime);
@@ -129,14 +133,16 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
 
         // draw bg tiles
         for (GameObject &obj : gs.bgTiles) {
-            SDL_FRect dst {
-                .x = obj.pos.x - gs.mapViewport.x,
-                .y = obj.pos.y - gs.mapViewport.y,
-                .w = static_cast<float>(obj.texture->w),
-                .h = static_cast<float>(obj.texture->h)
-               
-            };
-            SDL_RenderTexture(state.renderer, obj.texture, nullptr, &dst);
+            if (isOnscreen(state, gs, obj)) {
+                SDL_FRect dst {
+                    .x = obj.pos.x - gs.mapViewport.x,
+                    .y = obj.pos.y - gs.mapViewport.y,
+                    .w = static_cast<float>(obj.texture->w),
+                    .h = static_cast<float>(obj.texture->h)
+                    
+                }; 
+                SDL_RenderTexture(state.renderer, obj.texture, nullptr, &dst);
+            }
         }
 
         // draw level tiles
@@ -170,7 +176,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
 
         // Draw Lasers
         for(GameObject &laser : gs.lasers){
-            if (laser.data.obstacle.laserActive && isOnscreen(state, gs, laser)) {
+            if (isOnscreen(state, gs, laser) && laser.data.obstacle.laserActive) {
                 drawObject(state, gs, laser, TILE_SIZE, TILE_SIZE, deltaTime);
             }
         }
@@ -201,8 +207,8 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                             static_cast<int>(FPS), static_cast<int>(gs.player().data.player.state), gs.bullets.size(), gs.player().grounded, static_cast<int>(gs.player().pos.x), static_cast<int>(gs.player().pos.y)).c_str());
         }
 
-        // handle the mouse
-        handleMouse(state, gs, res, gs.player(), deltaTime);
+        // handle the crosshair
+        handleCrosshair(state, gs, res, gs.player(), deltaTime);
 
         //swap buffers and present
         SDL_RenderPresent(state.renderer);

@@ -48,6 +48,8 @@ struct GameState {
     glm::vec2 EntrancePortal;
     std::vector<GameObject> lasers;
     glm::vec2 mouseCoords; // X and Y of mouse
+    glm::vec2 clickCoords; // x and y of last clicked position
+
     int FPS = 60; // for now, we can change it later or set an option to change it later
 
     GameState(const SDLState &state) {
@@ -196,3 +198,5 @@ bool initialize(SDLState &state);
 void cleanup(SDLState &state);
 bool isOnscreen(const SDLState &state, GameState &gs, GameObject &obj);
 float changeVel(float vel, GameObject &obj);
+bool isSliding(GameObject &obj);
+glm::vec2 findCenterOfSprite(GameObject &obj);

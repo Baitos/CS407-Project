@@ -36,13 +36,15 @@ struct PlayerData {
     PlayerState state;
     Timer weaponTimer;
     Timer deathTimer;
+    Timer sprintTimer; // time 
+    //Timer sprintLeewayTimer;
     int healthPoints;
     float maxWalkX; // walking
     float maxRunX; // running 
     float maxSprintX; // sprinting
     bool fastfalling;
     bool canDoubleJump; // can double jump?
-    PlayerData() : weaponTimer(0.3f), deathTimer(3.0f)
+    PlayerData() : weaponTimer(0.3f), deathTimer(3.0f), sprintTimer(1.5f)
     {
         state = PlayerState::idle;
         healthPoints = 1;
@@ -93,7 +95,7 @@ struct GameObject {
     glm::vec2 pos, vel, acc;
     float dir;
     float maxSpeedX; // maximum (sprinting)
-    float maxSpeedY;
+    //float maxSpeedY;
     std::vector<Animation> animations;
     int curAnimation;
     SDL_Texture *texture;
@@ -110,7 +112,7 @@ struct GameObject {
         type = ObjectType::level;
         dir = 1;
         maxSpeedX = 0;
-        maxSpeedY = 0;
+        //maxSpeedY = 0;
         pos = vel = acc = glm::vec2(0);
         curAnimation = -1;
         texture = nullptr;

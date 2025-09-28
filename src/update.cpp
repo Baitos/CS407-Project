@@ -18,9 +18,9 @@ float updatePlayer(const SDLState &state, GameState &gs, Resources &res, GameObj
         if (state.keys[SDL_SCANCODE_D]) {
             currentDirection += 1;
         }
+
         Timer &weaponTimer = obj.data.player.weaponTimer;
         weaponTimer.step(deltaTime);
-
         const auto handleShooting = [&state, &gs, &res, &obj, &weaponTimer]() {
             if (state.keys[SDL_SCANCODE_J]) {
                 // bullets!
@@ -109,12 +109,42 @@ float updatePlayer(const SDLState &state, GameState &gs, Resources &res, GameObj
                         obj.vel.x += amount;
                     }
                 }
-                if (obj.vel.x * obj.dir < 0 && obj.grounded) { // moving in different direction of vel and pressing a direction, sliding
+                if (isSliding(obj) && obj.grounded) { // moving in different direction of vel and pressing a direction, sliding
                     obj.texture = res.texSlide;
                     obj.curAnimation = res.ANIM_PLAYER_SLIDE;
+                    obj.data.player.sprintTimer.reset();
                 } else {
                     obj.texture = res.texRun;
                     obj.curAnimation = res.ANIM_PLAYER_WALK;
+                }
+
+                float LEEWAY = 20;
+                if (obj.grounded && std::abs(obj.vel.x) >= (obj.data.player.maxRunX - LEEWAY)) {
+                    //obj.maxSpeedX = obj.data.player.maxSprintX;
+                    //printf("Step\n");                       
+                    if (!obj.data.player.sprintTimer.isTimeOut()) {
+                        obj.data.player.sprintTimer.step(deltaTime);
+                        //printf("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n");
+                    } else {
+                        obj.maxSpeedX = obj.data.player.maxSprintX;
+                        obj.data.player.state = PlayerState::sprinting;
+                    }
+                } 
+
+                handleShooting();
+                break;
+            }
+            case PlayerState::sprinting:
+            {
+                float LEEWAY = 20;
+                if (obj.grounded && std::abs(obj.vel.x) < (obj.data.player.maxRunX - LEEWAY)) { // if on ground and too slow reset sprint      
+                    obj.data.player.sprintTimer.reset();
+                    obj.maxSpeedX = obj.data.player.maxRunX;
+                    obj.data.player.state = PlayerState::moving;
+                }
+                if (isSliding(obj) && obj.grounded) { // moving in different direction of vel and pressing a direction, sliding
+                    obj.maxSpeedX = obj.data.player.maxRunX;
+                    obj.data.player.state = PlayerState::moving;
                 }
                 handleShooting();
                 break;
@@ -133,7 +163,7 @@ float updatePlayer(const SDLState &state, GameState &gs, Resources &res, GameObj
                 break;
             }
         }
-        if (obj.pos.y > 1000) { // hard coded, lol!
+        if (std::abs(obj.pos.y) > 1500) { // hard coded, lol!
             obj.data.player.state = PlayerState::dead; // die if you fall off
             obj.texture = res.texDie;
             obj.curAnimation = res.ANIM_PLAYER_DIE;
@@ -246,13 +276,15 @@ void update(const SDLState &state, GameState &gs, Resources &res, GameObject &ob
             break;
         }
     }
+    
     if (currentDirection) {
         obj.dir = currentDirection;
     }
     obj.vel += currentDirection * obj.acc * deltaTime;
     if (std::abs(obj.vel.x) > obj.maxSpeedX) {
-        obj.vel.x -= 1.5 * currentDirection * obj.acc.x * deltaTime;
-        //obj.vel.x -= currentDirection * obj.acc * deltaTime;
+        if (!isSliding(obj)) { // if not sliding slow down
+            obj.vel.x -= 1.5 * obj.acc.x * deltaTime * currentDirection;
+        }
     }
 
     // add vel to pos
@@ -300,7 +332,7 @@ void update(const SDLState &state, GameState &gs, Resources &res, GameObject &ob
     }
 }
 
-void handleMouse(const SDLState &state, GameState &gs, Resources &res, GameObject &obj, float deltaTime) {
+void handleCrosshair(const SDLState &state, GameState &gs, Resources &res, GameObject &obj, float deltaTime) {
     SDL_GetMouseState(&gs.mouseCoords.x, &gs.mouseCoords.y);
     float CROSSHAIR_SIZE = 15;
     float OFFSET = 7;
@@ -315,8 +347,15 @@ void handleMouse(const SDLState &state, GameState &gs, Resources &res, GameObjec
         .w = CROSSHAIR_SIZE,
         .h = CROSSHAIR_SIZE
     };
+    SDL_SetRenderDrawColor(state.renderer, 255, 0, 0, 255); // draw line to crosshair
+    glm::vec2 pOffset = findCenterOfSprite(gs.player());
+    //printf("x: %d, y: %d\n", pOffset.x, pOffset.y);
+    SDL_RenderLine(state.renderer, gs.player().pos.x - gs.mapViewport.x + pOffset.x, gs.player().pos.y - gs.mapViewport.y + pOffset.y, gs.mouseCoords.x, gs.mouseCoords.y);
+    SDL_SetRenderDrawColor(state.renderer, 64, 51, 83, 255);
+    
     //printf("mouseX: %f, mouseY: %f\n", gs.mouseCoords.x, gs.mouseCoords.y);
     SDL_RenderTexture(state.renderer, res.texCrosshair, nullptr, &dst); // src is for sprite stripping, dest is for where sprite should be drawn
+    
 }
 
 void handleKeyInput(const SDLState &state, GameState &gs, Resources &res, GameObject &obj,
@@ -327,9 +366,9 @@ void handleKeyInput(const SDLState &state, GameState &gs, Resources &res, GameOb
     }
     if (key.scancode == SDL_SCANCODE_F11 && keyDown && !key.repeat) { // tp to entrance portal
         gs.player().pos = gs.EntrancePortal;
-        gs.player().pos.x -= 32;
+        gs.player().pos.x -= TILE_SIZE;
     }
-    if (key.scancode == SDL_SCANCODE_F10 && keyDown && !key.repeat) { // anti gravity
+    if (key.scancode == SDL_SCANCODE_F2 && keyDown && !key.repeat) { // anti gravity
         gs.player().flip = -1 * gs.player().flip;
     }
     if (key.scancode == SDL_SCANCODE_F1) {
@@ -362,15 +401,24 @@ void handleKeyInput(const SDLState &state, GameState &gs, Resources &res, GameOb
                 //obj.gravityScale = 2.0f; // option 3; double their gravity until they land
             }
         };
-        const auto handleRunning = [&state, &gs, &obj, &res, key, keyDown]() {
+        const auto handleRunning = [&state, &gs, &obj, &res, key, keyDown, deltaTime]() {
             if (key.scancode == SDL_SCANCODE_LSHIFT) {
                 if (keyDown) { // if held down, increase speed
                     obj.maxSpeedX = obj.data.player.maxRunX;
-                    obj.curAnimation = res.ANIM_PLAYER_RUN; 
+                    obj.curAnimation = res.ANIM_PLAYER_RUN;
                 } else {
                     obj.maxSpeedX = obj.data.player.maxWalkX;
                     obj.curAnimation = res.ANIM_PLAYER_WALK; 
+                    obj.data.player.sprintTimer.reset();
                 }
+            }
+        };
+        const auto handleSprinting = [&state, &gs, &obj, &res, key, keyDown]() {
+            if (key.scancode == SDL_SCANCODE_LSHIFT && !keyDown) {
+                obj.maxSpeedX = obj.data.player.maxRunX;
+                obj.curAnimation = res.ANIM_PLAYER_RUN;
+                obj.data.player.sprintTimer.reset();
+                obj.data.player.state = PlayerState::moving;
             }
         };
         const auto handleFalling = [&state, &gs, &obj, &res, key, keyDown, deltaTime]() {
@@ -406,6 +454,14 @@ void handleKeyInput(const SDLState &state, GameState &gs, Resources &res, GameOb
                 handleFalling();
                 break;               
             }
+            case PlayerState::sprinting:
+            {
+                handleSprinting();
+                handleJumping();
+                handleFalling();
+                break;
+            }
         }
+        //printf("velX = %f, velY = %f\n", obj.vel.x, obj.vel.y);
     }
 }

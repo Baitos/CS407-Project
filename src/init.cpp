@@ -70,3 +70,14 @@ bool isOnscreen(const SDLState &state, GameState &gs, GameObject &obj) { // chec
 float changeVel(float vel, GameObject &obj) { // this is for ease of accounting for obj_flip without having to have it every time, use when you change/need vel/pos
     return vel * obj.flip; 
 }
+
+bool isSliding(GameObject &obj) { // checks if an obj is sliding
+    if (obj.vel.x * obj.dir < 0) {
+       return true;     
+    }
+    return false;
+}
+
+glm::vec2 findCenterOfSprite(GameObject &obj) { // finds center of sprite by collider
+    return glm::vec2((float)obj.collider.w / 2, (float)obj.collider.h / 2);
+}
