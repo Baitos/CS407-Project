@@ -112,37 +112,33 @@ float updatePlayer(const SDLState &state, GameState &gs, Resources &res, GameObj
                 if (isSliding(obj) && obj.grounded) { // moving in different direction of vel and pressing a direction, sliding
                     obj.texture = res.texSlide;
                     obj.curAnimation = res.ANIM_PLAYER_SLIDE;
-                    obj.data.player.sprintTimer.reset();
                 } else {
                     obj.texture = res.texRun;
                     obj.curAnimation = res.ANIM_PLAYER_WALK;
                 }
 
-                float LEEWAY = 20;
-                if (obj.grounded && std::abs(obj.vel.x) >= (obj.data.player.maxRunX - LEEWAY)) {
-                    //obj.maxSpeedX = obj.data.player.maxSprintX;
-                    //printf("Step\n");                       
-                    if (!obj.data.player.sprintTimer.isTimeOut()) {
-                        obj.data.player.sprintTimer.step(deltaTime);
-                        //printf("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n");
-                    } else {
-                        obj.maxSpeedX = obj.data.player.maxSprintX;
-                        obj.data.player.state = PlayerState::sprinting;
-                    }
-                } 
-
+                if (state.keys[SDL_SCANCODE_LSHIFT]) { // if not pressing then reset
+                    float LEEWAY = 20;
+                    if (obj.grounded && std::abs(obj.vel.x) >= (obj.data.player.maxRunX - LEEWAY)) { // if grounded and moving fast enter sprint (eventually)                
+                        if (!obj.data.player.sprintTimer.isTimeOut()) {
+                            obj.data.player.sprintTimer.step(deltaTime);
+                        } else {
+                            obj.maxSpeedX = obj.data.player.maxSprintX;
+                            obj.data.player.state = PlayerState::sprinting;
+                        }
+                    } 
+                } else {
+                    obj.data.player.sprintTimer.reset();
+                }
                 handleShooting();
                 break;
             }
             case PlayerState::sprinting:
             {
                 float LEEWAY = 20;
-                if (obj.grounded && std::abs(obj.vel.x) < (obj.data.player.maxRunX - LEEWAY)) { // if on ground and too slow reset sprint      
+                if (obj.grounded && // if on ground and sliding or too slow reset sprint
+                    (isSliding(obj) || std::abs(obj.vel.x) < (obj.data.player.maxRunX - LEEWAY))) {       
                     obj.data.player.sprintTimer.reset();
-                    obj.maxSpeedX = obj.data.player.maxRunX;
-                    obj.data.player.state = PlayerState::moving;
-                }
-                if (isSliding(obj) && obj.grounded) { // moving in different direction of vel and pressing a direction, sliding
                     obj.maxSpeedX = obj.data.player.maxRunX;
                     obj.data.player.state = PlayerState::moving;
                 }
@@ -415,8 +411,8 @@ void handleKeyInput(const SDLState &state, GameState &gs, Resources &res, GameOb
         };
         const auto handleSprinting = [&state, &gs, &obj, &res, key, keyDown]() {
             if (key.scancode == SDL_SCANCODE_LSHIFT && !keyDown) {
-                obj.maxSpeedX = obj.data.player.maxRunX;
-                obj.curAnimation = res.ANIM_PLAYER_RUN;
+                obj.maxSpeedX = obj.data.player.maxWalkX;
+                obj.curAnimation = res.ANIM_PLAYER_WALK;
                 obj.data.player.sprintTimer.reset();
                 obj.data.player.state = PlayerState::moving;
             }
