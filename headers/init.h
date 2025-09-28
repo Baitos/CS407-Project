@@ -124,6 +124,8 @@ struct Resources {
             texSlide = loadTexture(state.renderer, "data/SlideL.png");
             texShoot = loadTexture(state.renderer, "data/ShootL.png");
             texDie = loadTexture(state.renderer, "data/DieL.png");
+            texShootJump = texShoot;
+            texLaunch = texJump;
             texBullet = loadTexture(state.renderer, "data/fireballL.png");
             texBulletHit = loadTexture(state.renderer, "data/fireballHitL.png");
         } else {
