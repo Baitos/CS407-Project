@@ -13,6 +13,7 @@
 from PIL import Image
 import numpy as np
 import sys
+import random
 
 pngPath = sys.argv[1]
 png = Image.open(pngPath).convert("RGBA")
@@ -32,7 +33,10 @@ for y in range(height):
             colorIdDict[color] = (idCounter, (x,y))
             idCounter += 1
         
-        resultArray[y,x] = colorIdDict[color][0]
+        if colorIdDict[color][0] == 10:
+            resultArray[y,x] = random.choice([10,14,15,16,17,18])
+        else:
+            resultArray[y,x] = colorIdDict[color][0]
 
 filename = "C:/Users/hohma/OneDrive/Desktop/CS 407/Stage Design/Spaceship/" + "StageArray.txt"
 
