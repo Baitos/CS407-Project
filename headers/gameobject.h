@@ -6,7 +6,7 @@
 #include "../headers/animation.h"
 
 enum class PlayerState {
-    idle, moving, sprinting, jumping, dead, falling
+    idle, moving, sprinting, jumping, dead, falling, jumpLaunch, roll
 };
 enum class BulletState {
     moving, colliding, inactive
