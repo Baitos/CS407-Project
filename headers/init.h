@@ -33,9 +33,12 @@ const int MAP_COLS = 280;
 const int TILE_SIZE = 32;
 
 struct GameState {
-    std::array<std::vector<GameObject>, 2> layers;
+    //std::array<std::vector<GameObject>, 2> layers;
     std::vector<GameObject> bgTiles;
     std::vector<GameObject> fgTiles;
+    std::vector<GameObject> mapTiles;
+    std::vector<GameObject> characters;
+
     std::vector<GameObject> bullets;
     int playerIndex;
     SDL_FRect mapViewport;
@@ -44,6 +47,10 @@ struct GameState {
     glm::vec2 ExitPortal;
     glm::vec2 EntrancePortal;
     std::vector<GameObject> lasers;
+    glm::vec2 mouseCoords; // X and Y of mouse
+    glm::vec2 clickCoords; // x and y of last clicked position
+
+    int FPS = 60; // for now, we can change it later or set an option to change it later
 
     GameState(const SDLState &state) {
         playerIndex = -1; // will change when map is loaded
@@ -57,7 +64,7 @@ struct GameState {
         debugMode = false;
     }
     GameObject &player() {
-        return layers[LAYER_IDX_CHARACTERS][playerIndex];
+        return characters[playerIndex];
     }
 };
 
@@ -84,7 +91,7 @@ struct Resources {
     
 
     std::vector<SDL_Texture *> textures;
-    SDL_Texture *texIdle, *texRun, *texJump, *texLaunch, *texSlide, *texShoot, *texDie, *texShootJump, *texRoll,
+    SDL_Texture *texCrosshair, *texIdle, *texRun, *texJump, *texLaunch, *texSlide, *texShoot, *texDie, *texShootJump, *texRoll,
                 *texGrass, *texStone, *texBrick, *texFence, *texBush, 
                 *texBullet, *texBulletHit, *texSpiny, *texSpinyDead,
                 *texBg1, *texBg2, *texBg3, *texBg4, *texOnStage, *texOffStage, *texBg5, 
@@ -169,6 +176,7 @@ struct Resources {
             texBullet = loadTexture(state.renderer, "data/fireballM.png");
             texBulletHit = loadTexture(state.renderer, "data/fireballHitM.png");
         }
+        texCrosshair = loadTexture(state.renderer, "data/crosshair.png");
         texGrass = loadTexture(state.renderer, "data/grass.png");
         texBrick = loadTexture(state.renderer, "data/brick.png");
         texStone = loadTexture(state.renderer, "data/stone.png");
@@ -223,3 +231,6 @@ struct Resources {
 bool initialize(SDLState &state);
 void cleanup(SDLState &state);
 bool isOnscreen(const SDLState &state, GameState &gs, GameObject &obj);
+float changeVel(float vel, GameObject &obj);
+bool isSliding(GameObject &obj);
+glm::vec2 findCenterOfSprite(GameObject &obj);

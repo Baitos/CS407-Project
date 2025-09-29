@@ -19,3 +19,4 @@ float updateEnemy(const SDLState &state, GameState &gs, Resources &res, GameObje
 float updateObstacle(const SDLState &state, GameState &gs, Resources &res, GameObject &obj, float deltaTime, float currentDirection);
 void handleKeyInput(const SDLState &state, GameState &gs, Resources &res, GameObject &obj,
                     SDL_KeyboardEvent key, bool keyDown, float deltaTime);
+void handleCrosshair(const SDLState &state, GameState &gs, Resources &res, GameObject &obj, float deltaTime);

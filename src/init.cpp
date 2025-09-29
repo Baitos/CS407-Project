@@ -38,7 +38,10 @@ bool initialize(SDLState &state) {
         initSuccess = false;
     }
 
-    SDL_SetRenderVSync(state.renderer, 1); // turn this SHIT off
+    //SDL_SetRenderVSync(state.renderer, 1); // turn this SHIT off
+
+    SDL_SetWindowRelativeMouseMode(state.window, true); // mouse 
+    //SDL_SetWindowMouseGrab(state.window, true); // dont let mouse go past
 
     // configure presentation
     SDL_SetRenderLogicalPresentation(state.renderer, state.logW, state.logH, SDL_LOGICAL_PRESENTATION_LETTERBOX);
@@ -62,4 +65,19 @@ bool isOnscreen(const SDLState &state, GameState &gs, GameObject &obj) { // chec
         onscreen = false;
     }
     return onscreen;
+}
+
+float changeVel(float vel, GameObject &obj) { // this is for ease of accounting for obj_flip without having to have it every time, use when you change/need vel/pos
+    return vel * obj.flip; 
+}
+
+bool isSliding(GameObject &obj) { // checks if an obj is sliding
+    if (obj.vel.x * obj.dir < 0) {
+       return true;     
+    }
+    return false;
+}
+
+glm::vec2 findCenterOfSprite(GameObject &obj) { // finds center of sprite by collider
+    return glm::vec2((float)obj.collider.w / 2, (float)obj.collider.h / 2);
 }

@@ -39,9 +39,19 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     createTiles(state, gs, res);
     uint64_t prevTime = SDL_GetTicks();
 
+    uint64_t frames = 0;
+    uint64_t FPS = 0;
+    uint64_t lastTime = 0;
+
     // start game loop
     while (run) {
         uint64_t nowTime = SDL_GetTicks(); // take time from previous frame to calculate delta
+        frames++;
+        if (nowTime > lastTime + 1000) { // fps counter
+            lastTime = nowTime;
+            FPS = frames;           
+            frames = 0;
+        }
         float deltaTime = (nowTime - prevTime) / 1000.0f; // convert to seconds from ms
         SDL_Event event { 0 };
         while (SDL_PollEvent(&event)) {
@@ -55,7 +65,6 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                 {
                     state.width = event.window.data1;
                     state.height = event.window.data2;
-                    
                     //printf("Width = %d, Height = %d", state.width, state.height);
                     break;
                 }
@@ -69,14 +78,21 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                     handleKeyInput(state, gs, res, gs.player(), event.key, false, deltaTime);
                     break;
                 }
+                case SDL_EVENT_MOUSE_BUTTON_DOWN:
+                {
+                    //handleClick(state, gs, res, gs.player(), deltaTime);
+                    break;
+                }
             }
         }
 
-        // update objs
-        for (auto &layer : gs.layers) {
-            for (GameObject &obj : layer) {
-                update(state, gs, res, obj, deltaTime);
-            }
+        // update tiles, we don't need to currently
+        /*for (GameObject &tile : gs.mapTiles) {
+            update(state, gs, res, tile, deltaTime);
+        }*/
+        // update chars
+        for (GameObject &chars : gs.characters) {
+            update(state, gs, res, chars, deltaTime);
         }
 
         // update lasers
@@ -88,10 +104,11 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         for (GameObject &bullet : gs.bullets) {
             update(state, gs, res, bullet, deltaTime);
         }
+
         // used for camera system
         gs.mapViewport.x = (gs.player().pos.x + TILE_SIZE / 2) - (gs.mapViewport.w / 2); 
         gs.mapViewport.y = (gs.player().pos.y + TILE_SIZE / 2) - (gs.mapViewport.h / 2); 
-        //draw stuff
+        //draw bg
         SDL_SetRenderDrawColor(state.renderer, 64, 51, 83, 255);
         SDL_RenderClear(state.renderer);
 
@@ -116,18 +133,36 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
 
         // draw bg tiles
         for (GameObject &obj : gs.bgTiles) {
-            SDL_FRect dst {
-                .x = obj.pos.x - gs.mapViewport.x,
-                .y = obj.pos.y - gs.mapViewport.y,
-                .w = static_cast<float>(obj.texture->w),
-                .h = static_cast<float>(obj.texture->h)
-               
-            };
-            SDL_RenderTexture(state.renderer, obj.texture, nullptr, &dst);
+            if (isOnscreen(state, gs, obj)) {
+                SDL_FRect dst {
+                    .x = obj.pos.x - gs.mapViewport.x,
+                    .y = obj.pos.y - gs.mapViewport.y,
+                    .w = static_cast<float>(obj.texture->w),
+                    .h = static_cast<float>(obj.texture->h)
+                    
+                }; 
+                SDL_RenderTexture(state.renderer, obj.texture, nullptr, &dst);
+            }
         }
 
-        // draw objs
-        for (auto &layer : gs.layers) {
+        // draw level tiles
+        for(GameObject &level : gs.mapTiles){
+            if (isOnscreen(state, gs, level)) {
+                if (level.data.level.state == LevelState::portal){
+                    drawObject(state, gs, level, 32, 64, deltaTime); 
+                } else{
+                    drawObject(state, gs, level, TILE_SIZE, TILE_SIZE, deltaTime); 
+                } 
+            }
+        }
+
+        // draw chars
+        for(GameObject &chars : gs.characters){
+            if (isOnscreen(state, gs, chars)) {
+                drawObject(state, gs, chars, TILE_SIZE, TILE_SIZE, deltaTime);
+            }
+        }
+        /*for (auto &layer : gs.layers) {
             for (GameObject &obj : layer) {
                 if (isOnscreen(state, gs, obj)) {
                     if (obj.data.level.state == LevelState::portal && obj.type == ObjectType::level){
@@ -137,11 +172,11 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                     }    
                 }        
             }
-        }
+        }*/
 
         // Draw Lasers
         for(GameObject &laser : gs.lasers){
-            if (laser.data.obstacle.laserActive && isOnscreen(state, gs, laser)) {
+            if (isOnscreen(state, gs, laser) && laser.data.obstacle.laserActive) {
                 drawObject(state, gs, laser, TILE_SIZE, TILE_SIZE, deltaTime);
             }
         }
@@ -168,9 +203,13 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         // debug info
             SDL_SetRenderDrawColor(state.renderer, 255, 255, 255, 255);
             SDL_RenderDebugText(state.renderer, 5, 5,
-                            std::format("State: {}, Bullet: {}, Grounded: {}, playerX: {}, playerY: {}", 
-                            static_cast<int>(gs.player().data.player.state), gs.bullets.size(), gs.player().grounded, static_cast<int>(gs.player().pos.x), static_cast<int>(gs.player().pos.y)).c_str());
+                            std::format("FPS: {}, State: {}, Bullet: {}, Grounded: {}, X: {}, Y: {}", 
+                            static_cast<int>(FPS), static_cast<int>(gs.player().data.player.state), gs.bullets.size(), gs.player().grounded, static_cast<int>(gs.player().pos.x), static_cast<int>(gs.player().pos.y)).c_str());
         }
+
+        // handle the crosshair
+        handleCrosshair(state, gs, res, gs.player(), deltaTime);
+
         //swap buffers and present
         SDL_RenderPresent(state.renderer);
         prevTime = nowTime;

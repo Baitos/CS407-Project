@@ -20,9 +20,9 @@ float updatePlayer(const SDLState &state, GameState &gs, Resources &res, GameObj
         if (state.keys[SDL_SCANCODE_D]) {
             currentDirection += 1;
         }
+
         Timer &weaponTimer = obj.data.player.weaponTimer;
         weaponTimer.step(deltaTime);
-
         const auto handleShooting = [&state, &gs, &res, &obj, &weaponTimer]() {
             if (state.keys[SDL_SCANCODE_J]) {
                 // bullets!
@@ -121,12 +121,38 @@ float updatePlayer(const SDLState &state, GameState &gs, Resources &res, GameObj
                         obj.vel.x += amount;
                     }
                 }
-                if (obj.vel.x * obj.dir < 0 && obj.grounded) { // moving in different direction of vel and pressing a direction, sliding
+                if (isSliding(obj) && obj.grounded) { // moving in different direction of vel and pressing a direction, sliding
                     obj.texture = res.texSlide;
                     obj.curAnimation = res.ANIM_PLAYER_SLIDE;
                 } else {
                     obj.texture = res.texRun;
                     obj.curAnimation = res.ANIM_PLAYER_WALK;
+                }
+
+                if (state.keys[SDL_SCANCODE_LSHIFT]) { // if not pressing then reset
+                    float LEEWAY = 20;
+                    if (obj.grounded && std::abs(obj.vel.x) >= (obj.data.player.maxRunX - LEEWAY)) { // if grounded and moving fast enter sprint (eventually)                
+                        if (!obj.data.player.sprintTimer.isTimeOut()) {
+                            obj.data.player.sprintTimer.step(deltaTime);
+                        } else {
+                            obj.maxSpeedX = obj.data.player.maxSprintX;
+                            obj.data.player.state = PlayerState::sprinting;
+                        }
+                    } 
+                } else {
+                    obj.data.player.sprintTimer.reset();
+                }
+                handleShooting();
+                break;
+            }
+            case PlayerState::sprinting:
+            {
+                float LEEWAY = 20;
+                if (obj.grounded && // if on ground and sliding or too slow reset sprint
+                    (isSliding(obj) || std::abs(obj.vel.x) < (obj.data.player.maxRunX - LEEWAY))) {       
+                    obj.data.player.sprintTimer.reset();
+                    obj.maxSpeedX = obj.data.player.maxRunX;
+                    obj.data.player.state = PlayerState::moving;
                 }
                 handleShooting();
                 break;
@@ -175,7 +201,7 @@ float updatePlayer(const SDLState &state, GameState &gs, Resources &res, GameObj
                 break;
             }
         }
-        if (obj.pos.y > 1000) { // hard coded, lol!
+        if (std::abs(obj.pos.y) > 1500) { // hard coded, lol!
             obj.data.player.state = PlayerState::dead; // die if you fall off
             obj.texture = res.texDie;
             obj.curAnimation = res.ANIM_PLAYER_DIE;
@@ -262,7 +288,7 @@ void update(const SDLState &state, GameState &gs, Resources &res, GameObject &ob
         obj.animations[obj.curAnimation].step(deltaTime);
     }
     if (obj.dynamic && !obj.grounded) {
-        obj.vel += glm::vec2(0, 700) * deltaTime; // gravity
+        obj.vel.y += changeVel(700 * obj.gravityScale * deltaTime, obj); // gravity
         //printf("x=%d, y=%d\n", obj.pos.x, obj.pos.y);
     }
     float currentDirection = 0;
@@ -288,54 +314,34 @@ void update(const SDLState &state, GameState &gs, Resources &res, GameObject &ob
             break;
         }
     }
+    
     if (currentDirection) {
         obj.dir = currentDirection;
     }
     obj.vel += currentDirection * obj.acc * deltaTime;
     if (std::abs(obj.vel.x) > obj.maxSpeedX) {
-        obj.vel.x -= 1.5 * currentDirection * obj.acc.x * deltaTime;
-        //obj.vel.x -= currentDirection * obj.acc * deltaTime;
+        if (!isSliding(obj)) { // if not sliding slow down
+            obj.vel.x -= 1.5 * obj.acc.x * deltaTime * currentDirection;
+        }
     }
 
     // add vel to pos
     obj.pos += obj.vel * deltaTime;
     // collision
-    bool foundGround = false;
-    for (auto &layer : gs.layers) {
-        for (GameObject &objB : layer) {
-            if (isOnscreen(state, gs, obj) && isOnscreen(state, gs, objB)) {
-                if (&obj != &objB) {
-                    checkCollision(state, gs, res, obj, objB, deltaTime);
-                    if ((objB.type == ObjectType::level && objB.data.level.state != LevelState::portal) || objB.type == ObjectType::obstacle) {
-                        // grounded sensor
-                        const float inset = 2.0;
-                        SDL_FRect sensor {
-                            .x = obj.pos.x + obj.collider.x + 1,
-                            .y = obj.pos.y + obj.collider.y + obj.collider.h,
-                            .w = obj.collider.w - inset,
-                            .h = 1
-                        };
-                        SDL_FRect rectB {
-                            .x = objB.pos.x + objB.collider.x,
-                            .y = objB.pos.y + objB.collider.y,
-                            .w = objB.collider.w,
-                            .h = objB.collider.h
-                        };
-                        SDL_FRect rectC { 0 };
-                        if (SDL_GetRectIntersectionFloat(&sensor, &rectB, &rectC)) {
-                            foundGround = true;
-                        }
-                    }    
-                }
-            }
-        }
-        for (GameObject &objB : gs.lasers){
-            checkCollision(state, gs, res, obj, objB, deltaTime);     
+    bool foundGround = obj.grounded;
+    obj.grounded = false;
+    for (GameObject &objB : gs.mapTiles) { // check if player is touching any map tiles, currently no enemy collision
+        if (obj.dynamic && isOnscreen(state, gs, obj) && isOnscreen(state, gs, objB)) {
+            checkCollision(state, gs, res, obj, objB, deltaTime);
+        } else if (obj.type == ObjectType::bullet) {
+            checkCollision(state, gs, res, obj, objB, deltaTime);
         }
     }
-    if (obj.grounded != foundGround) { // changing state
-        obj.grounded = foundGround;
-        if (foundGround && obj.type == ObjectType::player && obj.data.player.state != PlayerState::dead) {
+    for (GameObject &objB : gs.lasers){
+        checkCollision(state, gs, res, obj, objB, deltaTime);     
+    }
+    if (obj.grounded && !foundGround) {
+        if (obj.grounded && obj.type == ObjectType::player) {
             if ((obj.data.player.state == PlayerState::jumping && obj.data.player.fastfalling)|| obj.data.player.state == PlayerState::falling) {
                 obj.data.player.state = PlayerState::roll;
                 obj.texture = res.texRoll;
@@ -347,11 +353,36 @@ void update(const SDLState &state, GameState &gs, Resources &res, GameObject &ob
 
             obj.data.player.fastfalling = false;
             obj.data.player.canDoubleJump = true;
+            obj.gravityScale = 1.0f;
         }
     }
 }
 
-
+void handleCrosshair(const SDLState &state, GameState &gs, Resources &res, GameObject &obj, float deltaTime) {
+    SDL_GetMouseState(&gs.mouseCoords.x, &gs.mouseCoords.y);
+    float CROSSHAIR_SIZE = 15;
+    float OFFSET = 7;
+    float yRatio = (float)state.logH / state.height;
+    float xRatio = (float)state.logW / state.width;
+    //printf("Xrat: %f, Yrat: %f\n", xRatio, yRatio);
+    gs.mouseCoords.x = gs.mouseCoords.x * xRatio;
+    gs.mouseCoords.y = gs.mouseCoords.y * yRatio;
+    SDL_FRect dst { 
+        .x = gs.mouseCoords.x - OFFSET,
+        .y = gs.mouseCoords.y - OFFSET,
+        .w = CROSSHAIR_SIZE,
+        .h = CROSSHAIR_SIZE
+    };
+    SDL_SetRenderDrawColor(state.renderer, 255, 0, 0, 255); // draw line to crosshair
+    glm::vec2 pOffset = findCenterOfSprite(gs.player());
+    //printf("x: %d, y: %d\n", pOffset.x, pOffset.y);
+    SDL_RenderLine(state.renderer, gs.player().pos.x - gs.mapViewport.x + pOffset.x, gs.player().pos.y - gs.mapViewport.y + pOffset.y, gs.mouseCoords.x, gs.mouseCoords.y);
+    SDL_SetRenderDrawColor(state.renderer, 64, 51, 83, 255);
+    
+    //printf("mouseX: %f, mouseY: %f\n", gs.mouseCoords.x, gs.mouseCoords.y);
+    SDL_RenderTexture(state.renderer, res.texCrosshair, nullptr, &dst); // src is for sprite stripping, dest is for where sprite should be drawn
+    
+}
 
 void handleKeyInput(const SDLState &state, GameState &gs, Resources &res, GameObject &obj,
                     SDL_KeyboardEvent key, bool keyDown, float deltaTime) {
@@ -359,9 +390,15 @@ void handleKeyInput(const SDLState &state, GameState &gs, Resources &res, GameOb
     if (key.scancode == SDL_SCANCODE_F12 && keyDown && !key.repeat) { // debug
             gs.debugMode = !gs.debugMode;
     }
-    if (key.scancode == SDL_SCANCODE_F11 && keyDown && !key.repeat) {
+    if (key.scancode == SDL_SCANCODE_F11 && keyDown && !key.repeat) { // tp to entrance portal
         gs.player().pos = gs.EntrancePortal;
-        gs.player().pos.x -= 32;
+        gs.player().pos.x -= TILE_SIZE;
+    }
+    if (key.scancode == SDL_SCANCODE_F2 && keyDown && !key.repeat) { // anti gravity
+        gs.player().flip = -1 * gs.player().flip;
+    }
+    if (key.scancode == SDL_SCANCODE_F1) {
+        run = false;
     }
     if (obj.type == ObjectType::player) {
         const float JUMP_FORCE = -450.f;
@@ -374,36 +411,57 @@ void handleKeyInput(const SDLState &state, GameState &gs, Resources &res, GameOb
                      obj.texture = res.texLaunch;
                      obj.curAnimation = res.ANIM_PLAYER_LAUNCH; 
                      obj.animations[obj.curAnimation].reset();
-                    obj.vel.y = JUMP_FORCE;
+                     obj.vel.y = changeVel(JUMP_FORCE, obj); 
                 } else if (obj.data.player.canDoubleJump) { // double jump
                     obj.data.player.state = PlayerState::jumping;
-                    obj.vel.y = JUMP_FORCE;  
+                    obj.vel.y = changeVel(JUMP_FORCE, obj);  
                     obj.data.player.canDoubleJump = false;
+                    obj.gravityScale = 1.0f; // reset gravity
                 }
                 //printf("canDoubleJump = %d\n" , obj.data.player.canDoubleJump);
             }
+            else if (!keyDown && key.scancode == SDL_SCANCODE_SPACE) { // letting go of jump
+                /*if (obj.vel.y < 0) { // OPTION 1: Set velocity to 0 when you let go. makes sharp but precise jumps
+                    obj.vel.y = 0;
+                }*/
+                float termVel = -200.0f; // option 2: Set velocity to predefined amount when you let go. makes less sharp jumps
+                float shouldFlip = obj.flip; // there might be a more modular way to do this. idk if we will actually use the gravity flip but having it is nice and cool
+                if (shouldFlip * obj.vel.y < shouldFlip * termVel) { 
+                    obj.vel.y = changeVel(termVel, obj);
+                }
+                //obj.gravityScale = 2.0f; // option 3; double their gravity until they land
+            }
         };
-        const auto handleRunning = [&state, &gs, &obj, &res, key, keyDown]() {
+        const auto handleRunning = [&state, &gs, &obj, &res, key, keyDown, deltaTime]() {
             if (key.scancode == SDL_SCANCODE_LSHIFT) {
                 if (keyDown) { // if held down, increase speed
                     obj.maxSpeedX = obj.data.player.maxRunX;
-                    obj.curAnimation = res.ANIM_PLAYER_RUN; 
+                    obj.curAnimation = res.ANIM_PLAYER_RUN;
                 } else {
                     obj.maxSpeedX = obj.data.player.maxWalkX;
                     obj.curAnimation = res.ANIM_PLAYER_WALK; 
+                    obj.data.player.sprintTimer.reset();
                 }
+            }
+        };
+        const auto handleSprinting = [&state, &gs, &obj, &res, key, keyDown]() {
+            if (key.scancode == SDL_SCANCODE_LSHIFT && !keyDown) {
+                obj.maxSpeedX = obj.data.player.maxWalkX;
+                obj.curAnimation = res.ANIM_PLAYER_WALK;
+                obj.data.player.sprintTimer.reset();
+                obj.data.player.state = PlayerState::moving;
             }
         };
         const auto handleFalling = [&state, &gs, &obj, &res, key, keyDown, deltaTime]() {
             if (key.scancode == SDL_SCANCODE_S && keyDown && !obj.grounded) { // fastfall
                 if (!key.repeat && !obj.data.player.fastfalling) {
-                    obj.vel.y = -250.0f;
+                    obj.vel.y = changeVel(-250.0f, obj);
                     obj.data.player.fastfalling = true;
-                    obj.data.player.canDoubleJump = false;
+                    obj.data.player.state = PlayerState::jumping;
+                    obj.curAnimation = res.ANIM_PLAYER_JUMP;
+                    //obj.data.player.canDoubleJump = false;
                 }
-                if (std::abs(obj.vel.y) < obj.maxSpeedY) {
-                    obj.vel += glm::vec2(0, 700) * 6.0f * deltaTime;
-                }
+                obj.gravityScale = 3.0f;
             }
         };
         switch (obj.data.player.state) {
@@ -427,6 +485,14 @@ void handleKeyInput(const SDLState &state, GameState &gs, Resources &res, GameOb
                 handleFalling();
                 break;               
             }
+            case PlayerState::sprinting:
+            {
+                handleSprinting();
+                handleJumping();
+                handleFalling();
+                break;
+            }
         }
+        //printf("velX = %f, velY = %f\n", obj.vel.x, obj.vel.y);
     }
 }
