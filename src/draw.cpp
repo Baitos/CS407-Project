@@ -9,8 +9,8 @@
 
 #include "../headers/draw.h"
 
-void drawObject(const SDLState &state, GameState &gs, GameObject &obj, float width, float height, float deltaTime) {
-        if (!isOnscreen(state, gs, obj)) {
+void drawObject(const SDLState &state, GameData &gd, GameObject &obj, float width, float height, float deltaTime) {
+        if (!isOnscreen(state, gd, obj)) {
             return;
         }
         float srcX = obj.curAnimation != -1 ? obj.animations[obj.curAnimation].currentFrame() * width : (obj.spriteFrame - 1) * width;
@@ -22,8 +22,8 @@ void drawObject(const SDLState &state, GameState &gs, GameObject &obj, float wid
         };
 
         SDL_FRect dst {
-            .x = obj.pos.x - gs.mapViewport.x,
-            .y = obj.pos.y - gs.mapViewport.y,
+            .x = obj.pos.x - gd.mapViewport.x,
+            .y = obj.pos.y - gd.mapViewport.y,
             .w = width,
             .h = height
         };
@@ -54,10 +54,10 @@ void drawObject(const SDLState &state, GameState &gs, GameObject &obj, float wid
         }
 
 
-        if (gs.debugMode) {
+        if (gd.debugMode) {
             SDL_FRect rectA {
-                .x = obj.pos.x + obj.collider.x - gs.mapViewport.x, 
-                .y = obj.pos.y + obj.collider.y - gs.mapViewport.y,
+                .x = obj.pos.x + obj.collider.x - gd.mapViewport.x, 
+                .y = obj.pos.y + obj.collider.y - gd.mapViewport.y,
                 .w = obj.collider.w, 
                 .h = obj.collider.h
             };
@@ -66,8 +66,8 @@ void drawObject(const SDLState &state, GameState &gs, GameObject &obj, float wid
             SDL_SetRenderDrawColor(state.renderer, 255, 0, 0, 150);
             SDL_RenderFillRect(state.renderer, &rectA);
             SDL_FRect sensor{  
-			    .x = obj.pos.x + obj.collider.x - gs.mapViewport.x,
-			    .y = obj.pos.y + obj.collider.y + obj.collider.h - gs.mapViewport.y,
+			    .x = obj.pos.x + obj.collider.x - gd.mapViewport.x,
+			    .y = obj.pos.y + obj.collider.y + obj.collider.h - gd.mapViewport.y,
 			    .w = obj.collider.w, 
                 .h = 1
 		    };

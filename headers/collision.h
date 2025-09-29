@@ -13,8 +13,8 @@
 #include "gameobject.h"
 
 bool intersectAABB(const SDL_FRect &a, const SDL_FRect &b, glm::vec2 &overlap);
-void checkCollision(const SDLState &state, GameState &gs, Resources &res, GameObject &a, GameObject &b, float deltaTime);
-void collisionResponse(const SDLState &state, GameState &gs, Resources &res,
+void checkCollision(const SDLState &state, GameData &gd, Resources &res, GameObject &a, GameObject &b, float deltaTime);
+void collisionResponse(const SDLState &state, GameData &gd, Resources &res,
                        const SDL_FRect &rectA, const SDL_FRect &rectB, const glm::vec2 &overlap,
                        GameObject &a, GameObject &b, float deltaTime);
-void groundedCheck(const SDLState &state, GameState &gs, const Resources &res, GameObject &a, GameObject &b, float deltaTime);
+void groundedCheck(const SDLState &state, GameData &gd, const Resources &res, GameObject &a, GameObject &b, float deltaTime);

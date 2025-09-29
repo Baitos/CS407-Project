@@ -12,4 +12,4 @@
 #include "init.h"
 #include "gameobject.h"
 
-void createTiles(const SDLState &state, GameState &gs, const Resources &res);
+void createTiles(const SDLState &state, GameData &gd, const Resources &res);

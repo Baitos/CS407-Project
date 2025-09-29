@@ -9,7 +9,7 @@
 
 #include "../headers/createTiles.h"
 
-void createTiles(const SDLState &state, GameState &gs, const Resources &res) { // 280 x 60
+void createTiles(const SDLState &state, GameData &gd, const Resources &res) { // 280 x 60
     /*
         1 - Stone
         2 - Brick
@@ -152,7 +152,7 @@ void createTiles(const SDLState &state, GameState &gs, const Resources &res) { /
 17,15,14,16,16,10,18,15,14,14,16,17,16,10,10,17,18,15,10,16,17,15,10,16,17,16,17,14,18,15,14,18,17,16,16,10,10,16,16,10,16,16,17,17,15,14,16,15,10,10,15,17,10,15,17,10,10,10,14,17,14,18,17,16,17,14,17,18,15,10,14,18,14,16,14,15,18,14,18,14,16,18,14,16,18,16,17,10,18,17,17,18,16,18,16,17,14,15,17,17,18,17,14,16,10,10,16,16,10,18,10,15,15,16,18,17,10,16,18,16,15,16,14,16,16,14,18,10,10,14,16,10,17,15,15,18,16,14,15,14,18,16,14,17,18,18,14,16,17,16,14,18,18,14,17,17,15,10,10,15,10,15,17,10,15,16,17,18,16,16,18,18,17,15,10,16,16,16,18,17,18,10,10,16,15,17,10,17,14,14,18,16,16,16,17,10,18,16,10,14,16,10,10,15,17,17,17,17,18,10,15,10,18,18,10,15,16,18,15,18,15,10,16,16,10,14,17,15,16,16,10,14,15,14,10,16,14,16,14,10,18,17,14,18,15,15,14,10,17,14,17,10,16,14,10,15,18,17,17,10,10,17,18,10,16,15,18,10,18,17,17,17,16,14,16,17,16,17,10,10
 
     };
-    const auto loadMap = [&state, &gs, &res](short layer[MAP_ROWS][MAP_COLS])
+    const auto loadMap = [&state, &gd, &res](short layer[MAP_ROWS][MAP_COLS])
     {
         const auto createObject = [&state](int r, int c, SDL_Texture *tex, ObjectType type) {
             GameObject o;
@@ -188,15 +188,15 @@ void createTiles(const SDLState &state, GameState &gs, const Resources &res) { /
                         } else {
                             o = createObject(r, c, res.texStone, ObjectType::level);
                         }
-                        //gs.layers[LAYER_IDX_LEVEL].push_back(o);
-                        gs.mapTiles.push_back(o);
+                        //gd.layers[LAYER_IDX_LEVEL].push_back(o);
+                        gd.mapTiles.push_back(o);
                         break; 
                     }
                     case 2: //Platform
                     {
                         GameObject o = createObject(r, c, res.texPlatform, ObjectType::level);
-                        //gs.layers[LAYER_IDX_LEVEL].push_back(o);
-                        gs.mapTiles.push_back(o);
+                        //gd.layers[LAYER_IDX_LEVEL].push_back(o);
+                        gd.mapTiles.push_back(o);
                         break; 
                     }
                     case 3: //Laser
@@ -208,8 +208,8 @@ void createTiles(const SDLState &state, GameState &gs, const Resources &res) { /
                         
                         //o.data.obstacle.laserActive = true;
                         
-                        gs.lasers.push_back(o);
-                        //gs.layers[LAYER_IDX_LEVEL].push_back(o);
+                        gd.lasers.push_back(o);
+                        //gd.layers[LAYER_IDX_LEVEL].push_back(o);
                         break; 
                     }
                     case 4: //Entrance Portal
@@ -222,9 +222,9 @@ void createTiles(const SDLState &state, GameState &gs, const Resources &res) { /
                         o.collider.h = 64;
                         o.data.level.state = LevelState::portal;
                         o.data.level.isEntrance = true;
-                        gs.EntrancePortal = glm::vec2(o.pos.x, o.pos.y);
-                        //gs.layers[LAYER_IDX_LEVEL].push_back(o);
-                        gs.mapTiles.push_back(o);
+                        gd.EntrancePortal = glm::vec2(o.pos.x, o.pos.y);
+                        //gd.layers[LAYER_IDX_LEVEL].push_back(o);
+                        gd.mapTiles.push_back(o);
                         break;
                     }
                     case 5: //Exit Portal
@@ -236,9 +236,9 @@ void createTiles(const SDLState &state, GameState &gs, const Resources &res) { /
                         o.collider.h = 64;
                         
                         o.data.level.state = LevelState::portal;
-                        gs.ExitPortal = glm::vec2(o.pos.x, o.pos.y);
-                        //gs.layers[LAYER_IDX_LEVEL].push_back(o);
-                        gs.mapTiles.push_back(o);
+                        gd.ExitPortal = glm::vec2(o.pos.x, o.pos.y);
+                        //gd.layers[LAYER_IDX_LEVEL].push_back(o);
+                        gd.mapTiles.push_back(o);
                         break; 
                     }
                     case 6: //Player
@@ -258,16 +258,16 @@ void createTiles(const SDLState &state, GameState &gs, const Resources &res) { /
                             .x = 1,
                             .y = 1,
                             .w = 28,
-                            .h = 30 // more accurate at 31, bug caused where player stuck in jump state in small ceilings
+                            .h = 30 // more accurate at 31, bug caused where player stuck in jump state in small ceilingd
                         };
-                        gs.characters.push_back(player); // put into array
-                        gs.playerIndex = gs.characters.size() - 1;
+                        gd.characters.push_back(player); // put into array
+                        gd.playerIndex = gd.characters.size() - 1;
                         break; 
                     }
                     case 7: //Background
                     {
                         GameObject o = createObject(r, c, res.texBg5, ObjectType::level);
-                        gs.bgTiles.push_back(o);
+                        gd.bgTiles.push_back(o);
                         break;
                     }
                     case 8: //Alternative Base Grond (Inside Corners, Ceiling, Right Wall)
@@ -278,7 +278,7 @@ void createTiles(const SDLState &state, GameState &gs, const Resources &res) { /
                         } else if((layer[r-1][c] == 1 || layer[r-1][c] == 8) && (layer[r+1][c] == 1 || layer[r+1][c] == 8)){ //Right Wall
                             o = createObject(r, c, res.texRWall, ObjectType::level);
                         }
-                        gs.layers[LAYER_IDX_LEVEL].push_back(o);
+                        gd.layers[LAYER_IDX_LEVEL].push_back(o);
                         break; 
 
                         */
@@ -298,51 +298,51 @@ void createTiles(const SDLState &state, GameState &gs, const Resources &res) { /
                         } else {
                             o = createObject(r, c, res.texStone, ObjectType::level);
                         }
-                        //gs.layers[LAYER_IDX_LEVEL].push_back(o);
-                        gs.mapTiles.push_back(o);
+                        //gd.layers[LAYER_IDX_LEVEL].push_back(o);
+                        gd.mapTiles.push_back(o);
                         break; 
                     }
                     case 10:
                     {
                         GameObject o = createObject(r, c, res.texPanelOne, ObjectType::level);
-                        gs.bgTiles.push_back(o);
+                        gd.bgTiles.push_back(o);
                         break;
                     }
                     case 12: //Backwall
                     {
                         //WILL REMOVE IF UGLY
                         GameObject o = createObject(r, c, res.texBackWall, ObjectType::level);
-                        gs.bgTiles.push_back(o);
+                        gd.bgTiles.push_back(o);
                         break;
                     }
                     case 14:
                     {
                         GameObject o = createObject(r, c, res.texPanelTwo, ObjectType::level);
-                        gs.bgTiles.push_back(o);
+                        gd.bgTiles.push_back(o);
                         break;
                     }
                     case 15:
                     {
                         GameObject o = createObject(r, c, res.texPanelThree, ObjectType::level);
-                        gs.bgTiles.push_back(o);
+                        gd.bgTiles.push_back(o);
                         break;
                     }
                     case 16:
                     {
                         GameObject o = createObject(r, c, res.texFan, ObjectType::level);
-                        gs.bgTiles.push_back(o);
+                        gd.bgTiles.push_back(o);
                         break;
                     }
                     case 17:
                     {
                         GameObject o = createObject(r, c, res.texVentOne, ObjectType::level);
-                        gs.bgTiles.push_back(o);
+                        gd.bgTiles.push_back(o);
                         break;
                     }
                     case 18:
                     {
                         GameObject o = createObject(r, c, res.texVentTwo, ObjectType::level);
-                        gs.bgTiles.push_back(o);
+                        gd.bgTiles.push_back(o);
                         break;
                     }
                 }
@@ -352,5 +352,5 @@ void createTiles(const SDLState &state, GameState &gs, const Resources &res) { /
     loadMap(map);
     loadMap(background);
     //loadMap(foreground);
-    assert(gs.playerIndex != -1);
+    assert(gd.playerIndex != -1);
 }

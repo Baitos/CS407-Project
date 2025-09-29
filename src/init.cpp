@@ -55,12 +55,12 @@ void cleanup(SDLState &state) {
     SDL_Quit();
 }
 
-bool isOnscreen(const SDLState &state, GameState &gs, GameObject &obj) { // checks if obj is onscreen (with some leeway)
+bool isOnscreen(const SDLState &state, GameData &gd, GameObject &obj) { // checks if obj is onscreen (with some leeway)
     bool onscreen = true;
-    if (obj.pos.x - gs.mapViewport.x + 2 * TILE_SIZE < 0 || // left side
-        obj.pos.x - gs.mapViewport.x - 2 * TILE_SIZE > state.logW || // right side
-        obj.pos.y - gs.mapViewport.y + 2 * TILE_SIZE < 0 || // up
-        obj.pos.y - gs.mapViewport.y - 2 * TILE_SIZE > state.logH) // down
+    if (obj.pos.x - gd.mapViewport.x + 2 * TILE_SIZE < 0 || // left side
+        obj.pos.x - gd.mapViewport.x - 2 * TILE_SIZE > state.logW || // right side
+        obj.pos.y - gd.mapViewport.y + 2 * TILE_SIZE < 0 || // up
+        obj.pos.y - gd.mapViewport.y - 2 * TILE_SIZE > state.logH) // down
     {
         onscreen = false;
     }

@@ -32,7 +32,7 @@ const int MAP_ROWS = 60;
 const int MAP_COLS = 280;
 const int TILE_SIZE = 32;
 
-struct GameState {
+struct GameData {
     //std::array<std::vector<GameObject>, 2> layers;
     std::vector<GameObject> bgTiles;
     std::vector<GameObject> fgTiles;
@@ -52,7 +52,7 @@ struct GameState {
 
     int FPS = 60; // for now, we can change it later or set an option to change it later
 
-    GameState(const SDLState &state) {
+    GameData(const SDLState &state) {
         playerIndex = -1; // will change when map is loaded
         mapViewport = SDL_FRect {
             .x = 0,
@@ -230,7 +230,7 @@ struct Resources {
 
 bool initialize(SDLState &state);
 void cleanup(SDLState &state);
-bool isOnscreen(const SDLState &state, GameState &gs, GameObject &obj);
+bool isOnscreen(const SDLState &state, GameData &gd, GameObject &obj);
 float changeVel(float vel, GameObject &obj);
 bool isSliding(GameObject &obj);
 glm::vec2 findCenterOfSprite(GameObject &obj);
