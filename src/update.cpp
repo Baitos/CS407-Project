@@ -485,6 +485,20 @@ void handleKeyInput(const SDLState &state, GameState &gs, Resources &res, GameOb
                 handleFalling();
                 break;               
             }
+            case PlayerState::jumpLaunch:
+            {
+                handleRunning();
+                handleJumping();
+                handleFalling();
+                break;               
+            }
+            case PlayerState::roll:
+            {
+                handleRunning();
+                handleJumping();
+                handleFalling();
+                break;               
+            }
             case PlayerState::sprinting:
             {
                 handleSprinting();
