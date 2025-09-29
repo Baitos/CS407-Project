@@ -103,7 +103,7 @@ struct Resources {
 
     void load(SDLState &state, bool real) { // First variable controls how many frames there are, second is how long each frame lasts (in seconds)
         //FOR NOW.. change to 0 for shotgun, 1 for sword, 2 for jetpack
-        int character = 1;
+        int character = 2;
         
         playerAnims.resize(10); // 
         playerAnims[ANIM_PLAYER_IDLE] = Animation(1, 1.6f);
@@ -155,8 +155,19 @@ struct Resources {
             texRoll = loadTexture(state.renderer, "data/CharacterSprites/Sword/rolling_sword.png");
             texBullet = loadTexture(state.renderer, "data/fireballM.png");
             texBulletHit = loadTexture(state.renderer, "data/fireballHitM.png");
-        } else {
-            
+        } else if (character == 2){
+            //load jetpack character animations
+            texIdle = loadTexture(state.renderer, "data/CharacterSprites/Jetpack/idle_jetpack.png");
+            texRun = loadTexture(state.renderer, "data/CharacterSprites/Jetpack/running_jetpack.png");
+            texJump = loadTexture(state.renderer, "data/CharacterSprites/Jetpack/jumped_jetpack.png");
+            texSlide = loadTexture(state.renderer, "data/CharacterSprites/Jetpack/turning_jetpack.png");
+            texShoot = loadTexture(state.renderer, "data/CharacterSprites/Jetpack/on_jetpack.png");
+            texDie = loadTexture(state.renderer, "data/CharacterSprites/Jetpack/shot_jetpack.png");
+            texShootJump = loadTexture(state.renderer, "data/CharacterSprites/Jetpack/on_jetpack.png");
+            texLaunch = loadTexture(state.renderer, "data/CharacterSprites/Jetpack/jumping_jetpack.png");
+            texRoll = loadTexture(state.renderer, "data/CharacterSprites/Jetpack/rolling_jetpack.png");
+            texBullet = loadTexture(state.renderer, "data/fireballM.png");
+            texBulletHit = loadTexture(state.renderer, "data/fireballHitM.png");
         }
         texGrass = loadTexture(state.renderer, "data/grass.png");
         texBrick = loadTexture(state.renderer, "data/brick.png");
