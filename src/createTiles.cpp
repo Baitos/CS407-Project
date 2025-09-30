@@ -8,6 +8,7 @@
 #include <format>
 
 #include "../headers/createTiles.h"
+#include "../headers/player.h"
 
 void createTiles(const SDLState &state, GameState &gs, const Resources &res) { // 280 x 60
     /*
@@ -243,25 +244,14 @@ void createTiles(const SDLState &state, GameState &gs, const Resources &res) { /
                     }
                     case 6: //Player
                     {
-                         
-                        GameObject player = createObject(r, c, res.texIdle, ObjectType::player);
-                        player.data.player = PlayerData(); // initialize player data to idle
-                        player.animations = res.playerAnims; // load anims
-                        player.curAnimation = res.ANIM_PLAYER_IDLE; // set player anim to idle
-                        player.acc = glm::vec2(300, 0);
-                        //player.maxSpeedY = 550;
-                        player.data.player.maxWalkX = player.maxSpeedX = 250;
-                        player.data.player.maxRunX = 650;
-                        player.data.player.maxSprintX = 850;
-                        player.dynamic = true;
-                        player.collider = { 
+                        SDL_FRect collider = { 
                             .x = 1,
                             .y = 1,
                             .w = 28,
                             .h = 30 // more accurate at 31, bug caused where player stuck in jump state in small ceilings
                         };
-                        gs.characters.push_back(player); // put into array
-                        gs.playerIndex = gs.characters.size() - 1;
+                        Player player(c * TILE_SIZE, state.logH - (MAP_ROWS - r) * TILE_SIZE, res.playerAnims, res.ANIM_PLAYER_IDLE, collider, res.texIdle);      
+                        gs.player = player;
                         break; 
                     }
                     case 7: //Background
@@ -351,5 +341,5 @@ void createTiles(const SDLState &state, GameState &gs, const Resources &res) { /
     loadMap(map);
     loadMap(background);
     //loadMap(foreground);
-    assert(gs.playerIndex != -1);
+    //assert(gs.playerIndex != -1);
 }

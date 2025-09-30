@@ -15,5 +15,5 @@
 
 
 
-void drawParallaxBackground(SDL_Renderer *renderer, SDL_Texture *texture, float xVelocity, float &scrollPos, float scrollFactor, float deltaTime);
 void drawObject(const SDLState &state, GameState &gs, GameObject &obj, float width, float height, float deltaTime);
+void drawPlayer(const SDLState &state, GameState &gs, Player player, float width, float height, float deltaTime);

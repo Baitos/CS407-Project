@@ -78,16 +78,34 @@ void drawObject(const SDLState &state, GameState &gs, GameObject &obj, float wid
         }
 }
 
-void drawParallaxBackground(SDL_Renderer *renderer, SDL_Texture *texture, float xVelocity, float &scrollPos, float scrollFactor, float deltaTime) {
-    scrollPos -= xVelocity * scrollFactor * deltaTime; // moving background to the left at rate dependent on playerX
-    if (scrollPos <= -texture->w) {
-        scrollPos = 0;
-    }
-    SDL_FRect dst {
-        .x = scrollPos,
-        .y = 200,
-        .w = texture->w * 2.0f,
-        .h = static_cast<float>(texture->h)
+void drawPlayer(const SDLState &state, GameState &gs, Player player, float width, float height, float deltaTime) {
+    float srcX = player.data.curAnimation != -1 ? player.data.animations[player.data.curAnimation].currentFrame() * width : (player.data.spriteFrame - 1) * width;
+    SDL_FRect src {
+        .x = srcX,
+        .y = 0,
+        .w = width,
+        .h = height
     };
-    SDL_RenderTextureTiled(renderer, texture, nullptr, 1, &dst);
+
+    SDL_FRect dst {
+        .x = player.data.pos.x - gs.mapViewport.x,
+        .y = player.data.pos.y - gs.mapViewport.y,
+        .w = width,
+        .h = height
+    };
+    SDL_FlipMode flipMode; // = obj.dir == -1 ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
+    if (player.data.dir == -1) {            
+        if (player.data.flip == -1) {
+            flipMode = (SDL_FlipMode)3; // FLIP_VERTICAL_AND_HORIZONTAL
+        } else {
+            flipMode = SDL_FLIP_HORIZONTAL;
+        }
+    } else {
+        if (player.data.flip == -1) {
+            flipMode = SDL_FLIP_VERTICAL;
+        } else {
+            flipMode = SDL_FLIP_NONE;
+        }
+    }
+    SDL_RenderTextureRotated(state.renderer, player.data.texture, &src, &dst, 0, nullptr, flipMode); // src is for sprite stripping, dest is for where sprite should be drawn
 }

@@ -43,6 +43,9 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     uint64_t FPS = 0;
     uint64_t lastTime = 0;
 
+    gs.mapViewport.x = 0;//(gs.player().pos.x + TILE_SIZE / 2) - (gs.mapViewport.w / 2); 
+    gs.mapViewport.y = 0;
+
     // start game loop
     while (run) {
         uint64_t nowTime = SDL_GetTicks(); // take time from previous frame to calculate delta
@@ -70,12 +73,12 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                 }
                 case SDL_EVENT_KEY_DOWN:
                 {
-                    handleKeyInput(state, gs, res, gs.player(), event.key, true, deltaTime);
+                    handleKeyInput(state, gs, res, event.key, true, deltaTime);
                     break;
                 }
                 case SDL_EVENT_KEY_UP:
                 {
-                    handleKeyInput(state, gs, res, gs.player(), event.key, false, deltaTime);
+                    handleKeyInput(state, gs, res, event.key, false, deltaTime);
                     break;
                 }
                 case SDL_EVENT_MOUSE_BUTTON_DOWN:
@@ -87,13 +90,13 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         }
 
         // update tiles, we don't need to currently
-        /*for (GameObject &tile : gs.mapTiles) {
+        for (GameObject &tile : gs.mapTiles) {
             update(state, gs, res, tile, deltaTime);
-        }*/
-        // update chars
-        for (GameObject &chars : gs.characters) {
-            update(state, gs, res, chars, deltaTime);
         }
+        // update chars
+        /*for (GameObject &chars : gs.characters) {
+            update(state, gs, res, chars, deltaTime);
+        }*/
 
         // update lasers
         for (GameObject &laser : gs.lasers) {
@@ -101,13 +104,13 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         }
 
         // update bullets
-        for (GameObject &bullet : gs.bullets) {
+        /*for (GameObject &bullet : gs.bullets) {
             update(state, gs, res, bullet, deltaTime);
-        }
+        }*/
 
         // used for camera system
-        gs.mapViewport.x = (gs.player().pos.x + TILE_SIZE / 2) - (gs.mapViewport.w / 2); 
-        gs.mapViewport.y = (gs.player().pos.y + TILE_SIZE / 2) - (gs.mapViewport.h / 2); 
+        //gs.mapViewport.x = 0;(gs.player().pos.x + TILE_SIZE / 2) - (gs.mapViewport.w / 2); 
+        //gs.mapViewport.y = 0;(gs.player().pos.y + TILE_SIZE / 2) - (gs.mapViewport.h / 2); 
         //draw bg
         SDL_SetRenderDrawColor(state.renderer, 64, 51, 83, 255);
         SDL_RenderClear(state.renderer);
@@ -157,11 +160,11 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         }
 
         // draw chars
-        for(GameObject &chars : gs.characters){
+        /*for(GameObject &chars : gs.characters){
             if (isOnscreen(state, gs, chars)) {
                 drawObject(state, gs, chars, TILE_SIZE, TILE_SIZE, deltaTime);
             }
-        }
+        }*/
         /*for (auto &layer : gs.layers) {
             for (GameObject &obj : layer) {
                 if (isOnscreen(state, gs, obj)) {
@@ -174,6 +177,8 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
             }
         }*/
 
+        drawPlayer(state, gs, gs.player, TILE_SIZE, TILE_SIZE, deltaTime); // draw player class
+
         // Draw Lasers
         for(GameObject &laser : gs.lasers){
             if (isOnscreen(state, gs, laser) && laser.data.obstacle.laserActive) {
@@ -182,11 +187,11 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         }
 
         // draw bullets
-        for (GameObject &bullet : gs.bullets) {
+        /*for (GameObject &bullet : gs.bullets) {
             if (bullet.data.bullet.state != BulletState::inactive) {
                 drawObject(state, gs, bullet, bullet.collider.w, bullet.collider.h, deltaTime);
             }
-        }
+        }*/
 
         // draw fg tiles
         /*for (GameObject &obj : gs.fgTiles) {
@@ -204,11 +209,11 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
             SDL_SetRenderDrawColor(state.renderer, 255, 255, 255, 255);
             SDL_RenderDebugText(state.renderer, 5, 5,
                             std::format("FPS: {}, State: {}, Bullet: {}, Grounded: {}, X: {}, Y: {}", 
-                            static_cast<int>(FPS), static_cast<int>(gs.player().data.player.state), gs.bullets.size(), gs.player().grounded, static_cast<int>(gs.player().pos.x), static_cast<int>(gs.player().pos.y)).c_str());
+                            static_cast<int>(FPS), static_cast<int>(0), gs.bullets.size(), false, gs.mapViewport.x, gs.mapViewport.y).c_str());
         }
 
         // handle the crosshair
-        handleCrosshair(state, gs, res, gs.player(), deltaTime);
+        //handleCrosshair(state, gs, res, gs.player(), deltaTime);
 
         //swap buffers and present
         SDL_RenderPresent(state.renderer);

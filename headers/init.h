@@ -8,8 +8,10 @@
 #include <array>
 #include <iostream>
 #include <format>
+#include "../ext/glm/glm.hpp"
 
 #include "gameobject.h"
+#include "player.h"
 
 struct SDLState
 {
@@ -38,6 +40,7 @@ struct GameState {
     std::vector<GameObject> fgTiles;
     std::vector<GameObject> mapTiles;
     std::vector<GameObject> characters;
+    Player player;
 
     std::vector<GameObject> bullets;
     int playerIndex;
@@ -63,9 +66,9 @@ struct GameState {
         bg2Scroll = bg3Scroll = bg4Scroll = 0;
         debugMode = false;
     }
-    GameObject &player() {
-        return characters[playerIndex];
-    }
+    /*GameObject &player() {
+        return characters[playerIndex - 1];
+    }*/
 };
 
 struct Resources {
