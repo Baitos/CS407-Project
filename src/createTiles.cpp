@@ -8,7 +8,7 @@
 const int MAP_ROWS = 60;
 const int MAP_COLS = 280;
 
-void createTiles(const SDLState &state, GameState &gs, const Resources &res) { // 260 x 80
+void createTiles(const SDLState &state, GameState &gs, const Resources &res) { // 280 x 60
     /*
         1 - Stone
         2 - Brick
@@ -153,20 +153,7 @@ void createTiles(const SDLState &state, GameState &gs, const Resources &res) { /
     };
     const auto loadMap = [&state, &gs, &res](short layer[MAP_ROWS][MAP_COLS])
     {
-        const auto createObject = [&state](int r, int c, SDL_Texture *tex, ObjectType type) {
-            GameObject o;
-            o.type = type; 
-            o.pos = glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r) * TILE_SIZE); // subtract r from map rows to not be backwards. drawn top to bottom and flush with resolution
-            o.texture = tex;
-            o.collider = {
-                .x = 0,
-                .y = 0,
-                .w = (float)TILE_SIZE,
-                .h = (float)TILE_SIZE
-            };
-            return o;
-        };
-        const auto createLevel = [&state](int r, int c, SDL_Texture *tex) {
+        /*const auto createLevel = [&state](int r, int c, SDL_Texture *tex) {
             Level l;
             l.pos = glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r) * TILE_SIZE); // subtract r from map rows to not be backwards. drawn top to bottom and flush with resolution
             l.texture = tex;
@@ -177,28 +164,35 @@ void createTiles(const SDLState &state, GameState &gs, const Resources &res) { /
                 .h = (float)TILE_SIZE
             };
             return l;
+        };*/
+        SDL_FRect collider = {
+            .x = 0,
+            .y = 0,
+            .w = (float)TILE_SIZE,
+            .h = (float)TILE_SIZE
         };
         for (int r = 0; r < MAP_ROWS; r++) {
             for (int c = 0; c < MAP_COLS; c++) {
+                glm::vec2 pos = glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r) * TILE_SIZE);
                 switch (layer[r][c]) {
                     case 1: //Base Ground
                     {
                         Level l;
                         //GameObject o; //= createObject(r, c, res.texStone, ObjectType::level);
                         if((layer[r][c-1] == 1 || layer[r][c-1] == 8) && (layer[r][c+1] == 1 || layer[r][c+1] == 8)){ //Floor
-                            l = createLevel(r, c, res.texFloor);
+                            l = Level(pos, collider, res.texFloor);
                         } else if((layer[r-1][c] == 1 || layer[r-1][c] == 8) && (layer[r+1][c] == 1 || layer[r+1][c] == 8)){ //Left Wall
-                            l = createLevel(r, c, res.texLWall);
+                            l = Level(pos, collider, res.texLWall);
                         } else if((layer[r+1][c] == 1 || layer[r+1][c] == 8) && (layer[r][c+1] == 1 || layer[r][c+1] == 8)){ // Top Left Corner
-                            l = createLevel(r, c, res.texTLCorner);
+                            l = Level(pos, collider, res.texTLCorner);
                         } else if((layer[r-1][c] == 1 || layer[r-1][c] == 8) && (layer[r][c+1] == 1 || layer[r][c+1] == 8)){ //Bottom Left Corner
-                            l = createLevel(r, c, res.texBLCorner);
+                            l = Level(pos, collider, res.texBLCorner);
                         } else if((layer[r][c-1] == 1 || layer[r][c-1] == 8) && (layer[r+1][c] == 1 || layer[r+1][c] == 8)){ //Top Right Corner
-                            l = createLevel(r, c, res.texTRCorner);;
+                            l = Level(pos, collider, res.texTRCorner);;
                         } else if((layer[r-1][c] == 1 || layer[r-1][c] == 8) && (layer[r][c-1] == 1 || layer[r][c-1] == 8)){ //Bottom Right Corner
-                            l = createLevel(r, c, res.texBRCorner);
+                            l = Level(pos, collider, res.texBRCorner);
                         } else {
-                            l = createLevel(r, c, res.texStone);
+                            l = Level(pos, collider, res.texStone);
                         }
                         //gs.layers[LAYER_IDX_LEVEL].push_back(o);
                         gs.mapTiles_.push_back(l);
@@ -206,7 +200,7 @@ void createTiles(const SDLState &state, GameState &gs, const Resources &res) { /
                     }
                     case 2: //Platform
                     {
-                        Level l = createLevel(r, c, res.texPlatform);
+                        Level l(pos, collider, res.texPlatform);
                         //gs.layers[LAYER_IDX_LEVEL].push_back(o);
                         gs.mapTiles_.push_back(l);
                         break; 
@@ -222,47 +216,37 @@ void createTiles(const SDLState &state, GameState &gs, const Resources &res) { /
                         
                         gs.lasers.push_back(o);
                         //gs.layers[LAYER_IDX_LEVEL].push_back(o);*/
-
-                        Laser la;
-                        la.pos = glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r) * TILE_SIZE);
-                        la.texture = res.texLaser;
-                        la.collider = {
+                        SDL_FRect laserCollider = {
                             .x = 0,
                             .y = 15,
                             .w = (float)TILE_SIZE,
                             .h = 4
                         };
+                        Laser la(pos, laserCollider, res.texLaser);
                         gs.lasers_.push_back(la);
                         break; 
                     }
                     case 4: //Entrance Portal
                     {
-                       GameObject o = createObject(r, c, res.texRPortal, ObjectType::level);
-                        //o.data.level = ObstacleData(); // init obs data 
-                        o.animations = res.portalAnims;
-                        o.curAnimation = res.PORTAL_IDLE;
-                        
-                        o.collider.h = 64;
-                        o.data.level.state = LevelState::portal;
-                        o.data.level.isEntrance = true;
-                        gs.EntrancePortal = glm::vec2(o.pos.x, o.pos.y);
-                        //gs.layers[LAYER_IDX_LEVEL].push_back(o);
-                        gs.mapTiles.push_back(o);
+                        Portal p(pos, collider, res.texRPortal);
+                        p.animations = res.portalAnims; // could get added to constructor
+                        p.curAnimation = res.PORTAL_IDLE; // could get added to constructor
+                        p.collider.h = 64;
+                        p.isEntrance = true;
+                        gs.EntrancePortal = pos;
+                        gs.portals_.push_back(p);
                         break;
                     }
                     case 5: //Exit Portal
                     {
-                       GameObject o = createObject(r, c, res.texLPortal, ObjectType::level);
-                        o.animations = res.portalAnims;
-                        o.curAnimation = res.PORTAL_IDLE;
-                        o.data.level.state = LevelState::portal;
-                        o.collider.h = 64;
-                        
-                        o.data.level.state = LevelState::portal;
-                        gs.ExitPortal = glm::vec2(o.pos.x, o.pos.y);
-                        //gs.layers[LAYER_IDX_LEVEL].push_back(o);
-                        gs.mapTiles.push_back(o);
-                        break; 
+                        Portal p(pos, collider, res.texRPortal);
+                        p.animations = res.portalAnims; // could get added to constructor
+                        p.curAnimation = res.PORTAL_IDLE; // could get added to constructor
+                        p.dir = -1;
+                        p.collider.h = 64;
+                        gs.ExitPortal = pos;
+                        gs.portals_.push_back(p);
+                        break;
                     }
                     case 6: //Player
                     {
@@ -272,15 +256,14 @@ void createTiles(const SDLState &state, GameState &gs, const Resources &res) { /
                             .w = 28,
                             .h = 30 // more accurate at 31, bug caused where player stuck in jump state in small ceilings
                         };
-                        Player player(c * TILE_SIZE, state.logH - (MAP_ROWS - r) * TILE_SIZE, res.playerAnims, collider, res.texIdle, 250);
-                        player.curAnimation = res.ANIM_PLAYER_IDLE;      
+                        Player player(pos, collider, res.texIdle, res.playerAnims, res.ANIM_PLAYER_IDLE, 250);  
                         gs.player = player;
                         break; 
                     }
                     case 7: //Background
                     {
-                        GameObject o = createObject(r, c, res.texBg5, ObjectType::level);
-                        gs.bgTiles.push_back(o);
+                        BackgroundObject b(pos, collider, res.texBg5);
+                        gs.bgTiles_.push_back(b);
                         break;
                     }
                     case 8: //Alternative Base Grond (Inside Corners, Ceiling, Right Wall)
@@ -295,66 +278,66 @@ void createTiles(const SDLState &state, GameState &gs, const Resources &res) { /
                         break; 
 
                         */
-                       GameObject o; //= createObject(r, c, res.texStone, ObjectType::level);
+                        Level l; //= createObject(r, c, res.texStone, ObjectType::level);
                         if((layer[r][c-1] == 1 || layer[r][c-1] == 8) && (layer[r][c+1] == 1 || layer[r][c+1] == 8)){ //Ceiling
-                            o = createObject(r, c, res.texCeiling, ObjectType::level);
+                            l = Level(pos, collider, res.texCeiling);
                         } else if((layer[r-1][c] == 1 || layer[r-1][c] == 8) && (layer[r+1][c] == 1 || layer[r+1][c] == 8)){ //Right Wall
-                            o = createObject(r, c, res.texRWall, ObjectType::level);
+                            l = Level(pos, collider, res.texRWall);
                         } else if((layer[r+1][c] == 1 || layer[r+1][c] == 8) && (layer[r][c+1] == 1 || layer[r][c+1] == 8)){ // Inner Top Left Corner
-                            o = createObject(r, c, res.texITLCorner, ObjectType::level);
+                            l = Level(pos, collider, res.texITLCorner);
                         } else if((layer[r-1][c] == 1 || layer[r-1][c] == 8) && (layer[r][c+1] == 1 || layer[r][c+1] == 8)){ //Inner Bottom Left Corner
-                            o = createObject(r, c, res.texIBLCorner, ObjectType::level);
+                            l = Level(pos, collider, res.texIBLCorner);
                         } else if((layer[r][c-1] == 1 || layer[r][c-1] == 8) && (layer[r+1][c] == 1 || layer[r+1][c] == 8)){ //Inner Top Right Corner
-                            o = createObject(r, c, res.texITRCorner, ObjectType::level);;
+                            l = Level(pos, collider, res.texITRCorner);;
                         } else if((layer[r-1][c] == 1 || layer[r-1][c] == 8) && (layer[r][c-1] == 1 || layer[r][c-1] == 8)){ //Inner Bottom Right Corner
-                            o = createObject(r, c, res.texIBRCorner, ObjectType::level);
+                            l = Level(pos, collider, res.texIBRCorner);
                         } else {
-                            o = createObject(r, c, res.texStone, ObjectType::level);
+                            l = Level(pos, collider, res.texStone);
                         }
                         //gs.layers[LAYER_IDX_LEVEL].push_back(o);
-                        gs.mapTiles.push_back(o);
+                        gs.mapTiles_.push_back(l);
                         break; 
                     }
                     case 10:
                     {
-                        GameObject o = createObject(r, c, res.texPanelOne, ObjectType::level);
-                        gs.bgTiles.push_back(o);
+                        BackgroundObject b(pos, collider, res.texPanelOne);
+                        gs.bgTiles_.push_back(b);
                         break;
                     }
                     case 12:
                     {
-                        GameObject o = createObject(r, c, res.texBackWall, ObjectType::level);
-                        gs.bgTiles.push_back(o);
+                        BackgroundObject b(pos, collider, res.texBackWall);
+                        gs.bgTiles_.push_back(b);
                         break;
                     }
                     case 14:
                     {
-                        GameObject o = createObject(r, c, res.texPanelTwo, ObjectType::level);
-                        gs.bgTiles.push_back(o);
+                        BackgroundObject b(pos, collider, res.texPanelTwo);
+                        gs.bgTiles_.push_back(b);
                         break;
                     }
                     case 15:
                     {
-                        GameObject o = createObject(r, c, res.texPanelThree, ObjectType::level);
-                        gs.bgTiles.push_back(o);
+                        BackgroundObject b(pos, collider, res.texPanelThree);
+                        gs.bgTiles_.push_back(b);
                         break;
                     }
                     case 16:
                     {
-                        GameObject o = createObject(r, c, res.texFan, ObjectType::level);
-                        gs.bgTiles.push_back(o);
+                        BackgroundObject b(pos, collider, res.texFan);
+                        gs.bgTiles_.push_back(b);
                         break;
                     }
                     case 17:
                     {
-                        GameObject o = createObject(r, c, res.texVentOne, ObjectType::level);
-                        gs.bgTiles.push_back(o);
+                        BackgroundObject b(pos, collider, res.texVentOne);
+                        gs.bgTiles_.push_back(b);
                         break;
                     }
                     case 18:
                     {
-                        GameObject o = createObject(r, c, res.texVentTwo, ObjectType::level);
-                        gs.bgTiles.push_back(o);
+                        BackgroundObject b(pos, collider, res.texVentTwo);
+                        gs.bgTiles_.push_back(b);
                         break;
                     }
                 }

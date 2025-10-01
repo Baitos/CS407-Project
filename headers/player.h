@@ -19,20 +19,13 @@ class Player : public AnimatedObject { // player
 
         virtual void handleInput(SDL_KeyboardEvent& key);
         virtual void update();
-        void draw(const SDLState &state, GameState &gs, float width, float height);
+        //void draw(const SDLState &state, GameState &gs, float width, float height);
         
-        Player(float x, float y, std::vector<Animation> anims, SDL_FRect colliderRect, SDL_Texture *tex, float maxSpeedX_) {
-            pos = glm::vec2(x, y);
-            vel = glm::vec2(0);
+        Player(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex, std::vector<Animation> anims, int curAnim, float maxSpeedX_) :
+        AnimatedObject(pos_, colliderRect, tex) {
             acc = glm::vec2(300, 0); // default for now
-            texture = tex;
-            collider = colliderRect;
-            
-            spriteFrame = 1;
             animations = anims;
-            curAnimation = -1;
-            dir = 1;
-            flip = 1.0f;
+            curAnimation = curAnim;
 
             grounded = false;
             sprinting = false;
@@ -40,6 +33,14 @@ class Player : public AnimatedObject { // player
             gravityScale = 1.0f;
             
         }
+        Player(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : // generic obj constructor
+        AnimatedObject(pos_, colliderRect, tex) {
+            grounded = false;
+            sprinting = false;
+            gravityScale = 1.0f;
+            maxSpeedX = 250; // walk speed default
+        }
+
         Player() : AnimatedObject() {
             grounded = false;
             gravityScale = 1.0f;

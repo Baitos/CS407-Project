@@ -92,9 +92,9 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         }
 
         // update tiles, we don't need to currently
-        for (GameObject &tile : gs.mapTiles) {
+        /*for (GameObject &tile : gs.mapTiles) {
             update(state, gs, res, tile, deltaTime);
-        }
+        }*/
         // update chars
         /*for (GameObject &chars : gs.characters) {
             update(state, gs, res, chars, deltaTime);
@@ -104,6 +104,13 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         /*for (GameObject &laser : gs.lasers) {
             update(state, gs, res, laser, deltaTime);
         }*/
+
+        // update portals
+        for (Portal &portal : gs.portals_) {
+            portal.update(state, gs, res, deltaTime);
+        }
+
+        // update lasers
         for (Laser &laser : gs.lasers_) {
             laser.update(state, gs, res, deltaTime);
         }
@@ -140,7 +147,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         //drawParallaxBackground(state.renderer, res.texBg2, gs.player().vel.x, gs.bg2Scroll, 0.3f, deltaTime);
 
         // draw bg tiles
-        for (GameObject &obj : gs.bgTiles) {
+        /*for (GameObject &obj : gs.bgTiles) {
             SDL_FRect dst {
                 .x = obj.pos.x - gs.mapViewport.x,
                 .y = obj.pos.y - gs.mapViewport.y,
@@ -149,20 +156,31 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                 
             }; 
             SDL_RenderTexture(state.renderer, obj.texture, nullptr, &dst);
+        }*/
+
+        // draw bg tiles
+        for (BackgroundObject &bg : gs.bgTiles_) {
+           bg.draw(state, gs, static_cast<float>(bg.texture->w), static_cast<float>(bg.texture->h)); 
         }
 
         // draw level tiles
-        for(GameObject &level : gs.mapTiles){
+        /*for(GameObject &level : gs.mapTiles){
             if (level.data.level.state == LevelState::portal){
                 drawObject(state, gs, level, 32, 64, deltaTime); 
             } else{
                 drawObject(state, gs, level, TILE_SIZE, TILE_SIZE, deltaTime); 
             } 
-        }
+        }*/
 
+        // draw level tiles
         for(Level &level : gs.mapTiles_) {
             level.draw(state, gs, TILE_SIZE, TILE_SIZE);
             //drawLevel(state, gs, level, TILE_SIZE, TILE_SIZE, deltaTime); 
+        }
+
+        // draw portal tiles
+        for(Portal &portal : gs.portals_) {
+            portal.draw(state, gs, TILE_SIZE, TILE_SIZE * 2);
         }
 
         // draw chars
@@ -184,9 +202,12 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         }*/
 
         //drawPlayer(state, gs, gs.player, TILE_SIZE, TILE_SIZE, deltaTime); 
+
+        // draw player
         gs.player.draw(state, gs, TILE_SIZE, TILE_SIZE); // draw player class
 
 
+        // draw lasers
         for(Laser &laser : gs.lasers_) {
             if (laser.laserActive) {
                 laser.draw(state, gs, TILE_SIZE, TILE_SIZE);

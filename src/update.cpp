@@ -281,9 +281,9 @@ float updateObstacle(const SDLState &state, GameState &gs, Resources &res, GameO
 
 void update(const SDLState &state, GameState &gs, Resources &res, GameObject &obj, float deltaTime) {
     // update animation
-     if (obj.curAnimation != -1) {
-         obj.animations[obj.curAnimation].step(deltaTime);
-     }
+    if (obj.curAnimation != -1) {
+        obj.animations[obj.curAnimation].step(deltaTime);
+    }
     if (obj.dynamic && !obj.grounded) {
         obj.vel.y += changeVel(700 * obj.gravityScale * deltaTime, obj); // gravity
         //printf("x=%d, y=%d\n", obj.pos.x, obj.pos.y);
@@ -387,11 +387,15 @@ void handleKeyInput(const SDLState &state, GameState &gs, Resources &res,
     if (key.scancode == SDL_SCANCODE_F12 && key.down && !key.repeat) { // debug
             gs.debugMode = !gs.debugMode;
     }
-    /*if (key.scancode == SDL_SCANCODE_F11 && key.down && !key.repeat) { // tp to entrance portal
-        gs.player().pos = gs.EntrancePortal;
-        gs.player().pos.x -= TILE_SIZE;
+    if (key.scancode == SDL_SCANCODE_F11 && key.down && !key.repeat) { // tp to entrance portal
+        gs.player.pos = gs.EntrancePortal;
+        gs.player.pos.x -= TILE_SIZE;
     }
-    if (key.scancode == SDL_SCANCODE_F2 && keyDown && !key.repeat) { // anti gravity
+    if (key.scancode == SDL_SCANCODE_F10 && key.down && !key.repeat) { // tp to exit portal
+        gs.player.pos = gs.ExitPortal;
+        gs.player.pos.x -= TILE_SIZE;
+    }
+    /*if (key.scancode == SDL_SCANCODE_F2 && keyDown && !key.repeat) { // anti gravity
         gs.player().flip = -1 * gs.player().flip;
     }*/
     if (key.scancode == SDL_SCANCODE_F1) {

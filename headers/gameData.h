@@ -16,18 +16,20 @@ struct GameState {
     
     
     Player player;
-    std::vector<Level> bgTiles_;
+    std::vector<BackgroundObject> bgTiles_;
     std::vector<Level> mapTiles_;
     std::vector<Laser> lasers_;
+    std::vector<Portal> portals_;
+    glm::vec2 ExitPortal, 
+              EntrancePortal, 
+              mouseCoords, 
+              clickCoords;
     
     std::vector<GameObject> bullets;
     int playerIndex = -1;
     SDL_FRect mapViewport;
     bool debugMode = false;
-    glm::vec2 ExitPortal, 
-              EntrancePortal, 
-              mouseCoords, 
-              clickCoords;
+    
     GameState(const SDLState &state) {
         playerIndex = -1; // will change when map is loaded
         mapViewport = SDL_FRect {
