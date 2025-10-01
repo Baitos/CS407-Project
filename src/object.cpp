@@ -3,8 +3,12 @@
 #include "../headers/playerState.h"
 #include "../headers/initState.h"
 #include "../headers/gameData.h"
+#include "../headers/helper.h"
 
 void Object::draw(const SDLState &state, GameState &gs, float width, float height) {
+    if (!isOnscreen(state, gs, (*this))) {
+        return;
+    }
     SDL_FRect dst {
         .x = (*this).pos.x - gs.mapViewport.x,
         .y = (*this).pos.y - gs.mapViewport.y,
@@ -41,6 +45,9 @@ void Object::drawDebug(const SDLState &state, GameState &gs, float width, float 
 }
 
 void AnimatedObject::draw(const SDLState &state, GameState &gs, float width, float height) {
+    if (!isOnscreen(state, gs, (*this))) {
+        return;
+    }
     float srcX = (*this).curAnimation != -1 ? (*this).animations[(*this).curAnimation].currentFrame() * width : ((*this).spriteFrame - 1) * width;
     SDL_FRect src {
         .x = srcX,
@@ -80,6 +87,9 @@ void AnimatedObject::update(const SDLState &state, GameState &gs, Resources &res
 }
 
 void BackgroundObject::draw(const SDLState &state, GameState &gs, float width, float height) { // same as Object.draw, just no debug option (maybe we can optimize this?)
+    if (!isOnscreen(state, gs, (*this))) {
+        return;
+    }
     SDL_FRect dst {
         .x = (*this).pos.x - gs.mapViewport.x,
         .y = (*this).pos.y - gs.mapViewport.y,

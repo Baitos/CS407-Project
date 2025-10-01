@@ -250,7 +250,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         }
 
         // handle the crosshair
-        //handleCrosshair(state, gs, res, gs.player(), deltaTime);
+        handleCrosshair(state, gs, res, deltaTime);
 
         //swap buffers and present
         SDL_RenderPresent(state.renderer);
