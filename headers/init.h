@@ -80,20 +80,26 @@ struct Resources {
     const int ANIM_PLAYER_SHOOT_JUMP = 8;
     const int ANIM_PLAYER_ROLL = 9;
     std::vector<Animation> playerAnims;
+
     const int ANIM_BULLET_MOVING = 0;
     const int ANIM_BULLET_HIT = 1;
     std::vector<Animation> bulletAnims;
+
     const int ANIM_ENEMY = 0;
     const int ANIM_ENEMY_DEAD = 1;
     std::vector<Animation> enemyAnims;
+
     const int PORTAL_IDLE = 0;
     std::vector<Animation> portalAnims;
-    
 
+    const int BOMB_IDLE = 0;
+    const int BOMB_EXPLODE = 1;
+    std::vector<Animation> itemAnims;
+    
     std::vector<SDL_Texture *> textures;
     SDL_Texture *texCrosshair, *texIdle, *texRun, *texJump, *texLaunch, *texSlide, *texShoot, *texDie, *texShootJump, *texRoll,
                 *texGrass, *texStone, *texBrick, *texFence, *texBush, 
-                *texBullet, *texBulletHit, *texSpiny, *texSpinyDead,
+                *texBullet, *texBulletHit, *texSpiny, *texSpinyDead, *texBombIdle, *texBombExplode,
                 *texBg1, *texBg2, *texBg3, *texBg4, *texOnStage, *texOffStage, *texBg5, 
                 *texLPortal, *texRPortal, *texLaser, *texFloor, *texTRCorner, *texRWall, *texBRCorner,
                 *texLWall, *texBLCorner, *texTLCorner, *texCeiling, *texITLCorner, *texITRCorner,
@@ -111,7 +117,7 @@ struct Resources {
     void load(SDLState &state, bool real) { // First variable controls how many frames there are, second is how long each frame lasts (in seconds)
         //FOR NOW.. change to 0 for shotgun, 1 for sword, 2 for jetpack
         int character = 2;
-        
+        // Players
         playerAnims.resize(10); // 
         playerAnims[ANIM_PLAYER_IDLE] = Animation(1, 1.6f);
         playerAnims[ANIM_PLAYER_WALK] = Animation(8, 1.0f);
@@ -127,14 +133,21 @@ struct Resources {
         playerAnims[ANIM_PLAYER_LAUNCH] = Animation(3, 0.2f);
         playerAnims[ANIM_PLAYER_SHOOT_JUMP] = Animation(1, 0.8f);
         playerAnims[ANIM_PLAYER_ROLL] = Animation(5, 0.2f);
+        // Bullets
         bulletAnims.resize(2); // 
         bulletAnims[ANIM_BULLET_MOVING] = Animation(4, 0.5f);
         bulletAnims[ANIM_BULLET_HIT] = Animation(3, 0.5f);
+        // Enemies
         enemyAnims.resize(2);
         enemyAnims[ANIM_ENEMY] = Animation(2, 0.6f);
         enemyAnims[ANIM_ENEMY_DEAD] = Animation(1, 1.0f);
+        // Portals
         portalAnims.resize(2);
         portalAnims[PORTAL_IDLE] = Animation(3, 1.0f);
+        // Items
+        itemAnims.resize(2);
+        itemAnims[BOMB_IDLE] = Animation(1, 3.0f);
+        itemAnims[BOMB_EXPLODE] = Animation(1, 1.0f);
 
         if (character == 0) {
             //load shotgun character animations
@@ -176,6 +189,10 @@ struct Resources {
             texBullet = loadTexture(state.renderer, "data/fireballM.png");
             texBulletHit = loadTexture(state.renderer, "data/fireballHitM.png");
         }
+        texBombIdle = loadTexture(state.renderer, "data/ItemSprites/bomb_large.png");
+        texBombExplode = loadTexture(state.renderer, "data/ItemSprites/explosion.png");
+
+
         texCrosshair = loadTexture(state.renderer, "data/crosshair.png");
         texGrass = loadTexture(state.renderer, "data/grass.png");
         texBrick = loadTexture(state.renderer, "data/brick.png");
