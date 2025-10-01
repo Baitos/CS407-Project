@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include "../headers/initState.h"
 #include "../headers/globals.h"
-#include "../headers/gameobject.h"
 #include "../headers/gameData.h"
 
 bool initialize(SDLState &state) {
