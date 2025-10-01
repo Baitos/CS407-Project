@@ -1,6 +1,5 @@
 #include "../headers/update.h"
 #include "../headers/collision.h"
-#include "../headers/gameobject.h"
 #include "../headers/gameData.h"
 #include "../headers/initState.h"
 #include "../headers/helper.h"

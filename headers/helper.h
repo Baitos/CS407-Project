@@ -7,7 +7,6 @@
 struct SDLState;
 struct GameData;
 struct Resources;
-struct GameObject;
 
 bool isOnscreen(const SDLState &state, GameData &gs, Object &obj);
 float changeVel(float vel, Player &p);
