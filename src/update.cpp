@@ -1,14 +1,11 @@
-#include <stdio.h>
-#include <SDL3/SDL.h>
-#include <SDL3_image/SDL_image.h>
-#include <vector>
-#include <string>
-#include <array>
-#include <iostream>
-#include <format>
-
 #include "../headers/update.h"
 #include "../headers/collision.h"
+#include "../headers/gameobject.h"
+#include "../headers/gameData.h"
+#include "../headers/initState.h"
+#include "../headers/helper.h"
+#include "../headers/globals.h"
+#include "../headers/resources.h"
 
 using namespace std;
 
@@ -359,7 +356,7 @@ void update(const SDLState &state, GameState &gs, Resources &res, GameObject &ob
 }
 
 void handleCrosshair(const SDLState &state, GameState &gs, Resources &res, GameObject &obj, float deltaTime) {
-    /*SDL_GetMouseState(&gs.mouseCoords.x, &gs.mouseCoords.y);
+    SDL_GetMouseState(&gs.mouseCoords.x, &gs.mouseCoords.y);
     float CROSSHAIR_SIZE = 15;
     float OFFSET = 7;
     float yRatio = (float)state.logH / state.height;
@@ -374,9 +371,9 @@ void handleCrosshair(const SDLState &state, GameState &gs, Resources &res, GameO
         .h = CROSSHAIR_SIZE
     };
     SDL_SetRenderDrawColor(state.renderer, 255, 0, 0, 255); // draw line to crosshair
-    glm::vec2 pOffset = findCenterOfSprite(gs.player());
+    glm::vec2 pOffset = glm::vec2(0); //findCenterOfSprite(gs.player());
     //printf("x: %d, y: %d\n", pOffset.x, pOffset.y);
-    SDL_RenderLine(state.renderer, gs.player().pos.x - gs.mapViewport.x + pOffset.x, gs.player().pos.y - gs.mapViewport.y + pOffset.y, gs.mouseCoords.x, gs.mouseCoords.y);
+    SDL_RenderLine(state.renderer, gs.player.pos.x - gs.mapViewport.x + pOffset.x, gs.player.pos.y - gs.mapViewport.y + pOffset.y, gs.mouseCoords.x, gs.mouseCoords.y);
     SDL_SetRenderDrawColor(state.renderer, 64, 51, 83, 255);
     
     //printf("mouseX: %f, mouseY: %f\n", gs.mouseCoords.x, gs.mouseCoords.y);
@@ -398,19 +395,19 @@ void handleKeyInput(const SDLState &state, GameState &gs, Resources &res,
         gs.player().flip = -1 * gs.player().flip;
     }*/
     if (key.scancode == SDL_SCANCODE_F1) {
-        run = false;
+        running = false;
     }
     if (key.scancode == SDL_SCANCODE_D) {
-        gs.mapViewport.x += 16;
+        gs.player.pos.x += 16;
     }
     if (key.scancode == SDL_SCANCODE_A) {
-        gs.mapViewport.x -= 16;
+        gs.player.pos.x -= 16;
     }
     if (key.scancode == SDL_SCANCODE_W) {
-        gs.mapViewport.y -= 16;
+        gs.player.pos.y -= 16;
     }
     if (key.scancode == SDL_SCANCODE_S) {
-        gs.mapViewport.y += 16;
+        gs.player.pos.y += 16;
     }
 
 

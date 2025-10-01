@@ -1,17 +1,14 @@
-#include <stdio.h>
-#include <SDL3/SDL.h>
-#include <SDL3_image/SDL_image.h>
-#include <vector>
-#include <string>
-#include <array>
-#include <iostream>
-#include <format>
-
 #include "../headers/draw.h"
+#include "../headers/initState.h"
+#include "../headers/gameData.h"
+#include "../headers/resources.h"
+#include "../headers/player.h"
+#include "../headers/globals.h"
+#include "../headers/helper.h"
 
 void drawObject(const SDLState &state, GameState &gs, GameObject &obj, float width, float height, float deltaTime) {
         if (!isOnscreen(state, gs, obj)) {
-            return;
+            return;  
         }
         float srcX = obj.curAnimation != -1 ? obj.animations[obj.curAnimation].currentFrame() * width : (obj.spriteFrame - 1) * width;
         SDL_FRect src {
@@ -78,34 +75,19 @@ void drawObject(const SDLState &state, GameState &gs, GameObject &obj, float wid
         }
 }
 
-void drawPlayer(const SDLState &state, GameState &gs, Player player, float width, float height, float deltaTime) {
-    float srcX = player.data.curAnimation != -1 ? player.data.animations[player.data.curAnimation].currentFrame() * width : (player.data.spriteFrame - 1) * width;
+void drawLevel(const SDLState &state, GameState &gs, Level &level, float width, float height, float deltaTime) {
     SDL_FRect src {
-        .x = srcX,
+        .x = 0,
         .y = 0,
         .w = width,
         .h = height
     };
 
     SDL_FRect dst {
-        .x = player.data.pos.x - gs.mapViewport.x,
-        .y = player.data.pos.y - gs.mapViewport.y,
+        .x = level.pos.x - gs.mapViewport.x,
+        .y = level.pos.y - gs.mapViewport.y,
         .w = width,
         .h = height
     };
-    SDL_FlipMode flipMode; // = obj.dir == -1 ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
-    if (player.data.dir == -1) {            
-        if (player.data.flip == -1) {
-            flipMode = (SDL_FlipMode)3; // FLIP_VERTICAL_AND_HORIZONTAL
-        } else {
-            flipMode = SDL_FLIP_HORIZONTAL;
-        }
-    } else {
-        if (player.data.flip == -1) {
-            flipMode = SDL_FLIP_VERTICAL;
-        } else {
-            flipMode = SDL_FLIP_NONE;
-        }
-    }
-    SDL_RenderTextureRotated(state.renderer, player.data.texture, &src, &dst, 0, nullptr, flipMode); // src is for sprite stripping, dest is for where sprite should be drawn
+    SDL_RenderTextureRotated(state.renderer, level.texture, &src, &dst, 0, nullptr, SDL_FLIP_NONE);
 }

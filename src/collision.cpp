@@ -1,44 +1,4 @@
-#include <stdio.h>
-#include <SDL3/SDL.h>
-#include <SDL3_image/SDL_image.h>
-#include <vector>
-#include <string>
-#include <array>
-#include <iostream>
-#include <format>
-
 #include "../headers/collision.h"
-
-void groundedCheck(const SDLState &state, GameState &gs, const Resources &res, GameObject &a, GameObject &b, float deltaTime) {
-/*    bool foundGround = false;
-    // grounded sensor
-    const float inset = 2.0;
-    SDL_FRect sensor {
-        .x = a.pos.x + a.collider.x + 1,
-        .y = a.flip == -1 ? a.pos.y : a.pos.y + a.collider.y + a.collider.h, // flip checker if flipped
-        .w = a.collider.w - inset,
-        .h = 1
-    };
-    SDL_FRect rectB {
-        .x = b.pos.x + b.collider.x,
-        .y = b.pos.y + b.collider.y,
-        .w = b.collider.w,
-        .h = b.collider.h
-    };
-    SDL_FRect rectC { 0 };
-    if (SDL_GetRectIntersectionFloat(&sensor, &rectB, &rectC)) {
-        foundGround = true;
-    }
-    if (a.grounded != foundGround) { // changing state
-        a.grounded = foundGround;
-        if (foundGround && a.data.player.state != PlayerState::dead) {
-            a.data.player.state = PlayerState::moving;
-            a.data.player.fastfalling = false;
-            a.data.player.canDoubleJump = true;
-            a.gravityScale = 1.0f;
-        }
-    }*/
-}
 
 void collisionResponse(const SDLState &state, GameState &gs, Resources &res,
  	const SDL_FRect &rectA, const SDL_FRect &rectB, const glm::vec2 &overlap,

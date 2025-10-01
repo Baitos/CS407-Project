@@ -1,9 +1,9 @@
 #pragma once
 
 #include <vector>
-#include <SDL3/SDL.h>
 #include "../ext/glm/glm.hpp"
 #include "../headers/animation.h"
+#include <SDL3/SDL.h>
 
 /*enum class PlayerState {
     idle, moving, sprinting, jumping, dead, falling, jumpLaunch, roll

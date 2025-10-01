@@ -1,75 +1,49 @@
 #pragma once
 
-#include <stdio.h>
-#include <SDL3/SDL.h> // don't include SDL3_main in anything other than the main cpp file
-#include <SDL3_image/SDL_image.h>
+#include "../ext/glm/glm.hpp"
+#include "animation.h"
 #include <vector>
-#include <string>
-#include <array>
-#include <iostream>
-#include <format>
+#include "object.h"
 
-#include "init.h"
-#include "playerState.h"
+struct SDLState;
+struct GameState;
+struct Resources;
+class PlayerState;
 
-    // PlayerState state;
-    // Timer weaponTimer;
-    // Timer deathTimer;
-    // Timer sprintTimer; // time 
-    // int healthPoints;
-    // float maxWalkX; // walking
-    // float maxRunX; // running 
-    // float maxSprintX; // sprinting
-    // bool fastfalling;
-    // bool canDoubleJump; // can double jump?
-
-    //glm::vec2 pos, vel, acc;
-    // float dir;
-
-    // float maxSpeedX; // maximum (sprinting)
-    // //float maxSpeedY;
-    // std::vector<Animation> animations;
-    // int curAnimation;
-    // SDL_Texture *texture;
-    // bool dynamic;
-    // bool grounded;
-    // float gravityScale; // how fast they fall
-    // float flip; // anti gravity
-    // SDL_FRect collider; // rectangle for collision
-    // Timer flashTimer;
-    // bool shouldFlash;
-    // int spriteFrame;
-
-struct PlayerData {
-    glm::vec2 pos, vel, acc;
-    float dir;
-    bool grounded;
-    float gravityScale;
-    float flip; // anti gravity
-    SDL_FRect collider; // rectangle for collision
-    int spriteFrame;
-    float maxSpeedX; // maximum (sprinting)
-    std::vector<Animation> animations;
-    int curAnimation;
-    SDL_Texture *texture;
-};
-
-class Player {
+class Player : public AnimatedObject { // player
     public:
-        PlayerData data;
-        virtual void handleInput(SDL_KeyboardEvent& key){}
-        virtual void update(){}
-        Player(float x, float y, std::vector<Animation> animations, int curAnimation, SDL_FRect collider, SDL_Texture *texture) {
-            data.pos = glm::vec2(x, y);
-            data.acc = glm::vec2(300, 0);
-            data.animations = animations;
-            data.curAnimation = curAnimation;
-            data.collider = collider;
-            data.maxSpeedX = 250; // walking speed for now     
-            data.texture = texture;
+        bool grounded; 
+        bool sprinting;
+        float gravityScale; 
+        float maxSpeedX; // will change depending on state
+
+        virtual void handleInput(SDL_KeyboardEvent& key);
+        virtual void update();
+        void draw(const SDLState &state, GameState &gs, float width, float height);
+        
+        Player(float x, float y, std::vector<Animation> anims, SDL_FRect colliderRect, SDL_Texture *tex, float maxSpeedX_) {
+            pos = glm::vec2(x, y);
+            vel = glm::vec2(0);
+            acc = glm::vec2(300, 0); // default for now
+            texture = tex;
+            collider = colliderRect;
+            
+            spriteFrame = 1;
+            animations = anims;
+            curAnimation = -1;
+            dir = 1;
+            flip = 1.0f;
+
+            grounded = false;
+            sprinting = false;
+            maxSpeedX = maxSpeedX_; // should be walk speed
+            gravityScale = 1.0f;
+            
         }
-        Player() {
-            data.pos = data.acc = glm::vec2(0,0);
+        Player() : AnimatedObject() {
+            grounded = false;
+            gravityScale = 1.0f;
+            maxSpeedX = 250; // walk speed default
         }
     private:
         PlayerState* state_;

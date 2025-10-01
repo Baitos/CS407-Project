@@ -8,11 +8,15 @@
 #include <iostream>
 #include <format>
 
-#include "../headers/gameobject.h"
-#include "../headers/init.h"
+#include "../headers/initState.h"
+#include "../headers/gameData.h"
+#include "../headers/resources.h"
+#include "../headers/player.h"
+#include "../headers/globals.h"
 #include "../headers/createTiles.h"
-#include "../headers/draw.h"
 #include "../headers/update.h"
+#include "../headers/helper.h"
+#include "../headers/draw.h"
 
 using namespace std;
 
@@ -23,31 +27,29 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     state.logW = 640;
     state.logH = 480;
 
-    bool l = false;
-    if (argc > 1 && !strcmp(argv[1], "l")) {
-        l = true;
-    }
     if (!initialize(state)) {
         return 1;
     }
     // load game assets
     Resources res;
-    res.load(state, l);
+    res.load(state);
+    
 
     // setup game data
     GameState gs(state);
     createTiles(state, gs, res);
+
     uint64_t prevTime = SDL_GetTicks();
 
     uint64_t frames = 0;
     uint64_t FPS = 0;
     uint64_t lastTime = 0;
 
-    gs.mapViewport.x = 0;//(gs.player().pos.x + TILE_SIZE / 2) - (gs.mapViewport.w / 2); 
-    gs.mapViewport.y = 0;
+    //gs.mapViewport.x = 0;//(gs.player().pos.x + TILE_SIZE / 2) - (gs.mapViewport.w / 2); 
+    //gs.mapViewport.y = 0;
 
     // start game loop
-    while (run) {
+    while (running) {
         uint64_t nowTime = SDL_GetTicks(); // take time from previous frame to calculate delta
         frames++;
         if (nowTime > lastTime + 1000) { // fps counter
@@ -61,7 +63,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
             switch (event.type) {
                 case SDL_EVENT_QUIT:
                 {
-                    run = false;
+                    running = false;
                     break;
                 }
                 case SDL_EVENT_WINDOW_RESIZED: 
@@ -99,8 +101,11 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         }*/
 
         // update lasers
-        for (GameObject &laser : gs.lasers) {
+        /*for (GameObject &laser : gs.lasers) {
             update(state, gs, res, laser, deltaTime);
+        }*/
+        for (Laser &laser : gs.lasers_) {
+            laser.update(state, gs, res, deltaTime);
         }
 
         // update bullets
@@ -109,8 +114,8 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         }*/
 
         // used for camera system
-        //gs.mapViewport.x = 0;(gs.player().pos.x + TILE_SIZE / 2) - (gs.mapViewport.w / 2); 
-        //gs.mapViewport.y = 0;(gs.player().pos.y + TILE_SIZE / 2) - (gs.mapViewport.h / 2); 
+        gs.mapViewport.x = (gs.player.pos.x + TILE_SIZE / 2) - (gs.mapViewport.w / 2); 
+        gs.mapViewport.y = (gs.player.pos.y + TILE_SIZE / 2) - (gs.mapViewport.h / 2); 
         //draw bg
         SDL_SetRenderDrawColor(state.renderer, 64, 51, 83, 255);
         SDL_RenderClear(state.renderer);
@@ -136,27 +141,28 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
 
         // draw bg tiles
         for (GameObject &obj : gs.bgTiles) {
-            if (isOnscreen(state, gs, obj)) {
-                SDL_FRect dst {
-                    .x = obj.pos.x - gs.mapViewport.x,
-                    .y = obj.pos.y - gs.mapViewport.y,
-                    .w = static_cast<float>(obj.texture->w),
-                    .h = static_cast<float>(obj.texture->h)
-                    
-                }; 
-                SDL_RenderTexture(state.renderer, obj.texture, nullptr, &dst);
-            }
+            SDL_FRect dst {
+                .x = obj.pos.x - gs.mapViewport.x,
+                .y = obj.pos.y - gs.mapViewport.y,
+                .w = static_cast<float>(obj.texture->w),
+                .h = static_cast<float>(obj.texture->h)
+                
+            }; 
+            SDL_RenderTexture(state.renderer, obj.texture, nullptr, &dst);
         }
 
         // draw level tiles
         for(GameObject &level : gs.mapTiles){
-            if (isOnscreen(state, gs, level)) {
-                if (level.data.level.state == LevelState::portal){
-                    drawObject(state, gs, level, 32, 64, deltaTime); 
-                } else{
-                    drawObject(state, gs, level, TILE_SIZE, TILE_SIZE, deltaTime); 
-                } 
-            }
+            if (level.data.level.state == LevelState::portal){
+                drawObject(state, gs, level, 32, 64, deltaTime); 
+            } else{
+                drawObject(state, gs, level, TILE_SIZE, TILE_SIZE, deltaTime); 
+            } 
+        }
+
+        for(Level &level : gs.mapTiles_) {
+            level.draw(state, gs, TILE_SIZE, TILE_SIZE);
+            //drawLevel(state, gs, level, TILE_SIZE, TILE_SIZE, deltaTime); 
         }
 
         // draw chars
@@ -177,14 +183,24 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
             }
         }*/
 
-        drawPlayer(state, gs, gs.player, TILE_SIZE, TILE_SIZE, deltaTime); // draw player class
+        //drawPlayer(state, gs, gs.player, TILE_SIZE, TILE_SIZE, deltaTime); 
+        gs.player.draw(state, gs, TILE_SIZE, TILE_SIZE); // draw player class
+
+
+        for(Laser &laser : gs.lasers_) {
+            if (laser.laserActive) {
+                laser.draw(state, gs, TILE_SIZE, TILE_SIZE);
+            }
+            //drawLevel(state, gs, level, TILE_SIZE, TILE_SIZE, deltaTime); 
+        }
 
         // Draw Lasers
-        for(GameObject &laser : gs.lasers){
+        /*for(GameObject &laser : gs.lasers){
             if (isOnscreen(state, gs, laser) && laser.data.obstacle.laserActive) {
                 drawObject(state, gs, laser, TILE_SIZE, TILE_SIZE, deltaTime);
             }
-        }
+        }*/
+        
 
         // draw bullets
         /*for (GameObject &bullet : gs.bullets) {
