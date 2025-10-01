@@ -4,7 +4,6 @@
 struct SDLState;
 struct GameData;
 struct Resources;
-struct GameObject;
 
 /*void update(const SDLState &state, GameData &gd, Resources &res, GameObject &obj, float deltaTime);
 float updatePlayer(const SDLState &state, GameData &gd, Resources &res, GameObject &obj, float deltaTime, float currentDirection);

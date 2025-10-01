@@ -3,18 +3,10 @@
 #include <SDL3/SDL.h>
 #include <vector>
 #include "../ext/glm/glm.hpp"
-#include "gameobject.h"
 #include "initState.h"
 #include "player.h"
 
 struct GameData {
-    std::vector<GameObject> bgTiles;
-    std::vector<GameObject> fgTiles;
-    std::vector<GameObject> mapTiles;
-    std::vector<GameObject> characters;
-    std::vector<GameObject> lasers;
-    
-    
     Player player;
     std::vector<BackgroundObject> bgTiles_;
     std::vector<Level> mapTiles_;
@@ -24,8 +16,7 @@ struct GameData {
               EntrancePortal, 
               mouseCoords, 
               clickCoords;
-    
-    std::vector<GameObject> bullets;
+              
     int playerIndex = -1;
     SDL_FRect mapViewport;
     bool debugMode = false;

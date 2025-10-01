@@ -1,8 +1,10 @@
 #include "../headers/collision.h"
+#include "../headers/object.h"
+#include "../headers/player.h"
 
 void collisionResponse(const SDLState &state, GameData &gd, Resources &res,
  	const SDL_FRect &rectA, const SDL_FRect &rectB, const glm::vec2 &overlap,
- 	GameObject &a, GameObject &b, float deltaTime)
+ 	Object &a, Object &b, float deltaTime)
  {
 // 	const auto genericResponse = [&]()
 // 	{
@@ -186,7 +188,7 @@ bool intersectAABB(const SDL_FRect &a, const SDL_FRect &b, glm::vec2 &overlap)
 }
 
 void checkCollision(const SDLState &state, GameData &gd, Resources &res,
-	GameObject &a, GameObject &b, float deltaTime)
+	Object &a, Object &b, float deltaTime)
 {
 	/*SDL_FRect rectA{
 		.x = a.pos.x + a.collider.x,
