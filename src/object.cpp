@@ -5,25 +5,25 @@
 #include "../headers/gameData.h"
 #include "../headers/helper.h"
 
-void Object::draw(const SDLState &state, GameState &gs, float width, float height) {
-    if (!isOnscreen(state, gs, (*this))) {
+void Object::draw(const SDLState &state, GameData &gd, float width, float height) {
+    if (!isOnscreen(state, gd, (*this))) {
         return;
     }
     SDL_FRect dst {
-        .x = (*this).pos.x - gs.mapViewport.x,
-        .y = (*this).pos.y - gs.mapViewport.y,
+        .x = (*this).pos.x - gd.mapViewport.x,
+        .y = (*this).pos.y - gd.mapViewport.y,
         .w = width,
         .h = height
     };
     SDL_RenderTexture(state.renderer, (*this).texture, nullptr, &dst);
-    (*this).drawDebug(state, gs, width, height);
+    (*this).drawDebug(state, gd, width, height);
 }
 
-void Object::drawDebug(const SDLState &state, GameState &gs, float width, float height) {
-    if (gs.debugMode) {
+void Object::drawDebug(const SDLState &state, GameData &gd, float width, float height) {
+    if (gd.debugMode) {
         SDL_FRect rectA {
-            .x = (*this).pos.x + (*this).collider.x - gs.mapViewport.x, 
-            .y = (*this).pos.y + (*this).collider.y - gs.mapViewport.y,
+            .x = (*this).pos.x + (*this).collider.x - gd.mapViewport.x, 
+            .y = (*this).pos.y + (*this).collider.y - gd.mapViewport.y,
             .w = (*this).collider.w, 
             .h = (*this).collider.h
         };
@@ -32,8 +32,8 @@ void Object::drawDebug(const SDLState &state, GameState &gs, float width, float 
         SDL_SetRenderDrawColor(state.renderer, 255, 0, 0, 150);
         SDL_RenderFillRect(state.renderer, &rectA);
         SDL_FRect sensor{  
-            .x = (*this).pos.x + (*this).collider.x - gs.mapViewport.x,
-            .y = (*this).pos.y + (*this).collider.y + (*this).collider.h - gs.mapViewport.y,
+            .x = (*this).pos.x + (*this).collider.x - gd.mapViewport.x,
+            .y = (*this).pos.y + (*this).collider.y + (*this).collider.h - gd.mapViewport.y,
             .w = (*this).collider.w, 
             .h = 1
         };
@@ -44,8 +44,8 @@ void Object::drawDebug(const SDLState &state, GameState &gs, float width, float 
     }
 }
 
-void AnimatedObject::draw(const SDLState &state, GameState &gs, float width, float height) {
-    if (!isOnscreen(state, gs, (*this))) {
+void AnimatedObject::draw(const SDLState &state, GameData &gd, float width, float height) {
+    if (!isOnscreen(state, gd, (*this))) {
         return;
     }
     float srcX = (*this).curAnimation != -1 ? (*this).animations[(*this).curAnimation].currentFrame() * width : ((*this).spriteFrame - 1) * width;
@@ -57,8 +57,8 @@ void AnimatedObject::draw(const SDLState &state, GameState &gs, float width, flo
     };
 
     SDL_FRect dst {
-        .x = (*this).pos.x - gs.mapViewport.x,
-        .y = (*this).pos.y - gs.mapViewport.y,
+        .x = (*this).pos.x - gd.mapViewport.x,
+        .y = (*this).pos.y - gd.mapViewport.y,
         .w = width,
         .h = height
     };
@@ -77,29 +77,29 @@ void AnimatedObject::draw(const SDLState &state, GameState &gs, float width, flo
         }
     }
     SDL_RenderTextureRotated(state.renderer, (*this).texture, &src, &dst, 0, nullptr, flipMode); // src is for sprite stripping, dest is for where sprite should be drawn
-    (*this).drawDebug(state, gs, width, height);
+    (*this).drawDebug(state, gd, width, height);
 }
 
-void AnimatedObject::update(const SDLState &state, GameState &gs, Resources &res, float deltaTime) { // just step the anims
+void AnimatedObject::update(const SDLState &state, GameData &gd, Resources &res, float deltaTime) { // just step the anims
     if ((*this).curAnimation != -1) {
         (*this).animations[(*this).curAnimation].step(deltaTime);
     }
 }
 
-void BackgroundObject::draw(const SDLState &state, GameState &gs, float width, float height) { // same as Object.draw, just no debug option (maybe we can optimize this?)
-    if (!isOnscreen(state, gs, (*this))) {
+void BackgroundObject::draw(const SDLState &state, GameData &gd, float width, float height) { // same as Object.draw, just no debug option (maybe we can optimize this?)
+    if (!isOnscreen(state, gd, (*this))) {
         return;
     }
     SDL_FRect dst {
-        .x = (*this).pos.x - gs.mapViewport.x,
-        .y = (*this).pos.y - gs.mapViewport.y,
+        .x = (*this).pos.x - gd.mapViewport.x,
+        .y = (*this).pos.y - gd.mapViewport.y,
         .w = width,
         .h = height
     };
     SDL_RenderTexture(state.renderer, (*this).texture, nullptr, &dst);
 }
 
-void Laser::update(const SDLState &state, GameState &gs, Resources &res, float deltaTime) { // update laser timer every frame
+void Laser::update(const SDLState &state, GameData &gd, Resources &res, float deltaTime) { // update laser timer every frame
     Timer &laserTimer = (*this).laserTimer;
     laserTimer.step(deltaTime);
     if (laserTimer.isTimeOut()){

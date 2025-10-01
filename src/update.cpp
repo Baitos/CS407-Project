@@ -9,7 +9,7 @@
 
 using namespace std;
 
-//  float updatePlayer(const SDLState &state, GameState &gs, Resources &res, GameObject &obj, float deltaTime, float currentDirection) {
+//  float updatePlayer(const SDLState &state, GameData &gd, Resources &res, GameObject &obj, float deltaTime, float currentDirection) {
 // //     if (obj.data.player.state != PlayerState::dead) {
 // //         if (state.keys[SDL_SCANCODE_A]) {
 // //             currentDirection += -1;
@@ -20,7 +20,7 @@ using namespace std;
 
 // //         Timer &weaponTimer = obj.data.player.weaponTimer;
 // //         weaponTimer.step(deltaTime);
-// //         const auto handleShooting = [&state, &gs, &res, &obj, &weaponTimer]() {
+// //         const auto handleShooting = [&state, &gd, &res, &obj, &weaponTimer]() {
 // //             if (state.keys[SDL_SCANCODE_J]) {
 // //                 // bullets!
 // //                     // in 2.5 hour video, go to 1:54:19 if you want to sync up shooting sprites with animations for running
@@ -43,7 +43,7 @@ using namespace std;
 // //                     GameObject bullet;
 // //                     bullet.data.bullet = BulletData();
 // //                     bullet.type = ObjectType::bullet;
-// //                     bullet.dir = gs.player().dir;
+// //                     bullet.dir = gd.player().dir;
 // //                     bullet.texture = res.texBullet;
 // //                     bullet.curAnimation = res.ANIM_BULLET_MOVING;
 // //                     bullet.collider = SDL_FRect {
@@ -69,15 +69,15 @@ using namespace std;
 // //                     );
 // //                     // try to reuse old inactive bullets
 // //                     bool foundInactive = false;
-// //                     for (int i = 0; i < gs.bullets.size() && !foundInactive; i++) {
-// //                         if (gs.bullets[i].data.bullet.state == BulletState::inactive) {
+// //                     for (int i = 0; i < gd.bullets.size() && !foundInactive; i++) {
+// //                         if (gd.bullets[i].data.bullet.state == BulletState::inactive) {
 // //                             foundInactive = true;
-// //                             gs.bullets[i] = bullet;
+// //                             gd.bullets[i] = bullet;
 // //                         }
 // //                     }
 // //                     // otherwise push new bullet
 // //                     if (!foundInactive) {
-// //                         gs.bullets.push_back(bullet);
+// //                         gd.bullets.push_back(bullet);
 // //                     }
 // //                 }
 // //             }
@@ -215,13 +215,13 @@ using namespace std;
 //      return currentDirection;
 // }
 
-// float updateBullet(const SDLState &state, GameState &gs, Resources &res, GameObject &obj, float deltaTime, float currentDirection) {
+// float updateBullet(const SDLState &state, GameData &gd, Resources &res, GameObject &obj, float deltaTime, float currentDirection) {
 //     switch (obj.data.bullet.state) {
 //         case BulletState::moving: {
-//             if (obj.pos.x - gs.mapViewport.x < 0 || // left side
-//                 obj.pos.x - gs.mapViewport.x > state.logW || // right side
-//                 obj.pos.y - gs.mapViewport.y < 0 || // up
-//                 obj.pos.y - gs.mapViewport.y > state.logH) // down
+//             if (obj.pos.x - gd.mapViewport.x < 0 || // left side
+//                 obj.pos.x - gd.mapViewport.x > state.logW || // right side
+//                 obj.pos.y - gd.mapViewport.y < 0 || // up
+//                 obj.pos.y - gd.mapViewport.y > state.logH) // down
 //             { 
 //                 obj.data.bullet.state = BulletState::inactive;
 //             }
@@ -236,11 +236,11 @@ using namespace std;
 //     return currentDirection;
 // }
 
-// float updateEnemy(const SDLState &state, GameState &gs, Resources &res, GameObject &obj, float deltaTime, float currentDirection) {
+// float updateEnemy(const SDLState &state, GameData &gd, Resources &res, GameObject &obj, float deltaTime, float currentDirection) {
 //     EnemyData &d = obj.data.enemy;
 //     switch (d.state) {
 //         /*case EnemyState::idle: {
-//             glm::vec2 playerDir = gs.player().pos - obj.pos;
+//             glm::vec2 playerDir = gd.player().pos - obj.pos;
 //             if (glm::length(playerDir) < 100) {
 //                 currentDirection = playerDir.x < 0 ? -1 : 1;
 //             } else {
@@ -267,7 +267,7 @@ using namespace std;
 //     }
 //     return currentDirection;
 // }
-// float updateObstacle(const SDLState &state, GameState &gs, Resources &res, GameObject &obj, float deltaTime, float currentDirection) {
+// float updateObstacle(const SDLState &state, GameData &gd, Resources &res, GameObject &obj, float deltaTime, float currentDirection) {
 //     //Timer for Laser
 //     Timer &laserTimer = obj.data.obstacle.laserTimer;
 //     laserTimer.step(deltaTime);
@@ -279,7 +279,7 @@ using namespace std;
 //     return currentDirection;
 // }
 
-// void update(const SDLState &state, GameState &gs, Resources &res, GameObject &obj, float deltaTime) {
+// void update(const SDLState &state, GameData &gd, Resources &res, GameObject &obj, float deltaTime) {
 //     // update animation
 //     if (obj.curAnimation != -1) {
 //         obj.animations[obj.curAnimation].step(deltaTime);
@@ -292,22 +292,22 @@ using namespace std;
 //     switch (obj.type) {
 //         /*case ObjectType::player:
 //         {
-//             currentDirection = updatePlayer(state, gs, res, obj, deltaTime, currentDirection);
+//             currentDirection = updatePlayer(state, gd, res, obj, deltaTime, currentDirection);
 //             break;
 //         }*/
 //         case ObjectType::bullet:
 //         {
-//             updateBullet(state, gs, res, obj, deltaTime, currentDirection);
+//             updateBullet(state, gd, res, obj, deltaTime, currentDirection);
 //             break;
 //         }
 //         case ObjectType::enemy:
 //         {
-//             updateEnemy(state, gs, res, obj, deltaTime, currentDirection);
+//             updateEnemy(state, gd, res, obj, deltaTime, currentDirection);
 //             break;
 //         }
 //         case ObjectType::obstacle:
 //         {
-//             updateObstacle(state, gs, res, obj, deltaTime, currentDirection);
+//             updateObstacle(state, gd, res, obj, deltaTime, currentDirection);
 //             break;
 //         }
 //     }
@@ -327,15 +327,15 @@ using namespace std;
 //     // collision
 //     bool foundGround = obj.grounded;
 //     obj.grounded = false;
-//     for (GameObject &objB : gs.mapTiles) { // check if player is touching any map tiles, currently no enemy collision
-//         if (obj.dynamic && isOnscreen(state, gs, obj) && isOnscreen(state, gs, objB)) {
-//             checkCollision(state, gs, res, obj, objB, deltaTime);
+//     for (GameObject &objB : gd.mapTiles) { // check if player is touching any map tiles, currently no enemy collision
+//         if (obj.dynamic && isOnscreen(state, gd, obj) && isOnscreen(state, gd, objB)) {
+//             checkCollision(state, gd, res, obj, objB, deltaTime);
 //         } else if (obj.type == ObjectType::bullet) {
-//             checkCollision(state, gs, res, obj, objB, deltaTime);
+//             checkCollision(state, gd, res, obj, objB, deltaTime);
 //         }
 //     }
-//     for (GameObject &objB : gs.lasers){
-//         checkCollision(state, gs, res, obj, objB, deltaTime);     
+//     for (GameObject &objB : gd.lasers){
+//         checkCollision(state, gd, res, obj, objB, deltaTime);     
 //     }
 //     /*if (obj.grounded && !foundGround) {
 //         if (obj.grounded && obj.type == ObjectType::player) {
@@ -355,67 +355,67 @@ using namespace std;
 //     }*/
 // }
 
-void handleCrosshair(const SDLState &state, GameState &gs, Resources &res, float deltaTime) {
-    SDL_GetMouseState(&gs.mouseCoords.x, &gs.mouseCoords.y);
+void handleCrosshair(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
+    SDL_GetMouseState(&gd.mouseCoords.x, &gd.mouseCoords.y);
     float CROSSHAIR_SIZE = 15;
     float OFFSET = 7;
     float yRatio = (float)state.logH / state.height;
     float xRatio = (float)state.logW / state.width;
     //printf("Xrat: %f, Yrat: %f\n", xRatio, yRatio);
-    gs.mouseCoords.x = gs.mouseCoords.x * xRatio;
-    gs.mouseCoords.y = gs.mouseCoords.y * yRatio;
+    gd.mouseCoords.x = gd.mouseCoords.x * xRatio;
+    gd.mouseCoords.y = gd.mouseCoords.y * yRatio;
     SDL_FRect dst { 
-        .x = gs.mouseCoords.x - OFFSET,
-        .y = gs.mouseCoords.y - OFFSET,
+        .x = gd.mouseCoords.x - OFFSET,
+        .y = gd.mouseCoords.y - OFFSET,
         .w = CROSSHAIR_SIZE,
         .h = CROSSHAIR_SIZE
     };
     SDL_SetRenderDrawColor(state.renderer, 255, 0, 0, 255); // draw line to crosshair
-    glm::vec2 pOffset = findCenterOfSprite(gs.player);
+    glm::vec2 pOffset = findCenterOfSprite(gd.player);
     //printf("x: %d, y: %d\n", pOffset.x, pOffset.y);
-    SDL_RenderLine(state.renderer, gs.player.pos.x - gs.mapViewport.x + pOffset.x, gs.player.pos.y - gs.mapViewport.y + pOffset.y, gs.mouseCoords.x, gs.mouseCoords.y);
+    SDL_RenderLine(state.renderer, gd.player.pos.x - gd.mapViewport.x + pOffset.x, gd.player.pos.y - gd.mapViewport.y + pOffset.y, gd.mouseCoords.x, gd.mouseCoords.y);
     SDL_SetRenderDrawColor(state.renderer, 64, 51, 83, 255);
     
-    //printf("mouseX: %f, mouseY: %f\n", gs.mouseCoords.x, gs.mouseCoords.y);
+    //printf("mouseX: %f, mouseY: %f\n", gd.mouseCoords.x, gd.mouseCoords.y);
     SDL_RenderTexture(state.renderer, res.texCrosshair, nullptr, &dst); // src is for sprite stripping, dest is for where sprite should be drawn*/ 
 }
 
-void handleKeyInput(const SDLState &state, GameState &gs, Resources &res,
+void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
                     SDL_KeyboardEvent key, bool keyDown, float deltaTime) {
 
     if (key.scancode == SDL_SCANCODE_F12 && key.down && !key.repeat) { // debug
-            gs.debugMode = !gs.debugMode;
+            gd.debugMode = !gd.debugMode;
     }
     if (key.scancode == SDL_SCANCODE_F11 && key.down && !key.repeat) { // tp to entrance portal
-        gs.player.pos = gs.EntrancePortal;
-        gs.player.pos.x -= TILE_SIZE;
+        gd.player.pos = gd.EntrancePortal;
+        gd.player.pos.x -= TILE_SIZE;
     }
     if (key.scancode == SDL_SCANCODE_F10 && key.down && !key.repeat) { // tp to exit portal
-        gs.player.pos = gs.ExitPortal;
+        gd.player.pos = gd.ExitPortal;
     }
     /*if (key.scancode == SDL_SCANCODE_F2 && keyDown && !key.repeat) { // anti gravity
-        gs.player().flip = -1 * gs.player().flip;
+        gd.player().flip = -1 * gd.player().flip;
     }*/
     if (key.scancode == SDL_SCANCODE_F1) {
         running = false;
     }
     if (key.scancode == SDL_SCANCODE_D && key.down) {
-        gs.player.pos.x += 2 * TILE_SIZE;
+        gd.player.pos.x += 2 * TILE_SIZE;
     }
     if (key.scancode == SDL_SCANCODE_A && key.down) {
-        gs.player.pos.x -= 2 * TILE_SIZE;
+        gd.player.pos.x -= 2 * TILE_SIZE;
     }
     if (key.scancode == SDL_SCANCODE_W && key.down) {
-        gs.player.pos.y -= 2 * TILE_SIZE;
+        gd.player.pos.y -= 2 * TILE_SIZE;
     }
     if (key.scancode == SDL_SCANCODE_S && key.down) {
-        gs.player.pos.y += 2 * TILE_SIZE;
+        gd.player.pos.y += 2 * TILE_SIZE;
     }
 
 
     // if (obj.type == ObjectType::player) {
     //     const float JUMP_FORCE = -450.f;
-    //     const auto handleJumping = [&state, &gs, &obj, res, key, keyDown, JUMP_FORCE]() {
+    //     const auto handleJumping = [&state, &gd, &obj, res, key, keyDown, JUMP_FORCE]() {
     //         if (key.scancode == SDL_SCANCODE_SPACE && keyDown && !key.repeat) { // jumping
     //             if (obj.grounded) { // single jump
     //                 //add something for jump animation before going up
@@ -445,7 +445,7 @@ void handleKeyInput(const SDLState &state, GameState &gs, Resources &res,
     //             //obj.gravityScale = 2.0f; // option 3; double their gravity until they land
     //         }
     //     };
-    //     const auto handleRunning = [&state, &gs, &obj, &res, key, keyDown, deltaTime]() {
+    //     const auto handleRunning = [&state, &gd, &obj, &res, key, keyDown, deltaTime]() {
     //         if (key.scancode == SDL_SCANCODE_LSHIFT) {
     //             if (keyDown) { // if held down, increase speed
     //                 obj.maxSpeedX = obj.data.player.maxRunX;
@@ -457,7 +457,7 @@ void handleKeyInput(const SDLState &state, GameState &gs, Resources &res,
     //             }
     //         }
     //     };
-    //     const auto handleSprinting = [&state, &gs, &obj, &res, key, keyDown]() {
+    //     const auto handleSprinting = [&state, &gd, &obj, &res, key, keyDown]() {
     //         if (key.scancode == SDL_SCANCODE_LSHIFT && !keyDown) {
     //             obj.maxSpeedX = obj.data.player.maxWalkX;
     //             obj.curAnimation = res.ANIM_PLAYER_WALK;
@@ -465,7 +465,7 @@ void handleKeyInput(const SDLState &state, GameState &gs, Resources &res,
     //             obj.data.player.state = PlayerState::moving;
     //         }
     //     };
-    //     const auto handleFalling = [&state, &gs, &obj, &res, key, keyDown, deltaTime]() {
+    //     const auto handleFalling = [&state, &gd, &obj, &res, key, keyDown, deltaTime]() {
     //         if (key.scancode == SDL_SCANCODE_S && keyDown && !obj.grounded) { // fastfall
     //             if (!key.repeat && !obj.data.player.fastfalling) {
     //                 obj.vel.y = changeVel(-250.0f, obj);

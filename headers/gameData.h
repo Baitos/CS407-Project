@@ -7,7 +7,7 @@
 #include "initState.h"
 #include "player.h"
 
-struct GameState {
+struct GameData {
     std::vector<GameObject> bgTiles;
     std::vector<GameObject> fgTiles;
     std::vector<GameObject> mapTiles;
@@ -30,7 +30,7 @@ struct GameState {
     SDL_FRect mapViewport;
     bool debugMode = false;
     
-    GameState(const SDLState &state) {
+    GameData(const SDLState &state) {
         playerIndex = -1; // will change when map is loaded
         mapViewport = SDL_FRect {
             .x = 0,

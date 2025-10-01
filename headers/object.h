@@ -7,7 +7,7 @@
 #include <vector>
 
 struct SDLState;
-struct GameState;
+struct GameData;
 struct Resources;
 class PlayerState;
 
@@ -25,8 +25,8 @@ class Object {   // generic obj type
             collider = colliderRect;
             vel = acc = glm::vec2(0);
         }
-        void draw(const SDLState &state, GameState &gs, float width, float height);
-        void drawDebug(const SDLState &state, GameState &gs, float width, float height);
+        void draw(const SDLState &state, GameData &gd, float width, float height);
+        void drawDebug(const SDLState &state, GameData &gd, float width, float height);
 };
 
 class AnimatedObject : public Object { // obj with anims
@@ -50,8 +50,8 @@ class AnimatedObject : public Object { // obj with anims
             flip = 1.0f;
         }
 
-        void update(const SDLState &state, GameState &gs, Resources &res, float deltaTime);
-        void draw(const SDLState &state, GameState &gs, float width, float height);
+        void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+        void draw(const SDLState &state, GameData &gd, float width, float height);
 };
 
 class Level : public Object { // the level type!
@@ -74,7 +74,7 @@ class BackgroundObject : public Object { // bg tiles
         Object(pos_, colliderRect, tex) {
 
         }
-        void draw(const SDLState &state, GameState &gs, float width, float height);
+        void draw(const SDLState &state, GameData &gd, float width, float height);
 };
 
 class Portal : public AnimatedObject { // portals
@@ -106,5 +106,5 @@ class Laser : public Object { // obstacle
         Object(pos_, colliderRect, tex), laserTimer(2.1f) {
             laserActive = true;
         }
-        void update(const SDLState &state, GameState &gs, Resources &res, float deltaTime);
+        void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
 };

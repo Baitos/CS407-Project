@@ -1,6 +1,6 @@
 #include "../headers/collision.h"
 
-void collisionResponse(const SDLState &state, GameState &gs, Resources &res,
+void collisionResponse(const SDLState &state, GameData &gd, Resources &res,
  	const SDL_FRect &rectA, const SDL_FRect &rectB, const glm::vec2 &overlap,
  	GameObject &a, GameObject &b, float deltaTime)
  {
@@ -185,7 +185,7 @@ bool intersectAABB(const SDL_FRect &a, const SDL_FRect &b, glm::vec2 &overlap)
 	return false;
 }
 
-void checkCollision(const SDLState &state, GameState &gs, Resources &res,
+void checkCollision(const SDLState &state, GameData &gd, Resources &res,
 	GameObject &a, GameObject &b, float deltaTime)
 {
 	/*SDL_FRect rectA{
@@ -205,6 +205,6 @@ void checkCollision(const SDLState &state, GameState &gs, Resources &res,
 	if (intersectAABB(rectA, rectB, resolution))
 	{
 		// found intersection, respond accordingly
-		collisionResponse(state, gs, res, rectA, rectB, resolution, a, b, deltaTime);
+		collisionResponse(state, gd, res, rectA, rectB, resolution, a, b, deltaTime);
 	}*/
 }

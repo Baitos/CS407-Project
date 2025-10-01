@@ -6,7 +6,7 @@
 #include "object.h"
 
 struct SDLState;
-struct GameState;
+struct GameData;
 struct Resources;
 class PlayerState;
 
@@ -19,7 +19,7 @@ class Player : public AnimatedObject { // player
 
         virtual void handleInput(SDL_KeyboardEvent& key);
         virtual void update();
-        //void draw(const SDLState &state, GameState &gs, float width, float height);
+        //void draw(const SDLState &state, GameData &gs, float width, float height);
         
         Player(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex, std::vector<Animation> anims, int curAnim, float maxSpeedX_) :
         AnimatedObject(pos_, colliderRect, tex) {
