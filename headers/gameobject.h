@@ -1,13 +1,14 @@
 #pragma once
 
 #include <vector>
-#include <SDL3/SDL.h>
 #include "../ext/glm/glm.hpp"
 #include "../headers/animation.h"
+#include <SDL3/SDL.h>
 
-enum class PlayerState {
+/*enum class PlayerState {
     idle, moving, sprinting, jumping, dead, falling, jumpLaunch, roll
-};
+};*/
+
 enum class BulletState {
     moving, colliding, inactive
 };
@@ -32,12 +33,11 @@ struct ObstacleData {
     }
 };
 
-struct PlayerData {
+/*struct PlayerData {
     PlayerState state;
     Timer weaponTimer;
     Timer deathTimer;
     Timer sprintTimer; // time 
-    //Timer sprintLeewayTimer;
     int healthPoints;
     float maxWalkX; // walking
     float maxRunX; // running 
@@ -51,7 +51,8 @@ struct PlayerData {
         fastfalling = false;
         canDoubleJump = true;
     }
-};
+};*/
+
 struct LevelData {
     LevelState state;
     bool isEntrance;
@@ -78,7 +79,7 @@ struct BulletData {
 };
 
 union ObjectData {
-    PlayerData player;
+    //PlayerData player;
     LevelData level;
     EnemyData enemy;
     BulletData bullet;
