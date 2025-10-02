@@ -1,10 +1,11 @@
-#include <stdio.h>
+/*#include <stdio.h>
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
 #include <vector>
 #include <string>
 #include <array>
 
+#include "../headers/*.h"
 #include "../headers/createTiles.h"
 #include "../headers/draw.h"
 #include "../headers/update.h"
@@ -61,4 +62,4 @@ GameState * changeState(GameState * currState){
     newState->prevState = currState;
 
     return newState;
-}
+}*/

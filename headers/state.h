@@ -5,6 +5,14 @@
 #include <string>
 #include <array>
 
+#include "../headers/update.h"
+#include "../headers/collision.h"
+#include "../headers/gameData.h"
+#include "../headers/initState.h"
+#include "../headers/helper.h"
+#include "../headers/globals.h"
+#include "../headers/resources.h"
+
 enum gameStates {
     TITLE,
     SETTINGS,
@@ -23,10 +31,10 @@ class GameState{
         int nextStateVal;
         GameState * prevState;
         //GameState * nextState; //May not need
-        void (*input)(const SDLState &state, GameData &gd, Resources &res, GameObject &obj,
+        void (*input)(const SDLState &state, GameData &gd, Resources &res,
                     SDL_KeyboardEvent key, bool keyDown, float deltaTime);
-        void (*update)(const SDLState &state, GameData &gd, Resources &res, GameObject &obj, float deltaTime);
-        void (*render)(const SDLState &state, GameData &gd, GameObject &obj, float width, float height, float deltaTime);
+        void (*update)();
+        void (*render)();
         // void (*init)();
 
 };
@@ -66,9 +74,9 @@ class LevelState : public GameState{
 
 /*class SpaceshipState : public LevelState {
      void (*createTiles)();
-};*/
+};
 
-/* Add a copy for each additional stage
+Add a copy for each additional stage
 class LevelX : public LevelState {
      void (*createTiles)();
 };
