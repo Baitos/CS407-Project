@@ -8,6 +8,18 @@
 
 using namespace std;
 
+void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
+    // update portals
+        for (Portal &portal : gd.portals_) {
+            portal.update(state, gd, res, deltaTime);
+        }
+
+        // update lasers
+        for (Laser &laser : gd.lasers_) {
+            laser.update(state, gd, res, deltaTime);
+        }
+}
+
 // float updatePlayer(const SDLState &state, GameData &gd, Resources &res, GameObject &obj, float deltaTime, float currentDirection) {
 //     if (obj.data.player.state != PlayerState::dead) {
 //         if (state.keys[SDL_SCANCODE_A]) {
@@ -520,4 +532,39 @@ void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
     //     }
     //     //printf("velX = %f, velY = %f\n", obj.vel.x, obj.vel.y);
     // }
+}
+
+void levelInputs(SDLState &state, GameData &gd, Resources &res, float deltaTime){
+    SDL_Event event { 0 };
+        while (SDL_PollEvent(&event)) {
+            switch (event.type) {
+                case SDL_EVENT_QUIT:
+                {
+                    running = false;
+                    break;
+                }
+                case SDL_EVENT_WINDOW_RESIZED: 
+                {
+                    state.width = event.window.data1;
+                    state.height = event.window.data2;
+                    //printf("Width = %d, Height = %d", state.width, state.height);
+                    break;
+                }
+                case SDL_EVENT_KEY_DOWN:
+                {
+                    handleKeyInput(state, gd, res, event.key, true, deltaTime);
+                    break;
+                }
+                case SDL_EVENT_KEY_UP:
+                {
+                    handleKeyInput(state, gd, res, event.key, false, deltaTime);
+                    break;
+                }
+                case SDL_EVENT_MOUSE_BUTTON_DOWN:
+                {
+                    //handleClick(state, gd, res, gd.player(), deltaTime);
+                    break;
+                }
+            }
+        }
 }

@@ -1,10 +1,8 @@
-// #include "../headers/draw.h"
-// #include "../headers/initState.h"
-// #include "../headers/gameData.h"
-// #include "../headers/resources.h"
-// #include "../headers/player.h"
-// #include "../headers/globals.h"
-// #include "../headers/helper.h"
+
+
+#include "../headers/draw.h"
+#include "../headers/helper.h"
+#include "../headers/state.h"
 
 // void drawObject(const SDLState &state, GameState &gs, GameObject &obj, float width, float height, float deltaTime) {
 //         if (!isOnscreen(state, gs, obj)) {
@@ -91,3 +89,37 @@
 //     };
 //     SDL_RenderTextureRotated(state.renderer, level.texture, &src, &dst, 0, nullptr, SDL_FLIP_NONE);
 // }
+void drawLevel(const SDLState &state, GameData &gd, Resources res, float deltaTime){
+    // used for camera system
+    gd.mapViewport.x = (gd.player.pos.x + TILE_SIZE / 2) - (gd.mapViewport.w / 2); 
+    gd.mapViewport.y = (gd.player.pos.y + TILE_SIZE / 2) - (gd.mapViewport.h / 2); 
+    //draw bg
+    SDL_SetRenderDrawColor(state.renderer, 64, 51, 83, 255);
+    SDL_RenderClear(state.renderer);
+
+    // draw bg tiles
+    for (BackgroundObject &bg : gd.bgTiles_) {
+        bg.draw(state, gd, static_cast<float>(bg.texture->w), static_cast<float>(bg.texture->h)); 
+    }
+
+    // draw level tiles
+    for(Level &level : gd.mapTiles_) {
+        level.draw(state, gd, TILE_SIZE, TILE_SIZE);
+    }
+
+    // draw portal tiles
+    for(Portal &portal : gd.portals_) {
+        portal.draw(state, gd, TILE_SIZE, TILE_SIZE * 2);
+    }
+
+    // draw player
+    gd.player.draw(state, gd, TILE_SIZE, TILE_SIZE); // draw player class
+
+    for(Laser &laser : gd.lasers_) {
+        if (laser.laserActive) {
+            laser.draw(state, gd, TILE_SIZE, TILE_SIZE);
+        }
+    }
+
+    handleCrosshair(state, gd, res, deltaTime);
+}

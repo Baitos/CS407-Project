@@ -11,11 +11,20 @@ struct GameData;
 struct Resources;
 class PlayerState;
 
+enum ObjectType{
+    ANIMATED,
+    LEVEL,
+    BACKGROUND,
+    PORTAL,
+    LASER
+};
+
 class Object {   // generic obj type    
     public:
         glm::vec2 pos, vel, acc;
         SDL_Texture *texture;
         SDL_FRect collider; // rectangle for collision
+        int type;
         Object() {           
             pos = vel = acc = glm::vec2(0);
         }
@@ -27,7 +36,8 @@ class Object {   // generic obj type
         }
         void draw(const SDLState &state, GameData &gd, float width, float height);
         void drawDebug(const SDLState &state, GameData &gd, float width, float height);
-};
+        virtual ~Object() {}
+    };
 
 class AnimatedObject : public Object { // obj with anims
     public:
@@ -41,6 +51,7 @@ class AnimatedObject : public Object { // obj with anims
             curAnimation = -1;
             dir = 1;
             flip = 1.0f;
+            type = ANIMATED;
         }
         AnimatedObject(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : // generic obj constructor
         Object(pos_, colliderRect, tex) {
@@ -48,6 +59,7 @@ class AnimatedObject : public Object { // obj with anims
             curAnimation = -1;
             dir = 1;
             flip = 1.0f;
+            type = ANIMATED;
         }
 
         void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
@@ -61,18 +73,18 @@ class Level : public Object { // the level type!
         }
         Level(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : // generic obj constructor
         Object(pos_, colliderRect, tex) {
-
+            type = LEVEL;
         }
 };
 
 class BackgroundObject : public Object { // bg tiles
     public:
         BackgroundObject() : Object() { // default 
-
+            type = BACKGROUND;
         }
         BackgroundObject(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : // generic obj constructor
         Object(pos_, colliderRect, tex) {
-
+            type = BACKGROUND;
         }
         void draw(const SDLState &state, GameData &gd, float width, float height);
 };
@@ -85,12 +97,14 @@ class Portal : public AnimatedObject { // portals
         _id = std::floor(portalID);
         isEntrance = false;
         portalID += 0.5;
+        type = PORTAL;
     }  
     Portal(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : 
     AnimatedObject(pos_, colliderRect, tex) { // generic obj constructor
         _id = std::floor(portalID);
         isEntrance = false;
         portalID += 0.5;
+        type = PORTAL;
     }
 };
 
@@ -101,10 +115,12 @@ class Laser : public Object { // obstacle
         Laser() : Object(), laserTimer(2.1f)
         {
             laserActive = true; 
+            type = LASER;
         }
         Laser(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) :
         Object(pos_, colliderRect, tex), laserTimer(2.1f) {
             laserActive = true;
+            type = LASER;
         }
         void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
 };

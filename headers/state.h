@@ -1,3 +1,4 @@
+#pragma once
 #include <stdio.h>
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
@@ -31,11 +32,11 @@ class GameState{
         int nextStateVal;
         GameState * prevState;
         //GameState * nextState; //May not need
-        void (*input)(const SDLState &state, GameData &gd, Resources &res,
-                    SDL_KeyboardEvent key, bool keyDown, float deltaTime);
-        void (*update)();
-        void (*render)();
-        // void (*init)();
+        void (*input)(SDLState &state, GameData &gd, Resources &res, float deltaTime);
+        void (*update)(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+        void (*render)(const SDLState &state, GameData &gd, Resources res, float deltaTime);
+        void (*init)(const SDLState &state, GameData &gd, const Resources &res);
+
 
 };
 
@@ -60,16 +61,8 @@ class CharSelectState : public GameState{
 };
 
 class LevelState : public GameState{
-    public:
-        void (*checkCollision)(const SDLState &state, GameData &gd, Resources &res,
-	GameObject &a, GameObject &b, float deltaTime);
-        void (*collisionResponse)(const SDLState &state, GameData &gd, Resources &res,
-	const SDL_FRect &rectA, const SDL_FRect &rectB, const glm::vec2 &overlap,
-	GameObject &a, GameObject &b, float deltaTime);
-        bool (*aabbIntersection)(const SDL_FRect &a, const SDL_FRect &b, glm::vec2 &overlap); //Ask ryan what aabb means
-        bool (*isOnScreen)(const SDLState &state, GameData &gd, GameObject &obj);
-        float (*changeVelocity)(float vel, GameObject &obj);
-        void (*init)(const SDLState &state, GameData &gd, const Resources &res);
+    //public:
+        //void (*init)(const SDLState &state, GameData &gd, const Resources &res);
 };
 
 /*class SpaceshipState : public LevelState {
