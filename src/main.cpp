@@ -26,8 +26,8 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     SDLState state;
     state.width = 1600;
     state.height = 900;
-    state.logW = 640;
-    state.logH = 480;
+    state.logW = 800;
+    state.logH = 450;
 
     if (!initialize(state)) {
         return 1;
