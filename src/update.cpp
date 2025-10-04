@@ -5,8 +5,11 @@
 #include "../headers/helper.h"
 #include "../headers/globals.h"
 #include "../headers/resources.h"
+#include "../headers/state.h"
 
 using namespace std;
+
+extern GameState * currState;
 
 void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
     // update portals
@@ -421,6 +424,11 @@ void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
     if (key.scancode == SDL_SCANCODE_S && key.down) {
         gd.player.pos.y += 2 * TILE_SIZE;
     }
+    if(key.scancode == SDL_SCANCODE_F2){
+        printf("F2 key clicked");
+        currState = changeState(currState);
+        currState->init(state,gd, res);
+    }
 
 
     // if (obj.type == ObjectType::player) {
@@ -553,6 +561,7 @@ void levelInputs(SDLState &state, GameData &gd, Resources &res, float deltaTime)
                 case SDL_EVENT_KEY_DOWN:
                 {
                     handleKeyInput(state, gd, res, event.key, true, deltaTime);
+                    
                     break;
                 }
                 case SDL_EVENT_KEY_UP:
@@ -564,7 +573,7 @@ void levelInputs(SDLState &state, GameData &gd, Resources &res, float deltaTime)
                 {
                     //handleClick(state, gd, res, gd.player(), deltaTime);
                     break;
-                }
+                } 
             }
         }
 }

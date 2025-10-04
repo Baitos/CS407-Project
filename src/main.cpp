@@ -19,6 +19,7 @@
 #include "../headers/draw.h"
 #include "../headers/state.h"
 
+GameState * currState;
 using namespace std;
 
 int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; include argv/argc
@@ -35,8 +36,9 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     Resources res;
     res.load(state);
     
-    GameState * currState = new LevelState();
-    currState->init = createTiles;
+    currState = new LevelState();
+    currState->nextStateVal = SPACESHIP;
+    currState->init = createTilesTemp;
     currState->update = levelUpdate;
     currState->render = drawLevel;
     currState->input = levelInputs;
@@ -75,6 +77,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         //swap buffers and present
         SDL_RenderPresent(state.renderer);
         prevTime = nowTime;
+        
     }
 
     res.unload();

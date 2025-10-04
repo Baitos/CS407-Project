@@ -5,3 +5,4 @@ struct GameData;
 struct Resources;
 
 void createTiles(const SDLState &state, GameData &gd, const Resources &res);
+void createTilesTemp(const SDLState &state, GameData &gd, const Resources &res);

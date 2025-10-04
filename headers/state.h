@@ -14,6 +14,8 @@
 #include "../headers/globals.h"
 #include "../headers/resources.h"
 
+
+
 enum gameStates {
     TITLE,
     SETTINGS,
@@ -83,3 +85,5 @@ class CreditsState : public GameState {
 
 };
 
+
+GameState * changeState(GameState * tempState);
