@@ -89,6 +89,8 @@
 //     };
 //     SDL_RenderTextureRotated(state.renderer, level.texture, &src, &dst, 0, nullptr, SDL_FLIP_NONE);
 // }
+
+//Draw Function for level Spaceship
 void drawLevel(const SDLState &state, GameData &gd, Resources res, float deltaTime){
     // used for camera system
     gd.mapViewport.x = (gd.player.pos.x + TILE_SIZE / 2) - (gd.mapViewport.w / 2); 

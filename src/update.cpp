@@ -11,6 +11,7 @@ using namespace std;
 
 extern GameState * currState;
 
+//Update Function for level Spaceship
 void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
     // update portals
         for (Portal &portal : gd.portals_) {
@@ -542,6 +543,7 @@ void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
     // }
 }
 
+//Input Function for level Spaceship
 void levelInputs(SDLState &state, GameData &gd, Resources &res, float deltaTime){
     SDL_Event event { 0 };
         while (SDL_PollEvent(&event)) {

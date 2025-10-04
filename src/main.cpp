@@ -36,9 +36,12 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     Resources res;
     res.load(state);
     
+
+    //Initial Game State
+    //CHANGE if testing a different screen and you want it up on start
     currState = new LevelState();
     currState->nextStateVal = SPACESHIP;
-    currState->init = createTilesTemp;
+    currState->init = createTiles;
     currState->update = levelUpdate;
     currState->render = drawLevel;
     currState->input = levelInputs;
@@ -64,9 +67,12 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
             frames = 0;
         }
         float deltaTime = (nowTime - prevTime) / 1000.0f; // convert to seconds from ms
+
+        //Calls functions related to the current GameState
         currState->input(state, gd, res, deltaTime);
         currState->update(state, gd, res, deltaTime);
         currState->render(state, gd, res, deltaTime);
+
         if (gd.debugMode) {
         // debug info
             SDL_SetRenderDrawColor(state.renderer, 255, 255, 255, 255);
