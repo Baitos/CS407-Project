@@ -13,6 +13,7 @@ struct GameData {
     std::vector<Laser> lasers_;
     std::vector<Portal> portals_;
     std::vector<charIconObject> charIcons_;
+    std::vector<AnimatedObject> previews_;
     glm::vec2 ExitPortal, 
               EntrancePortal, 
               mouseCoords, 

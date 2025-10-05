@@ -366,10 +366,9 @@ void initCharSelect(const SDLState &state, GameData &gd, const Resources &res) {
         c.curAnimation = 0;
         c.spriteFrame = 7;
         gd.charIcons_.push_back(c);
-        //Put player options on right side
-
-        //Sword
         
+        //Put player options on right side
+        //Sword
         c.pos = glm::vec2(658,156);
         gd.charIcons_.push_back(c);
         //Jetpack
@@ -381,15 +380,21 @@ void initCharSelect(const SDLState &state, GameData &gd, const Resources &res) {
         c.spriteFrame = 1;
         gd.charIcons_.push_back(c);
 
-        //Character Select Background
-        BackgroundObject b(pos, collider, res.texCharIcons);
-        b.pos = glm::vec2(0,0);
-        b.texture = res.texCharSelectBackground;
-        b.collider.w = 800;
-        b.collider.h = 450;
-        gd.bgTiles_.push_back(b);
+        // Background
+        BackgroundObject bg(pos, collider, res.texCharSelectBackground);
+        bg.pos = glm::vec2(0,0);
+        bg.collider.w = res.texCharSelectBackground->w;
+        bg.collider.h = res.texCharSelectBackground->h;
+        gd.bgTiles_.push_back(bg);
 
-
+        
+        // Preview
+        AnimatedObject preview(pos, collider, res.texSword);
+        preview.pos = glm::vec2(530,200);
+        preview.animations = res.playerAnims;
+        preview.curAnimation = res.ANIM_PLAYER_RUN;
+        gd.previews_.push_back(preview);
+        
     //loadMap(foreground);
     //assert(gd.playerIndex != -1);
 }

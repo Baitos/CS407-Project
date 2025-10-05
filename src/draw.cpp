@@ -139,10 +139,15 @@ void drawCharSelect(const SDLState &state, GameData &gd, Resources res, float de
         bg.draw(state, gd, static_cast<float>(bg.texture->w), static_cast<float>(bg.texture->h)); 
     }
 
+    for (AnimatedObject &p : gd.previews_){
+        p.draw(state, gd, 96, 96); 
+    }
+
     //Draw charIcon tiles
     for (charIconObject &ci : gd.charIcons_){
         ci.draw(state, gd, 34, 36); 
     }
+
     
 
     handleMousePointer(state, gd, res, deltaTime);

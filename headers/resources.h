@@ -43,7 +43,7 @@ struct Resources {
                 *texLPortal, *texRPortal, *texLaser, 
                 *texFloor, *texTRCorner, *texRWall, *texBRCorner, *texLWall, *texBLCorner, *texTLCorner, *texCeiling, *texITLCorner, *texITRCorner, *texIBRCorner, *texIBLCorner, *texPlatform, 
                 *texFan, *texPanelOne, *texPanelTwo, *texPanelThree, *texVentOne, *texVentTwo, *texBackWall, 
-                *texCharSelectBackground, *texCursor, *texCharIcons;
+                *texCharSelectBackground, *texCursor, *texCharIcons, *texSword, *texShotgun, *texJetpack;
     SDL_Texture *loadTexture(SDL_Renderer *renderer, const std::string &filepath);
     void load(SDLState &state);
     void unload();

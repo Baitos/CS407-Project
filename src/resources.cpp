@@ -127,6 +127,9 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     texCharSelectBackground = loadTexture(state.renderer, "data/CharSelect/background.png");
     texCursor = loadTexture(state.renderer, "data/CharSelect/cursor.png");
     texCharIcons = loadTexture(state.renderer, "data/CharSelect/charIcons.png");
+    texSword = loadTexture(state.renderer, "data/CharSelect/running_sword_large.png");
+    texShotgun = loadTexture(state.renderer, "data/CharSelect/running_shotgun_large.png");
+    texJetpack = loadTexture(state.renderer, "data/CharSelect/running_jetpack_large.png");
 }
 
 void Resources::unload() {

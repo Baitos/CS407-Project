@@ -25,7 +25,10 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
 }
 
 void charSelectUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
-        
+        for (AnimatedObject &preview : gd.previews_) {
+            preview.update(state, gd, res, deltaTime);
+        }
+
 }
 
 // float updatePlayer(const SDLState &state, GameData &gd, Resources &res, GameObject &obj, float deltaTime, float currentDirection) {
@@ -581,6 +584,10 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
     
     if ((gd.mouseCoords.x >= 658 && gd.mouseCoords.x <= 658+34) && (gd.mouseCoords.y >= 156 && gd.mouseCoords.y <= 156+36)){
         //Set Icons and Player to Sword
+        gd.previews_[0].texture = res.texSword;
+        gd.previews_[0].pos = glm::vec2(530,200);
+        gd.previews_[0].draw(state, gd, 96,96);
+        gd.bgTiles_[0].draw(state, gd, 800,450);
         ((CharSelectState*) currState)->character = SWORD;
         for (charIconObject &ci : gd.charIcons_){
             ci.spriteFrame = ci.spriteFrame % 4;
@@ -591,6 +598,10 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
         }
     } else if ((gd.mouseCoords.x >= 658 && gd.mouseCoords.x <= 658+34) && (gd.mouseCoords.y >= 220 && gd.mouseCoords.y <= 220+36)){
         //Set Icons and Player to Jetpack
+        gd.previews_[0].texture = res.texJetpack;
+        gd.previews_[0].pos = glm::vec2(510,200);
+        gd.previews_[0].draw(state, gd, 96,96);
+        gd.bgTiles_[0].draw(state, gd, 800,450);
         ((CharSelectState*) currState)->character = JETPACK;
         for (charIconObject &ci : gd.charIcons_){
             ci.spriteFrame = ci.spriteFrame % 4;
@@ -601,6 +612,10 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
         }
     } else if ((gd.mouseCoords.x >= 658 && gd.mouseCoords.x <= 658+34) && (gd.mouseCoords.y >= 284 && gd.mouseCoords.y <= 284+36)){
         //Set Icons and Player to Shotgun
+        gd.previews_[0].texture = res.texShotgun;
+        gd.previews_[0].pos = glm::vec2(520,200);
+        gd.previews_[0].draw(state, gd, 96,96);
+        gd.bgTiles_[0].draw(state, gd, 800,450);
         ((CharSelectState*) currState)->character = SHOTGUN;
         for (charIconObject &ci : gd.charIcons_){
             ci.spriteFrame = ci.spriteFrame % 4;
