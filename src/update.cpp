@@ -24,6 +24,10 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
         }
 }
 
+void charSelectUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
+        
+}
+
 // float updatePlayer(const SDLState &state, GameData &gd, Resources &res, GameObject &obj, float deltaTime, float currentDirection) {
 //     if (obj.data.player.state != PlayerState::dead) {
 //         if (state.keys[SDL_SCANCODE_A]) {
@@ -394,6 +398,23 @@ void handleCrosshair(const SDLState &state, GameData &gd, Resources &res, float 
     SDL_RenderTexture(state.renderer, res.texCrosshair, nullptr, &dst); // src is for sprite stripping, dest is for where sprite should be drawn*/ 
 }
 
+void handleMousePointer(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
+    SDL_GetMouseState(&gd.mouseCoords.x, &gd.mouseCoords.y);
+    float CROSSHAIR_SIZE = 15;
+    float OFFSET = 7;
+    float yRatio = (float)state.logH / state.height;
+    float xRatio = (float)state.logW / state.width;
+    gd.mouseCoords.x = gd.mouseCoords.x * xRatio;
+    gd.mouseCoords.y = gd.mouseCoords.y * yRatio;
+    SDL_FRect dst { 
+        .x = gd.mouseCoords.x - OFFSET,
+        .y = gd.mouseCoords.y - OFFSET,
+        .w = 32,
+        .h = 32
+    };
+    SDL_RenderTexture(state.renderer, res.texCursor, nullptr, &dst); // src is for sprite stripping, dest is for where sprite should be drawn*/ 
+}
+
 void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
                     SDL_KeyboardEvent key, bool keyDown, float deltaTime) {
 
@@ -427,10 +448,9 @@ void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
     }
     if(key.scancode == SDL_SCANCODE_F2){
         printf("F2 key clicked");
-        currState = changeState(currState);
+        currState = changeState(currState, gd);
         currState->init(state,gd, res);
     }
-
 
     // if (obj.type == ObjectType::player) {
     //     const float JUMP_FORCE = -450.f;
@@ -543,6 +563,67 @@ void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
     // }
 }
 
+void handleCharSelectKeyInput(const SDLState &state, GameData &gd, Resources &res,
+                    SDL_KeyboardEvent key, bool keyDown, float deltaTime) {
+
+    if (key.scancode == SDL_SCANCODE_F12 && key.down && !key.repeat) { // debug
+            gd.debugMode = !gd.debugMode;
+    }
+    if (key.scancode == SDL_SCANCODE_F1) {
+        running = false;
+    }
+    if(key.scancode == SDL_SCANCODE_F2){
+        currState = changeState(currState, gd);
+        currState->init(state,gd, res);
+    }
+}
+void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
+    
+    if ((gd.mouseCoords.x >= 658 && gd.mouseCoords.x <= 658+34) && (gd.mouseCoords.y >= 156 && gd.mouseCoords.y <= 156+36)){
+        //Set Icons and Player to Sword
+        ((CharSelectState*) currState)->character = SWORD;
+        for (charIconObject &ci : gd.charIcons_){
+            ci.spriteFrame = ci.spriteFrame % 4;
+            if (ci.spriteFrame == 3){
+                ci.spriteFrame +=4;
+                gd.charIcons_[0].spriteFrame = ci.spriteFrame;
+            }
+        }
+    } else if ((gd.mouseCoords.x >= 658 && gd.mouseCoords.x <= 658+34) && (gd.mouseCoords.y >= 220 && gd.mouseCoords.y <= 220+36)){
+        //Set Icons and Player to Jetpack
+        ((CharSelectState*) currState)->character = JETPACK;
+        for (charIconObject &ci : gd.charIcons_){
+            ci.spriteFrame = ci.spriteFrame % 4;
+            if (ci.spriteFrame == 2){
+                ci.spriteFrame +=4;
+                gd.charIcons_[0].spriteFrame = ci.spriteFrame;
+            }
+        }
+    } else if ((gd.mouseCoords.x >= 658 && gd.mouseCoords.x <= 658+34) && (gd.mouseCoords.y >= 284 && gd.mouseCoords.y <= 284+36)){
+        //Set Icons and Player to Shotgun
+        ((CharSelectState*) currState)->character = SHOTGUN;
+        for (charIconObject &ci : gd.charIcons_){
+            ci.spriteFrame = ci.spriteFrame % 4;
+            if (ci.spriteFrame == 1){
+                ci.spriteFrame +=4;
+                gd.charIcons_[0].spriteFrame = ci.spriteFrame;
+            }
+        }
+    } else if ((gd.mouseCoords.x >= 35 && gd.mouseCoords.x <= 218) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)){
+        //Enter Stage
+        //TO DO - ONLY DO WHEN PLAYERS AGREE TO READY UP
+        //TODO Change Character type when they ready up
+        currState = changeState(currState, gd);
+        currState->init(state,gd, res);
+    } else if ((gd.mouseCoords.x >= 583 && gd.mouseCoords.x <= 766) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)){
+        //Exit to Title
+        currState->nextStateVal = TITLE;
+        currState = changeState(currState, gd);
+        currState->init(state,gd, res);
+    }
+    
+}
+
 //Input Function for level Spaceship
 void levelInputs(SDLState &state, GameData &gd, Resources &res, float deltaTime){
     SDL_Event event { 0 };
@@ -575,6 +656,42 @@ void levelInputs(SDLState &state, GameData &gd, Resources &res, float deltaTime)
                 {
                     //handleClick(state, gd, res, gd.player(), deltaTime);
                     break;
+                } 
+            }
+        }
+}
+void charSelectInputs(SDLState &state, GameData &gd, Resources &res, float deltaTime){
+    SDL_Event event { 0 };
+        while (SDL_PollEvent(&event)) {
+            switch (event.type) {
+                case SDL_EVENT_QUIT:
+                {
+                    running = false;
+                    break;
+                }
+                case SDL_EVENT_WINDOW_RESIZED: 
+                {
+                    state.width = event.window.data1;
+                    state.height = event.window.data2;
+                    //printf("Width = %d, Height = %d", state.width, state.height);
+                    break;
+                }
+                case SDL_EVENT_KEY_DOWN:
+                {
+                    handleCharSelectKeyInput(state, gd, res, event.key, true, deltaTime);
+                    
+                    break;
+                }
+                case SDL_EVENT_KEY_UP:
+                {
+                    handleCharSelectKeyInput(state, gd, res, event.key, false, deltaTime);
+                    break;
+                }
+                case SDL_EVENT_MOUSE_BUTTON_DOWN:
+                {
+                    handleCharSelectClick(state, gd, res, deltaTime);
+                    break;
+                    
                 } 
             }
         }

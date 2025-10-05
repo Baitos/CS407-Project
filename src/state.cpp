@@ -11,29 +11,30 @@
 //Input and Update functions should be located in update.cpp
 //Render functions should be located in draw.cpp
 
-GameState * changeState(GameState * tempState){
+GameState * changeState(GameState * tempState, GameData &gd){
     GameState * newState;
     //Initialize nextState
     switch (tempState->nextStateVal){
         case TITLE:
         {
-
+            printf("TITLE");
+            break;
         }
         case SETTINGS:
         {
-
+            break;
         }
         case HOST:
         {
-
+            break;
         }
         case JOIN:
         {
-
+            break;
         }
         case CHAR_SELECT:
         {
-            
+            break;           
         }
         case SPACESHIP:
         {
@@ -43,15 +44,17 @@ GameState * changeState(GameState * tempState){
             newState->update = levelUpdate;
             newState->render = drawLevel;
             newState->init = createTiles;    
+            ((LevelState *) tempState)->unloadLevelState(gd);
             break;
         }
         case RESULTS:
         {
-
+            break;
         }
     }
     newState->prevStateVal = tempState->currStateVal;
     newState->currStateVal = tempState->nextStateVal;
     newState->prevState = tempState;
+    newState->nextStateVal = SPACESHIP;
     return newState;
 }

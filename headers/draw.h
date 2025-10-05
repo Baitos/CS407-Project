@@ -14,3 +14,4 @@ void drawObject(const SDLState &state, GameData &gd, GameObject &obj, float widt
 void drawPlayer(const SDLState &state, GameData &gd, Player &player, float width, float height, float deltaTime);
 void drawLevel(const SDLState &state, GameData &gd, Level &level, float width, float height, float deltaTime);*/
 void drawLevel(const SDLState &state, GameData &gd, Resources res, float deltaTime);
+void drawCharSelect(const SDLState &state, GameData &gd, Resources res, float deltaTime);

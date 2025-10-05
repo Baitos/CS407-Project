@@ -28,16 +28,22 @@ struct Resources {
     std::vector<Animation> enemyAnims;
     const int PORTAL_IDLE = 0;
     std::vector<Animation> portalAnims;
+    const int ICONS = 0;
+    std::vector<Animation> charIconAnims;
+
+    //FOR NOW.. change to 0 for shotgun, 1 for sword, 2 for jetpack
+    int character;
+    
 
     std::vector<SDL_Texture *> textures;
     SDL_Texture *texCrosshair, *texIdle, *texRun, *texJump, *texLaunch, *texSlide, *texShoot, *texDie, *texShootJump, *texRoll,
                 *texGrass, *texStone, *texBrick, *texFence, *texBush, 
                 *texBullet, *texBulletHit, *texSpiny, *texSpinyDead,
                 *texBg1, *texBg2, *texBg3, *texBg4, *texOnStage, *texOffStage, *texBg5, 
-                *texLPortal, *texRPortal, *texLaser, *texFloor, *texTRCorner, *texRWall, *texBRCorner,
-                *texLWall, *texBLCorner, *texTLCorner, *texCeiling, *texITLCorner, *texITRCorner,
-                *texIBRCorner, *texIBLCorner, *texPlatform, *texFan, *texPanelOne, *texPanelTwo, *texPanelThree,
-                *texVentOne, *texVentTwo, *texBackWall;
+                *texLPortal, *texRPortal, *texLaser, 
+                *texFloor, *texTRCorner, *texRWall, *texBRCorner, *texLWall, *texBLCorner, *texTLCorner, *texCeiling, *texITLCorner, *texITRCorner, *texIBRCorner, *texIBLCorner, *texPlatform, 
+                *texFan, *texPanelOne, *texPanelTwo, *texPanelThree, *texVentOne, *texVentTwo, *texBackWall, 
+                *texCharSelectBackground, *texCursor, *texCharIcons;
     SDL_Texture *loadTexture(SDL_Renderer *renderer, const std::string &filepath);
     void load(SDLState &state);
     void unload();

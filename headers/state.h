@@ -26,6 +26,11 @@ enum gameStates {
     RESULTS,
     CREDITS
 };
+enum characterType {
+    SHOTGUN,
+    SWORD,
+    JETPACK
+};
 
 class GameState{
     public:
@@ -59,12 +64,19 @@ class JoinState : public GameState {
 };
 
 class CharSelectState : public GameState{
-
+    public:
+        int character = SWORD;
 };
 
 class LevelState : public GameState{
-    //public:
-        //void (*init)(const SDLState &state, GameData &gd, const Resources &res);
+    public:
+        void unloadLevelState(GameData &gd){
+            gd.mapTiles_.clear();
+            gd.bgTiles_.clear();
+            gd.lasers_.clear();
+            gd.portals_.clear();
+            //TO DO: CALL CLEAR ON PLAYERS
+        }
 };
 
 /*class SpaceshipState : public LevelState {
@@ -86,4 +98,4 @@ class CreditsState : public GameState {
 };
 
 
-GameState * changeState(GameState * tempState);
+GameState * changeState(GameState * tempState, GameData &gd);
