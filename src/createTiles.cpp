@@ -8,6 +8,7 @@
 const int MAP_ROWS = 60;
 const int MAP_COLS = 280;
 
+//Init function for level spaceship
 void createTiles(const SDLState &state, GameData &gd, const Resources &res) { // 280 x 60
     /*
         1 - Stone
@@ -343,6 +344,76 @@ void createTiles(const SDLState &state, GameData &gd, const Resources &res) { //
                 }
             }
         }
+    };
+    loadMap(map);
+    loadMap(background);
+    //loadMap(foreground);
+    //assert(gd.playerIndex != -1);
+}
+
+void initCharSelect(const SDLState &state, GameData &gd, const Resources &res) { // 280 x 60
+    
+    short map[MAP_ROWS][MAP_COLS] = {
+        
+    };
+    short foreground[MAP_ROWS][MAP_COLS] = {
+        
+    };
+    short background[MAP_ROWS][MAP_COLS] = {
+
+    };
+    const auto loadMap = [&state, &gd, &res](short layer[MAP_ROWS][MAP_COLS])
+    {
+         
+        /*const auto createLevel = [&state](int r, int c, SDL_Texture *tex) {
+            Level l;
+            l.pos = glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r) * TILE_SIZE); // subtract r from map rows to not be backwards. drawn top to bottom and flush with resolution
+            l.texture = tex;
+            l.collider = {
+                .x = 0,
+                .y = 0,
+                .w = (float)TILE_SIZE,
+                .h = (float)TILE_SIZE
+            };
+            return l;
+        };*/
+        SDL_FRect collider = {
+            .x = 0,
+            .y = 0,
+            .w = (float)TILE_SIZE,
+            .h = (float)TILE_SIZE
+        };
+        
+        //Character Select Background
+        glm::vec2 pos = glm::vec2(0,0);
+        BackgroundObject b(pos, collider, res.texBg5);
+        gd.bgTiles_.push_back(b);
+        
+        
+        /*for (int r = 0; r < MAP_ROWS; r++) {
+            for (int c = 0; c < MAP_COLS; c++) {
+                glm::vec2 pos = glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r) * TILE_SIZE);
+                switch (layer[r][c]) {
+                    case 1: //Base Ground
+                    {
+                        break;
+                    }
+                    case 2: //Platform
+                    {
+                        Level l(pos, collider, res.texPlatform);
+                        //gd.layers[LAYER_IDX_LEVEL].push_back(o);
+                        gd.mapTiles_.push_back(l);
+                        break; 
+                    }
+                    case 7: //Background
+                    {
+                        BackgroundObject b(pos, collider, res.texBg5);
+                        gd.bgTiles_.push_back(b);
+                        break;
+                    }
+                }
+            }
+        }*/
     };
     loadMap(map);
     loadMap(background);
