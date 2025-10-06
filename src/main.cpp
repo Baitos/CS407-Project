@@ -86,6 +86,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         
     }
 
+    delete currState;
     res.unload();
     cleanup(state);
     return 0;

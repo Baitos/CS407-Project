@@ -44,7 +44,6 @@ GameState * changeState(GameState * tempState, GameData &gd){
             newState->update = levelUpdate;
             newState->render = drawLevel;
             newState->init = createTiles;    
-            ((LevelState *) tempState)->unloadLevelState(gd);
             break;
         }
         case RESULTS:
@@ -52,9 +51,12 @@ GameState * changeState(GameState * tempState, GameData &gd){
             break;
         }
     }
+    tempState->unloadGameState(gd);
     newState->prevStateVal = tempState->currStateVal;
     newState->currStateVal = tempState->nextStateVal;
     newState->prevState = tempState;
+
+    //To be removed when new screens are added
     newState->nextStateVal = SPACESHIP;
     return newState;
 }

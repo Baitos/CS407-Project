@@ -4,9 +4,12 @@
 #include "../headers/resources.h"
 #include "../headers/player.h"
 #include "../headers/globals.h"
+#include "../headers/state.h"
 
 const int MAP_ROWS = 60;
 const int MAP_COLS = 280;
+
+extern GameState *currState;
 
 //Init function for level spaceship
 void createTiles(const SDLState &state, GameData &gd, const Resources &res) { // 280 x 60
@@ -257,8 +260,19 @@ void createTiles(const SDLState &state, GameData &gd, const Resources &res) { //
                             .w = 28,
                             .h = 30 // more accurate at 31, bug caused where player stuck in jump state in small ceilingd
                         };
-                        Player player(pos, collider, res.texIdle, res.playerAnims, res.ANIM_PLAYER_IDLE, 250);  
-                        gd.player = player;
+                        
+                        
+                        printf("%d",((LevelState*) currState)->character);
+                        if(((LevelState*) currState)->character == SWORD){
+                                Player player(pos, collider, res.texIdleS, res.playerAnims, res.ANIM_PLAYER_IDLE, 250);
+                                gd.player = player;
+                        } else if(((LevelState*) currState)->character == SHOTGUN){
+                                Player player(pos, collider, res.texIdleG, res.playerAnims, res.ANIM_PLAYER_IDLE, 250);
+                                gd.player = player;
+                        } else {
+                                Player player(pos, collider, res.texIdleJ, res.playerAnimsJ, res.ANIM_PLAYER_IDLE, 250);
+                                gd.player = player;
+                        }
                         break; 
                     }
                     case 7: //Background
