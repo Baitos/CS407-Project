@@ -26,8 +26,8 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     SDLState state;
     state.width = 1600;
     state.height = 900;
-    state.logW = 640;
-    state.logH = 480;
+    state.logW = 800;
+    state.logH = 450;
 
     if (!initialize(state)) {
         return 1;
@@ -41,10 +41,10 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     //CHANGE if testing a different screen and you want it up on start
     currState = new LevelState();
     currState->nextStateVal = SPACESHIP;
-    currState->init = createTiles;
-    currState->update = levelUpdate;
-    currState->render = drawLevel;
-    currState->input = levelInputs;
+    currState->init = initCharSelect;
+    currState->update = charSelectUpdate;
+    currState->render = drawCharSelect;
+    currState->input = charSelectInputs;
 
     // setup game data
     GameData gd(state);

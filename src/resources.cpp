@@ -12,9 +12,6 @@ SDL_Texture* Resources::loadTexture(SDL_Renderer *renderer, const std::string &f
 }
 
 void Resources::load(SDLState &state) { // First variable controls how many frames there are, second is how long each frame lasts (in seconds)
-    //FOR NOW.. change to 0 for shotgun, 1 for sword, 2 for jetpack
-    int character = 2;
-    
     playerAnims.resize(10); // 
     playerAnims[ANIM_PLAYER_IDLE] = Animation(1, 1.6f);
     playerAnims[ANIM_PLAYER_WALK] = Animation(8, 1.0f);
@@ -35,6 +32,9 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     bulletAnims[ANIM_BULLET_HIT] = Animation(3, 0.5f);
     portalAnims.resize(2);
     portalAnims[PORTAL_IDLE] = Animation(3, 1.0f);
+    charIconAnims.resize(1);
+    charIconAnims[ICONS] = Animation(8, 0.0f);
+
 
     if (character == 0) {
         //load shotgun character animations
@@ -117,6 +117,14 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     texVentTwo = loadTexture(state.renderer, "data/spaceship/BackgroundTiles/VentTwo.png");
     texBackWall = loadTexture(state.renderer, "data/spaceship/BackgroundTiles/BackWall.png");
 
+    //Char Select Background
+    
+    texCharSelectBackground = loadTexture(state.renderer, "data/CharSelect/background.png");
+    texCursor = loadTexture(state.renderer, "data/CharSelect/cursor.png");
+    texCharIcons = loadTexture(state.renderer, "data/CharSelect/charIcons.png");
+    texSword = loadTexture(state.renderer, "data/CharSelect/running_sword_large.png");
+    texShotgun = loadTexture(state.renderer, "data/CharSelect/running_shotgun_large.png");
+    texJetpack = loadTexture(state.renderer, "data/CharSelect/running_jetpack_large.png");
 
     //Items
     texItemBox = loadTexture(state.renderer, "data/ItemSprites/item_box.png");

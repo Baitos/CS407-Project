@@ -11,7 +11,14 @@ float updateBullet(const SDLState &state, GameData &gd, Resources &res, GameObje
 
 float updateObstacle(const SDLState &state, GameData &gd, Resources &res, GameObject &obj, float deltaTime, float currentDirection);*/
 void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+void charSelectUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
 void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
                     SDL_KeyboardEvent key, bool keyDown, float deltaTime); 
 void handleCrosshair(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
 void levelInputs(SDLState &state, GameData &gd, Resources &res, float deltaTime);
+void handleMousePointer(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+void charSelectInputs(SDLState &state, GameData &gd, Resources &res, float deltaTime);
+void handleCharSelectKeyInput(const SDLState &state, GameData &gd, Resources &res,
+                    SDL_KeyboardEvent key, bool keyDown, float deltaTime);
+void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res,
+                    SDL_KeyboardEvent key, bool keyDown, float deltaTime) ;
