@@ -123,5 +123,11 @@ void drawLevel(const SDLState &state, GameData &gd, Resources res, float deltaTi
         }
     }
 
+    for(ItemBox &box : gd.itemBoxes_) {
+        if (box.itemBoxActive) {
+            box.draw(state, gd, TILE_SIZE, TILE_SIZE);
+        }
+    }
+
     handleCrosshair(state, gd, res, deltaTime);
 }

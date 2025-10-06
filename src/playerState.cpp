@@ -17,6 +17,7 @@ PlayerState* IdleState::handleInput(Player& player, SDL_KeyboardEvent key) {
     return NULL;
 };
 void IdleState::update(Player& player) {
+    
 };
 void IdleState::enter(Player& player) {
 };

@@ -16,7 +16,8 @@ enum ObjectType{
     LEVEL,
     BACKGROUND,
     PORTAL,
-    LASER
+    LASER,
+    ITEMBOX
 };
 
 class Object {   // generic obj type    
@@ -124,3 +125,22 @@ class Laser : public Object { // obstacle
         }
         void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
 };
+
+class ItemBox : public Object {
+    public:
+        bool itemBoxActive;
+        Timer itemBoxTimer;
+        float cooldownLength = 3.0f;
+        ItemBox() : Object(), itemBoxTimer(cooldownLength) {
+            itemBoxActive = true;
+            type = ITEMBOX;
+        }
+        ItemBox(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) :
+            Object(pos_, colliderRect, tex), itemBoxTimer(cooldownLength) {
+                itemBoxActive = true;
+                type = ITEMBOX;
+            }
+        void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+};
+
+

@@ -78,25 +78,6 @@ void collisionResponse(const SDLState &state, GameData &gd, Resources &res,
 //                         } 
 //                         break;
 //                 }
-//                 case ObjectType::enemy: {
-//                     if (b.data.enemy.state != EnemyState::dead) {
-//                         PlayerData &d = a.data.player;
-//                         d.healthPoints -= 1;
-//                         if (d.healthPoints <= 0) {
-//                             const float JUMP_DEAD = -350.0f;
-//                             d.state = PlayerState::dead;
-//                             a.texture = res.texDie;
-//                             a.curAnimation = res.ANIM_PLAYER_DIE;
-//                             a.vel.x = 0;
-//                             a.vel.y = JUMP_DEAD;
-//                         }
-//                     }
-//                     break;
-//                     /*if (b.data.enemy.state != EnemyState::dead) {
-//                         a.vel = glm::vec2(100, 0) * -a.dir;
-//                     }
-//                     break;*/ // this would push the player away when touching an enemy. its buggy
-//                 }
 //             }
 //         }
 //     } else if (a.type == ObjectType::bullet) {
@@ -106,32 +87,6 @@ void collisionResponse(const SDLState &state, GameData &gd, Resources &res,
 //             {
 //                 switch (b.type) {
 //                     case ObjectType::level: {
-//                         break;
-//                     }
-//                     case ObjectType::enemy: {
-//                         EnemyData &d = b.data.enemy;
-//                         if (d.state != EnemyState::dead) {
-//                             if (b.dir == a.dir) {
-//                                 b.dir = -a.dir; // turn enemy around
-//                                 b.vel.x = -b.vel.x;
-//                             }
-//                             b.shouldFlash = true;
-//                             b.flashTimer.reset();
-//                             // could change enemy sprite here if needed
-//                             d.state = EnemyState::damaged;
-//                             // damage enemy and flag dead if needed
-//                             d.healthPoints -= 1;
-//                             if (d.healthPoints <= 0) {
-//                                 const float JUMP_DEAD = -10.0f;
-//                                 d.state = EnemyState::dead;
-//                                 b.texture = res.texSpinyDead;
-//                                 b.curAnimation = res.ANIM_ENEMY_DEAD;
-//                                 b.pos.y += JUMP_DEAD; // make the enemy jump up a bit when they die then pass thru the floor
-//                             }
-//                             b.vel.x += 25.0f * b.dir;
-//                         } else {
-//                             passthrough = true;
-//                         }
 //                         break;
 //                     }
 //                 }
@@ -147,22 +102,6 @@ void collisionResponse(const SDLState &state, GameData &gd, Resources &res,
 //                 break;
 //             }
 //         }
-//     } else if (a.type == ObjectType::enemy) {
-//         // obj a is colliding with
-//         switch (b.type) {
-//             case ObjectType::level: {
-//                 if (a.data.enemy.state != EnemyState::dead) {
-//                     genericResponse();
-//                     break;
-//                 }
-//             }
-//             case ObjectType::enemy: {
-//                 if (a.data.enemy.state != EnemyState::dead && b.data.enemy.state != EnemyState::dead) {
-//                     genericResponse();
-//                     break;
-//                 }
-//             }
-//         } // if we need to do something different for player uncomment
 //     } 
 }
 

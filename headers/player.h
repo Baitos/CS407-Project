@@ -12,6 +12,9 @@ class PlayerState;
 
 class Player : public AnimatedObject { // player
     public:
+        PlayerState* state_; // was private before but idc 
+        bool isDead;
+        bool position;
         bool grounded; 
         bool sprinting;
         float gravityScale; 
@@ -46,6 +49,4 @@ class Player : public AnimatedObject { // player
             gravityScale = 1.0f;
             maxSpeedX = 250; // walk speed default
         }
-    private:
-        PlayerState* state_;
 };

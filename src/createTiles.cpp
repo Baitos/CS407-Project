@@ -10,15 +10,7 @@ const int MAP_COLS = 280;
 
 //Init function for level spaceship
 void createTiles(const SDLState &state, GameData &gd, const Resources &res) { // 280 x 60
-    /*
-        1 - Stone
-        2 - Brick
-        3 - Enemy
-        4 - Player
-        5 - Grass
-        6 - Fence
-        7 - Bush
-    */
+
     short map[MAP_ROWS][MAP_COLS] = {
         0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -208,15 +200,6 @@ void createTiles(const SDLState &state, GameData &gd, const Resources &res) { //
                     }
                     case 3: //Laser
                     {
-                        /*GameObject o = createObject(r, c, res.texLaser, ObjectType::obstacle);
-                        o.data.obstacle = ObstacleData(); // init obstacle data
-                        o.collider.y = 15;
-                        o.collider.h = 4;
-                        
-                        //o.data.obstacle.laserActive = true;
-                        
-                        gd.lasers.push_back(o);
-                        //gd.layers[LAYER_IDX_LEVEL].push_back(o);*/
                         SDL_FRect laserCollider = {
                             .x = 0,
                             .y = 15,
@@ -340,6 +323,18 @@ void createTiles(const SDLState &state, GameData &gd, const Resources &res) { //
                         BackgroundObject b(pos, collider, res.texVentTwo);
                         gd.bgTiles_.push_back(b);
                         break;
+                    }
+                    case 19: // Item Box
+                    {
+                        SDL_FRect itemBoxCollider = {
+                            .x = 0,
+                            .y = 0,
+                            .w = (float)TILE_SIZE,
+                            .h = (float)TILE_SIZE
+                        };
+                        ItemBox box(pos, itemBoxCollider, res.texItemBox);
+                        gd.itemBoxes_.push_back(box);
+                        break; 
                     }
                 }
             }

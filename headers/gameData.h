@@ -11,6 +11,7 @@ struct GameData {
     std::vector<BackgroundObject> bgTiles_;
     std::vector<Level> mapTiles_;
     std::vector<Laser> lasers_;
+    std::vector<ItemBox> itemBoxes_;
     std::vector<Portal> portals_;
     glm::vec2 ExitPortal, 
               EntrancePortal, 

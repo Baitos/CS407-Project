@@ -1,9 +1,14 @@
 #pragma once
 
 class Player;
-
+enum PlayerStateType {
+    IDLE,
+    MOVING,
+    SPRINTING,
+};
 class PlayerState {
     public:
+        PlayerStateType type;
         virtual ~PlayerState() {}
         virtual PlayerState* handleInput(Player& player, SDL_KeyboardEvent key);
         virtual void update(Player& player);

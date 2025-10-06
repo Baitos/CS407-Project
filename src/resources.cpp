@@ -33,9 +33,6 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     bulletAnims.resize(2); // 
     bulletAnims[ANIM_BULLET_MOVING] = Animation(4, 0.5f);
     bulletAnims[ANIM_BULLET_HIT] = Animation(3, 0.5f);
-    enemyAnims.resize(2);
-    enemyAnims[ANIM_ENEMY] = Animation(2, 0.6f);
-    enemyAnims[ANIM_ENEMY_DEAD] = Animation(1, 1.0f);
     portalAnims.resize(2);
     portalAnims[PORTAL_IDLE] = Animation(3, 1.0f);
 
@@ -89,8 +86,6 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     texBg2 = loadTexture(state.renderer, "data/bg_layer2.png");
     texBg3 = loadTexture(state.renderer, "data/bg_layer3.png");
     texBg4 = loadTexture(state.renderer, "data/bg_layer4.png");
-    texSpiny = loadTexture(state.renderer, "data/Spiny.png");
-    texSpinyDead = loadTexture(state.renderer, "data/SpinyDead.png");
 
     //Spaceship
     texOnStage = loadTexture(state.renderer, "data/spaceship/OnStage.png");
@@ -122,6 +117,15 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     texVentTwo = loadTexture(state.renderer, "data/spaceship/BackgroundTiles/VentTwo.png");
     texBackWall = loadTexture(state.renderer, "data/spaceship/BackgroundTiles/BackWall.png");
 
+
+    //Items
+    texItemBox = loadTexture(state.renderer, "data/ItemSprites/item_box.png");
+    texItemStorage = loadTexture(state.renderer, "data/ItemSprites/item_storage.png");
+    texItemRandomizer = loadTexture(state.renderer, "data/ItemSprites/item_randomization.png");
+    texBomb = loadTexture(state.renderer, "data/ItemSprites/bomb.png");
+    texExplosion = loadTexture(state.renderer, "data/ItemSprites/explosion.png");
+    texBoombox = loadTexture(state.renderer, "data/ItemSprites/boombox.png");
+    texSoundwaves = loadTexture(state.renderer, "data/ItemSprites/boombox_soundwaves.png");
 }
 
 void Resources::unload() {
