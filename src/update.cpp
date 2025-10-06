@@ -482,7 +482,7 @@ void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
     if (key.scancode == SDL_SCANCODE_F2)
     {
         printf("F2 key clicked");
-        currState = changeState(currState);
+        currState = changeState(currState, gd);
         currState->init(state, gd, res);
     }
 
@@ -671,6 +671,43 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
 
 //Input Function for level Spaceship
 void levelInputs(SDLState &state, GameData &gd, Resources &res, float deltaTime){
+    SDL_Event event { 0 };
+        while (SDL_PollEvent(&event)) {
+            switch (event.type) {
+                case SDL_EVENT_QUIT:
+                {
+                    running = false;
+                    break;
+                }
+                case SDL_EVENT_WINDOW_RESIZED: 
+                {
+                    state.width = event.window.data1;
+                    state.height = event.window.data2;
+                    //printf("Width = %d, Height = %d", state.width, state.height);
+                    break;
+                }
+                case SDL_EVENT_KEY_DOWN:
+                {
+                    handleCharSelectKeyInput(state, gd, res, event.key, true, deltaTime);
+                    
+                    break;
+                }
+                case SDL_EVENT_KEY_UP:
+                {
+                    handleCharSelectKeyInput(state, gd, res, event.key, false, deltaTime);
+                    break;
+                }
+                case SDL_EVENT_MOUSE_BUTTON_DOWN:
+                {
+                    handleCharSelectClick(state, gd, res, deltaTime);
+                    break;
+                    
+                } 
+            }
+        }
+}
+
+void charSelectInputs(SDLState &state, GameData &gd, Resources &res, float deltaTime){
     SDL_Event event { 0 };
         while (SDL_PollEvent(&event)) {
             switch (event.type) {
