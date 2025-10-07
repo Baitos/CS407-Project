@@ -277,8 +277,11 @@ void createTiles(const SDLState &state, GameData &gd, const Resources &res) { //
                         
                         PlayerState * newState = new PlayerState();
                         newState->handleInput = handleInputIdle;
+                        newState->update = updateIdle;
+                        newState->enter = enterIdle;
                         newState->currStateVal = IDLE;
                         gd.player.state_ = newState;
+                        gd.player.dir = 0;
                         break; 
                     }
                     case 7: //Background

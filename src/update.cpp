@@ -29,11 +29,12 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
             laser.update(state, gd, res, deltaTime);
         }
 
-
+        gd.player.currentDirection = 0;
         gd.player.state_->update(state, gd, res,deltaTime);
         if(gd.player.currentDirection){
             gd.player.dir = gd.player.currentDirection;
         }
+        //printf("%f\n", gd.player.dir);
 
         gd.player.vel += gd.player.dir * gd.player.acc * deltaTime;
         if (std::abs(gd.player.vel.x) > gd.player.maxSpeedX) {
@@ -43,7 +44,9 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
         }
 
         // add vel to pos
+        printf("%f\n", gd.player.vel);
         gd.player.pos += gd.player.vel * deltaTime;
+        //printf("%f", gd.player.vel);
         // collision
         bool foundGround = gd.player.grounded;
         gd.player.grounded = false;

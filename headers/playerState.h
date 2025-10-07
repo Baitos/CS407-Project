@@ -118,3 +118,4 @@ void handleJumping (GameData &gd, Resources &res, SDL_KeyboardEvent key);
 void handleRunning (GameData &gd, Resources &res, SDL_KeyboardEvent key);
 void handleSprinting (GameData &gd, Resources &res, SDL_KeyboardEvent key);
 void handleFalling (GameData &gd, Resources &res, SDL_KeyboardEvent key);
+void sharedUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
