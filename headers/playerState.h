@@ -78,6 +78,43 @@ class JetpackDeployState : public PlayerState {
 
 PlayerState * changePlayerState(PlayerState * tempPlayer);
 
-void handleInputIdle(GameData &gd, Resources &res, SDL_KeyboardEvent key, float deltaTime);
-void handleJumping (GameData &gd, Resources &res, SDL_KeyboardEvent key);
+//Idle Functions
+void handleInputIdle(GameData &gd, Resources &res, SDL_KeyboardEvent key);
+void updateIdle(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+void enterIdle(Player& player, GameData &gd, Resources &res);
+//Walk Functions
+void handleInputWalk(GameData &gd, Resources &res, SDL_KeyboardEvent key);
+void updateWalk(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+void enterWalk(Player& player, GameData &gd, Resources &res);
+//Run Fuctions
+void handleInputRun(GameData &gd, Resources &res, SDL_KeyboardEvent key);
+void enterRun(Player& player, GameData &gd, Resources &res);
+//Jump Functions
+void handleInputJump(GameData &gd, Resources &res, SDL_KeyboardEvent key);
+void updateJump(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+void enterJump(Player& player, GameData &gd, Resources &res);
+//Launch Functions
+void handleInputLaunch(GameData &gd, Resources &res, SDL_KeyboardEvent key);
+void updateLaunch(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
 void enterLaunch(Player& player, GameData &gd, Resources &res);
+//Roll Functions
+void handleInputRoll(GameData &gd, Resources &res, SDL_KeyboardEvent key);
+void updateRoll(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+void enterRoll(Player& player, GameData &gd, Resources &res);
+//Sprint Functions
+void handleInputSprint(GameData &gd, Resources &res, SDL_KeyboardEvent key);
+void updateSprint(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+void enterSprint(Player& player, GameData &gd, Resources &res);
+//Fall Functions
+void updateFalling(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+void enterFall(Player& player, GameData &gd, Resources &res);
+//Dead Functions
+void enterDead(Player& player, GameData &gd, Resources &res);
+//Dummy Functions?
+void dummyInput(GameData &gd, Resources &res, SDL_KeyboardEvent key);
+void dummyUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+//Handlers
+void handleJumping (GameData &gd, Resources &res, SDL_KeyboardEvent key);
+void handleRunning (GameData &gd, Resources &res, SDL_KeyboardEvent key);
+void handleSprinting (GameData &gd, Resources &res, SDL_KeyboardEvent key);
+void handleFalling (GameData &gd, Resources &res, SDL_KeyboardEvent key);

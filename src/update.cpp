@@ -47,6 +47,10 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
         // collision
         bool foundGround = gd.player.grounded;
         gd.player.grounded = false;
+        
+        
+        collisionCheckAndResponse(state,gd,res,gd.player,deltaTime);
+        /*
         for (Object &objB : gd.mapTiles_) { // check if player is touching any map tiles, currently no enemy collision
             if (isOnscreen(state, gd, objB)) {
                 checkCollision(state, gd, res, gd.player, objB, deltaTime);
@@ -56,7 +60,7 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
         }
         for (Object &objB : gd.portals_){
             checkCollision(state, gd, res, gd.player, objB, deltaTime);     
-        }
+        }*/
         /*if (obj.grounded && !foundGround) {
             if (obj.grounded && obj.type == ObjectType::player) {
                 if ((obj.data.player.state == PlayerState::jumping && obj.data.player.fastfalling)|| obj.data.player.state == PlayerState::falling) {
@@ -73,8 +77,8 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
                 obj.gravityScale = 1.0f;
             }
         }*/
-    }
 }
+
 //Update for Character Select Screen
 void charSelectUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
         for (AnimatedObject &preview : gd.previews_) {
@@ -231,7 +235,7 @@ void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
         currState = changeState(currState, gd);
         currState->init(state,gd, res);
     }
-    gd.player.state_->handleInput(gd, res, key, deltaTime);
+    gd.player.state_->handleInput(gd, res, key);
 
     
 }

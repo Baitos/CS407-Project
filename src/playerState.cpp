@@ -263,8 +263,27 @@ void updateRoll(const SDLState &state, GameData &gd, Resources &res, float delta
 }
 
 void dummyUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime){
-
+    if (gd.player.curAnimation != -1) {
+        gd.player.animations[gd.player.curAnimation].step(deltaTime);
+    }
+    if (!gd.player.grounded) {
+        gd.player.vel.y += changeVel(700 * gd.player.gravityScale * deltaTime, gd.player); // gravity
+    }
+    if (state.keys[SDL_SCANCODE_A]) {
+        gd.player.currentDirection += -1;
+    }
+    if (state.keys[SDL_SCANCODE_D]) {
+        gd.player.currentDirection += 1;
+    }
+    if(gd.player.currentDirection) { // if moving change to running
+        gd.player.state_->nextStateVal = WALK;
+        PlayerState * newState = changePlayerState(gd.player.state_);
+        delete gd.player.state_;
+        gd.player.state_ = newState;
+    }
 }
+
+
 
 //Enter Functions
 void enterIdle(Player& player, GameData &gd, Resources &res){
@@ -485,7 +504,7 @@ PlayerState * changePlayerState(PlayerState * tempPlayer){
         {
             newPlayer = new RunState();
             newPlayer->enter = enterRun;
-            newPlayer->update = dummyUpdate;
+            newPlayer->update = updateWalk;
             newPlayer->handleInput = handleInputRun;
             newPlayer->currStateVal = RUN;
             break;
