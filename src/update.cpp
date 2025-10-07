@@ -6,6 +6,7 @@
 #include "../headers/globals.h"
 #include "../headers/resources.h"
 #include "../headers/state.h"
+#include "../headers/playerState.h"
 
 using namespace std;
 
@@ -18,6 +19,7 @@ extern GameState * currState;
 //Update Function for level Spaceship
 void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
     // update portals
+        gd.player.currentDirection = 0;
         for (Portal &portal : gd.portals_) {
             portal.update(state, gd, res, deltaTime);
         }
@@ -26,6 +28,52 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
         for (Laser &laser : gd.lasers_) {
             laser.update(state, gd, res, deltaTime);
         }
+
+
+        gd.player.state_->update(state, gd, res,deltaTime);
+        if(gd.player.currentDirection){
+            gd.player.dir = gd.player.currentDirection;
+        }
+
+        gd.player.vel += gd.player.dir * gd.player.acc * deltaTime;
+        if (std::abs(gd.player.vel.x) > gd.player.maxSpeedX) {
+            if (!isSliding(gd.player)) { // if not sliding slow down
+                gd.player.vel.x -= 1.5 * gd.player.acc.x * deltaTime * gd.player.currentDirection;
+            }
+        }
+
+        // add vel to pos
+        gd.player.pos += gd.player.vel * deltaTime;
+        // collision
+        bool foundGround = gd.player.grounded;
+        gd.player.grounded = false;
+        for (Object &objB : gd.mapTiles_) { // check if player is touching any map tiles, currently no enemy collision
+            if (isOnscreen(state, gd, objB)) {
+                checkCollision(state, gd, res, gd.player, objB, deltaTime);
+        }
+        for (Object &objB : gd.lasers_){
+            checkCollision(state, gd, res, gd.player, objB, deltaTime);     
+        }
+        for (Object &objB : gd.portals_){
+            checkCollision(state, gd, res, gd.player, objB, deltaTime);     
+        }
+        /*if (obj.grounded && !foundGround) {
+            if (obj.grounded && obj.type == ObjectType::player) {
+                if ((obj.data.player.state == PlayerState::jumping && obj.data.player.fastfalling)|| obj.data.player.state == PlayerState::falling) {
+                    obj.data.player.state = PlayerState::roll;
+                    obj.texture = res.texRoll;
+                    obj.curAnimation = res.ANIM_PLAYER_ROLL;
+                    obj.animations[obj.curAnimation].reset();
+                } else {
+                    obj.data.player.state = PlayerState::moving;
+                }
+
+                obj.data.player.fastfalling = false;
+                obj.data.player.canDoubleJump = true;
+                obj.gravityScale = 1.0f;
+            }
+        }*/
+    }
 }
 //Update for Character Select Screen
 void charSelectUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
@@ -179,132 +227,13 @@ void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
         running = false;
     }
     if(key.scancode == SDL_SCANCODE_F2){
-        printf("F2 key clicked");
+        //printf("F2 key clicked");
         currState = changeState(currState, gd);
         currState->init(state,gd, res);
     }
-    if (key.scancode == SDL_SCANCODE_D && key.down) {
-        gd.player.pos.x += 2 * TILE_SIZE;
-    }
-    if (key.scancode == SDL_SCANCODE_A && key.down) {
-        gd.player.pos.x -= 2 * TILE_SIZE;
-    }
-    if (key.scancode == SDL_SCANCODE_W && key.down) {
-        gd.player.pos.y -= 2 * TILE_SIZE;
-    }
-    if (key.scancode == SDL_SCANCODE_S && key.down) {
-        gd.player.pos.y += 2 * TILE_SIZE;
-    }
+    gd.player.state_->handleInput(gd, res, key, deltaTime);
 
-    // if (obj.type == ObjectType::player) {
-    //     const float JUMP_FORCE = -450.f;
-    //     const auto handleJumping = [&state, &gd, &obj, res, key, keyDown, JUMP_FORCE]() {
-    //         if (key.scancode == SDL_SCANCODE_SPACE && keyDown && !key.repeat) { // jumping
-    //             if (obj.grounded) { // single jump
-    //                 //add something for jump animation before going up
-    //                 //obj.data.player.state = PlayerState::jumping;
-    //                  obj.data.player.state = PlayerState::jumpLaunch; // <-- use launch state
-    //                  obj.texture = res.texLaunch;
-    //                  obj.curAnimation = res.ANIM_PLAYER_LAUNCH; 
-    //                  obj.animations[obj.curAnimation].reset();
-    //                  obj.vel.y = changeVel(JUMP_FORCE, obj); 
-    //             } else if (obj.data.player.canDoubleJump) { // double jump
-    //                 obj.data.player.state = PlayerState::jumping;
-    //                 obj.vel.y = changeVel(JUMP_FORCE, obj);  
-    //                 obj.data.player.canDoubleJump = false;
-    //                 obj.gravityScale = 1.0f; // reset gravity
-    //             }
-    //             //printf("canDoubleJump = %d\n" , obj.data.player.canDoubleJump);
-    //         }
-    //         else if (!keyDown && key.scancode == SDL_SCANCODE_SPACE) { // letting go of jump
-    //             /*if (obj.vel.y < 0) { // OPTION 1: Set velocity to 0 when you let go. makes sharp but precise jumps
-    //                 obj.vel.y = 0;
-    //             }*/
-    //             float termVel = -200.0f; // option 2: Set velocity to predefined amount when you let go. makes less sharp jumps
-    //             float shouldFlip = obj.flip; // there might be a more modular way to do this. idk if we will actually use the gravity flip but having it is nice and cool
-    //             if (shouldFlip * obj.vel.y < shouldFlip * termVel) { 
-    //                 obj.vel.y = changeVel(termVel, obj);
-    //             }
-    //             //obj.gravityScale = 2.0f; // option 3; double their gravity until they land
-    //         }
-    //     };
-    //     const auto handleRunning = [&state, &gd, &obj, &res, key, keyDown, deltaTime]() {
-    //         if (key.scancode == SDL_SCANCODE_LSHIFT) {
-    //             if (keyDown) { // if held down, increase speed
-    //                 obj.maxSpeedX = obj.data.player.maxRunX;
-    //                 obj.curAnimation = res.ANIM_PLAYER_RUN;
-    //             } else {
-    //                 obj.maxSpeedX = obj.data.player.maxWalkX;
-    //                 obj.curAnimation = res.ANIM_PLAYER_WALK; 
-    //                 obj.data.player.sprintTimer.reset();
-    //             }
-    //         }
-    //     };
-    //     const auto handleSprinting = [&state, &gd, &obj, &res, key, keyDown]() {
-    //         if (key.scancode == SDL_SCANCODE_LSHIFT && !keyDown) {
-    //             obj.maxSpeedX = obj.data.player.maxWalkX;
-    //             obj.curAnimation = res.ANIM_PLAYER_WALK;
-    //             obj.data.player.sprintTimer.reset();
-    //             obj.data.player.state = PlayerState::moving;
-    //         }
-    //     };
-    //     const auto handleFalling = [&state, &gd, &obj, &res, key, keyDown, deltaTime]() {
-    //         if (key.scancode == SDL_SCANCODE_S && keyDown && !obj.grounded) { // fastfall
-    //             if (!key.repeat && !obj.data.player.fastfalling) {
-    //                 obj.vel.y = changeVel(-250.0f, obj);
-    //                 obj.data.player.fastfalling = true;
-    //                 obj.data.player.state = PlayerState::jumping;
-    //                 obj.curAnimation = res.ANIM_PLAYER_JUMP;
-    //                 //obj.data.player.canDoubleJump = false;
-    //             }
-    //             obj.gravityScale = 3.0f;
-    //         }
-    //     };
-    //     switch (obj.data.player.state) {
-    //         case PlayerState::idle:
-    //         {
-    //             handleJumping();
-    //             handleRunning();
-    //             break;
-    //         }
-    //         case PlayerState::moving:
-    //         {
-    //             handleJumping();
-    //             handleRunning();
-    //             handleFalling();
-    //             break;
-    //         }
-    //         case PlayerState::jumping:
-    //         {
-    //             handleRunning();
-    //             handleJumping();
-    //             handleFalling();
-    //             break;               
-    //         }
-    //         case PlayerState::jumpLaunch:
-    //         {
-    //             handleRunning();
-    //             handleJumping();
-    //             handleFalling();
-    //             break;               
-    //         }
-    //         case PlayerState::roll:
-    //         {
-    //             handleRunning();
-    //             handleJumping();
-    //             handleFalling();
-    //             break;               
-    //         }
-    //         case PlayerState::sprinting:
-    //         {
-    //             handleSprinting();
-    //             handleJumping();
-    //             handleFalling();
-    //             break;
-    //         }
-    //     }
-    //     //printf("velX = %f, velY = %f\n", obj.vel.x, obj.vel.y);
-    // }
+    
 }
 //Key Input Handler for Char Select
 void handleCharSelectKeyInput(const SDLState &state, GameData &gd, Resources &res,

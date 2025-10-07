@@ -1,311 +1,462 @@
 #include <SDL3/SDL.h>
 
+#include "../headers/gameData.h"
 #include "../headers/player.h"
 #include "../headers/playerState.h"
+#include "../headers/helper.h"
+#include "../headers/resources.h"
+#include "../headers/state.h"
 #include <vector>
 
-PlayerState* PlayerState::handleInput(Player& player, SDL_KeyboardEvent key) {
-    return NULL;
-};
-void PlayerState::update(Player& player) {
-};
-void PlayerState::enter(Player& player) {
-};
-// for generic playerState, do nothing. This solely exists to be overwritten.
+extern GameState * currState;
+const float JUMP_FORCE = -450.f;
 
-PlayerState* IdleState::handleInput(Player& player, SDL_KeyboardEvent key) { 
-    return NULL;
-};
-void IdleState::update(Player& player) {
-    if (0){ //TO-DO Change condition to switch player out of idle
 
+//Handle Input Functions
+void handleInputIdle(GameData &gd, Resources &res, SDL_KeyboardEvent key){
+    handleJumping(gd,res,key);
+    handleRunning(gd,res,key);
+}
+
+void handleInputWalk(GameData &gd, Resources &res, SDL_KeyboardEvent key){
+    handleJumping(gd,res,key);
+    handleRunning(gd,res,key);
+    handleFalling(gd,res,key);
+}
+
+void handleInputRun(GameData &gd, Resources &res, SDL_KeyboardEvent key){
+    handleJumping(gd,res,key);
+    handleRunning(gd,res,key);
+    handleFalling(gd,res,key);
+}
+
+void handleInputJump(GameData &gd, Resources &res, SDL_KeyboardEvent key){
+    handleRunning(gd,res,key);
+    handleJumping(gd,res,key);
+    handleFalling(gd,res,key);
+}
+
+void handleInputLaunch(GameData &gd, Resources &res, SDL_KeyboardEvent key){
+    handleRunning(gd,res,key);
+    handleJumping(gd,res,key);
+    handleFalling(gd,res,key);
+}
+
+void handleInputRoll(GameData &gd, Resources &res, SDL_KeyboardEvent key){
+    handleRunning(gd,res,key);
+    handleJumping(gd,res,key);
+    handleFalling(gd,res,key);
+}
+
+void handleInputSprint(GameData &gd, Resources &res, SDL_KeyboardEvent key){
+    handleSprinting(gd,res,key);
+    handleJumping(gd,res,key);
+    handleFalling(gd,res,key);
+}
+
+//Might not need, idk how it would work with a nullptr as a function in the loop
+void dummyInput(GameData &gd, Resources &res, SDL_KeyboardEvent key){
+}
+
+//Update Functions
+void updateIdle(const SDLState &state, GameData &gd, Resources &res, float deltaTime){
+    if (gd.player.curAnimation != -1) {
+        gd.player.animations[gd.player.curAnimation].step(deltaTime);
     }
-};
-void IdleState::enter(Player& player) {
-};
+    if (!gd.player.grounded) {
+        gd.player.vel.y += changeVel(700 * gd.player.gravityScale * deltaTime, gd.player); // gravity
+    }
+    if (state.keys[SDL_SCANCODE_A]) {
+        gd.player.currentDirection += -1;
+    }
+    if (state.keys[SDL_SCANCODE_D]) {
+        gd.player.currentDirection += 1;
+    }
+    if(gd.player.currentDirection) { // if moving change to running
+        gd.player.state_->nextStateVal = WALK;
+        PlayerState * newState = changePlayerState(gd.player.state_);
+        delete gd.player.state_;
+        gd.player.state_ = newState;
+    }
+}
+
+void updateWalk(const SDLState &state, GameData &gd, Resources &res, float deltaTime){
+    if (gd.player.curAnimation != -1) {
+        gd.player.animations[gd.player.curAnimation].step(deltaTime);
+    }
+    if (!gd.player.grounded) {
+        gd.player.vel.y += changeVel(700 * gd.player.gravityScale * deltaTime, gd.player); // gravity
+    }
+    if (state.keys[SDL_SCANCODE_A]) {
+        gd.player.currentDirection += -1;
+    }
+    if (state.keys[SDL_SCANCODE_D]) {
+        gd.player.currentDirection += 1;
+    }
+
+    if (!gd.player.currentDirection && gd.player.grounded) { // if not moving, slow down
+        const float factor = gd.player.vel.x > 0 ? -1.0f : 1.0f;
+        float amount = factor * gd.player.acc.x * deltaTime;
+        if (std::abs(gd.player.vel.x) < std::abs(amount)) {
+            gd.player.vel.x = 0;
+            // once stopped, set player to idle
+            gd.player.state_->nextStateVal = IDLE;
+            PlayerState * newState = changePlayerState(gd.player.state_);
+            delete gd.player.state_;
+            gd.player.sprinting = newState;
+        }
+        else {
+            gd.player.vel.x += amount;
+        }
+    }
+
+    if (isSliding(gd.player) && gd.player.grounded) { // moving in different direction of vel and pressing a direction, sliding
+        //TO DO, FIGURE OUT SLIDING MAYBE?
+        //gd.player.state_->nextStateVal = TURNING;
+        //PlayerState * newState = changePlayerState(gd.player.state_);
+        //delete gd.player.state_;
+        //gd.player.sprinting = newState;
+    } else {
+        gd.player.state_->nextStateVal = RUN;
+        PlayerState * newState = changePlayerState(gd.player.state_);
+        delete gd.player.state_;
+        gd.player.state_ = newState;
+    }
+
+    if (state.keys[SDL_SCANCODE_LSHIFT]) { // if not pressing then reset
+        float LEEWAY = 20;
+        if (gd.player.grounded && std::abs(gd.player.vel.x) >= (gd.player.maxRunX - LEEWAY)) { // if grounded and moving fast enter sprint (eventually)                
+            if (!gd.player.sprintTimer.isTimeOut()) {
+                gd.player.sprintTimer.step(deltaTime);
+            } else {
+
+                gd.player.maxSpeedX = gd.player.maxSprintX;
+                gd.player.state_->nextStateVal = SPRINT;
+                PlayerState * newState = changePlayerState(gd.player.state_);
+                delete gd.player.state_;
+                gd.player.state_ = newState;
+            }
+        } 
+    } else {
+        gd.player.sprintTimer.reset();
+    }
+}
+
+void updateSprint(const SDLState &state, GameData &gd, Resources &res, float deltaTime){
+    if (gd.player.curAnimation != -1) {
+        gd.player.animations[gd.player.curAnimation].step(deltaTime);
+    }
+    if (!gd.player.grounded) {
+        gd.player.vel.y += changeVel(700 * gd.player.gravityScale * deltaTime, gd.player); // gravity
+    }
+    if (state.keys[SDL_SCANCODE_A]) {
+        gd.player.currentDirection += -1;
+    }
+    if (state.keys[SDL_SCANCODE_D]) {
+        gd.player.currentDirection += 1;
+    }
+
+    float LEEWAY = 20;
+    if (gd.player.grounded && // if on ground and sliding or too slow reset sprint
+        (isSliding(gd.player) || std::abs(gd.player.vel.x) < (gd.player.maxRunX - LEEWAY))) {       
+        gd.player.sprintTimer.reset();
+        gd.player.maxSpeedX = gd.player.maxRunX;
+        gd.player.state_->nextStateVal = WALK;
+        PlayerState * newState = changePlayerState(gd.player.state_);
+        delete gd.player.state_;
+        gd.player.state_ = newState;
+    }
+}
+
+void updateJump(const SDLState &state, GameData &gd, Resources &res, float deltaTime){
+    if (gd.player.curAnimation != -1) {
+        gd.player.animations[gd.player.curAnimation].step(deltaTime);
+    }
+    if (!gd.player.grounded) {
+        gd.player.vel.y += changeVel(700 * gd.player.gravityScale * deltaTime, gd.player); // gravity
+    }
+    if (state.keys[SDL_SCANCODE_A]) {
+        gd.player.currentDirection += -1;
+    }
+    if (state.keys[SDL_SCANCODE_D]) {
+        gd.player.currentDirection += 1;
+    }
+    gd.player.state_->nextStateVal = JUMP;
+    PlayerState * newState = changePlayerState(gd.player.state_);
+    delete gd.player.state_;
+    gd.player.state_ = newState;
+}
+
+void updateFalling(const SDLState &state, GameData &gd, Resources &res, float deltaTime){
+    if (gd.player.curAnimation != -1) {
+        gd.player.animations[gd.player.curAnimation].step(deltaTime);
+    }
+    if (!gd.player.grounded) {
+        gd.player.vel.y += changeVel(700 * gd.player.gravityScale * deltaTime, gd.player); // gravity
+    }
+    if (state.keys[SDL_SCANCODE_A]) {
+        gd.player.currentDirection += -1;
+    }
+    if (state.keys[SDL_SCANCODE_D]) {
+        gd.player.currentDirection += 1;
+    }
+
+    gd.player.state_->nextStateVal = FALL;
+    PlayerState * newState = changePlayerState(gd.player.state_);
+    delete gd.player.state_;
+    gd.player.state_ = newState;
+}
+      
+void updateLaunch(const SDLState &state, GameData &gd, Resources &res, float deltaTime){
+    if (gd.player.curAnimation != -1) {
+        gd.player.animations[gd.player.curAnimation].step(deltaTime);
+    }
+    if (!gd.player.grounded) {
+        gd.player.vel.y += changeVel(700 * gd.player.gravityScale * deltaTime, gd.player); // gravity
+    }
+    if (state.keys[SDL_SCANCODE_A]) {
+        gd.player.currentDirection += -1;
+    }
+    if (state.keys[SDL_SCANCODE_D]) {
+        gd.player.currentDirection += 1;
+    }
+    gd.player.state_->nextStateVal = LAUNCH;
+    PlayerState * newState = changePlayerState(gd.player.state_);
+    delete gd.player.state_;
+    gd.player.state_ = newState;
+
+    if (gd.player.animations[gd.player.curAnimation].isDone()) {
+        gd.player.state_->nextStateVal = JUMP;
+        PlayerState * newState = changePlayerState(gd.player.state_);
+        delete gd.player.state_;
+        gd.player.state_ = newState;
+        gd.player.animations[gd.player.curAnimation].reset();
+    }
+}
+
+void updateRoll(const SDLState &state, GameData &gd, Resources &res, float deltaTime){
+    if (gd.player.curAnimation != -1) {
+        gd.player.animations[gd.player.curAnimation].step(deltaTime);
+    }
+    if (!gd.player.grounded) {
+        gd.player.vel.y += changeVel(700 * gd.player.gravityScale * deltaTime, gd.player); // gravity
+    }
+    if (state.keys[SDL_SCANCODE_A]) {
+        gd.player.currentDirection += -1;
+    }
+    if (state.keys[SDL_SCANCODE_D]) {
+        gd.player.currentDirection += 1;
+    }
+    gd.player.state_->nextStateVal = ROLL;
+    PlayerState * newState = changePlayerState(gd.player.state_);
+    delete gd.player.state_;
+    gd.player.state_ = newState;
+
+    // when roll animation finishes, switch to moving
+    if (gd.player.animations[gd.player.curAnimation].isDone()) {
+        gd.player.state_->nextStateVal = RUN;
+        PlayerState * newState = changePlayerState(gd.player.state_);
+        delete gd.player.state_;
+        gd.player.state_ = newState;
+        gd.player.animations[gd.player.curAnimation].reset();
+    }
+}
+
+void dummyUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime){
+
+}
+
+//Enter Functions
+void enterIdle(Player& player, GameData &gd, Resources &res){
+    if(((LevelState * )(currState))->character == SWORD){
+        player.texture = res.texIdleS;
+    } else if(((LevelState * )(currState))->character == SHOTGUN){
+        player.texture = res.texIdleG;
+    } else {
+        player.texture = res.texIdleJ;
+    }
+    player.curAnimation = res.ANIM_PLAYER_IDLE; 
+    player.animations[gd.player.curAnimation].reset();
+}
+
+void enterWalk(Player& player, GameData &gd, Resources &res){
+    if(((LevelState * )(currState))->character == SWORD){
+        player.texture = res.texRunS;
+    } else if(((LevelState * )(currState))->character == SHOTGUN){
+        player.texture = res.texRunG;
+    } else {
+        player.texture = res.texRunJ;
+    }
+    player.curAnimation = res.ANIM_PLAYER_WALK; 
+    player.animations[gd.player.curAnimation].reset();
+}
+
+void enterRun(Player& player, GameData &gd, Resources &res){
+    if(((LevelState * )(currState))->character == SWORD){
+        player.texture = res.texRunS;
+    } else if(((LevelState * )(currState))->character == SHOTGUN){
+        player.texture = res.texRunG;
+    } else {
+        player.texture = res.texRunJ;
+    }
+    player.curAnimation = res.ANIM_PLAYER_RUN; 
+    player.animations[gd.player.curAnimation].reset();
+}
+
+void enterSprint(Player& player, GameData &gd, Resources &res){
+    if(((LevelState * )(currState))->character == SWORD){
+        player.texture = res.texRunS;
+    } else if(((LevelState * )(currState))->character == SHOTGUN){
+        player.texture = res.texRunG;
+    } else {
+        player.texture = res.texRunJ;
+    }
+    //Change?
+    player.curAnimation = res.ANIM_PLAYER_RUN; 
+    player.animations[gd.player.curAnimation].reset();
+}
+
+void enterLaunch(Player& player, GameData &gd, Resources &res){
+    if(((LevelState * )(currState))->character == SWORD){
+        player.texture = res.texLaunchS;
+    } else if(((LevelState * )(currState))->character == SHOTGUN){
+        player.texture = res.texLaunchG;
+    } else {
+        player.texture = res.texLaunchJ;
+    }
+    player.curAnimation = res.ANIM_PLAYER_LAUNCH; 
+    player.animations[gd.player.curAnimation].reset();
+}
+
+void enterJump(Player& player, GameData &gd, Resources &res){
+    if(((LevelState * )(currState))->character == SWORD){
+        player.texture = res.texJumpS;
+    } else if(((LevelState * )(currState))->character == SHOTGUN){
+        player.texture = res.texJumpG;
+    } else {
+        player.texture = res.texJumpJ;
+    }
+    player.curAnimation = res.ANIM_PLAYER_JUMP; 
+    player.animations[gd.player.curAnimation].reset();
+}
+
+void enterRoll(Player& player, GameData &gd, Resources &res){
+    if(((LevelState * )(currState))->character == SWORD){
+        player.texture = res.texRollS;
+    } else if(((LevelState * )(currState))->character == SHOTGUN){
+        player.texture = res.texRollG;
+    } else {
+        player.texture = res.texRollJ;
+    }
+    player.curAnimation = res.ANIM_PLAYER_ROLL; 
+    player.animations[gd.player.curAnimation].reset();
+}
+
+void enterFall(Player& player, GameData &gd, Resources &res){
+    /*if(((LevelState * )(currState))->character == SWORD){
+        player.texture = res.texShot;
+    } else if(((LevelState * )(currState))->character == SHOTGUN){
+        player.texture = res.texLaunchG;
+    } else {
+        player.texture = res.texLaunchJ;
+    }
+    player.curAnimation = res.ANIM_PLAYER_LAUNCH; 
+    player.animations[gd.player.curAnimation].reset();*/
+}
+
+void enterDead(Player& player, GameData &gd, Resources &res){
+    if(((LevelState * )(currState))->character == SWORD){
+        player.texture = res.texDieS;
+    } else if(((LevelState * )(currState))->character == SHOTGUN){
+        player.texture = res.texDieG;
+    } else {
+        player.texture = res.texDieJ;
+    }
+    player.curAnimation = res.ANIM_PLAYER_DIE; 
+    player.animations[gd.player.curAnimation].reset();
+}
 
 
-// float updatePlayer(const SDLState &state, GameData &gd, Resources &res, GameObject &obj, float deltaTime, float currentDirection) {
-//     if (obj.data.player.state != PlayerState::dead) {
-//         if (state.keys[SDL_SCANCODE_A]) {
-//             currentDirection += -1;
-//         }
-//         if (state.keys[SDL_SCANCODE_D]) {
-//             currentDirection += 1;
-//         }
-//
-//         Timer &weaponTimer = obj.data.player.weaponTimer;
-//         weaponTimer.step(deltaTime);
-//         const auto handleShooting = [&state, &gd, &res, &obj, &weaponTimer]() {
-//             if (state.keys[SDL_SCANCODE_J]) {
-//                 // bullets!
-//                     // in 2.5 hour video, go to 1:54:19 if you want to sync up shooting sprites with animations for running
-//                 if (weaponTimer.isTimeOut()) {
-//                     /*if (obj.data.player.state == PlayerState::idle) {
-//                         obj.texture = res.texShoot;
-//                         obj.curAnimation = res.ANIM_PLAYER_SHOOT;
-//                     }*/
-//                     if(obj.curAnimation == res.ANIM_PLAYER_SLIDE) {
-//                         return;
-//                     }
-//                     if(obj.curAnimation == res.ANIM_PLAYER_JUMP) {
-//                         obj.texture = res.texShootJump;
-//                         obj.curAnimation=res.ANIM_PLAYER_SHOOT_JUMP;
-//                     } else {
-//                         obj.texture = res.texShoot;
-//                         obj.curAnimation=res.ANIM_PLAYER_SHOOT;
-//                     }
-//                     weaponTimer.reset();
-//                     GameObject bullet;
-//                     bullet.data.bullet = BulletData();
-//                     bullet.type = ObjectType::bullet;
-//                     bullet.dir = gd.player().dir;
-//                     bullet.texture = res.texBullet;
-//                     bullet.curAnimation = res.ANIM_BULLET_MOVING;
-//                     bullet.collider = SDL_FRect {
-//                         .x = 0,
-//                         .y = 0,
-//                         .w = static_cast<float>(res.texBullet->h),
-//                         .h = static_cast<float>(res.texBullet->h)
-//                     };
-//                     const float left = 0;
-//                     const float right = 24;
-//                     const float t = (obj.dir + 1) / 2.0f; // results in 0 to 1
-//                     const float xOffset = left + right * t; // LERP between left and right
-//                     const float yVariation = 40;
-//                     const float yVelocity = SDL_rand(yVariation) - yVariation / 2.0f;
-//                     bullet.vel = glm::vec2(
-//                     obj.vel.x + 300.0f * obj.dir, yVelocity);
-//                     //printf("bullet.vel.x = %f\n", bullet.vel.x);
-//                     bullet.maxSpeedX = 5000.0f;
-//                     bullet.animations = res.bulletAnims;
-//                     bullet.pos = glm::vec2( 
-//                         obj.pos.x + xOffset,
-//                         obj.pos.y + TILE_SIZE / 2 + 1
-//                     );
-//                     // try to reuse old inactive bullets
-//                     bool foundInactive = false;
-//                     for (int i = 0; i < gd.bullets.size() && !foundInactive; i++) {
-//                         if (gd.bullets[i].data.bullet.state == BulletState::inactive) {
-//                             foundInactive = true;
-//                             gd.bullets[i] = bullet;
-//                         }
-//                     }
-//                     // otherwise push new bullet
-//                     if (!foundInactive) {
-//                         gd.bullets.push_back(bullet);
-//                     }
-//                 }
-//             }
-//         };
-//         switch (obj.data.player.state) {
-//             case PlayerState::idle:
-//             {
-//                 if(currentDirection) { // if moving change to running
-//                     obj.data.player.state = PlayerState::moving;
-//                 }
-//                 /*else { // slowing down is now handled by running state
-//                     if (obj.vel.x) { // slow player down when idle
-//                         const float factor = obj.vel.x > 0 ? -1.5f : 1.5f;
-//                         float amount = factor * obj.acc.x * deltaTime;
-//                         if (std::abs(obj.vel.x) < std::abs(amount)) {
-//                             obj.vel.x = 0;
-//                         }
-//                         else {
-//                             obj.vel.x += amount;
-//                         }
-//                     }
-//                 }*/
-//                 obj.texture = res.texIdle;
-//                 obj.curAnimation = res.ANIM_PLAYER_IDLE;
-//                 handleShooting();
-//                 break;
-//             }
-//             case PlayerState::moving:
-//             {
-//                 if (!currentDirection && obj.grounded) { // if not moving, slow down
-//                     const float factor = obj.vel.x > 0 ? -1.0f : 1.0f;
-//                     float amount = factor * obj.acc.x * deltaTime;
-//                     if (std::abs(obj.vel.x) < std::abs(amount)) {
-//                         obj.vel.x = 0;
-//                         obj.data.player.state = PlayerState::idle; // once stopped, set player to idle
-//                     }
-//                     else {
-//                         obj.vel.x += amount;
-//                     }
-//                 }
-//                 if (isSliding(obj) && obj.grounded) { // moving in different direction of vel and pressing a direction, sliding
-//                     obj.texture = res.texSlide;
-//                     obj.curAnimation = res.ANIM_PLAYER_SLIDE;
-//                 } else {
-//                     obj.texture = res.texRun;
-//                     obj.curAnimation = res.ANIM_PLAYER_WALK;
-//                 }
-//
-//                 if (state.keys[SDL_SCANCODE_LSHIFT]) { // if not pressing then reset
-//                     float LEEWAY = 20;
-//                     if (obj.grounded && std::abs(obj.vel.x) >= (obj.data.player.maxRunX - LEEWAY)) { // if grounded and moving fast enter sprint (eventually)                
-//                         if (!obj.data.player.sprintTimer.isTimeOut()) {
-//                             obj.data.player.sprintTimer.step(deltaTime);
-//                         } else {
-//                             obj.maxSpeedX = obj.data.player.maxSprintX;
-//                             obj.data.player.state = PlayerState::sprinting;
-//                         }
-//                     } 
-//                 } else {
-//                     obj.data.player.sprintTimer.reset();
-//                 }
-//                 handleShooting();
-//                 break;
-//             }
-//             case PlayerState::sprinting:
-//             {
-//                 float LEEWAY = 20;
-//                 if (obj.grounded && // if on ground and sliding or too slow reset sprint
-//                     (isSliding(obj) || std::abs(obj.vel.x) < (obj.data.player.maxRunX - LEEWAY))) {       
-//                     obj.data.player.sprintTimer.reset();
-//                     obj.maxSpeedX = obj.data.player.maxRunX;
-//                     obj.data.player.state = PlayerState::moving;
-//                 }
-//                 handleShooting();
-//                 break;
-//             }
-//             case PlayerState::jumping:
-//             {
-//                 obj.texture = res.texJump;
-//                 obj.curAnimation = res.ANIM_PLAYER_JUMP;
-//                 handleShooting();
-//                 break;
-//             } 
-//             case PlayerState::falling:
-//             {
-//                 obj.texture = res.texDie;
-//                 obj.curAnimation = res.ANIM_PLAYER_DIE;
-//                 break;
-//             }
-//             case PlayerState::jumpLaunch:
-//             {
-//                 obj.texture = res.texLaunch;
-//                 obj.curAnimation = res.ANIM_PLAYER_LAUNCH;
-//
-//                 // once the launch animation finishes, switch to normal in-air "jump"
-//                 if (obj.animations[obj.curAnimation].isDone()) {
-//                     obj.data.player.state = PlayerState::jumping;
-//                     obj.texture = res.texJump;
-//                     obj.curAnimation = res.ANIM_PLAYER_JUMP;
-//                     obj.animations[obj.curAnimation].reset();
-//                 }
-//                 handleShooting();
-//                 break;
-//             }
-//             case PlayerState::roll:
-//             {
-//                 obj.texture = res.texRoll;
-//                 obj.curAnimation = res.ANIM_PLAYER_ROLL;
-//
-//                 // when roll animation finishes, switch to moving
-//                 if (obj.animations[obj.curAnimation].isDone()) {
-//                     obj.data.player.state = PlayerState::moving;
-//                     obj.texture = res.texRun;
-//                     obj.curAnimation = res.ANIM_PLAYER_WALK;
-//                     obj.animations[obj.curAnimation].reset();
-//                 }
-//                 handleShooting(); // optional: allow shooting while rolling
-//                 break;
-//             }
-//         }
-//         if (std::abs(obj.pos.y) > 1500) { // hard coded, lol!
-//             obj.data.player.state = PlayerState::dead; // die if you fall off
-//             obj.texture = res.texDie;
-//             obj.curAnimation = res.ANIM_PLAYER_DIE;
-//             obj.vel.x = 0;
-//         }
-//         //printf("Player x = %f, Player y = %f\n", obj.pos.x, obj.pos.y);
-//     } else { // player is dead, reset map
-//         Timer &deathTimer = obj.data.player.deathTimer;
-//         deathTimer.step(deltaTime);
-//         if (deathTimer.isTimeOut()) {
-//             run = false; // exit program
-//         }
-//     }
-//      return currentDirection;
-// }
-//
-// void update(const SDLState &state, GameData &gd, Resources &res, GameObject &obj, float deltaTime) {
-//     // update animation
-//     if (obj.curAnimation != -1) {
-//         obj.animations[obj.curAnimation].step(deltaTime);
-//     }
-//     if (obj.dynamic && !obj.grounded) {
-//         obj.vel.y += changeVel(700 * obj.gravityScale * deltaTime, obj); // gravity
-//         //printf("x=%d, y=%d\n", obj.pos.x, obj.pos.y);
-//     }
-//     float currentDirection = 0;
-//     switch (obj.type) {
-//         /*case ObjectType::player:
-//         {
-//             currentDirection = updatePlayer(state, gd, res, obj, deltaTime, currentDirection);
-//             break;
-//         }*/
-//         case ObjectType::bullet:
-//         {
-//             updateBullet(state, gd, res, obj, deltaTime, currentDirection);
-//             break;
-//         }
-//         case ObjectType::enemy:
-//         {
-//             updateEnemy(state, gd, res, obj, deltaTime, currentDirection);
-//             break;
-//         }
-//         case ObjectType::obstacle:
-//         {
-//             updateObstacle(state, gd, res, obj, deltaTime, currentDirection);
-//             break;
-//         }
-//     }
-//    
-//     if (currentDirection) {
-//         obj.dir = currentDirection;
-//     }
-//     obj.vel += currentDirection * obj.acc * deltaTime;
-//     if (std::abs(obj.vel.x) > obj.maxSpeedX) {
-//         if (!isSliding(obj)) { // if not sliding slow down
-//             obj.vel.x -= 1.5 * obj.acc.x * deltaTime * currentDirection;
-//         }
-//     }
-//
-//     // add vel to pos
-//     obj.pos += obj.vel * deltaTime;
-//     // collision
-//     bool foundGround = obj.grounded;
-//     obj.grounded = false;
-//     for (GameObject &objB : gd.mapTiles) { // check if player is touching any map tiles, currently no enemy collision
-//         if (obj.dynamic && isOnscreen(state, gd, obj) && isOnscreen(state, gd, objB)) {
-//             checkCollision(state, gd, res, obj, objB, deltaTime);
-//         } else if (obj.type == ObjectType::bullet) {
-//             checkCollision(state, gd, res, obj, objB, deltaTime);
-//         }
-//     }
-//     for (GameObject &objB : gd.lasers){
-//         checkCollision(state, gd, res, obj, objB, deltaTime);     
-//     }
-//     /*if (obj.grounded && !foundGround) {
-//         if (obj.grounded && obj.type == ObjectType::player) {
-//             if ((obj.data.player.state == PlayerState::jumping && obj.data.player.fastfalling)|| obj.data.player.state == PlayerState::falling) {
-//                 obj.data.player.state = PlayerState::roll;
-//                 obj.texture = res.texRoll;
-//                 obj.curAnimation = res.ANIM_PLAYER_ROLL;
-//                 obj.animations[obj.curAnimation].reset();
-//             } else {
-//                 obj.data.player.state = PlayerState::moving;
-//             }
-//
-//             obj.data.player.fastfalling = false;
-//             obj.data.player.canDoubleJump = true;
-//             obj.gravityScale = 1.0f;
-//         }
-//     }*/
-// }
+//Handlers
+void handleJumping (GameData &gd, Resources &res, SDL_KeyboardEvent key) {
+    if (key.scancode == SDL_SCANCODE_SPACE && key.down && !key.repeat) {
+        if (gd.player.grounded) { // single jump
+            gd.player.state_->nextStateVal = LAUNCH;
+            PlayerState * tempState = changePlayerState(gd.player.state_);
+            delete gd.player.state_;
+            gd.player.state_ = tempState;
+            gd.player.vel.y = changeVel(JUMP_FORCE, gd.player); 
+        } else if (gd.player.canDoubleJump) { // double jump
+            gd.player.state_->nextStateVal = JUMP;
+            PlayerState * tempState = changePlayerState(gd.player.state_);
+            delete gd.player.state_;
+            gd.player.state_ = tempState;
+            gd.player.vel.y = changeVel(JUMP_FORCE, gd.player);  
+            gd.player.canDoubleJump = false;
+            gd.player.gravityScale = 1.0f; // reset gravity
+        }
+    } else if (!key.down && key.scancode == SDL_SCANCODE_SPACE) { // letting go of jump
+            float termVel = -200.0f; // option 2: Set velocity to predefined amount when you let go. makes less sharp jumps
+            float shouldFlip = gd.player.flip; // there might be a more modular way to do this. idk if we will actually use the gravity flip but having it is nice and cool
+            if (shouldFlip * gd.player.vel.y < shouldFlip * termVel) { 
+                gd.player.vel.y = changeVel(termVel, gd.player);
+            }
+        }
+}
+
+void handleRunning (GameData &gd, Resources &res, SDL_KeyboardEvent key){
+    if (key.scancode == SDL_SCANCODE_LSHIFT) {
+            if (key.down) { // if held down, increase speed
+                gd.player.maxSpeedX = gd.player.maxRunX;
+                gd.player.state_->nextStateVal = RUN;
+                PlayerState * tempState = changePlayerState(gd.player.state_);
+                delete gd.player.state_;
+                gd.player.state_ = tempState;
+            } else {
+                gd.player.maxSpeedX = gd.player.maxWalkX;
+                gd.player.state_->nextStateVal = WALK;
+                PlayerState * tempState = changePlayerState(gd.player.state_);
+                delete gd.player.state_;
+                gd.player.state_ = tempState;
+                gd.player.sprintTimer.reset();
+            }
+        }
+}
+
+void handleSprinting(GameData &gd, Resources &res, SDL_KeyboardEvent key){
+    if (key.scancode == SDL_SCANCODE_LSHIFT && !key.down) {
+        gd.player.maxSpeedX = gd.player.maxWalkX;
+        gd.player.curAnimation = res.ANIM_PLAYER_WALK;
+        gd.player.sprintTimer.reset();
+
+        //Apart of old function, don't get purpose
+        //Maybe walking?
+
+        //gd.player.state = PlayerState::moving;
+
+        gd.player.state_->nextStateVal = WALK;
+        PlayerState *newState = changePlayerState(gd.player.state_);
+        delete gd.player.state_;
+        gd.player.state_ = newState;
+    }
+}
+
+void handleFalling(GameData &gd, Resources &res, SDL_KeyboardEvent key){
+    if (key.scancode == SDL_SCANCODE_S && key.down && !gd.player.grounded) { // fastfall
+        if (!key.repeat && !gd.player.fastFalling) {
+            gd.player.vel.y = changeVel(-250.0f, gd.player);
+            gd.player.fastFalling = true;
+
+            //Enter Jumping State
+            gd.player.state_->nextStateVal = JUMP;
+            PlayerState * tempState = changePlayerState(gd.player.state_);
+            delete gd.player.state_;
+            gd.player.state_ = tempState;
+            //Call enter on jumping state
+        }
+        gd.player.gravityScale = 3.0f;
+    }
+}
 
 
 //Use tempPlayer->nextStateVal to return the new state of the player
@@ -314,37 +465,94 @@ PlayerState * changePlayerState(PlayerState * tempPlayer){
     switch(tempPlayer->nextStateVal){
         case IDLE:
         {
+            newPlayer = new IdleState();
+            newPlayer->enter = enterIdle;
+            newPlayer->update = updateIdle;
+            newPlayer->handleInput = handleInputIdle;
+            newPlayer->currStateVal = IDLE;
             break;
         }
         case WALK:
         {
+            newPlayer = new WalkState();
+            newPlayer->enter = enterWalk;
+            newPlayer->update = updateWalk;
+            newPlayer->handleInput = handleInputWalk;
+            newPlayer->currStateVal = WALK;
             break;
         }
         case RUN:
         {
+            newPlayer = new RunState();
+            newPlayer->enter = enterRun;
+            newPlayer->update = dummyUpdate;
+            newPlayer->handleInput = handleInputRun;
+            newPlayer->currStateVal = RUN;
             break;
         }
         case SPRINT:
         {
+            newPlayer = new SprintState();
+            newPlayer->enter = enterSprint;
+            newPlayer->update = updateSprint;
+            newPlayer->handleInput = handleInputSprint;
+            newPlayer->currStateVal = SPRINT;
             break;
         }
         case LAUNCH:
         {
+            newPlayer = new JumpLaunchState();
+            newPlayer->enter = enterLaunch;
+            newPlayer->update = updateLaunch;
+            newPlayer->handleInput = handleInputLaunch;
+            newPlayer->currStateVal = LAUNCH;
             break;
         }
         case JUMP:
         {
+            newPlayer = new JumpState();
+            newPlayer->enter = enterJump;
+            newPlayer->update = updateJump;
+            newPlayer->handleInput = handleInputJump;
+            newPlayer->currStateVal = JUMP;
             break;
         }
         case ROLL:
         {
+            newPlayer = new RollState();
+            newPlayer->enter = enterRoll;
+            newPlayer->update = updateRoll;
+            newPlayer->handleInput = handleInputRoll;
+            newPlayer->currStateVal = ROLL;
             break;
         }
         case FALL:
         {
+            newPlayer = new FallState();
+            newPlayer->enter = enterFall;
+            newPlayer->update = dummyUpdate;
+            newPlayer->handleInput = dummyInput;
+            newPlayer->currStateVal = FALL;
             break;
         }
         case DEAD:
+        {
+            newPlayer = new DeadState();
+            newPlayer->enter = enterDead;
+            newPlayer->update = dummyUpdate;
+            newPlayer->handleInput = dummyInput;
+            newPlayer->currStateVal = DEAD;
+            break;
+        }
+        case SWORD_DEPLOY:
+        {
+            break;
+        }
+        case SHOTGUN_DEPLOY:
+        {
+            break;
+        }
+        case JETPACK_DEPLOY:
         {
             break;
         }

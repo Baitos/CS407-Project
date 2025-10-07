@@ -4,6 +4,7 @@
 #include "animation.h"
 #include <vector>
 #include "object.h"
+#include "timer.h"
 
 struct SDLState;
 struct GameData;
@@ -13,16 +14,27 @@ class PlayerState;
 class Player : public AnimatedObject { // player
     public:
         bool grounded; 
-        bool sprinting;
+        bool sprinting = false;
+        bool fastFalling = false;
         float gravityScale; 
         float maxSpeedX; // will change depending on state
+        bool canDoubleJump = true;
+        float maxSpeedY = 550;
+        float maxWalkX = 250; // walking
+        //float maxSpeedX = 250;
+        float maxRunX = 650; // running 
+        float maxSprintX = 850; // sprinting
+        float currentDirection;
+        Timer sprintTimer;
 
-        virtual void handleInput(SDL_KeyboardEvent& key);
-        virtual void update();
+        PlayerState* state_;
+
+        virtual void handleInput(SDL_KeyboardEvent& key, GameData &gd, Resources &res, float deltaTime);
+        virtual void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
         //void draw(const SDLState &state, GameData &gs, float width, float height);
         
         Player(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex, std::vector<Animation> anims, int curAnim, float maxSpeedX_) :
-        AnimatedObject(pos_, colliderRect, tex) {
+        AnimatedObject(pos_, colliderRect, tex), sprintTimer(1.5f) {
             acc = glm::vec2(300, 0); // default for now
             animations = anims;
             curAnimation = curAnim;
@@ -32,20 +44,20 @@ class Player : public AnimatedObject { // player
             maxSpeedX = maxSpeedX_; // should be walk speed
             gravityScale = 1.0f;
             
+            
         }
         Player(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : // generic obj constructor
-        AnimatedObject(pos_, colliderRect, tex) {
+        AnimatedObject(pos_, colliderRect, tex), sprintTimer(1.5f) {
             grounded = false;
             sprinting = false;
             gravityScale = 1.0f;
             maxSpeedX = 250; // walk speed default
         }
 
-        Player() : AnimatedObject() {
+        Player() : AnimatedObject(), sprintTimer(1.5f) {
             grounded = false;
             gravityScale = 1.0f;
             maxSpeedX = 250; // walk speed default
         }
-    private:
-        PlayerState* state_;
+        
 };

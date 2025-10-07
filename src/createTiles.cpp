@@ -5,6 +5,7 @@
 #include "../headers/player.h"
 #include "../headers/globals.h"
 #include "../headers/state.h"
+#include "../headers/playerState.h"
 
 const int MAP_ROWS = 60;
 const int MAP_COLS = 280;
@@ -262,7 +263,7 @@ void createTiles(const SDLState &state, GameData &gd, const Resources &res) { //
                         };
                         
                         
-                        printf("%d",((LevelState*) currState)->character);
+                        //printf("%d",((LevelState*) currState)->character);
                         if(((LevelState*) currState)->character == SWORD){
                                 Player player(pos, collider, res.texIdleS, res.playerAnims, res.ANIM_PLAYER_IDLE, 250);
                                 gd.player = player;
@@ -273,6 +274,11 @@ void createTiles(const SDLState &state, GameData &gd, const Resources &res) { //
                                 Player player(pos, collider, res.texIdleJ, res.playerAnimsJ, res.ANIM_PLAYER_IDLE, 250);
                                 gd.player = player;
                         }
+                        
+                        PlayerState * newState = new PlayerState();
+                        newState->handleInput = handleInputIdle;
+                        newState->currStateVal = IDLE;
+                        gd.player.state_ = newState;
                         break; 
                     }
                     case 7: //Background

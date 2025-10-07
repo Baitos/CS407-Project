@@ -11,82 +11,73 @@ enum PlayerStateValues {
     JUMP, 
     ROLL, 
     FALL, 
-    DEAD
+    DEAD,
+    SWORD_DEPLOY,
+    SHOTGUN_DEPLOY,
+    JETPACK_DEPLOY
 };
 
 class PlayerState {
     public:
         int currStateVal;
         int nextStateVal;
-        virtual ~PlayerState() {}
-        virtual PlayerState* handleInput(Player& player, SDL_KeyboardEvent key);
-        virtual void update(Player& player);
-        virtual void enter(Player& player);
+        //virtual ~PlayerState() {}
+        void (*handleInput)(GameData &gd, Resources &res, SDL_KeyboardEvent key);
+        void (*update)(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+        void (*enter)(Player& player, GameData &gd, Resources &res);
     
 };
 
 class IdleState : public PlayerState {
-    public:
-        virtual PlayerState* handleInput(Player& player, SDL_KeyboardEvent key);
-        virtual void update(Player& player);
-        virtual void enter(Player& player);
+
 };
 
 class WalkState : public PlayerState {
-    public:
-        virtual PlayerState* handleInput(Player& player, SDL_KeyboardEvent key);
-        virtual void update(Player& player);
-        virtual void enter(Player& player);
+
 };
 
 class RunState : public PlayerState {
-    public:
-        virtual PlayerState* handleInput(Player& player, SDL_KeyboardEvent key);
-        virtual void update(Player& player);
-        virtual void enter(Player& player);
+
 };
 
 class SprintState : public PlayerState {
-    public:
-        virtual PlayerState* handleInput(Player& player, SDL_KeyboardEvent key);
-        virtual void update(Player& player);
-        virtual void enter(Player& player);
+
 };
 
 class JumpLaunchState : public PlayerState {
-    public:
-        virtual PlayerState* handleInput(Player& player, SDL_KeyboardEvent key);
-        virtual void update(Player& player);
-        virtual void enter(Player& player);
+
 };
 
 class JumpState : public PlayerState {
-    public:
-        virtual PlayerState* handleInput(Player& player, SDL_KeyboardEvent key);
-        virtual void update(Player& player);
-        virtual void enter(Player& player);
+
 };
 
 class RollState : public PlayerState {
-    public:
-        virtual PlayerState* handleInput(Player& player, SDL_KeyboardEvent key);
-        virtual void update(Player& player);
-        virtual void enter(Player& player);
+
 };
 
 class FallState : public PlayerState {
-    public:
-        virtual PlayerState* handleInput(Player& player, SDL_KeyboardEvent key);
-        virtual void update(Player& player);
-        virtual void enter(Player& player);
+
 };
 
 class DeadState : public PlayerState {
-    public:
-        virtual PlayerState* handleInput(Player& player, SDL_KeyboardEvent key);
-        virtual void update(Player& player);
-        virtual void enter(Player& player);
+
 };
 
+class ShotgunDeployState : public PlayerState {
+
+};
+
+class SwordDepolyState : public PlayerState {
+
+};
+
+class JetpackDeployState : public PlayerState {
+
+};
 
 PlayerState * changePlayerState(PlayerState * tempPlayer);
+
+void handleInputIdle(GameData &gd, Resources &res, SDL_KeyboardEvent key, float deltaTime);
+void handleJumping (GameData &gd, Resources &res, SDL_KeyboardEvent key);
+void enterLaunch(Player& player, GameData &gd, Resources &res);
