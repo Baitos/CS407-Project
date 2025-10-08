@@ -64,6 +64,18 @@ void handleInputGrapple(GameData &gd, Resources &res, SDL_KeyboardEvent key) {
 void dummyInput(GameData &gd, Resources &res, SDL_KeyboardEvent key){
 }
 
+void handleInputJetpackDeploy(GameData &gd, Resources &res, SDL_KeyboardEvent key) {
+    handleJumping(gd,res,key);
+}
+
+void handleInputShotgunDeploy(GameData &gd, Resources &res, SDL_KeyboardEvent key) {
+    handleJumping(gd,res,key);
+}
+
+void handleInputSwordDeploy(GameData &gd, Resources &res, SDL_KeyboardEvent key) {
+    handleJumping(gd,res,key);
+}
+
 //Update Functions
 void updateIdle(const SDLState &state, GameData &gd, Resources &res, float deltaTime){
     //gd.player.vel.x = 0;    
@@ -246,7 +258,57 @@ void dummyUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
     }
 }
 
+void updateJetpackDeploy(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
+    sharedUpdate(state, gd,res,deltaTime);
+    gd.player.vel.y -= 3.f;
 
+            if (!gd.player.jetpackTimer.isTimeOut()) {
+                gd.player.jetpackTimer.step(deltaTime);
+            } else {
+                gd.player.cooldownTimer.reset();
+                gd.player.state_->nextStateVal = IDLE;
+                PlayerState * newState = changePlayerState(gd, res, gd.player.state_);
+                delete gd.player.state_;
+                gd.player.state_ = newState;
+                gd.player.state_->enter(gd.player, gd, res);
+            }
+}
+
+void updateShotgunDeploy(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
+    sharedUpdate(state, gd, res, deltaTime);
+
+    if(gd.player.blast->animations[gd.player.blast->curAnimation].isDone()) { 
+        delete gd.player.blast;
+        gd.player.blast = nullptr;
+        gd.player.cooldownTimer.reset();
+        gd.player.state_->nextStateVal = IDLE;
+        PlayerState * newState = changePlayerState(gd, res, gd.player.state_);
+        delete gd.player.state_;
+        gd.player.state_ = newState;
+        gd.player.state_->enter(gd.player, gd, res);
+    } else {
+        if(gd.player.dir == 1) {
+            gd.player.blast->pos = glm::vec2(gd.player.pos.x + 32, gd.player.pos.y - 4);
+            gd.player.blast->dir = 1;
+        } else if (gd.player.dir == -1) {
+            gd.player.blast->pos = glm::vec2(gd.player.pos.x - 80, gd.player.pos.y - 4);
+            gd.player.blast->dir = -1;
+        }
+    }
+}
+
+void updateSwordDeploy(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
+    sharedUpdate(state, gd, res, deltaTime);
+
+     if(gd.player.animations[gd.player.curAnimation].isDone()) { 
+        gd.player.cooldownTimer.reset();
+        gd.player.state_->nextStateVal = IDLE;
+        PlayerState * newState = changePlayerState(gd, res, gd.player.state_);
+        delete gd.player.state_;
+        gd.player.state_ = newState;
+        gd.player.state_->enter(gd.player, gd, res);
+    }
+}
 
 //Enter Functions
 void enterIdle(Player& player, GameData &gd, Resources &res){
@@ -360,6 +422,46 @@ void enterDead(Player& player, GameData &gd, Resources &res){
     player.animations[gd.player.curAnimation].reset();
 }
 
+void enterJetpackDeploy(Player& player, GameData &gd, Resources &res) {
+
+    player.texture = res.texJDeploy;
+    player.curAnimation = res.ANIM_PLAYER_JETPACK_DEPLOY;
+    player.animations[gd.player.curAnimation].reset();
+
+    gd.player.jetpackTimer.reset();
+}
+
+void enterShotgunDeploy(Player& player, GameData &gd, Resources &res) {
+
+    player.texture = res.texGDeploy;
+    player.curAnimation = res.ANIM_PLAYER_SHOOT;
+    player.animations[gd.player.curAnimation].reset();
+    //load in shotgun
+    SDL_FRect collider = { 
+                            .x = 0,
+                            .y = 12,
+                            .w = 80,
+                            .h = 24
+                        };
+    glm::vec2 pos;
+    AnimatedObject* blast = new AnimatedObject(pos, collider, res.texShotgunBlast);
+    if(player.dir == 1) {
+        blast->pos = glm::vec2(player.pos.x + 32, player.pos.y - 4);
+        blast->dir = 1;
+    } else if (player.dir == -1) {
+        blast->pos = glm::vec2(player.pos.x - 80, player.pos.y - 4);
+        blast->dir = -1;
+    }
+    blast->animations = res.shotgunAnims;
+    blast->curAnimation = res.SHOTGUN_BLAST;
+    gd.player.blast = blast;
+}
+
+void enterSwordDeploy(Player& player, GameData &gd, Resources &res) {
+    player.texture = res.texSDeploy;
+    player.curAnimation = res.ANIM_PLAYER_SWORD_DEPLOY;
+    player.animations[gd.player.curAnimation].reset();
+}
 
 //Handlers
 void handleJumping (GameData &gd, Resources &res, SDL_KeyboardEvent key) {
@@ -466,6 +568,8 @@ void sharedUpdate(const SDLState &state, GameData &gd, Resources &res, float del
         //printf("currentDirection in sharedUpdate while pressing D: %f\n", gd.player.currentDirection);
     }
     //printf("currentDirection in sharedUpdate: %f\n", gd.player.currentDirection);
+
+    gd.player.cooldownTimer.step(deltaTime);
 }
 //Use tempPlayer->nextStateVal to return the new state of the player
 PlayerState * changePlayerState(GameData &gd, Resources &res, PlayerState * tempPlayer) {
@@ -555,14 +659,29 @@ PlayerState * changePlayerState(GameData &gd, Resources &res, PlayerState * temp
         }
         case SWORD_DEPLOY:
         {
+            newPlayer = new ShotgunDeployState();
+            newPlayer->enter = enterSwordDeploy;
+            newPlayer->update = updateSwordDeploy;
+            newPlayer->handleInput = handleInputSwordDeploy;
+            newPlayer->currStateVal = SWORD_DEPLOY;
             break;
         }
         case SHOTGUN_DEPLOY:
         {
+            newPlayer = new ShotgunDeployState();
+            newPlayer->enter = enterShotgunDeploy;
+            newPlayer->update = updateShotgunDeploy;
+            newPlayer->handleInput = handleInputShotgunDeploy;
+            newPlayer->currStateVal = SHOTGUN_DEPLOY;
             break;
         }
         case JETPACK_DEPLOY:
         {
+            newPlayer = new JetpackDeployState();
+            newPlayer->enter = enterJetpackDeploy;
+            newPlayer->update = updateJetpackDeploy;
+            newPlayer->handleInput = handleInputJetpackDeploy;
+            newPlayer->currStateVal = JETPACK_DEPLOY;
             break;
         }
     }

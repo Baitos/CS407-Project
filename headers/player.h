@@ -21,11 +21,14 @@ class Player : public AnimatedObject { // player
         bool canDoubleJump = true;
         float maxSpeedY = 550;
         float maxWalkX = 250; // walking
-        //float maxSpeedX = 250;
         float maxRunX = 650; // running 
         float maxSprintX = 850; // sprinting
         int currentDirection;
         Timer sprintTimer;
+        Timer jetpackTimer;
+        Timer cooldownTimer;
+
+        AnimatedObject* blast;
 
         PlayerState* state_;
 
@@ -34,7 +37,7 @@ class Player : public AnimatedObject { // player
         //void draw(const SDLState &state, GameData &gs, float width, float height);
         
         Player(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex, std::vector<Animation> anims, int curAnim, float maxSpeedX_) :
-        AnimatedObject(pos_, colliderRect, tex), sprintTimer(1.5f) {
+        AnimatedObject(pos_, colliderRect, tex), sprintTimer(1.5f), jetpackTimer(2.0f), cooldownTimer(5.0f) {
             acc = glm::vec2(300, 0); // default for now
             animations = anims;
             curAnimation = curAnim;
@@ -47,7 +50,7 @@ class Player : public AnimatedObject { // player
             
         }
         Player(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : // generic obj constructor
-        AnimatedObject(pos_, colliderRect, tex), sprintTimer(1.5f) {
+        AnimatedObject(pos_, colliderRect, tex), sprintTimer(1.5f), jetpackTimer(2.0f), cooldownTimer(5.0f) {
             grounded = false;
             sprinting = false;
             currentDirection = 0;
@@ -55,7 +58,7 @@ class Player : public AnimatedObject { // player
             maxSpeedX = 250; // walk speed default
         }
 
-        Player() : AnimatedObject(), sprintTimer(1.5f) {
+        Player() : AnimatedObject(), sprintTimer(1.5f), jetpackTimer(2.0f), cooldownTimer(5.0f) {
             grounded = false;
             gravityScale = 1.0f;
             currentDirection = 0;

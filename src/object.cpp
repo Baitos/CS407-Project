@@ -136,3 +136,7 @@ void Laser::update(const SDLState &state, GameData &gd, Resources &res, float de
         (*this).laserActive = !(*this).laserActive;
     }
 }
+
+void Hook::update(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
+    (*this).pos += (*this).vel * deltaTime;
+}

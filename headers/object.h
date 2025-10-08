@@ -153,6 +153,13 @@ class Laser : public Object { // obstacle
         void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
 };
 
-class Hook : public Object { // grappling hook projectile
+class Hook : public AnimatedObject { // grappling hook projectile
+    public:
+        Hook() : AnimatedObject() { // default 
+        }  
+        Hook(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : 
+        AnimatedObject(pos_, colliderRect, tex) { // generic obj constructor
 
+        }
+        void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
 };

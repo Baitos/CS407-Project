@@ -117,6 +117,11 @@ void drawLevel(const SDLState &state, GameData &gd, Resources res, float deltaTi
     // draw player
     gd.player.draw(state, gd, TILE_SIZE, TILE_SIZE); // draw player class
 
+    //draw blast if needed for shotgun
+    if(gd.player.blast != nullptr) {
+        gd.player.blast->draw(state, gd, 80, 48);
+    }
+
     for(Laser &laser : gd.lasers_) {
         if (laser.laserActive) {
             laser.draw(state, gd, TILE_SIZE, TILE_SIZE);
@@ -124,6 +129,9 @@ void drawLevel(const SDLState &state, GameData &gd, Resources res, float deltaTi
     }
 
     handleCrosshair(state, gd, res, deltaTime);
+
+    gd.hook.draw(state, gd, TILE_SIZE, TILE_SIZE);
+
 }
 
 void drawCharSelect(const SDLState &state, GameData &gd, Resources res, float deltaTime){
