@@ -38,13 +38,14 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
         //printf("Velocity at Update: %f\n", gd.player.vel.x);
         //printf("%f\n", gd.player.dir);
         
-        gd.player.vel += gd.player.dir * gd.player.acc * deltaTime;
+        gd.player.vel += static_cast<float>(gd.player.currentDirection) * gd.player.acc * deltaTime;
         //printf("Velocity after Update: %f\n", gd.player.vel.x);
         //printf("currDirection = %d\n", gd.player.currentDirection);
         if (std::abs(gd.player.vel.x) > gd.player.maxSpeedX) {
-            //if (!isSliding(gd.player)) { // if not sliding slow down
+            //gd.player.vel.x = gd.player.maxSpeedX * gd.player.dir;
+            if (!isSliding(gd.player)) { // if not sliding slow down
                 gd.player.vel.x -= 1.5 * gd.player.acc.x * deltaTime * gd.player.currentDirection;
-            //}
+            }
         }
 
         // add vel to pos

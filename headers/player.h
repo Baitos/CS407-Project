@@ -24,7 +24,7 @@ class Player : public AnimatedObject { // player
         //float maxSpeedX = 250;
         float maxRunX = 650; // running 
         float maxSprintX = 850; // sprinting
-        float currentDirection;
+        int currentDirection;
         Timer sprintTimer;
 
         PlayerState* state_;
@@ -38,7 +38,7 @@ class Player : public AnimatedObject { // player
             acc = glm::vec2(300, 0); // default for now
             animations = anims;
             curAnimation = curAnim;
-
+            currentDirection = 0;
             grounded = false;
             sprinting = false;
             maxSpeedX = maxSpeedX_; // should be walk speed
@@ -50,6 +50,7 @@ class Player : public AnimatedObject { // player
         AnimatedObject(pos_, colliderRect, tex), sprintTimer(1.5f) {
             grounded = false;
             sprinting = false;
+            currentDirection = 0;
             gravityScale = 1.0f;
             maxSpeedX = 250; // walk speed default
         }
@@ -57,6 +58,7 @@ class Player : public AnimatedObject { // player
         Player() : AnimatedObject(), sprintTimer(1.5f) {
             grounded = false;
             gravityScale = 1.0f;
+            currentDirection = 0;
             maxSpeedX = 250; // walk speed default
         }
         

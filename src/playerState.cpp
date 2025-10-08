@@ -60,8 +60,9 @@ void dummyInput(GameData &gd, Resources &res, SDL_KeyboardEvent key){
 
 //Update Functions
 void updateIdle(const SDLState &state, GameData &gd, Resources &res, float deltaTime){
+    //gd.player.vel.x = 0;    
     sharedUpdate(state, gd,res,deltaTime);
-    if(gd.player.currentDirection != 0.f) { // if moving change to running
+    if(gd.player.currentDirection) { // if moving change to running
         gd.player.state_->nextStateVal = WALK;
         PlayerState * newState = changePlayerState(gd.player.state_);
         //PlayerState * oldState = gd.player.state_;
@@ -75,11 +76,11 @@ void updateIdle(const SDLState &state, GameData &gd, Resources &res, float delta
 void updateWalk(const SDLState &state, GameData &gd, Resources &res, float deltaTime){
     
     sharedUpdate(state, gd,res,deltaTime);
-    printf("currentDirection: %f\n", gd.player.currentDirection);
+    //printf("currentDirection: %d\n", gd.player.currentDirection);
     //printf("Velocity: %f\n", gd.player.vel.x);
-    if (gd.player.currentDirection == 0.f && gd.player.grounded) { // if not moving, slow down
+    if (!gd.player.currentDirection && gd.player.grounded) { // if not moving, slow down
         //printf("Slowing Walk\n");
-        printf("currentDirection: %f\n", gd.player.currentDirection);
+        //printf("currentDirection: %d\n", gd.player.currentDirection);
         const float factor = gd.player.vel.x > 0 ? -1.0f : 1.0f;
         float amount = factor * gd.player.acc.x * deltaTime;
         
@@ -387,7 +388,7 @@ void handleJumping (GameData &gd, Resources &res, SDL_KeyboardEvent key) {
 
 void handleRunning (GameData &gd, Resources &res, SDL_KeyboardEvent key){
     if (key.scancode == SDL_SCANCODE_LSHIFT) {
-        printf("running handled");
+        //printf("running handled");
             if (key.down) { // if held down, increase speed
                 gd.player.maxSpeedX = gd.player.maxRunX;
                 gd.player.state_->nextStateVal = RUN;
@@ -409,7 +410,7 @@ void handleRunning (GameData &gd, Resources &res, SDL_KeyboardEvent key){
 
 void handleSprinting(GameData &gd, Resources &res, SDL_KeyboardEvent key){
     if (key.scancode == SDL_SCANCODE_LSHIFT && !key.down) {
-        printf("Sprinting handled");
+        //printf("Sprinting handled");
         gd.player.maxSpeedX = gd.player.maxWalkX;
         gd.player.curAnimation = res.ANIM_PLAYER_WALK;
         gd.player.sprintTimer.reset();
@@ -424,7 +425,7 @@ void handleSprinting(GameData &gd, Resources &res, SDL_KeyboardEvent key){
 
 void handleFalling(GameData &gd, Resources &res, SDL_KeyboardEvent key){
     if (key.scancode == SDL_SCANCODE_S && key.down && !gd.player.grounded) { // fastfall
-        printf("Falling handled");
+        //printf("Falling handled");
         if (!key.repeat && !gd.player.fastFalling) {
             gd.player.vel.y = changeVel(-250.0f, gd.player);
             gd.player.fastFalling = true;
@@ -456,9 +457,9 @@ void sharedUpdate(const SDLState &state, GameData &gd, Resources &res, float del
     if (state.keys[SDL_SCANCODE_D]) {
         gd.player.currentDirection += 1.f;
         //printf("set curDirection 1\n");
-        printf("currentDirection in sharedUpdate while pressing D: %f\n", gd.player.currentDirection);
+        //printf("currentDirection in sharedUpdate while pressing D: %f\n", gd.player.currentDirection);
     }
-    printf("currentDirection in sharedUpdate: %f\n", gd.player.currentDirection);
+    //printf("currentDirection in sharedUpdate: %f\n", gd.player.currentDirection);
 }
 //Use tempPlayer->nextStateVal to return the new state of the player
 PlayerState * changePlayerState(PlayerState * tempPlayer){
