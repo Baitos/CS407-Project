@@ -105,7 +105,7 @@ void levelInputs(SDLState &state, GameData &gd, Resources &res, float deltaTime)
                 }
                 case SDL_EVENT_MOUSE_BUTTON_DOWN:
                 {
-                    //handleClick(state, gd, res, gd.player(), deltaTime);
+                    handleGameClick(state, gd, res, event.button, deltaTime);
                     break;
                 } 
             }
@@ -168,10 +168,10 @@ void handleCrosshair(const SDLState &state, GameData &gd, Resources &res, float 
         .w = CROSSHAIR_SIZE,
         .h = CROSSHAIR_SIZE
     };
-    SDL_SetRenderDrawColor(state.renderer, 255, 0, 0, 255); // draw line to crosshair
-    glm::vec2 pOffset = findCenterOfSprite(gd.player);
+    //SDL_SetRenderDrawColor(state.renderer, 255, 0, 0, 255); // draw line to crosshair
+    //glm::vec2 pOffset = findCenterOfSprite(gd.player);
     //printf("x: %d, y: %d\n", pOffset.x, pOffset.y);
-    SDL_RenderLine(state.renderer, gd.player.pos.x - gd.mapViewport.x + pOffset.x, gd.player.pos.y - gd.mapViewport.y + pOffset.y, gd.mouseCoords.x, gd.mouseCoords.y);
+    //SDL_RenderLine(state.renderer, gd.player.pos.x - gd.mapViewport.x + pOffset.x, gd.player.pos.y - gd.mapViewport.y + pOffset.y, gd.mouseCoords.x, gd.mouseCoords.y);
     SDL_SetRenderDrawColor(state.renderer, 64, 51, 83, 255);
     
     //printf("mouseX: %f, mouseY: %f\n", gd.mouseCoords.x, gd.mouseCoords.y);
@@ -217,7 +217,7 @@ void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
     if(key.scancode == SDL_SCANCODE_F2){
         //printf("F2 key clicked");
         currState = changeState(currState, gd);
-        currState->init(state,gd, res);
+        currState->init(state, gd, res);
     }
     gd.player.state_->handleInput(gd, res, key);
 
@@ -238,6 +238,16 @@ void handleCharSelectKeyInput(const SDLState &state, GameData &gd, Resources &re
         currState->init(state,gd, res);
     }
 }
+
+void handleGameClick(const SDLState &state, GameData &gd, Resources &res, SDL_MouseButtonEvent button, float deltaTime) {
+    if (button.button == SDL_BUTTON_LEFT) {
+        //printf("left click\n");
+        
+    } else if (button.button == SDL_BUTTON_RIGHT) {
+        //printf("right click\n");
+    }
+}
+
 //Handles Clicking for Character Select Screen
 void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
     if ((gd.mouseCoords.x >= 658 && gd.mouseCoords.x <= 658+34) && (gd.mouseCoords.y >= 156 && gd.mouseCoords.y <= 156+36)){

@@ -18,6 +18,7 @@ void handleCrosshair(const SDLState &state, GameData &gd, Resources &res, float 
 void levelInputs(SDLState &state, GameData &gd, Resources &res, float deltaTime);
 void handleMousePointer(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
 void charSelectInputs(SDLState &state, GameData &gd, Resources &res, float deltaTime);
+void handleGameClick(const SDLState &state, GameData &gd, Resources &res, SDL_MouseButtonEvent button, float deltaTime);
 void handleCharSelectKeyInput(const SDLState &state, GameData &gd, Resources &res,
                     SDL_KeyboardEvent key, bool keyDown, float deltaTime);
 void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res,

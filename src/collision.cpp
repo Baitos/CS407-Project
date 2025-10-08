@@ -75,10 +75,9 @@ void collisionCheckAndResponse(const SDLState &state, GameData &gd, Resources &r
 			if(l.laserActive){
 				//printf("FALLING");
 				a.state_->nextStateVal = DEAD;
-				PlayerState * newState = changePlayerState(a.state_);
+				PlayerState * newState = changePlayerState(gd, res, a.state_);
 				delete a.state_;
 				a.state_ = newState;
-				a.state_->enter(a, gd, res);
 			
 				a.vel.x = changeVel(-a.vel.x, a);
 				float shouldFlip = a.flip; // there might be a more modular way to do this. idk if we will actually use the gravity flip but having it is nice and cool

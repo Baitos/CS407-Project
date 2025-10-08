@@ -36,9 +36,6 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     playerAnims[ANIM_PLAYER_SHOOT_JUMP] = Animation(1, 0.8f);
     playerAnims[ANIM_PLAYER_ROLL] = Animation(5, 0.2f);
 
-    bulletAnims.resize(2); // 
-    bulletAnims[ANIM_BULLET_MOVING] = Animation(4, 0.5f);
-    bulletAnims[ANIM_BULLET_HIT] = Animation(3, 0.5f);
     enemyAnims.resize(2);
     enemyAnims[ANIM_ENEMY] = Animation(2, 0.6f);
     enemyAnims[ANIM_ENEMY_DEAD] = Animation(1, 1.0f);
@@ -46,6 +43,9 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     portalAnims[PORTAL_IDLE] = Animation(3, 1.0f);
     charIconAnims.resize(1);
     charIconAnims[ICONS] = Animation(8, 0.0f);
+
+    errorAnims.resize(1); // default to prevent crashes
+    errorAnims[ERROR] = Animation(1, 1.0f);
 
 
     //load shotgun character animations
@@ -88,11 +88,6 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     texBush = loadTexture(state.renderer, "data/bush.png");
     texFence = loadTexture(state.renderer, "data/fence.png");
     texBg1 = loadTexture(state.renderer, "data/Spaceship/Background.png");
-    texBg2 = loadTexture(state.renderer, "data/bg_layer2.png");
-    texBg3 = loadTexture(state.renderer, "data/bg_layer3.png");
-    texBg4 = loadTexture(state.renderer, "data/bg_layer4.png");
-    texSpiny = loadTexture(state.renderer, "data/Spiny.png");
-    texSpinyDead = loadTexture(state.renderer, "data/SpinyDead.png");
 
     //Spaceship
     texOnStage = loadTexture(state.renderer, "data/spaceship/OnStage.png");

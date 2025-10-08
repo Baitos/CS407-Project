@@ -12,6 +12,8 @@ struct GameData {
     std::vector<Level> mapTiles_;
     std::vector<Laser> lasers_;
     std::vector<Portal> portals_;
+    std::vector<Hook> hooks_; // grappling hook
+
     std::vector<charIconObject> charIcons_;
     std::vector<AnimatedObject> previews_;
     glm::vec2 ExitPortal, 

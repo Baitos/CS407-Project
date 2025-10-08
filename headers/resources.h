@@ -31,6 +31,8 @@ struct Resources {
     std::vector<Animation> portalAnims;
     const int ICONS = 0;
     std::vector<Animation> charIconAnims;
+    const int ERROR = 0;
+    std::vector<Animation> errorAnims;
 
     //FOR NOW.. change to 0 for shotgun, 1 for sword, 2 for jetpack
     int character;

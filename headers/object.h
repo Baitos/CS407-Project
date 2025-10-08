@@ -5,10 +5,10 @@
 #include "animation.h"
 #include "globals.h"
 #include <vector>
+#include "resources.h"
 
 struct SDLState;
 struct GameData;
-struct Resources;
 class PlayerState;
 
 enum ObjectType{
@@ -27,6 +27,12 @@ class Object {   // generic obj type
         int type;
         Object() {           
             pos = vel = acc = glm::vec2(0);
+            collider = {
+                .x = 0,
+                .y = 0,
+                .w = (float)TILE_SIZE,
+                .h = (float)TILE_SIZE
+            };
         }
         Object(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) {
             pos = pos_;       
@@ -37,7 +43,7 @@ class Object {   // generic obj type
         void draw(const SDLState &state, GameData &gd, float width, float height);
         void drawDebug(const SDLState &state, GameData &gd, float width, float height);
         virtual ~Object() {}
-    };
+};
 
 class AnimatedObject : public Object { // obj with anims
     public:
@@ -145,4 +151,8 @@ class Laser : public Object { // obstacle
             type = LASER;
         }
         void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+};
+
+class Hook : public Object { // grappling hook projectile
+
 };
