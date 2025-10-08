@@ -254,18 +254,55 @@ void dummyUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
 
 void updateJetpackDeploy(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
     sharedUpdate(state, gd,res,deltaTime);
-    gd.player.vel.y -= 3.f;
+    int vertDir = 0;
+    //calculate direction
+     if (state.keys[SDL_SCANCODE_W]) {
+        vertDir += -1.f;
+    }
+    if (state.keys[SDL_SCANCODE_S]) {
+        vertDir += 1.f;
+    }
+    if(gd.player.currentDirection == 1 && vertDir == 0) {
+        gd.player.vel.x += 5.f;
+    } else if (gd.player.currentDirection == -1 && vertDir == 0) {
+        gd.player.vel.x -= 5.f;
+    } else if (gd.player.currentDirection == 0 && vertDir == 1) {
+        gd.player.vel.y += 5.f;
+    } else if (gd.player.currentDirection == 0 && vertDir == -1) {
+        gd.player.vel.y -= 5.f;
+    } else if (gd.player.currentDirection == 1 && vertDir == 1) {
+        gd.player.vel.x += (5/sqrt(2));
+        gd.player.vel.y += (5/sqrt(2));
+    } else if (gd.player.currentDirection == 1 && vertDir == -1) {
+        gd.player.vel.x += (5/sqrt(2));
+        gd.player.vel.y -= (5/sqrt(2));
+    } else if (gd.player.currentDirection == -1 && vertDir == 1) {
+        gd.player.vel.x -= (5/sqrt(2));
+        gd.player.vel.y += (5/sqrt(2));
+    } else if (gd.player.currentDirection == -1 && vertDir == -1) {
+        gd.player.vel.x -= (5/sqrt(2));
+        gd.player.vel.y -= (5/sqrt(2));
+    }
 
-            if (!gd.player.jetpackTimer.isTimeOut()) {
-                gd.player.jetpackTimer.step(deltaTime);
-            } else {
-                gd.player.cooldownTimer.reset();
-                gd.player.state_->nextStateVal = IDLE;
-                PlayerState * newState = changePlayerState(gd.player.state_);
-                delete gd.player.state_;
-                gd.player.state_ = newState;
-                gd.player.state_->enter(gd.player, gd, res);
-            }
+    //Check timer for state change
+    if (!gd.player.jetpackTimer.isTimeOut()) {
+        gd.player.jetpackTimer.step(deltaTime);
+    } else {
+        gd.player.cooldownTimer.reset();
+        if(gd.player.vel.x != 0) {
+            gd.player.state_->nextStateVal = WALK;
+            PlayerState * newState = changePlayerState(gd.player.state_);
+            delete gd.player.state_;
+            gd.player.state_ = newState;
+            gd.player.state_->enter(gd.player, gd, res);
+        } else {
+            gd.player.state_->nextStateVal = IDLE;
+            PlayerState * newState = changePlayerState(gd.player.state_);
+            delete gd.player.state_;
+            gd.player.state_ = newState;
+            gd.player.state_->enter(gd.player, gd, res);
+        }
+    }
 }
 
 void updateShotgunDeploy(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
@@ -275,11 +312,19 @@ void updateShotgunDeploy(const SDLState &state, GameData &gd, Resources &res, fl
         delete gd.player.blast;
         gd.player.blast = nullptr;
         gd.player.cooldownTimer.reset();
-        gd.player.state_->nextStateVal = IDLE;
-        PlayerState * newState = changePlayerState(gd.player.state_);
-        delete gd.player.state_;
-        gd.player.state_ = newState;
-        gd.player.state_->enter(gd.player, gd, res);
+        if(gd.player.vel.x != 0) {
+            gd.player.state_->nextStateVal = WALK;
+            PlayerState * newState = changePlayerState(gd.player.state_);
+            delete gd.player.state_;
+            gd.player.state_ = newState;
+            gd.player.state_->enter(gd.player, gd, res);
+        } else {
+            gd.player.state_->nextStateVal = IDLE;
+            PlayerState * newState = changePlayerState(gd.player.state_);
+            delete gd.player.state_;
+            gd.player.state_ = newState;
+            gd.player.state_->enter(gd.player, gd, res);
+        }
     } else {
         if(gd.player.dir == 1) {
             gd.player.blast->pos = glm::vec2(gd.player.pos.x + 32, gd.player.pos.y - 4);
@@ -296,11 +341,19 @@ void updateSwordDeploy(const SDLState &state, GameData &gd, Resources &res, floa
 
      if(gd.player.animations[gd.player.curAnimation].isDone()) { 
         gd.player.cooldownTimer.reset();
-        gd.player.state_->nextStateVal = IDLE;
-        PlayerState * newState = changePlayerState(gd.player.state_);
-        delete gd.player.state_;
-        gd.player.state_ = newState;
-        gd.player.state_->enter(gd.player, gd, res);
+        if(gd.player.vel.x != 0) {
+            gd.player.state_->nextStateVal = WALK;
+            PlayerState * newState = changePlayerState(gd.player.state_);
+            delete gd.player.state_;
+            gd.player.state_ = newState;
+            gd.player.state_->enter(gd.player, gd, res);
+        } else {
+            gd.player.state_->nextStateVal = IDLE;
+            PlayerState * newState = changePlayerState(gd.player.state_);
+            delete gd.player.state_;
+            gd.player.state_ = newState;
+            gd.player.state_->enter(gd.player, gd, res);
+        }
     }
 }
 

@@ -267,12 +267,18 @@ void createTiles(const SDLState &state, GameData &gd, const Resources &res) { //
                         if(((LevelState*) currState)->character == SWORD){
                                 Player player(pos, collider, res.texIdleS, res.playerAnims, res.ANIM_PLAYER_IDLE, 250);
                                 gd.player = player;
+                                gd.player.cooldownTimer = Timer(3.0f);
+                                gd.player.cooldownTimer.step(3.0f);
                         } else if(((LevelState*) currState)->character == SHOTGUN){
                                 Player player(pos, collider, res.texIdleG, res.playerAnims, res.ANIM_PLAYER_IDLE, 250);
                                 gd.player = player;
+                                gd.player.cooldownTimer = Timer(5.0f);
+                                gd.player.cooldownTimer.step(5.0f);
                         } else {
                                 Player player(pos, collider, res.texIdleJ, res.playerAnimsJ, res.ANIM_PLAYER_IDLE, 250);
                                 gd.player = player;
+                                gd.player.cooldownTimer = Timer(1.0f);
+                                gd.player.cooldownTimer.step(1.0f);
                         }
                         
                         PlayerState * newState = new PlayerState();
@@ -283,7 +289,8 @@ void createTiles(const SDLState &state, GameData &gd, const Resources &res) { //
                         gd.player.state_ = newState;
                         gd.player.dir = 0;
                         gd.player.flip =1;
-                        gd.player.cooldownTimer.step(5.0f);
+
+                
                         break; 
                     }
                     case 7: //Background
