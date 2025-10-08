@@ -19,7 +19,7 @@ extern GameState * currState;
 //Update Function for level Spaceship
 void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
     // update portals
-        gd.player.currentDirection = 0;
+        //gd.player.currentDirection = 0;
         for (Portal &portal : gd.portals_) {
             portal.update(state, gd, res, deltaTime);
         }
@@ -29,57 +29,37 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
             laser.update(state, gd, res, deltaTime);
         }
 
-        gd.player.currentDirection = 0;
+        //gd.player.currentDirection = 0;
         gd.player.state_->update(state, gd, res,deltaTime);
         if(gd.player.currentDirection){
             gd.player.dir = gd.player.currentDirection;
         }
-        //printf("%f\n", gd.player.dir);
 
+        //printf("Velocity at Update: %f\n", gd.player.vel.x);
+        //printf("%f\n", gd.player.dir);
+        
         gd.player.vel += gd.player.dir * gd.player.acc * deltaTime;
+        //printf("Velocity after Update: %f\n", gd.player.vel.x);
+        //printf("currDirection = %d\n", gd.player.currentDirection);
         if (std::abs(gd.player.vel.x) > gd.player.maxSpeedX) {
-            if (!isSliding(gd.player)) { // if not sliding slow down
+            //if (!isSliding(gd.player)) { // if not sliding slow down
                 gd.player.vel.x -= 1.5 * gd.player.acc.x * deltaTime * gd.player.currentDirection;
-            }
+            //}
         }
 
         // add vel to pos
-        printf("%f\n", gd.player.vel);
+        //printf("%f\n", gd.player.vel);
         gd.player.pos += gd.player.vel * deltaTime;
         //printf("%f", gd.player.vel);
         // collision
         bool foundGround = gd.player.grounded;
         gd.player.grounded = false;
         
-        
+        //printf("Is fastfalling: %d\n", gd.player.fastFalling);
         collisionCheckAndResponse(state,gd,res,gd.player,deltaTime);
-        /*
-        for (Object &objB : gd.mapTiles_) { // check if player is touching any map tiles, currently no enemy collision
-            if (isOnscreen(state, gd, objB)) {
-                checkCollision(state, gd, res, gd.player, objB, deltaTime);
-        }
-        for (Object &objB : gd.lasers_){
-            checkCollision(state, gd, res, gd.player, objB, deltaTime);     
-        }
-        for (Object &objB : gd.portals_){
-            checkCollision(state, gd, res, gd.player, objB, deltaTime);     
-        }*/
-        /*if (obj.grounded && !foundGround) {
-            if (obj.grounded && obj.type == ObjectType::player) {
-                if ((obj.data.player.state == PlayerState::jumping && obj.data.player.fastfalling)|| obj.data.player.state == PlayerState::falling) {
-                    obj.data.player.state = PlayerState::roll;
-                    obj.texture = res.texRoll;
-                    obj.curAnimation = res.ANIM_PLAYER_ROLL;
-                    obj.animations[obj.curAnimation].reset();
-                } else {
-                    obj.data.player.state = PlayerState::moving;
-                }
 
-                obj.data.player.fastfalling = false;
-                obj.data.player.canDoubleJump = true;
-                obj.gravityScale = 1.0f;
-            }
-        }*/
+        //printf("%d\n", gd.player.state_->currStateVal);
+        
 }
 
 //Update for Character Select Screen

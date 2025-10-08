@@ -23,8 +23,9 @@ void collisionCheckAndResponse(const SDLState &state, GameData &gd, Resources &r
 		};
 
 		glm::vec2 resolution{ 0 };
-		glm::vec2 overlap = resolution;
+		//glm::vec2 overlap = resolution;
 		if (intersectAABB(rectA, rectB, resolution)){
+			glm::vec2 overlap = resolution;
 			// found intersection, respond accordingly
 			if (overlap.x < overlap.y){
 				if (a.pos.x < l.pos.x) {
@@ -38,11 +39,15 @@ void collisionCheckAndResponse(const SDLState &state, GameData &gd, Resources &r
 					a.pos.y -= overlap.y;
                 if (a.flip == 1) {
 				    a.grounded = true;
+					a.canDoubleJump = true;
+					gd.player.gravityScale = 1.0f; // reset gravity
                 }
 			} else {
 				a.pos.y += overlap.y;
                 if (a.flip == -1) {
 				    a.grounded = true;
+					a.canDoubleJump = true;
+					gd.player.gravityScale = 1.0f; // reset gravity
                 }
 			}
 			a.vel.y = 0;
@@ -69,10 +74,11 @@ void collisionCheckAndResponse(const SDLState &state, GameData &gd, Resources &r
 			// found intersection, respond accordingly
 			if(l.laserActive){
 				//printf("FALLING");
-				a.state_->nextStateVal = FALL;
+				a.state_->nextStateVal = DEAD;
 				PlayerState * newState = changePlayerState(a.state_);
 				delete a.state_;
 				a.state_ = newState;
+				a.state_->enter(a, gd, res);
 			
 				a.vel.x = changeVel(-a.vel.x, a);
 				float shouldFlip = a.flip; // there might be a more modular way to do this. idk if we will actually use the gravity flip but having it is nice and cool
