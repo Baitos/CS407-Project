@@ -139,6 +139,15 @@ void handleLevelClick(SDLState &state, GameData &gd, Resources &res, float delta
                 gd.player.state_ = newState;
                 gd.player.state_->enter(gd.player, gd, res);
             }
+        } else if (((LevelState *)currState)->character == SWORD) {
+            //SWORD DEPLOY
+            if(gd.player.cooldownTimer.isTimeOut()) {
+                gd.player.state_->nextStateVal = SWORD_DEPLOY;
+                PlayerState *newState = changePlayerState(gd.player.state_);
+                delete gd.player.state_;
+                gd.player.state_ = newState;
+                gd.player.state_->enter(gd.player, gd, res);
+            }
         }
     } else if (event.button.button == SDL_BUTTON_RIGHT) {
         //RIGHT CLICK FOR CHARACTER GRAPPLE (?)

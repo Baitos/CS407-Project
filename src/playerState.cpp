@@ -66,6 +66,10 @@ void handleInputShotgunDeploy(GameData &gd, Resources &res, SDL_KeyboardEvent ke
     handleJumping(gd,res,key);
 }
 
+void handleInputSwordDeploy(GameData &gd, Resources &res, SDL_KeyboardEvent key) {
+    handleJumping(gd,res,key);
+}
+
 //Update Functions
 void updateIdle(const SDLState &state, GameData &gd, Resources &res, float deltaTime){
     //gd.player.vel.x = 0;    
@@ -287,7 +291,18 @@ void updateShotgunDeploy(const SDLState &state, GameData &gd, Resources &res, fl
     }
 }
 
+void updateSwordDeploy(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
+    sharedUpdate(state, gd, res, deltaTime);
 
+     if(gd.player.animations[gd.player.curAnimation].isDone()) { 
+        gd.player.cooldownTimer.reset();
+        gd.player.state_->nextStateVal = IDLE;
+        PlayerState * newState = changePlayerState(gd.player.state_);
+        delete gd.player.state_;
+        gd.player.state_ = newState;
+        gd.player.state_->enter(gd.player, gd, res);
+    }
+}
 
 //Enter Functions
 void enterIdle(Player& player, GameData &gd, Resources &res){
@@ -412,15 +427,15 @@ void enterJetpackDeploy(Player& player, GameData &gd, Resources &res) {
 
 void enterShotgunDeploy(Player& player, GameData &gd, Resources &res) {
 
-    player.texture = res.texSDeploy;
+    player.texture = res.texGDeploy;
     player.curAnimation = res.ANIM_PLAYER_SHOOT;
     player.animations[gd.player.curAnimation].reset();
     //load in shotgun
     SDL_FRect collider = { 
-                            .x = 1,
-                            .y = 1,
-                            .w = 28,
-                            .h = 30
+                            .x = 0,
+                            .y = 12,
+                            .w = 80,
+                            .h = 24
                         };
     glm::vec2 pos;
     AnimatedObject* blast = new AnimatedObject(pos, collider, res.texShotgunBlast);
@@ -434,6 +449,12 @@ void enterShotgunDeploy(Player& player, GameData &gd, Resources &res) {
     blast->animations = res.shotgunAnims;
     blast->curAnimation = res.SHOTGUN_BLAST;
     gd.player.blast = blast;
+}
+
+void enterSwordDeploy(Player& player, GameData &gd, Resources &res) {
+    player.texture = res.texSDeploy;
+    player.curAnimation = res.ANIM_PLAYER_SWORD_DEPLOY;
+    player.animations[gd.player.curAnimation].reset();
 }
 
 //Handlers
@@ -631,6 +652,11 @@ PlayerState * changePlayerState(PlayerState * tempPlayer){
         }
         case SWORD_DEPLOY:
         {
+            newPlayer = new ShotgunDeployState();
+            newPlayer->enter = enterSwordDeploy;
+            newPlayer->update = updateSwordDeploy;
+            newPlayer->handleInput = handleInputSwordDeploy;
+            newPlayer->currStateVal = SWORD_DEPLOY;
             break;
         }
         case SHOTGUN_DEPLOY:

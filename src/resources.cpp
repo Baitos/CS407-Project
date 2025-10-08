@@ -12,7 +12,7 @@ SDL_Texture* Resources::loadTexture(SDL_Renderer *renderer, const std::string &f
 }
 
 void Resources::load(SDLState &state) { // First variable controls how many frames there are, second is how long each frame lasts (in seconds)
-    playerAnimsJ.resize(11); // 
+    playerAnimsJ.resize(12); // 
     playerAnimsJ[ANIM_PLAYER_IDLE] = Animation(1, 1.6f);
     playerAnimsJ[ANIM_PLAYER_WALK] = Animation(8, 1.0f);
     playerAnimsJ[ANIM_PLAYER_RUN] = Animation(8, 0.5f);
@@ -24,8 +24,9 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     playerAnimsJ[ANIM_PLAYER_SHOOT_JUMP] = Animation(1, 0.8f);
     playerAnimsJ[ANIM_PLAYER_ROLL] = Animation(5, 0.2f);
     playerAnimsJ[ANIM_PLAYER_JETPACK_DEPLOY] = Animation(1, 2.0f);
+    playerAnimsJ[ANIM_PLAYER_SWORD_DEPLOY] = Animation(3, 0.3f);
 
-    playerAnims.resize(11); // 
+    playerAnims.resize(12); // 
     playerAnims[ANIM_PLAYER_IDLE] = Animation(1, 1.6f);
     playerAnims[ANIM_PLAYER_WALK] = Animation(8, 1.0f);
     playerAnims[ANIM_PLAYER_RUN] = Animation(8, 0.5f);
@@ -37,6 +38,7 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     playerAnims[ANIM_PLAYER_SHOOT_JUMP] = Animation(1, 0.8f);
     playerAnims[ANIM_PLAYER_ROLL] = Animation(5, 0.2f);
     playerAnims[ANIM_PLAYER_JETPACK_DEPLOY] = Animation(1, 2.0f);
+    playerAnims[ANIM_PLAYER_SWORD_DEPLOY] = Animation(3, 0.3f);
 
     bulletAnims.resize(2); // 
     bulletAnims[ANIM_BULLET_MOVING] = Animation(4, 0.5f);
@@ -87,7 +89,8 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
 
     //load special deploy animations
     texJDeploy = loadTexture(state.renderer, "data/CharacterSprites/Jetpack/on_jetpack.png");
-    texSDeploy = loadTexture(state.renderer, "data/CharacterSprites/Shotgun/shooting_shotgun.png");
+    texGDeploy = loadTexture(state.renderer, "data/CharacterSprites/Shotgun/shooting_shotgun.png");
+    texSDeploy = loadTexture(state.renderer, "data/CharacterSprites/Sword/swing_sword.png");
 
     texShotgunBlast = loadTexture(state.renderer, "data/CharacterSprites/Shotgun/fire_shotgun.png");
 

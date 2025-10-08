@@ -68,7 +68,7 @@ class ShotgunDeployState : public PlayerState {
 
 };
 
-class SwordDepolyState : public PlayerState {
+class SwordDeployState : public PlayerState {
 
 };
 
@@ -121,6 +121,10 @@ void enterJetpackDeploy(Player& player, GameData &gd, Resources &res);
 void handleInputShotgunDeploy(GameData &gd, Resources &res, SDL_KeyboardEvent key);
 void updateShotgunDeploy(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
 void enterShotgunDeploy(Player& player, GameData &gd, Resources &res);
+//Sword Deploy Functions
+void handleInputSwordDeploy(GameData &gd, Resources &res, SDL_KeyboardEvent key);
+void updateSwordDeploy(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+void enterSwordDeploy(Player& player, GameData &gd, Resources &res);
 //Handlers
 void handleJumping (GameData &gd, Resources &res, SDL_KeyboardEvent key);
 void handleRunning (GameData &gd, Resources &res, SDL_KeyboardEvent key);

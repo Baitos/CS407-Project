@@ -20,6 +20,7 @@ struct Resources {
     const int ANIM_PLAYER_SHOOT_JUMP = 8;
     const int ANIM_PLAYER_ROLL = 9;
     const int ANIM_PLAYER_JETPACK_DEPLOY = 10;
+    const int ANIM_PLAYER_SWORD_DEPLOY = 11;
     std::vector<Animation> playerAnims;
     std::vector<Animation> playerAnimsJ;
     const int SHOTGUN_BLAST = 0;
@@ -44,7 +45,7 @@ struct Resources {
                 *texIdleS, *texRunS, *texJumpS, *texLaunchS, *texSlideS, *texShootS, *texDieS, *texShootJumpS, *texRollS,
                 *texIdleG, *texRunG, *texJumpG, *texLaunchG, *texSlideG, *texShootG, *texDieG, *texShootJumpG, *texRollG,
                 *texIdleJ, *texRunJ, *texJumpJ, *texLaunchJ, *texSlideJ, *texShootJ, *texDieJ, *texShootJumpJ, *texRollJ,
-                *texJDeploy, *texSDeploy,
+                *texJDeploy, *texGDeploy, *texSDeploy,
                 *texShotgunBlast,
                 *texGrass, *texStone, *texBrick, *texFence, *texBush, 
                 *texBullet, *texBulletHit, *texSpiny, *texSpinyDead,
