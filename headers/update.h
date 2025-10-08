@@ -21,4 +21,4 @@ void charSelectInputs(SDLState &state, GameData &gd, Resources &res, float delta
 void handleCharSelectKeyInput(const SDLState &state, GameData &gd, Resources &res,
                     SDL_KeyboardEvent key, bool keyDown, float deltaTime);
 void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res,
-                    SDL_KeyboardEvent key, bool keyDown, float deltaTime) ;
+                     float deltaTime) ;

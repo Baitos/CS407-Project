@@ -43,6 +43,15 @@ class GameState{
         void (*update)(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
         void (*render)(const SDLState &state, GameData &gd, Resources res, float deltaTime);
         void (*init)(const SDLState &state, GameData &gd, const Resources &res);
+       
+        void unloadGameState(GameData &gd){
+            gd.mapTiles_.clear();
+            gd.bgTiles_.clear();
+            gd.previews_.clear();
+            gd.lasers_.clear();
+            gd.portals_.clear();
+            //TO-DO Add clearing players
+        }
 
 
 };
@@ -70,13 +79,7 @@ class CharSelectState : public GameState{
 
 class LevelState : public GameState{
     public:
-        void unloadLevelState(GameData &gd){
-            gd.mapTiles_.clear();
-            gd.bgTiles_.clear();
-            gd.lasers_.clear();
-            gd.portals_.clear();
-            //TO DO: CALL CLEAR ON PLAYERS
-        }
+        int character = SWORD;
 };
 
 /*class SpaceshipState : public LevelState {

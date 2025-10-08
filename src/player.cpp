@@ -4,16 +4,10 @@
 #include "../headers/initState.h"
 #include "../headers/gameData.h"
 
-void Player::handleInput(SDL_KeyboardEvent& key){
-    PlayerState* state = state_->handleInput(*this, key);
-    if (state != NULL) {
-        delete state_;
-        state_ = state;
-        // do enter action on new state
-        state_->enter(*this);
-    }
+void Player::handleInput(SDL_KeyboardEvent& key, GameData &gd, Resources &res, float deltaTime){
+    state_->handleInput(gd, res, key);
 }
 
-void Player::update() {
-    state_->update(*this);
+void Player::update(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
+    state_->update(state,gd, res, deltaTime);
 }

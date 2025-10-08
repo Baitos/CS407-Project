@@ -1,109 +1,122 @@
 #include "../headers/collision.h"
 #include "../headers/object.h"
 #include "../headers/player.h"
+#include "../headers/playerState.h"
+#include "../headers/state.h"
 
-void collisionResponse(const SDLState &state, GameData &gd, Resources &res,
- 	const SDL_FRect &rectA, const SDL_FRect &rectB, const glm::vec2 &overlap,
- 	Object &a, Object &b, float deltaTime)
+void collisionCheckAndResponse(const SDLState &state, GameData &gd, Resources &res,
+ 	Player &a, float deltaTime)
  {
-// 	const auto genericResponse = [&]()
-// 	{
-// 		// horiz collision
-// 		if (overlap.x < overlap.y)
-// 		{
-// 			if (a.pos.x < b.pos.x) // left
-// 			{
-// 				a.pos.x -= overlap.x;
-// 			}
-// 			else // right
-// 			{
-// 				a.pos.x += overlap.x;
-// 			}
-// 			a.vel.x = 0;
-// 		}
-//         // vert collision
-// 		else
-// 		{
-// 			if (a.pos.y < b.pos.y) // top
-// 			{
-// 				a.pos.y -= overlap.y;
-//                 if (a.flip == 1) {
-// 				    a.grounded = true;
-//                 }
-// 			}
-// 			else // bottom
-// 			{
-// 				a.pos.y += overlap.y;
-//                 if (a.flip == -1) {
-// 				    a.grounded = true;
-//                 }
-// 			}
-// 			a.vel.y = 0;
-// 		}
-// 	};
-//     // obj we are checking
-//     if (a.type == ObjectType::player) {
-//         if (a.data.player.state != PlayerState::dead) {
-//             // obj a is colliding with
-//             switch (b.type) {
-//                 case ObjectType::level: {
-//                     if(b.data.level.state == LevelState::ground){
-//                         genericResponse();
-                        
-//                     } else if (b.data.level.state == LevelState::portal ){
-//                         //Teleport to Exit Portal
-//                         if (b.data.level.isEntrance == true){
-//                             a.pos = gs.ExitPortal;
-//                         }
-//                     }
-//                     break;
-//                 }
-//                 case ObjectType::obstacle: {
-//                         if(b.data.obstacle.laserActive){
-//                             //printf("FALLING");
-//                             a.texture = res.texDie;
-//                             a.curAnimation = res.ANIM_PLAYER_DIE;
-                            
-//                             a.vel.x = changeVel(-a.vel.x, a);
-//                             float shouldFlip = a.flip; // there might be a more modular way to do this. idk if we will actually use the gravity flip but having it is nice and cool
-//                             if(shouldFlip * b.pos.y < shouldFlip * a.pos.y ){
-//                                 a.vel.y = changeVel(200.f, a);
-//                             } else {
-//                                 a.vel.y = changeVel(-400.f, a);
-//                             }
+	
+	for (Level &l : gd.mapTiles_){
+		SDL_FRect rectA{
+			.x = a.pos.x + a.collider.x,
+			.y = a.pos.y + a.collider.y,
+			.w = a.collider.w,
+			.h = a.collider.h
+		};
+		SDL_FRect rectB{
+			.x = l.pos.x + l.collider.x,
+			.y = l.pos.y + l.collider.y,
+			.w = l.collider.w,
+			.h = l.collider.h
+		};
 
-//                             //printf("x=%d, y=%d\n", a.pos.x, a.pos.y);
-//                             a.data.player.state = PlayerState::falling;
-//                             a.gravityScale = 1.0f;
-//                         } 
-//                         break;
-//                 }
-//             }
-//         }
-//     } else if (a.type == ObjectType::bullet) {
-//         bool passthrough = false;
-//         switch (a.data.bullet.state) {
-//             case BulletState::moving:
-//             {
-//                 switch (b.type) {
-//                     case ObjectType::level: {
-//                         break;
-//                     }
-//                 }
-//                 if (b.type != ObjectType::player && !passthrough) {
-//                     genericResponse();
-//                     a.vel *= 0;
-//                     a.data.bullet.state = BulletState::colliding;
-//                     a.texture = res.texBulletHit;
-//                     a.curAnimation = res.ANIM_BULLET_HIT;
-//                     a.collider.x = a.collider.y = 0;
-//                     a.collider.w = a.collider.h = static_cast<float>(res.texBulletHit->h); // exploding sprite has new size
-//                 }
-//                 break;
-//             }
-//         }
-//     } 
+		glm::vec2 resolution{ 0 };
+		//glm::vec2 overlap = resolution;
+		if (intersectAABB(rectA, rectB, resolution)){
+			glm::vec2 overlap = resolution;
+			// found intersection, respond accordingly
+			if (overlap.x < overlap.y){
+				if (a.pos.x < l.pos.x) {
+					a.pos.x -= overlap.x;
+				} else {
+					a.pos.x += overlap.x;
+				}	
+				a.vel.x = 0;
+			} else {
+				if (a.pos.y < l.pos.y) {
+					a.pos.y -= overlap.y;
+                if (a.flip == 1) {
+				    a.grounded = true;
+					a.canDoubleJump = true;
+					gd.player.gravityScale = 1.0f; // reset gravity
+                }
+			} else {
+				a.pos.y += overlap.y;
+                if (a.flip == -1) {
+				    a.grounded = true;
+					a.canDoubleJump = true;
+					gd.player.gravityScale = 1.0f; // reset gravity
+                }
+			}
+			a.vel.y = 0;
+			}
+		}
+	}
+	//glm::vec2 overlap = resolution;
+	for (Laser &l : gd.lasers_){
+		SDL_FRect rectA{
+			.x = a.pos.x + a.collider.x,
+			.y = a.pos.y + a.collider.y,
+			.w = a.collider.w,
+			.h = a.collider.h
+		};
+		SDL_FRect rectB{
+			.x = l.pos.x + l.collider.x,
+			.y = l.pos.y + l.collider.y,
+			.w = l.collider.w,
+			.h = l.collider.h
+		};
+
+		glm::vec2 resolution{ 0 };
+		if (intersectAABB(rectA, rectB, resolution)){
+			// found intersection, respond accordingly
+			if(l.laserActive){
+				//printf("FALLING");
+				a.state_->nextStateVal = DEAD;
+				PlayerState * newState = changePlayerState(a.state_);
+				delete a.state_;
+				a.state_ = newState;
+				a.state_->enter(a, gd, res);
+			
+				a.vel.x = changeVel(-a.vel.x, a);
+				float shouldFlip = a.flip; // there might be a more modular way to do this. idk if we will actually use the gravity flip but having it is nice and cool
+				if(shouldFlip * l.pos.y < shouldFlip * a.pos.y ){
+					a.vel.y = changeVel(200.f, a);
+				} else {
+					a.vel.y = changeVel(-400.f, a);
+				}
+
+				a.gravityScale = 1.0f;
+			} 
+		}
+	}
+	for (Portal &p : gd.portals_){
+		SDL_FRect rectA{
+			.x = a.pos.x + a.collider.x,
+			.y = a.pos.y + a.collider.y,
+			.w = a.collider.w,
+			.h = a.collider.h
+		};
+		SDL_FRect rectB{
+			.x = p.pos.x + p.collider.x,
+			.y = p.pos.y + p.collider.y,
+			.w = p.collider.w,
+			.h = p.collider.h
+		};
+
+		glm::vec2 resolution{ 0 };
+		if (intersectAABB(rectA, rectB, resolution)){
+			// found intersection, respond accordingly
+			if (p.isEntrance == true){
+					a.pos = gd.ExitPortal;
+			}
+		} 
+	}
 }
+
+
 
 bool intersectAABB(const SDL_FRect &a, const SDL_FRect &b, glm::vec2 &overlap)
 {
@@ -126,10 +139,9 @@ bool intersectAABB(const SDL_FRect &a, const SDL_FRect &b, glm::vec2 &overlap)
 	return false;
 }
 
-void checkCollision(const SDLState &state, GameData &gd, Resources &res,
+/*void checkCollision(const SDLState &state, GameData &gd, Resources &res,
 	Object &a, Object &b, float deltaTime)
-{
-	/*SDL_FRect rectA{
+	SDL_FRect rectA{
 		.x = a.pos.x + a.collider.x,
 		.y = a.pos.y + a.collider.y,
 		.w = a.collider.w,
@@ -147,5 +159,5 @@ void checkCollision(const SDLState &state, GameData &gd, Resources &res,
 	{
 		// found intersection, respond accordingly
 		collisionResponse(state, gd, res, rectA, rectB, resolution, a, b, deltaTime);
-	}*/
-}
+	}
+}*/

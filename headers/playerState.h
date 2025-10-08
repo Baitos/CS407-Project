@@ -1,28 +1,121 @@
 #pragma once
 
 class Player;
-enum PlayerStateType {
-    IDLE,
-    MOVING,
-    SPRINTING,
+
+enum PlayerStateValues {
+    IDLE, 
+    WALK, 
+    RUN, 
+    SPRINT, 
+    LAUNCH, 
+    JUMP, 
+    ROLL, 
+    FALL, 
+    DEAD,
+    SWORD_DEPLOY,
+    SHOTGUN_DEPLOY,
+    JETPACK_DEPLOY
 };
+
 class PlayerState {
     public:
-        PlayerStateType type;
-        virtual ~PlayerState() {}
-        virtual PlayerState* handleInput(Player& player, SDL_KeyboardEvent key);
-        virtual void update(Player& player);
-        virtual void enter(Player& player);
+        int currStateVal;
+        int nextStateVal;
+        //virtual ~PlayerState() {}
+        void (*handleInput)(GameData &gd, Resources &res, SDL_KeyboardEvent key);
+        void (*update)(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+        void (*enter)(Player& player, GameData &gd, Resources &res);
     
 };
 
 class IdleState : public PlayerState {
-    public:
-        virtual PlayerState* handleInput(Player& player, SDL_KeyboardEvent key);
-        virtual void update(Player& player);
-        virtual void enter(Player& player);
+
 };
 
 class WalkState : public PlayerState {
 
 };
+
+class RunState : public PlayerState {
+
+};
+
+class SprintState : public PlayerState {
+
+};
+
+class JumpLaunchState : public PlayerState {
+
+};
+
+class JumpState : public PlayerState {
+
+};
+
+class RollState : public PlayerState {
+
+};
+
+class FallState : public PlayerState {
+
+};
+
+class DeadState : public PlayerState {
+
+};
+
+class ShotgunDeployState : public PlayerState {
+
+};
+
+class SwordDepolyState : public PlayerState {
+
+};
+
+class JetpackDeployState : public PlayerState {
+
+};
+
+PlayerState * changePlayerState(PlayerState * tempPlayer);
+
+//Idle Functions
+void handleInputIdle(GameData &gd, Resources &res, SDL_KeyboardEvent key);
+void updateIdle(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+void enterIdle(Player& player, GameData &gd, Resources &res);
+//Walk Functions
+void handleInputWalk(GameData &gd, Resources &res, SDL_KeyboardEvent key);
+void updateWalk(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+void enterWalk(Player& player, GameData &gd, Resources &res);
+//Run Fuctions
+void handleInputRun(GameData &gd, Resources &res, SDL_KeyboardEvent key);
+void enterRun(Player& player, GameData &gd, Resources &res);
+//Jump Functions
+void handleInputJump(GameData &gd, Resources &res, SDL_KeyboardEvent key);
+void updateJump(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+void enterJump(Player& player, GameData &gd, Resources &res);
+//Launch Functions
+void handleInputLaunch(GameData &gd, Resources &res, SDL_KeyboardEvent key);
+void updateLaunch(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+void enterLaunch(Player& player, GameData &gd, Resources &res);
+//Roll Functions
+void handleInputRoll(GameData &gd, Resources &res, SDL_KeyboardEvent key);
+void updateRoll(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+void enterRoll(Player& player, GameData &gd, Resources &res);
+//Sprint Functions
+void handleInputSprint(GameData &gd, Resources &res, SDL_KeyboardEvent key);
+void updateSprint(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+void enterSprint(Player& player, GameData &gd, Resources &res);
+//Fall Functions
+void updateFalling(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+void enterFall(Player& player, GameData &gd, Resources &res);
+//Dead Functions
+void enterDead(Player& player, GameData &gd, Resources &res);
+//Dummy Functions?
+void dummyInput(GameData &gd, Resources &res, SDL_KeyboardEvent key);
+void dummyUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+//Handlers
+void handleJumping (GameData &gd, Resources &res, SDL_KeyboardEvent key);
+void handleRunning (GameData &gd, Resources &res, SDL_KeyboardEvent key);
+void handleSprinting (GameData &gd, Resources &res, SDL_KeyboardEvent key);
+void handleFalling (GameData &gd, Resources &res, SDL_KeyboardEvent key);
+void sharedUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
