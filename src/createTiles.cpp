@@ -283,6 +283,7 @@ void createTiles(const SDLState &state, GameData &gd, const Resources &res) { //
                         gd.player.state_ = newState;
                         gd.player.dir = 0;
                         gd.player.flip =1;
+                        gd.player.cooldownTimer.step(5.0f);
                         break; 
                     }
                     case 7: //Background
