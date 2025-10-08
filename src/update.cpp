@@ -325,14 +325,14 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
                 gd.charIcons_[0].spriteFrame = ci.spriteFrame;
             }
         }
-    } else if ((gd.mouseCoords.x >= 35 && gd.mouseCoords.x <= 218) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)){
+    } else if ((gd.mouseCoords.x >= 583 && gd.mouseCoords.x <= 766) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)){
         //Enter Stage
         //TO DO - ONLY DO WHEN PLAYERS AGREE TO READY UP
         int character = ((CharSelectState*) currState)->character;
         currState = changeState(currState, gd);
         ((LevelState*) currState)->character = character;
         currState->init(state,gd, res);
-    } else if ((gd.mouseCoords.x >= 583 && gd.mouseCoords.x <= 766) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)){
+    } else if ((gd.mouseCoords.x >= 35 && gd.mouseCoords.x <= 218) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)){
         //Exit to Title
         currState->nextStateVal = TITLE;
         currState = changeState(currState, gd);
