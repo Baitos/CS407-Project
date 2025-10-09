@@ -21,9 +21,12 @@ struct Resources {
     const int ANIM_PLAYER_ROLL = 9;
     std::vector<Animation> playerAnims;
     std::vector<Animation> playerAnimsJ;
-    const int ANIM_BULLET_MOVING = 0;
-    const int ANIM_BULLET_HIT = 1;
-    std::vector<Animation> bulletAnims;
+
+    const int ANIM_ITEM_EMPTY = 0;
+    const int ANIM_ITEM_CYCLE = 1;
+    const int ANIM_ITEM_PICKED = 2;
+    std::vector<Animation> itemAnims;
+    std::vector<SDL_Texture *> itemTextures;
     const int PORTAL_IDLE = 0;
     std::vector<Animation> portalAnims;
     const int ICONS = 0;
@@ -45,7 +48,10 @@ struct Resources {
                 *texFloor, *texTRCorner, *texRWall, *texBRCorner, *texLWall, *texBLCorner, *texTLCorner, *texCeiling, *texITLCorner, *texITRCorner, *texIBRCorner, *texIBLCorner, *texPlatform, 
                 *texFan, *texPanelOne, *texPanelTwo, *texPanelThree, *texVentOne, *texVentTwo, *texBackWall, 
                 *texCharSelectBackground, *texCursor, *texCharIcons, *texSword, *texShotgun, *texJetpack, 
-                *texItemBox, *texItemStorage, *texItemRandomizer, *texBomb, *texExplosion, *texBoombox, *texSoundwaves;
+                *texItemBox, *texItemStorage, *texItemRandomizer, 
+                *texBombStorage, *texBoomboxStorage, *texBouncyBallStorage, *texFogStorage,
+                *texIceStorage, *texMissileStorage, *texSugarStorage, *texPieStorage,
+                *texBomb, *texExplosion, *texBoombox, *texSoundwaves, *texSugar;
     SDL_Texture *loadTexture(SDL_Renderer *renderer, const std::string &filepath);
     void load(SDLState &state);
     void unload();

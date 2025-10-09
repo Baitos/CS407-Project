@@ -5,7 +5,8 @@
 #include "../headers/initState.h"
 #include "../headers/gameData.h"
 #include "../headers/helper.h"
-
+#include "../headers/item.h"
+#include "../headers/resources.h"
 void Object::draw(const SDLState &state, GameData &gd, float width, float height) {
     if (!isOnscreen(state, gd, (*this))) {
         return;
@@ -137,10 +138,54 @@ void Laser::update(const SDLState &state, GameData &gd, Resources &res, float de
     }
 }
 void ItemBox::update(const SDLState &state, GameData &gd, Resources &res, float deltaTime) { // update item box timer every frame (when on cooldown)
-    this->itemBoxTimer.step(deltaTime);
-    if (this->itemBoxTimer.isTimeOut()) {
+    Timer &itemBoxTimer = this->itemBoxTimer;
+    itemBoxTimer.step(deltaTime);
+    if (itemBoxTimer.isTimeOut()) {
         // Reset timer and reactivate item box
-        this->itemBoxTimer.reset();
+        itemBoxTimer.reset();
         this->itemBoxActive = true;
     }
+}
+
+void ItemBox::generateItem(Player &player, GameData &gd, Resources &res) {
+    SDL_FRect defaultCollider = {
+        .x = 0,
+        .y = 0,
+        .w = float(TILE_SIZE),
+        .h = float(TILE_SIZE)
+    };
+    Item newItem;
+    std::vector<itemType> itemOptions;
+    int selected;
+    // Limit items for top 25% of players
+    if ((player.position / (float)gd.numPlayers) <= 0.25) {
+        itemOptions = {itemType::BOMB, itemType::BOOMBOX, itemType::BOUNCYBALL, 
+            itemType::ICE, itemType::PIE, itemType::SUGAR};
+    }
+    // Limit items for bottom 25% of players
+    else if ((player.position / (float)gd.numPlayers) >= 0.75) {
+        itemOptions = {itemType::BOOMBOX, itemType::BOUNCYBALL, 
+            itemType::FOG, itemType::MISSILE, itemType::PIE, itemType::SUGAR};
+    }
+    else {
+        // All items are available
+        itemOptions = {itemType::BOMB, itemType::BOOMBOX, itemType::BOUNCYBALL, 
+            itemType::FOG, itemType::ICE, itemType::MISSILE, itemType::PIE, itemType::SUGAR};
+    }
+    selected = rand() % itemOptions.size();
+    switch ((itemType)selected) {
+        case itemType::BOMB:
+            newItem = Bomb(player.pos, defaultCollider, res.texBomb);
+            break;
+        case itemType::BOOMBOX:
+            newItem = Boombox(player.pos, defaultCollider, res.texBoombox);
+            break;
+        case itemType::SUGAR:
+            newItem = Sugar(player.pos, defaultCollider, res.texSugar);
+        default:
+            printf("Your item is in another castle\n");
+            newItem = Bomb(player.pos, defaultCollider, res.texBomb);
+    }
+    gd.player.nextItem = newItem;
+    player.pickingItem = true;
 }

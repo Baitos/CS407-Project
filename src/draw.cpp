@@ -128,7 +128,7 @@ void drawLevel(const SDLState &state, GameData &gd, Resources res, float deltaTi
             box.draw(state, gd, TILE_SIZE, TILE_SIZE);
         }
     }
-
+    gd.itemStorage_.draw(state, gd, 68, 68);
     handleCrosshair(state, gd, res, deltaTime);
 }
 

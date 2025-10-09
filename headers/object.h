@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SDL3/SDL.h>
+#include <stdio.h>
 #include "../ext/glm/glm.hpp"
 #include "animation.h"
 #include "globals.h"
@@ -9,6 +10,7 @@
 struct SDLState;
 struct GameData;
 struct Resources;
+class Player;
 class PlayerState;
 
 enum ObjectType{
@@ -152,17 +154,17 @@ class ItemBox : public Object {
     public:
         bool itemBoxActive;
         Timer itemBoxTimer;
-        float cooldownLength = 3.0f;
-        ItemBox() : Object(), itemBoxTimer(cooldownLength) {
+        ItemBox() : Object(), itemBoxTimer(3.0f) {
             itemBoxActive = true;
             type = ITEMBOX;
         }
         ItemBox(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) :
-            Object(pos_, colliderRect, tex), itemBoxTimer(cooldownLength) {
+            Object(pos_, colliderRect, tex), itemBoxTimer(3.0f) {
                 itemBoxActive = true;
                 type = ITEMBOX;
             }
         void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+        void generateItem(Player &player, GameData &gd, Resources &res);
 };
 
 

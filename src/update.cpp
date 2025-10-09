@@ -7,6 +7,7 @@
 #include "../headers/resources.h"
 #include "../headers/state.h"
 #include "../headers/playerState.h"
+#include "../headers/item.h"
 
 using namespace std;
 
@@ -30,6 +31,14 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
             laser.update(state, gd, res, deltaTime);
         }
 
+        for (ItemBox &box : gd.itemBoxes_) {
+            if (!box.itemBoxActive) {
+                box.update(state, gd, res, deltaTime);
+            }
+        }
+        if (gd.player.pickingItem) {
+            gd.itemStorage_.update(state, gd, res, deltaTime);
+        }
         //gd.player.currentDirection = 0;
         gd.player.state_->update(state, gd, res,deltaTime);
         if(gd.player.currentDirection){
@@ -56,12 +65,15 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
         // collision
         bool foundGround = gd.player.grounded;
         gd.player.grounded = false;
-        
+
         //printf("Is fastfalling: %d\n", gd.player.fastFalling);
         collisionCheckAndResponse(state,gd,res,gd.player,deltaTime);
 
         //printf("%d\n", gd.player.state_->currStateVal);
         
+        // UPDATE ITEM STORAGE
+        gd.itemStorage_.pos.x = gd.player.pos.x - 368;
+        gd.itemStorage_.pos.y = gd.player.pos.y - 200;
 }
 
 //Update for Character Select Screen
@@ -224,10 +236,16 @@ void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
         currState = changeState(currState, gd);
         currState->init(state, gd, res);
     }
-    gd.player.state_->handleInput(gd, res, key);
-
-    
+    if(key.scancode == SDL_SCANCODE_Q && gd.player.hasItem) {
+        Item item = gd.player.item;
+        item.useItem(state, gd, res);
+        gd.player.hasItem = false;
+        clearItem(state, gd, res);
+        delete &item;
+    }
+    gd.player.state_->handleInput(gd, res, key);    
 }
+
 //Key Input Handler for Char Select
 void handleCharSelectKeyInput(const SDLState &state, GameData &gd, Resources &res,
                     SDL_KeyboardEvent key, bool keyDown, float deltaTime) {
