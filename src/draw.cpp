@@ -114,6 +114,30 @@ void drawLevel(const SDLState &state, GameData &gd, Resources res, float deltaTi
         portal.draw(state, gd, TILE_SIZE, TILE_SIZE * 2);
     }
 
+    if(gd.player.usingSugar){
+        //Draw sugar effect
+        if(gd.player.dir == 1){
+        glm::vec2 pos = glm::vec2(gd.player.pos.x - 30.f, gd.player.pos.y);
+        SDL_FRect collider = {
+            .x = 28 * (gd.player.dir),
+            .y = 0,
+            .w = 0.f,
+            .h = 0.f
+            };
+        Object sugarEffectObject(pos, collider, res.texSugarEffectL);
+        sugarEffectObject.draw(state,gd,32,32);
+        } else {
+            glm::vec2 pos = glm::vec2(gd.player.pos.x + 30.f, gd.player.pos.y);
+            SDL_FRect collider = {
+                .x = 28 * (gd.player.dir),
+                .y = 0,
+                .w = 0.f,
+                .h = 0.f
+                };
+            Object sugarEffectObject(pos, collider, res.texSugarEffectR);
+            sugarEffectObject.draw(state,gd,32,32);
+        }
+    }
     // draw player
     gd.player.draw(state, gd, TILE_SIZE, TILE_SIZE); // draw player class
 
@@ -128,6 +152,12 @@ void drawLevel(const SDLState &state, GameData &gd, Resources res, float deltaTi
         }
     }
 
+    for(ItemBox &box : gd.itemBoxes_) {
+        if (box.itemBoxActive) {
+            box.draw(state, gd, TILE_SIZE, TILE_SIZE);
+        }
+    }
+    gd.itemStorage_.draw(state, gd, 68, 68);
     handleCrosshair(state, gd, res, deltaTime);
 }
 

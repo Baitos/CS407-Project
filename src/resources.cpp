@@ -40,12 +40,11 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     playerAnims[ANIM_PLAYER_JETPACK_DEPLOY] = Animation(1, 2.0f);
     playerAnims[ANIM_PLAYER_SWORD_DEPLOY] = Animation(3, 0.3f);
 
-    bulletAnims.resize(2); // 
-    bulletAnims[ANIM_BULLET_MOVING] = Animation(4, 0.5f);
-    bulletAnims[ANIM_BULLET_HIT] = Animation(3, 0.5f);
-    enemyAnims.resize(2);
-    enemyAnims[ANIM_ENEMY] = Animation(2, 0.6f);
-    enemyAnims[ANIM_ENEMY_DEAD] = Animation(1, 1.0f);
+    itemAnims.resize(3); // 
+    itemAnims[ANIM_ITEM_EMPTY] = Animation(1, 1.0f);
+    itemAnims[ANIM_ITEM_CYCLE] = Animation(8, 0.4f);
+    itemAnims[ANIM_ITEM_PICKED] = Animation(1, 1.0f);
+
     portalAnims.resize(2);
     portalAnims[PORTAL_IDLE] = Animation(3, 1.0f);
     charIconAnims.resize(1);
@@ -104,8 +103,6 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     texBg2 = loadTexture(state.renderer, "data/bg_layer2.png");
     texBg3 = loadTexture(state.renderer, "data/bg_layer3.png");
     texBg4 = loadTexture(state.renderer, "data/bg_layer4.png");
-    texSpiny = loadTexture(state.renderer, "data/Spiny.png");
-    texSpinyDead = loadTexture(state.renderer, "data/SpinyDead.png");
 
     //Spaceship
     texOnStage = loadTexture(state.renderer, "data/spaceship/OnStage.png");
@@ -145,6 +142,33 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     texSword = loadTexture(state.renderer, "data/CharSelect/running_sword_large.png");
     texShotgun = loadTexture(state.renderer, "data/CharSelect/running_shotgun_large.png");
     texJetpack = loadTexture(state.renderer, "data/CharSelect/running_jetpack_large.png");
+
+    //Items
+    texItemBox = loadTexture(state.renderer, "data/ItemSprites/item_box.png");
+    texItemStorage = loadTexture(state.renderer, "data/ItemSprites/item_storage.png");
+    texItemRandomizer = loadTexture(state.renderer, "data/ItemSprites/item_randomization.png");
+    texBombStorage = loadTexture(state.renderer, "data/ItemSprites/bomb_storage.png");
+    texBoomboxStorage = loadTexture(state.renderer, "data/ItemSprites/boombox_storage.png");
+    texBouncyBallStorage = loadTexture(state.renderer, "data/ItemSprites/bouncyball_storage.png");
+    texFogStorage = loadTexture(state.renderer, "data/ItemSprites/fog_storage.png");
+    texIceStorage = loadTexture(state.renderer, "data/ItemSprites/ice_storage.png");
+    texMissileStorage = loadTexture(state.renderer, "data/ItemSprites/missile_storage.png");
+    texSugarStorage = loadTexture(state.renderer, "data/ItemSprites/sugar_storage.png");
+    texPieStorage = loadTexture(state.renderer, "data/ItemSprites/pie_storage.png");
+
+    texBomb = loadTexture(state.renderer, "data/ItemSprites/bomb.png");
+    texExplosion = loadTexture(state.renderer, "data/ItemSprites/explosion.png");
+
+    texBoombox = loadTexture(state.renderer, "data/ItemSprites/boombox.png");
+    texSoundwaves = loadTexture(state.renderer, "data/ItemSprites/boombox_soundwaves.png");
+
+    texSugar = loadTexture(state.renderer, "data/ItemSprites/sugar.png");
+
+    texSugarEffectL = loadTexture(state.renderer, "data/ItemSprites/SugarEffectL.png");
+    texSugarEffectR = loadTexture(state.renderer, "data/ItemSprites/SugarEffectR.png");
+
+    itemTextures = {texBombStorage, texBoomboxStorage, texBouncyBallStorage, texFogStorage,
+        texIceStorage, texMissileStorage, texSugarStorage, texPieStorage};
 }
 
 void Resources::unload() {

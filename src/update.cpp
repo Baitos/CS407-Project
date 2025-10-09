@@ -7,6 +7,7 @@
 #include "../headers/resources.h"
 #include "../headers/state.h"
 #include "../headers/playerState.h"
+#include "../headers/item.h"
 
 using namespace std;
 
@@ -16,8 +17,9 @@ extern GameState * currState;
 //UPDATE FUNCTIONS
 //
 
-//Update Function for level Spaceship
-void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
+// Update Function for level Spaceship
+void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime)
+{
     // update portals
         //gd.player.currentDirection = 0;
         for (Portal &portal : gd.portals_) {
@@ -33,6 +35,14 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
             laser.update(state, gd, res, deltaTime);
         }
 
+        for (ItemBox &box : gd.itemBoxes_) {
+            if (!box.itemBoxActive) {
+                box.update(state, gd, res, deltaTime);
+            }
+        }
+        if (gd.player.pickingItem) {
+            gd.itemStorage_.update(state, gd, res, deltaTime);
+        }
         //gd.player.currentDirection = 0;
         gd.player.state_->update(state, gd, res,deltaTime);
         if(gd.player.currentDirection){
@@ -52,6 +62,16 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
             }
         }
 
+        if(gd.player.usingSugar){
+            ((Sugar *) &gd.player.item)->sugarTimer.step(deltaTime);
+            //printf("%d\n",gd.player.currentDirection);
+            gd.player.vel.x += 1.0f * gd.player.currentDirection;
+            if(((Sugar *) &gd.player.item)->sugarTimer.isTimeOut()){
+                //printf("Stopped sugar\n");
+                gd.player.usingSugar = false;
+            }
+        }
+
         // add vel to pos
         //printf("%f\n", gd.player.vel);
         gd.player.pos += gd.player.vel * deltaTime;
@@ -59,12 +79,17 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
         // collision
         bool foundGround = gd.player.grounded;
         gd.player.grounded = false;
+
         
+
         //printf("Is fastfalling: %d\n", gd.player.fastFalling);
         collisionCheckAndResponse(state,gd,res,gd.player,deltaTime);
 
         //printf("%d\n", gd.player.state_->currStateVal);
         
+        // UPDATE ITEM STORAGE
+        gd.itemStorage_.pos.x = gd.player.pos.x - 368;
+        gd.itemStorage_.pos.y = gd.player.pos.y - 200;
 }
 
 //Update for Character Select Screen
@@ -205,20 +230,19 @@ void handleCrosshair(const SDLState &state, GameData &gd, Resources &res, float 
     float xRatio = (float)state.logW / state.width;
     gd.mouseCoords.x = gd.mouseCoords.x * xRatio;
     gd.mouseCoords.y = gd.mouseCoords.y * yRatio;
-    SDL_FRect dst { 
+    SDL_FRect dst{
         .x = gd.mouseCoords.x - OFFSET,
         .y = gd.mouseCoords.y - OFFSET,
         .w = CROSSHAIR_SIZE,
-        .h = CROSSHAIR_SIZE
-    };
+        .h = CROSSHAIR_SIZE};
     SDL_SetRenderDrawColor(state.renderer, 255, 0, 0, 255); // draw line to crosshair
     glm::vec2 pOffset = findCenterOfSprite(gd.player);
-    //printf("x: %d, y: %d\n", pOffset.x, pOffset.y);
+    // printf("x: %d, y: %d\n", pOffset.x, pOffset.y);
     SDL_RenderLine(state.renderer, gd.player.pos.x - gd.mapViewport.x + pOffset.x, gd.player.pos.y - gd.mapViewport.y + pOffset.y, gd.mouseCoords.x, gd.mouseCoords.y);
     SDL_SetRenderDrawColor(state.renderer, 64, 51, 83, 255);
-    
-    //printf("mouseX: %f, mouseY: %f\n", gd.mouseCoords.x, gd.mouseCoords.y);
-    SDL_RenderTexture(state.renderer, res.texCrosshair, nullptr, &dst); // src is for sprite stripping, dest is for where sprite should be drawn*/ 
+
+    // printf("mouseX: %f, mouseY: %f\n", gd.mouseCoords.x, gd.mouseCoords.y);
+    SDL_RenderTexture(state.renderer, res.texCrosshair, nullptr, &dst); // src is for sprite stripping, dest is for where sprite should be drawn*/
 }
 //Mouse Cursor for Title/Settings/Char Select/Etc.
 void handleMousePointer(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
@@ -239,33 +263,43 @@ void handleMousePointer(const SDLState &state, GameData &gd, Resources &res, flo
 }
 //Key Input Handler for Level
 void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
-                    SDL_KeyboardEvent key, bool keyDown, float deltaTime) {
+                    SDL_KeyboardEvent key, bool keyDown, float deltaTime)
+{
 
-    if (key.scancode == SDL_SCANCODE_F12 && key.down && !key.repeat) { // debug
-            gd.debugMode = !gd.debugMode;
+    if (key.scancode == SDL_SCANCODE_F12 && key.down && !key.repeat)
+    { // debug
+        gd.debugMode = !gd.debugMode;
     }
-    if (key.scancode == SDL_SCANCODE_F11 && key.down && !key.repeat) { // tp to entrance portal
+    if (key.scancode == SDL_SCANCODE_F11 && key.down && !key.repeat)
+    { // tp to entrance portal
         gd.player.pos = gd.EntrancePortal;
         gd.player.pos.x -= TILE_SIZE;
     }
-    if (key.scancode == SDL_SCANCODE_F10 && key.down && !key.repeat) { // tp to exit portal
+    if (key.scancode == SDL_SCANCODE_F10 && key.down && !key.repeat)
+    { // tp to exit portal
         gd.player.pos = gd.ExitPortal;
     }
     /*if (key.scancode == SDL_SCANCODE_F2 && keyDown && !key.repeat) { // anti gravity
-        gd.player().flip = -1 * gd.player().flip;
+        gd.obj().flip = -1 * gd.obj().flip;
     }*/
-    if (key.scancode == SDL_SCANCODE_F1) {
+    if (key.scancode == SDL_SCANCODE_F1)
+    {
         running = false;
     }
     if(key.scancode == SDL_SCANCODE_F2){
         //printf("F2 key clicked");
         currState = changeState(currState, gd);
-        currState->init(state,gd, res);
+        currState->init(state, gd, res);
     }
-    gd.player.state_->handleInput(gd, res, key);
-
-    
+    if(key.scancode == SDL_SCANCODE_Q && gd.player.hasItem) {
+        Item item = gd.player.item;
+        item.useItem(state, gd, res);
+        gd.player.hasItem = false;
+        clearItem(state, gd, res);
+    }
+    gd.player.state_->handleInput(gd, res, key);    
 }
+
 //Key Input Handler for Char Select
 void handleCharSelectKeyInput(const SDLState &state, GameData &gd, Resources &res,
                     SDL_KeyboardEvent key, bool keyDown, float deltaTime) {
@@ -325,14 +359,14 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
                 gd.charIcons_[0].spriteFrame = ci.spriteFrame;
             }
         }
-    } else if ((gd.mouseCoords.x >= 35 && gd.mouseCoords.x <= 218) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)){
+    } else if ((gd.mouseCoords.x >= 583 && gd.mouseCoords.x <= 766) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)){
         //Enter Stage
         //TO DO - ONLY DO WHEN PLAYERS AGREE TO READY UP
         int character = ((CharSelectState*) currState)->character;
         currState = changeState(currState, gd);
         ((LevelState*) currState)->character = character;
         currState->init(state,gd, res);
-    } else if ((gd.mouseCoords.x >= 583 && gd.mouseCoords.x <= 766) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)){
+    } else if ((gd.mouseCoords.x >= 35 && gd.mouseCoords.x <= 218) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)){
         //Exit to Title
         currState->nextStateVal = TITLE;
         currState = changeState(currState, gd);
