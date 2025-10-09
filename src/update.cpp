@@ -149,10 +149,14 @@ void handleLevelClick(SDLState &state, GameData &gd, Resources &res, float delta
         }
     } else if (event.button.button == SDL_BUTTON_RIGHT) { // grapple
         gd.hook.pos = gd.player.pos;
-        int flipX = gd.player.pos.x > 0.0f ? 1 : -1;
-        int flipY = gd.player.pos.y > 0.0f ? 1 : -1;
-        gd.hook.vel.x = 100 * flipX;
-        gd.hook.vel.y = 100 * flipY;
+        glm::vec2 pOffset = findCenterOfSprite(gd.player);
+        float xDist = gd.mouseCoords.x - (gd.player.pos.x - gd.mapViewport.x + pOffset.x); // A
+        float yDist = gd.mouseCoords.y - (gd.player.pos.y - gd.mapViewport.y + pOffset.y); // O
+        float dist = std::sqrt(xDist * xDist + yDist * yDist); // distance formula, H
+        float aH = xDist / dist; // cos
+        float oH = yDist / dist; // sin
+        printf("xDist: %f, yDist: %f, dist: %f\n", xDist, yDist, dist);
+        gd.hook.vel = 500.0f * glm::vec2(aH, oH);
     }
 }
 
@@ -213,10 +217,13 @@ void handleCrosshair(const SDLState &state, GameData &gd, Resources &res, float 
         .w = CROSSHAIR_SIZE,
         .h = CROSSHAIR_SIZE
     };
-    //SDL_SetRenderDrawColor(state.renderer, 255, 0, 0, 255); // draw line to crosshair
-    //glm::vec2 pOffset = findCenterOfSprite(gd.player);
-    //printf("x: %d, y: %d\n", pOffset.x, pOffset.y);
-    //SDL_RenderLine(state.renderer, gd.player.pos.x - gd.mapViewport.x + pOffset.x, gd.player.pos.y - gd.mapViewport.y + pOffset.y, gd.mouseCoords.x, gd.mouseCoords.y);
+    SDL_SetRenderDrawColor(state.renderer, 255, 0, 0, 255); // draw line to crosshair
+    glm::vec2 pOffset = findCenterOfSprite(gd.player);
+    //printf("x: %f, y: %f\n", gd.mouseCoords.x, gd.mouseCoords.y);
+    SDL_RenderLine(state.renderer, gd.player.pos.x - gd.mapViewport.x + pOffset.x, 
+                    gd.player.pos.y - gd.mapViewport.y + pOffset.y, 
+                    gd.hook.pos.x - gd.mapViewport.x + pOffset.x, 
+                    gd.hook.pos.y - gd.mapViewport.y + pOffset.y);
     SDL_SetRenderDrawColor(state.renderer, 64, 51, 83, 255);
     
     //printf("mouseX: %f, mouseY: %f\n", gd.mouseCoords.x, gd.mouseCoords.y);

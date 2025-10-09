@@ -11,6 +11,234 @@
 extern GameState * currState;
 const float JUMP_FORCE = -450.f;
 
+//Handlers
+void handleJumping (GameData &gd, Resources &res, SDL_KeyboardEvent key) {
+    if (key.scancode == SDL_SCANCODE_SPACE && key.down && !key.repeat) {
+        //printf("Jump handled");
+        //printf("%d", gd.player.grounded);
+        if (gd.player.grounded) { // single jump
+            gd.player.state_->nextStateVal = LAUNCH;
+            PlayerState * tempState = changePlayerState(gd, res, gd.player.state_);
+            delete gd.player.state_;
+            gd.player.state_ = tempState;
+            
+            gd.player.vel.y = changeVel(JUMP_FORCE, gd.player); 
+        } else if (gd.player.canDoubleJump) { // double jump
+            gd.player.state_->nextStateVal = JUMP;
+            PlayerState * tempState = changePlayerState(gd, res, gd.player.state_);
+            delete gd.player.state_;
+            gd.player.state_ = tempState;
+            
+            gd.player.vel.y = changeVel(JUMP_FORCE, gd.player);  
+            gd.player.canDoubleJump = false;
+            gd.player.gravityScale = 1.0f; // reset gravity
+        }
+    } else if (!key.down && key.scancode == SDL_SCANCODE_SPACE) { // letting go of jump
+            float termVel = -200.0f; // option 2: Set velocity to predefined amount when you let go. makes less sharp jumps
+            float shouldFlip = gd.player.flip; // there might be a more modular way to do this. idk if we will actually use the gravity flip but having it is nice and cool
+            if (shouldFlip * gd.player.vel.y < shouldFlip * termVel) { 
+                gd.player.vel.y = changeVel(termVel, gd.player);
+            }
+        }
+}
+
+void handleRunning (GameData &gd, Resources &res, SDL_KeyboardEvent key){
+    if (key.scancode == SDL_SCANCODE_LSHIFT) {
+        //printf("running handled");
+            if (key.down) { // if held down, increase speed
+                gd.player.maxSpeedX = gd.player.maxRunX;
+                gd.player.state_->nextStateVal = RUN;
+                PlayerState * tempState = changePlayerState(gd, res, gd.player.state_);
+                delete gd.player.state_;
+                gd.player.state_ = tempState;
+                
+            } else {
+                gd.player.maxSpeedX = gd.player.maxWalkX;
+                gd.player.state_->nextStateVal = WALK;
+                PlayerState * tempState = changePlayerState(gd, res, gd.player.state_);
+                delete gd.player.state_;
+                gd.player.state_ = tempState;
+                
+                gd.player.sprintTimer.reset();
+            }
+        }
+}
+
+void handleSprinting(GameData &gd, Resources &res, SDL_KeyboardEvent key){
+    if (key.scancode == SDL_SCANCODE_LSHIFT && !key.down) {
+        //printf("Sprinting handled");
+        gd.player.maxSpeedX = gd.player.maxWalkX;
+        gd.player.curAnimation = res.ANIM_PLAYER_WALK;
+        gd.player.sprintTimer.reset();
+
+        gd.player.state_->nextStateVal = WALK;
+        PlayerState *newState = changePlayerState(gd, res, gd.player.state_);
+        delete gd.player.state_;
+        gd.player.state_ = newState;
+        
+    }
+}
+
+void handleFalling(GameData &gd, Resources &res, SDL_KeyboardEvent key){
+    if (key.scancode == SDL_SCANCODE_S && key.down && !gd.player.grounded) { // fastfall
+        //printf("Falling handled");
+        if (!key.repeat && !gd.player.fastFalling) {
+            gd.player.vel.y = changeVel(-250.0f, gd.player);
+            gd.player.fastFalling = true;
+
+            //Enter Jumping State
+            /*gd.player.state_->nextStateVal = JUMP;
+            PlayerState * tempState = changePlayerState(gd, res, gd.player.state_);
+            delete gd.player.state_;
+            gd.player.state_ = tempState;
+            */
+            //Call enter on jumping state
+        }
+        gd.player.gravityScale = 3.0f;
+    }
+}
+
+void sharedUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime){
+    gd.player.currentDirection = 0;
+    if (gd.player.curAnimation != -1) {
+        gd.player.animations[gd.player.curAnimation].step(deltaTime);
+    }
+    if (!gd.player.grounded) {
+        gd.player.vel.y += changeVel(700 * gd.player.gravityScale * deltaTime, gd.player); // gravity
+    }
+    if (state.keys[SDL_SCANCODE_A]) {
+        gd.player.currentDirection += -1.f;
+        //printf("set curDirection -1\n");
+    }
+    if (state.keys[SDL_SCANCODE_D]) {
+        gd.player.currentDirection += 1.f;
+        //printf("set curDirection 1\n");
+        //printf("currentDirection in sharedUpdate while pressing D: %f\n", gd.player.currentDirection);
+    }
+    //printf("currentDirection in sharedUpdate: %f\n", gd.player.currentDirection);
+
+    gd.player.cooldownTimer.step(deltaTime);
+}
+
+//Use tempPlayer->nextStateVal to return the new state of the player
+PlayerState * changePlayerState(GameData &gd, Resources &res, PlayerState * tempPlayer) {
+    PlayerState * newPlayer;
+    //tempPlayer->exit(gd.player, gd, res);
+    switch(tempPlayer->nextStateVal){
+        case IDLE:
+        {
+            newPlayer = new IdleState();
+            newPlayer->enter = enterIdle;
+            newPlayer->update = updateIdle;
+            newPlayer->handleInput = handleInputIdle;
+            newPlayer->currStateVal = IDLE;
+            break;
+        }
+        case WALK:
+        {
+            newPlayer = new WalkState();
+            newPlayer->enter = enterWalk;
+            newPlayer->update = updateWalk;
+            newPlayer->handleInput = handleInputWalk;
+            newPlayer->currStateVal = WALK;
+            break;
+        }
+        case RUN:
+        {
+            newPlayer = new RunState();
+            newPlayer->enter = enterRun;
+            newPlayer->update = updateWalk;
+            newPlayer->handleInput = handleInputRun;
+            newPlayer->currStateVal = RUN;
+            break;
+        }
+        case SPRINT:
+        {
+            newPlayer = new SprintState();
+            newPlayer->enter = enterSprint;
+            newPlayer->update = updateSprint;
+            newPlayer->handleInput = handleInputSprint;
+            newPlayer->currStateVal = SPRINT;
+            break;
+        }
+        case LAUNCH:
+        {
+            newPlayer = new JumpLaunchState();
+            newPlayer->enter = enterLaunch;
+            newPlayer->update = updateLaunch;
+            newPlayer->handleInput = handleInputLaunch;
+            newPlayer->currStateVal = LAUNCH;
+            break;
+        }
+        case JUMP:
+        {
+            newPlayer = new JumpState();
+            newPlayer->enter = enterJump;
+            newPlayer->update = updateJump;
+            newPlayer->handleInput = handleInputJump;
+            newPlayer->currStateVal = JUMP;
+            break;
+        }
+        case ROLL:
+        {
+            newPlayer = new RollState();
+            newPlayer->enter = enterRoll;
+            newPlayer->update = updateRoll;
+            newPlayer->handleInput = handleInputRoll;
+            newPlayer->currStateVal = ROLL;
+            break;
+        }
+        case FALL:
+        {
+            newPlayer = new FallState();
+            newPlayer->enter = enterFall;
+            newPlayer->update = dummyUpdate;
+            newPlayer->handleInput = dummyInput;
+            newPlayer->currStateVal = FALL;
+            break;
+        }
+        case DEAD:
+        {
+            newPlayer = new DeadState();
+            newPlayer->enter = enterDead;
+            newPlayer->update = dummyUpdate;
+            newPlayer->handleInput = dummyInput;
+            newPlayer->currStateVal = DEAD;
+            break;
+        }
+        case SWORD_DEPLOY:
+        {
+            newPlayer = new ShotgunDeployState();
+            newPlayer->enter = enterSwordDeploy;
+            newPlayer->update = updateSwordDeploy;
+            newPlayer->handleInput = handleInputSwordDeploy;
+            newPlayer->currStateVal = SWORD_DEPLOY;
+            break;
+        }
+        case SHOTGUN_DEPLOY:
+        {
+            newPlayer = new ShotgunDeployState();
+            newPlayer->enter = enterShotgunDeploy;
+            newPlayer->update = updateShotgunDeploy;
+            newPlayer->handleInput = handleInputShotgunDeploy;
+            newPlayer->currStateVal = SHOTGUN_DEPLOY;
+            break;
+        }
+        case JETPACK_DEPLOY:
+        {
+            newPlayer = new JetpackDeployState();
+            newPlayer->enter = enterJetpackDeploy;
+            newPlayer->update = updateJetpackDeploy;
+            newPlayer->handleInput = handleInputJetpackDeploy;
+            newPlayer->currStateVal = JETPACK_DEPLOY;
+            break;
+        }
+    }
+
+    //newPlayer->currStateVal = tempPlayer->nextStateVal;
+    newPlayer->enter(gd.player, gd, res);
+    return newPlayer;
+}
 
 //Handle Input Functions
 void handleInputIdle(GameData &gd, Resources &res, SDL_KeyboardEvent key){
@@ -461,232 +689,4 @@ void enterSwordDeploy(Player& player, GameData &gd, Resources &res) {
     player.texture = res.texSDeploy;
     player.curAnimation = res.ANIM_PLAYER_SWORD_DEPLOY;
     player.animations[gd.player.curAnimation].reset();
-}
-
-//Handlers
-void handleJumping (GameData &gd, Resources &res, SDL_KeyboardEvent key) {
-    if (key.scancode == SDL_SCANCODE_SPACE && key.down && !key.repeat) {
-        //printf("Jump handled");
-        //printf("%d", gd.player.grounded);
-        if (gd.player.grounded) { // single jump
-            gd.player.state_->nextStateVal = LAUNCH;
-            PlayerState * tempState = changePlayerState(gd, res, gd.player.state_);
-            delete gd.player.state_;
-            gd.player.state_ = tempState;
-            
-            gd.player.vel.y = changeVel(JUMP_FORCE, gd.player); 
-        } else if (gd.player.canDoubleJump) { // double jump
-            gd.player.state_->nextStateVal = JUMP;
-            PlayerState * tempState = changePlayerState(gd, res, gd.player.state_);
-            delete gd.player.state_;
-            gd.player.state_ = tempState;
-            
-            gd.player.vel.y = changeVel(JUMP_FORCE, gd.player);  
-            gd.player.canDoubleJump = false;
-            gd.player.gravityScale = 1.0f; // reset gravity
-        }
-    } else if (!key.down && key.scancode == SDL_SCANCODE_SPACE) { // letting go of jump
-            float termVel = -200.0f; // option 2: Set velocity to predefined amount when you let go. makes less sharp jumps
-            float shouldFlip = gd.player.flip; // there might be a more modular way to do this. idk if we will actually use the gravity flip but having it is nice and cool
-            if (shouldFlip * gd.player.vel.y < shouldFlip * termVel) { 
-                gd.player.vel.y = changeVel(termVel, gd.player);
-            }
-        }
-}
-
-void handleRunning (GameData &gd, Resources &res, SDL_KeyboardEvent key){
-    if (key.scancode == SDL_SCANCODE_LSHIFT) {
-        //printf("running handled");
-            if (key.down) { // if held down, increase speed
-                gd.player.maxSpeedX = gd.player.maxRunX;
-                gd.player.state_->nextStateVal = RUN;
-                PlayerState * tempState = changePlayerState(gd, res, gd.player.state_);
-                delete gd.player.state_;
-                gd.player.state_ = tempState;
-                
-            } else {
-                gd.player.maxSpeedX = gd.player.maxWalkX;
-                gd.player.state_->nextStateVal = WALK;
-                PlayerState * tempState = changePlayerState(gd, res, gd.player.state_);
-                delete gd.player.state_;
-                gd.player.state_ = tempState;
-                
-                gd.player.sprintTimer.reset();
-            }
-        }
-}
-
-void handleSprinting(GameData &gd, Resources &res, SDL_KeyboardEvent key){
-    if (key.scancode == SDL_SCANCODE_LSHIFT && !key.down) {
-        //printf("Sprinting handled");
-        gd.player.maxSpeedX = gd.player.maxWalkX;
-        gd.player.curAnimation = res.ANIM_PLAYER_WALK;
-        gd.player.sprintTimer.reset();
-
-        gd.player.state_->nextStateVal = WALK;
-        PlayerState *newState = changePlayerState(gd, res, gd.player.state_);
-        delete gd.player.state_;
-        gd.player.state_ = newState;
-        
-    }
-}
-
-void handleFalling(GameData &gd, Resources &res, SDL_KeyboardEvent key){
-    if (key.scancode == SDL_SCANCODE_S && key.down && !gd.player.grounded) { // fastfall
-        //printf("Falling handled");
-        if (!key.repeat && !gd.player.fastFalling) {
-            gd.player.vel.y = changeVel(-250.0f, gd.player);
-            gd.player.fastFalling = true;
-
-            //Enter Jumping State
-            /*gd.player.state_->nextStateVal = JUMP;
-            PlayerState * tempState = changePlayerState(gd, res, gd.player.state_);
-            delete gd.player.state_;
-            gd.player.state_ = tempState;
-            */
-            //Call enter on jumping state
-        }
-        gd.player.gravityScale = 3.0f;
-    }
-}
-
-void sharedUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime){
-    gd.player.currentDirection = 0;
-    if (gd.player.curAnimation != -1) {
-        gd.player.animations[gd.player.curAnimation].step(deltaTime);
-    }
-    if (!gd.player.grounded) {
-        gd.player.vel.y += changeVel(700 * gd.player.gravityScale * deltaTime, gd.player); // gravity
-    }
-    if (state.keys[SDL_SCANCODE_A]) {
-        gd.player.currentDirection += -1.f;
-        //printf("set curDirection -1\n");
-    }
-    if (state.keys[SDL_SCANCODE_D]) {
-        gd.player.currentDirection += 1.f;
-        //printf("set curDirection 1\n");
-        //printf("currentDirection in sharedUpdate while pressing D: %f\n", gd.player.currentDirection);
-    }
-    //printf("currentDirection in sharedUpdate: %f\n", gd.player.currentDirection);
-
-    gd.player.cooldownTimer.step(deltaTime);
-}
-//Use tempPlayer->nextStateVal to return the new state of the player
-PlayerState * changePlayerState(GameData &gd, Resources &res, PlayerState * tempPlayer) {
-    PlayerState * newPlayer;
-    //tempPlayer->exit(gd.player, gd, res);
-    switch(tempPlayer->nextStateVal){
-        case IDLE:
-        {
-            newPlayer = new IdleState();
-            newPlayer->enter = enterIdle;
-            newPlayer->update = updateIdle;
-            newPlayer->handleInput = handleInputIdle;
-            newPlayer->currStateVal = IDLE;
-            break;
-        }
-        case WALK:
-        {
-            newPlayer = new WalkState();
-            newPlayer->enter = enterWalk;
-            newPlayer->update = updateWalk;
-            newPlayer->handleInput = handleInputWalk;
-            newPlayer->currStateVal = WALK;
-            break;
-        }
-        case RUN:
-        {
-            newPlayer = new RunState();
-            newPlayer->enter = enterRun;
-            newPlayer->update = updateWalk;
-            newPlayer->handleInput = handleInputRun;
-            newPlayer->currStateVal = RUN;
-            break;
-        }
-        case SPRINT:
-        {
-            newPlayer = new SprintState();
-            newPlayer->enter = enterSprint;
-            newPlayer->update = updateSprint;
-            newPlayer->handleInput = handleInputSprint;
-            newPlayer->currStateVal = SPRINT;
-            break;
-        }
-        case LAUNCH:
-        {
-            newPlayer = new JumpLaunchState();
-            newPlayer->enter = enterLaunch;
-            newPlayer->update = updateLaunch;
-            newPlayer->handleInput = handleInputLaunch;
-            newPlayer->currStateVal = LAUNCH;
-            break;
-        }
-        case JUMP:
-        {
-            newPlayer = new JumpState();
-            newPlayer->enter = enterJump;
-            newPlayer->update = updateJump;
-            newPlayer->handleInput = handleInputJump;
-            newPlayer->currStateVal = JUMP;
-            break;
-        }
-        case ROLL:
-        {
-            newPlayer = new RollState();
-            newPlayer->enter = enterRoll;
-            newPlayer->update = updateRoll;
-            newPlayer->handleInput = handleInputRoll;
-            newPlayer->currStateVal = ROLL;
-            break;
-        }
-        case FALL:
-        {
-            newPlayer = new FallState();
-            newPlayer->enter = enterFall;
-            newPlayer->update = dummyUpdate;
-            newPlayer->handleInput = dummyInput;
-            newPlayer->currStateVal = FALL;
-            break;
-        }
-        case DEAD:
-        {
-            newPlayer = new DeadState();
-            newPlayer->enter = enterDead;
-            newPlayer->update = dummyUpdate;
-            newPlayer->handleInput = dummyInput;
-            newPlayer->currStateVal = DEAD;
-            break;
-        }
-        case SWORD_DEPLOY:
-        {
-            newPlayer = new ShotgunDeployState();
-            newPlayer->enter = enterSwordDeploy;
-            newPlayer->update = updateSwordDeploy;
-            newPlayer->handleInput = handleInputSwordDeploy;
-            newPlayer->currStateVal = SWORD_DEPLOY;
-            break;
-        }
-        case SHOTGUN_DEPLOY:
-        {
-            newPlayer = new ShotgunDeployState();
-            newPlayer->enter = enterShotgunDeploy;
-            newPlayer->update = updateShotgunDeploy;
-            newPlayer->handleInput = handleInputShotgunDeploy;
-            newPlayer->currStateVal = SHOTGUN_DEPLOY;
-            break;
-        }
-        case JETPACK_DEPLOY:
-        {
-            newPlayer = new JetpackDeployState();
-            newPlayer->enter = enterJetpackDeploy;
-            newPlayer->update = updateJetpackDeploy;
-            newPlayer->handleInput = handleInputJetpackDeploy;
-            newPlayer->currStateVal = JETPACK_DEPLOY;
-            break;
-        }
-    }
-
-    //newPlayer->currStateVal = tempPlayer->nextStateVal;
-    newPlayer->enter(gd.player, gd, res);
-    return newPlayer;
 }
