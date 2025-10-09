@@ -133,6 +133,11 @@ void enterShotgunDeploy(Player& player, GameData &gd, Resources &res);
 void handleInputSwordDeploy(GameData &gd, Resources &res, SDL_KeyboardEvent key);
 void updateSwordDeploy(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
 void enterSwordDeploy(Player& player, GameData &gd, Resources &res);
+
+void handleInputGrapple(GameData &gd, Resources &res, SDL_KeyboardEvent key);
+void updateGrapple(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+void enterGrapple(Player& player, GameData &gd, Resources &res);
+
 //Handlers
 void handleJumping (GameData &gd, Resources &res, SDL_KeyboardEvent key);
 void handleRunning (GameData &gd, Resources &res, SDL_KeyboardEvent key);

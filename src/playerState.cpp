@@ -214,6 +214,15 @@ PlayerState * changePlayerState(GameData &gd, Resources &res, PlayerState * temp
             newPlayer->currStateVal = JETPACK_DEPLOY;
             break;
         }
+        case GRAPPLE:
+        {
+            newPlayer = new GrappleState();
+            newPlayer->enter = enterGrapple;
+            newPlayer->update = updateGrapple;
+            newPlayer->handleInput = handleInputGrapple;
+            newPlayer->currStateVal = GRAPPLE;
+            break;
+        }
     }
 
     //newPlayer->currStateVal = tempPlayer->nextStateVal;
@@ -266,6 +275,33 @@ void handleInputSprint(GameData &gd, Resources &res, SDL_KeyboardEvent key){
 
 void handleInputGrapple(GameData &gd, Resources &res, SDL_KeyboardEvent key) {
 
+}
+
+void updateGrapple(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
+    glm::vec2 pOffset = findCenterOfSprite(gd.player); // this will go in helper function later
+    glm::vec2 hOffset = findCenterOfSprite(gd.hook);
+    float xDist = (gd.hook.pos.x - gd.mapViewport.x + hOffset.x) - (gd.player.pos.x - gd.mapViewport.x + pOffset.x); // A
+    float yDist = (gd.hook.pos.y - gd.mapViewport.y + hOffset.y) - (gd.player.pos.y - gd.mapViewport.y + pOffset.y); // O
+    float dist = std::sqrt(xDist * xDist + yDist * yDist); // distance formula, H
+    float aH = xDist / dist; // cos
+    float oH = yDist / dist; // sin
+    gd.player.vel = 500.0f * glm::vec2(aH, oH);
+}
+
+void enterGrapple(Player& player, GameData &gd, Resources &res) {
+    if(((LevelState * )(currState))->character == SWORD){
+        player.texture = res.texJumpS;
+    } else if(((LevelState * )(currState))->character == SHOTGUN){
+        player.texture = res.texJumpG;
+    } else {
+        player.texture = res.texJumpJ;
+    }
+    player.curAnimation = res.ANIM_PLAYER_JUMP; 
+    player.animations[gd.player.curAnimation].reset();
+
+    gd.player.fastFalling = false;
+    gd.player.gravityScale = 1.0f;
+    gd.player.canDoubleJump = true;
 }
 
 //Might not need, idk how it would work with a nullptr as a function in the loop
@@ -519,7 +555,7 @@ void enterLaunch(Player& player, GameData &gd, Resources &res){
     player.animations[gd.player.curAnimation].reset();
 }
 
-void enterJump(Player& player, GameData &gd, Resources &res){
+void enterJump(Player& player, GameData &gd, Resources &res) {
     if(((LevelState * )(currState))->character == SWORD){
         player.texture = res.texJumpS;
     } else if(((LevelState * )(currState))->character == SHOTGUN){

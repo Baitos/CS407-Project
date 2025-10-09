@@ -40,8 +40,6 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
         }
 
         gd.hook.update(state, gd, res, deltaTime);
-
-
         gd.hook.checkCollision(state, gd, res, deltaTime);
         
         gd.player.vel += static_cast<float>(gd.player.currentDirection) * gd.player.acc * deltaTime;
@@ -138,13 +136,18 @@ void handleLevelClick(SDLState &state, GameData &gd, Resources &res, float delta
             }
         }
     } else if (buttonDown && event.button.button == SDL_BUTTON_RIGHT) { // grapple
-        gd.hook.pos = gd.player.pos;
+        glm::vec2 hOffset = findCenterOfSprite(gd.hook);
+        gd.hook.pos = gd.player.pos + hOffset;
         gd.hook.visible = true;
         std::vector dist = distanceForm(gd, gd.player, gd.hook);
         gd.hook.vel = 500.0f * glm::vec2(dist.at(3), dist.at(4));
     } else if (!buttonDown && event.button.button == SDL_BUTTON_RIGHT) { // grapple release 
         gd.hook.pos = glm::vec2(-1000.0f, -1000.0f); // maybe unnecessary
         gd.hook.visible = false;
+        if (gd.hook.collided) { // get out
+            gd.player.state_ = changePlayerState(gd, res, gd.player.state_, JUMP);
+        }
+        gd.hook.collided = false;
     }
 }
 

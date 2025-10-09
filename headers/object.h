@@ -136,11 +136,13 @@ class Laser : public Object { // obstacle
 
 class Hook : public AnimatedObject { // grappling hook projectile
     public:
+        bool collided; // has hook hit something
         Hook() : AnimatedObject() { // default 
+            collided = false;
         }  
         Hook(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : 
         AnimatedObject(pos_, colliderRect, tex) { // generic obj constructor
-
+            collided = false;
         }
         void draw(const SDLState &state, GameData &gd, float width, float height);
         void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);

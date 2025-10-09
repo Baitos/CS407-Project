@@ -160,6 +160,10 @@ void Hook::checkCollision(const SDLState &state, GameData &gd, Resources &res, f
         if (intersectAABB(rectA, rectB, resolution))
 	    {
             (*this).vel = glm::vec2(0);
+            if (!(*this).collided) {
+                gd.player.state_ = changePlayerState(gd, res, gd.player.state_, GRAPPLE);
+                (*this).collided = true;
+            }
         }
     }
 	
