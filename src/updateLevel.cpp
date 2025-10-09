@@ -33,6 +33,16 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
             laser.update(state, gd, res, deltaTime);
         }
 
+        for (ItemBox &box : gd.itemBoxes_) {
+            if (!box.itemBoxActive) {
+                box.update(state, gd, res, deltaTime);
+            }
+        }
+
+        if (gd.player.pickingItem) {
+            gd.itemStorage_.update(state, gd, res, deltaTime);
+        }
+
         //gd.player.currentDirection = 0;
         gd.player.state_->update(state, gd, res, deltaTime);
         if(gd.player.currentDirection){
@@ -43,27 +53,33 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
         gd.hook.checkCollision(state, gd, res, deltaTime);
         
         gd.player.vel += static_cast<float>(gd.player.currentDirection) * gd.player.acc * deltaTime;
-        //printf("Velocity after Update: %f\n", gd.player.vel.x);
-        //printf("currDirection = %d\n", gd.player.currentDirection);
+
         if (std::abs(gd.player.vel.x) > gd.player.maxSpeedX) {
-            //gd.player.vel.x = gd.player.maxSpeedX * gd.player.dir;
             if (!isSliding(gd.player)) { // if not sliding slow down
                 gd.player.vel.x -= 1.5 * gd.player.acc.x * deltaTime * gd.player.currentDirection;
             }
+            
         }
 
-        // add vel to pos
-        //printf("%f\n", gd.player.vel);  
+        if(gd.player.usingSugar){
+            ((Sugar *) &gd.player.item)->sugarTimer.step(deltaTime);
+            gd.player.vel.x += 1.0f * gd.player.currentDirection;
+            if(((Sugar *) &gd.player.item)->sugarTimer.isTimeOut()){
+                //printf("Stopped sugar\n");
+                gd.player.usingSugar = false;
+            }
+        }
+
+        // add vel to pos 
         gd.player.pos += updatePos(gd.player, deltaTime);
-        //printf("%f", gd.player.vel);
+
         // collision
-        //bool foundGround = gd.player.grounded;
         gd.player.grounded = false;
-        
-        //printf("Is fastfalling: %d\n", gd.player.fastFalling);
         collisionCheckAndResponse(state,gd,res,gd.player,deltaTime);
 
         //printf("%d\n", gd.player.state_->currStateVal);
+        gd.itemStorage_.pos.x = gd.player.pos.x - 368;
+        gd.itemStorage_.pos.y = gd.player.pos.y - 200;
         
 }
 
@@ -195,10 +211,16 @@ void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
     if (key.scancode == SDL_SCANCODE_F1) {
         running = false;
     }
-    if(key.scancode == SDL_SCANCODE_F2){
+    if (key.scancode == SDL_SCANCODE_F2) {
         printf("currState: %d, nextState: %d", currState->currStateVal, currState->nextStateVal);
         currState = changeState(currState, gd);
         currState->init(state, gd, res);
+    }
+    if (key.scancode == SDL_SCANCODE_Q && gd.player.hasItem) {
+        Item item = gd.player.item;
+        item.useItem(state, gd, res);
+        gd.player.hasItem = false;
+        clearItem(state, gd, res);
     }
     gd.player.state_->handleInput(gd, res, key);   
 }

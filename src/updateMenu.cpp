@@ -82,8 +82,8 @@ void handleMousePointer(const SDLState &state, GameData &gd, Resources &res, flo
     SDL_FRect dst { 
         .x = gd.mouseCoords.x - OFFSET,
         .y = gd.mouseCoords.y - OFFSET,
-        .w = 32,
-        .h = 32
+        .w = (float)TILE_SIZE,
+        .h = (float)TILE_SIZE
     };
     SDL_RenderTexture(state.renderer, res.texCursor, nullptr, &dst); // src is for sprite stripping, dest is for where sprite should be drawn*/ 
 }
@@ -148,15 +148,14 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
                 gd.charIcons_[0].spriteFrame = ci.spriteFrame;
             }
         }
-    } else if ((gd.mouseCoords.x >= 35 && gd.mouseCoords.x <= 218) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)){
+    } else if ((gd.mouseCoords.x >= 583 && gd.mouseCoords.x <= 766) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)) {
         //Enter Stage
         //TO DO - ONLY DO WHEN PLAYERS AGREE TO READY UP
         int character = ((CharSelectState*) currState)->character;
         currState = changeState(currState, gd);
         ((LevelState*) currState)->character = character;
         currState->init(state, gd, res);
-    } else if ((gd.mouseCoords.x >= 583 && gd.mouseCoords.x <= 766) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)){
-        //Exit to Title
+    } else if ((gd.mouseCoords.x >= 35 && gd.mouseCoords.x <= 218) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)) {
         currState->nextStateVal = TITLE;
         currState = changeState(currState, gd);
         currState->init(state, gd, res);
