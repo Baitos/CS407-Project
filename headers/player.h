@@ -30,7 +30,6 @@ class Player : public AnimatedObject { // player
         float maxSpeedX; // will change depending on state
         float maxSpeedY = 550;
         float maxWalkX = 250; // walking
-        //float maxSpeedX = 250;
         float maxRunX = 650; // running 
         float maxSprintX = 850; // sprinting
         int currentDirection;

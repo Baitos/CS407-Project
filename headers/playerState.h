@@ -14,13 +14,13 @@ enum PlayerStateValues {
     DEAD,
     SWORD_DEPLOY,
     SHOTGUN_DEPLOY,
-    JETPACK_DEPLOY
+    JETPACK_DEPLOY,
+    GRAPPLE
 };
 
 class PlayerState {
     public:
         int currStateVal;
-        int nextStateVal;
         //virtual ~PlayerState() {}
         void (*handleInput)(GameData &gd, Resources &res, SDL_KeyboardEvent key);
         void (*update)(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
@@ -76,7 +76,11 @@ class JetpackDeployState : public PlayerState {
 
 };
 
-PlayerState * changePlayerState(PlayerState * tempPlayer);
+class GrappleState : public PlayerState {
+
+};
+
+PlayerState * changePlayerState(GameData &gd, Resources &res, PlayerState * tempPlayer, PlayerStateValues newState);
 
 //Idle Functions
 void handleInputIdle(GameData &gd, Resources &res, SDL_KeyboardEvent key);
@@ -105,6 +109,10 @@ void enterRoll(Player& player, GameData &gd, Resources &res);
 void handleInputSprint(GameData &gd, Resources &res, SDL_KeyboardEvent key);
 void updateSprint(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
 void enterSprint(Player& player, GameData &gd, Resources &res);
+//Grapple Functions
+void handleInputGrapple(GameData &gd, Resources &res, SDL_KeyboardEvent key);
+void updateGrapple(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+void enterGrapple(Player& player, GameData &gd, Resources &res);
 //Fall Functions
 void updateFalling(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
 void enterFall(Player& player, GameData &gd, Resources &res);
@@ -127,6 +135,11 @@ void enterShotgunDeploy(Player& player, GameData &gd, Resources &res);
 void handleInputSwordDeploy(GameData &gd, Resources &res, SDL_KeyboardEvent key);
 void updateSwordDeploy(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
 void enterSwordDeploy(Player& player, GameData &gd, Resources &res);
+
+void handleInputGrapple(GameData &gd, Resources &res, SDL_KeyboardEvent key);
+void updateGrapple(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+void enterGrapple(Player& player, GameData &gd, Resources &res);
+
 //Handlers
 void handleJumping (GameData &gd, Resources &res, SDL_KeyboardEvent key);
 void handleRunning (GameData &gd, Resources &res, SDL_KeyboardEvent key);

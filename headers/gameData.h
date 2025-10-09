@@ -5,17 +5,20 @@
 #include "../ext/glm/glm.hpp"
 #include "initState.h"
 #include "player.h"
+#include "menu.h"
 
 struct GameData {
     Player player;
     Player player2;
     int numPlayers; 
+    Hook hook;
     std::vector<BackgroundObject> bgTiles_;
     std::vector<Level> mapTiles_;
     std::vector<Laser> lasers_;
     std::vector<ItemBox> itemBoxes_;
     std::vector<Item> items_;
     std::vector<Portal> portals_;
+
     std::vector<charIconObject> charIcons_;
     std::vector<AnimatedObject> previews_;
     glm::vec2 ExitPortal, 

@@ -6,7 +6,8 @@
 #include <string>
 #include <array>
 
-#include "../headers/update.h"
+#include "../headers/updateMenu.h"
+#include "../headers/updateLevel.h"
 #include "../headers/collision.h"
 #include "../headers/gameData.h"
 #include "../headers/initState.h"
@@ -38,7 +39,7 @@ class GameState{
         int currStateVal;
         int nextStateVal;
         GameState * prevState;
-        //GameState * nextState; //May not need
+        GameState * nextState; //May not need
         void (*input)(SDLState &state, GameData &gd, Resources &res, float deltaTime);
         void (*update)(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
         void (*render)(const SDLState &state, GameData &gd, Resources res, float deltaTime);

@@ -1,6 +1,7 @@
 #include "../headers/createTiles.h"
-#include "../headers/draw.h"
-#include "../headers/update.h"
+#include "../headers/drawLevel.h"
+#include "../headers/updateMenu.h"
+#include "../headers/updateLevel.h"
 #include "../headers/state.h"
 #include "../headers/collision.h"
 
@@ -46,6 +47,7 @@ GameState * changeState(GameState * tempState, GameData &gd){
             newState->init = createTiles;    
             break;
         }
+
         case RESULTS:
         {
             break;

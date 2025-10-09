@@ -35,6 +35,8 @@ struct Resources {
     std::vector<Animation> portalAnims;
     const int ICONS = 0;
     std::vector<Animation> charIconAnims;
+    const int ERROR = 0;
+    std::vector<Animation> errorAnims;
 
     //FOR NOW.. change to 0 for shotgun, 1 for sword, 2 for jetpack
     int character;
@@ -47,6 +49,7 @@ struct Resources {
                 *texIdleJ, *texRunJ, *texJumpJ, *texLaunchJ, *texSlideJ, *texShootJ, *texDieJ, *texShootJumpJ, *texRollJ,
                 *texJDeploy, *texGDeploy, *texSDeploy,
                 *texShotgunBlast,
+                *texGrapple, *texGrappleAngle,
                 *texGrass, *texStone, *texBrick, *texFence, *texBush, 
                 *texBullet, *texBulletHit,
                 *texBg1, *texBg2, *texBg3, *texBg4, *texOnStage, *texOffStage, *texBg5, 
