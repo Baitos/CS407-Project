@@ -39,15 +39,11 @@ void handleJumping (GameData &gd, Resources &res, SDL_KeyboardEvent key) {
 void handleRunning (GameData &gd, Resources &res, SDL_KeyboardEvent key){
     if (key.scancode == SDL_SCANCODE_LSHIFT) {
         //printf("running handled");
-            if (key.down) { // if held down, increase speed
-                gd.player.maxSpeedX = gd.player.maxRunX;
+            if (key.down && gd.player.currentDirection) { // if held down, increase speed               
                 gd.player.state_ = changePlayerState(gd, res, gd.player.state_, RUN);
                 
             } else {
-                gd.player.maxSpeedX = gd.player.maxWalkX;
-                gd.player.state_ = changePlayerState(gd, res, gd.player.state_, WALK);
-                
-                gd.player.sprintTimer.reset();
+                gd.player.state_ = changePlayerState(gd, res, gd.player.state_, WALK);                
             }
         }
 }
@@ -55,10 +51,6 @@ void handleRunning (GameData &gd, Resources &res, SDL_KeyboardEvent key){
 void handleSprinting(GameData &gd, Resources &res, SDL_KeyboardEvent key){
     if (key.scancode == SDL_SCANCODE_LSHIFT && !key.down) {
         //printf("Sprinting handled");
-        gd.player.maxSpeedX = gd.player.maxWalkX;
-        gd.player.curAnimation = res.ANIM_PLAYER_WALK;
-        gd.player.sprintTimer.reset();
-
         gd.player.state_ = changePlayerState(gd, res, gd.player.state_, WALK);
         
     }
@@ -128,7 +120,7 @@ PlayerState * changePlayerState(GameData &gd, Resources &res, PlayerState * temp
         {
             newPlayer = new RunState();
             newPlayer->enter = enterRun;
-            newPlayer->update = updateWalk;
+            newPlayer->update = updateRun;
             newPlayer->handleInput = handleInputRun;
             newPlayer->currStateVal = RUN;
             break;
@@ -141,6 +133,15 @@ PlayerState * changePlayerState(GameData &gd, Resources &res, PlayerState * temp
             newPlayer->handleInput = handleInputSprint;
             newPlayer->currStateVal = SPRINT;
             break;
+        }
+        case SLIDE:
+        {
+            newPlayer = new SlideState();
+            newPlayer->enter = enterSlide;
+            newPlayer->update = updateSlide;
+            newPlayer->handleInput = handleInputSlide;
+            newPlayer->currStateVal = SLIDE;
+            break;  
         }
         case LAUNCH:
         {
@@ -234,7 +235,6 @@ PlayerState * changePlayerState(GameData &gd, Resources &res, PlayerState * temp
 //Handle Input Functions
 void handleInputIdle(GameData &gd, Resources &res, SDL_KeyboardEvent key){
     handleJumping(gd,res,key);
-    handleRunning(gd,res,key);
 }
 
 void handleInputWalk(GameData &gd, Resources &res, SDL_KeyboardEvent key){
@@ -329,66 +329,55 @@ void updateIdle(const SDLState &state, GameData &gd, Resources &res, float delta
     }
 }
 
-void updateWalk(const SDLState &state, GameData &gd, Resources &res, float deltaTime){
-    
+void updateWalk(const SDLState &state, GameData &gd, Resources &res, float deltaTime){   
     sharedUpdate(state, gd,res,deltaTime);
-    //printf("currentDirection: %d\n", gd.player.currentDirection);
-    //printf("Velocity: %f\n", gd.player.vel.x);
     if (!gd.player.currentDirection && gd.player.grounded) { // if not moving, slow down
-        //printf("Slowing Walk\n");
-        //printf("currentDirection: %d\n", gd.player.currentDirection);
         const float factor = gd.player.vel.x > 0 ? -1.0f : 1.0f;
         float amount = factor * gd.player.acc.x * deltaTime;
         
         if (std::abs(gd.player.vel.x) < std::abs(amount)) {
-            //printf("Walk to Idle\n");
             gd.player.vel.x = 0;
             // once stopped, set player to idle
             gd.player.state_ = changePlayerState(gd, res, gd.player.state_, IDLE);            
         }
         else {
-            //printf("Velocity before: %f\n", gd.player.vel.x);
             gd.player.vel.x += amount;
-            //printf("Velocity After: %f\n", gd.player.vel.x);
         }
     }
-
     if (isSliding(gd.player) && gd.player.grounded) { // moving in different direction of vel and pressing a direction, sliding
-        //TO DO, FIGURE OUT SLIDING MAYBE?
-        //gd.player.state_->nextStateVal = TURNING;
-        //gd.player.state_ = changePlayerState(gd, res, gd.player.state_);
-
-    } else {
-        /*gd.player.state_->nextStateVal = RUN;
-        gd.player.state_ = changePlayerState(gd, res, gd.player.state_);
-        
-        */
+        gd.player.state_ = changePlayerState(gd, res, gd.player.state_, SLIDE); 
     }
-
-    if (state.keys[SDL_SCANCODE_LSHIFT]) { // if not pressing then reset
-        float LEEWAY = 20;
-        if (gd.player.grounded && std::abs(gd.player.vel.x) >= (gd.player.maxRunX - LEEWAY)) { // if grounded and moving fast enter sprint (eventually)                
-            if (!gd.player.sprintTimer.isTimeOut()) {
-                gd.player.sprintTimer.step(deltaTime);
-            } else {
-
-                gd.player.maxSpeedX = gd.player.maxSprintX;
-                gd.player.state_ = changePlayerState(gd, res, gd.player.state_, SPRINT);
-            }
-        } 
-    } else {
-        gd.player.sprintTimer.reset();
+    if (state.keys[SDL_SCANCODE_LSHIFT] && gd.player.currentDirection) {
+        gd.player.state_ = changePlayerState(gd, res, gd.player.state_, RUN);
     }
 }
 
-void updateSprint(const SDLState &state, GameData &gd, Resources &res, float deltaTime){
+void updateRun(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {   
+    sharedUpdate(state, gd,res,deltaTime);
+    if (!state.keys[SDL_SCANCODE_LSHIFT] || !gd.player.currentDirection) { // if not pressing then reset
+        gd.player.state_ = changePlayerState(gd, res, gd.player.state_, WALK);
+    }
+
+    float LEEWAY = 20;
+    if (gd.player.grounded && std::abs(gd.player.vel.x) >= (gd.player.maxRunX - LEEWAY)) { // if grounded and moving fast enter sprint (eventually)                
+        if (!gd.player.sprintTimer.isTimeOut()) {
+            gd.player.sprintTimer.step(deltaTime);
+        } else {
+            gd.player.state_ = changePlayerState(gd, res, gd.player.state_, SPRINT);
+        }
+    } 
+    if (isSliding(gd.player) && gd.player.grounded) { // moving in different direction of vel and pressing a direction, sliding
+        gd.player.state_ = changePlayerState(gd, res, gd.player.state_, SLIDE); 
+    }
+}
+
+void updateSprint(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
     sharedUpdate(state, gd,res,deltaTime);
     float LEEWAY = 20;
     if (gd.player.grounded && // if on ground and sliding or too slow reset sprint
         (isSliding(gd.player) || std::abs(gd.player.vel.x) < (gd.player.maxRunX - LEEWAY))) {       
         gd.player.sprintTimer.reset();
-        gd.player.maxSpeedX = gd.player.maxRunX;
-        gd.player.state_ = changePlayerState(gd, res, gd.player.state_, WALK);
+        gd.player.state_ = changePlayerState(gd, res, gd.player.state_, RUN);
     }
 }
 
@@ -416,7 +405,33 @@ void updateFalling(const SDLState &state, GameData &gd, Resources &res, float de
     // gd.player.state_ = changePlayerState(gd, res, gd.player.state_);
     // 
 }
-      
+
+void handleInputSlide(GameData &gd, Resources &res, SDL_KeyboardEvent key) {;
+    handleRunning(gd,res,key);
+    handleJumping(gd,res,key);
+}
+void updateSlide(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
+    sharedUpdate(state, gd,res,deltaTime);
+    if (gd.player.currentDirection == 0) { // this entire function is awful and making me sad
+        gd.player.currentDirection = gd.player.dir;
+    } 
+    if (!isSliding(gd.player)) {
+        gd.player.state_ = changePlayerState(gd, res, gd.player.state_, RUN);
+    }
+}
+void enterSlide(Player& player, GameData &gd, Resources &res) {
+    if(((LevelState * )(currState))->character == SWORD){
+        player.texture = res.texSlideS;
+    } else if(((LevelState * )(currState))->character == SHOTGUN){
+        player.texture = res.texSlideG;
+    } else {
+        player.texture = res.texSlideJ;
+    }
+    player.curAnimation = res.ANIM_PLAYER_SLIDE; 
+    player.animations[gd.player.curAnimation].reset();
+    gd.player.sprintTimer.reset();
+}
+
 void updateLaunch(const SDLState &state, GameData &gd, Resources &res, float deltaTime){
     sharedUpdate(state, gd,res,deltaTime);
         
@@ -565,6 +580,8 @@ void enterWalk(Player& player, GameData &gd, Resources &res){
     }
     player.curAnimation = res.ANIM_PLAYER_WALK; 
     player.animations[gd.player.curAnimation].reset();
+    gd.player.maxSpeedX = gd.player.maxWalkX;
+    gd.player.sprintTimer.reset();
 }
 
 void enterRun(Player& player, GameData &gd, Resources &res){
@@ -577,6 +594,8 @@ void enterRun(Player& player, GameData &gd, Resources &res){
     }
     player.curAnimation = res.ANIM_PLAYER_RUN; 
     player.animations[gd.player.curAnimation].reset();
+    gd.player.maxSpeedX = gd.player.maxRunX;
+    gd.player.sprintTimer.reset();
 }
 
 void enterSprint(Player& player, GameData &gd, Resources &res){
@@ -590,6 +609,7 @@ void enterSprint(Player& player, GameData &gd, Resources &res){
     //Change?
     player.curAnimation = res.ANIM_PLAYER_RUN; 
     player.animations[gd.player.curAnimation].reset();
+    gd.player.maxSpeedX = gd.player.maxSprintX;
 }
 
 void enterLaunch(Player& player, GameData &gd, Resources &res){

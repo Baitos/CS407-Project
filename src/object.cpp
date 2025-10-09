@@ -178,6 +178,13 @@ void Hook::checkCollision(const SDLState &state, GameData &gd, Resources &res, f
             }
         }
     }
+    Player p = gd.player2;
+    rectB = {
+        .x = p.pos.x + p.collider.x,
+        .y = p.pos.y + p.collider.y,
+        .w = p.collider.w,
+        .h = p.collider.h
+    };
 }
 
 void ItemBox::update(const SDLState &state, GameData &gd, Resources &res, float deltaTime) { // update item box timer every frame (when on cooldown)

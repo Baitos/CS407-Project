@@ -6,7 +6,8 @@ enum PlayerStateValues {
     IDLE, 
     WALK, 
     RUN, 
-    SPRINT, 
+    SPRINT,
+    SLIDE, 
     LAUNCH, 
     JUMP, 
     ROLL, 
@@ -41,6 +42,10 @@ class RunState : public PlayerState {
 };
 
 class SprintState : public PlayerState {
+
+};
+
+class SlideState : public PlayerState {
 
 };
 
@@ -92,7 +97,12 @@ void updateWalk(const SDLState &state, GameData &gd, Resources &res, float delta
 void enterWalk(Player& player, GameData &gd, Resources &res);
 //Run Fuctions
 void handleInputRun(GameData &gd, Resources &res, SDL_KeyboardEvent key);
+void updateRun(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
 void enterRun(Player& player, GameData &gd, Resources &res);
+// Slide Functions
+void handleInputSlide(GameData &gd, Resources &res, SDL_KeyboardEvent key);
+void updateSlide(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+void enterSlide(Player& player, GameData &gd, Resources &res);
 //Jump Functions
 void handleInputJump(GameData &gd, Resources &res, SDL_KeyboardEvent key);
 void updateJump(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
