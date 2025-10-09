@@ -251,6 +251,9 @@ void dummyUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
         gd.player.state_->enter(gd.player, gd, res);
     }
 }
+void emptyUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime){
+}
+
 
 void updateJetpackDeploy(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
     sharedUpdate(state, gd,res,deltaTime);
@@ -508,6 +511,10 @@ void enterSwordDeploy(Player& player, GameData &gd, Resources &res) {
     player.texture = res.texSDeploy;
     player.curAnimation = res.ANIM_PLAYER_SWORD_DEPLOY;
     player.animations[gd.player.curAnimation].reset();
+}
+
+void dummyEnter(Player& player, GameData &gd, Resources &res) {
+    
 }
 
 //Handlers

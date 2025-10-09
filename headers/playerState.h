@@ -111,8 +111,10 @@ void enterFall(Player& player, GameData &gd, Resources &res);
 //Dead Functions
 void enterDead(Player& player, GameData &gd, Resources &res);
 //Dummy Functions?
+void dummyEnter(Player& player, GameData &gd, Resources &res);
 void dummyInput(GameData &gd, Resources &res, SDL_KeyboardEvent key);
 void dummyUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+void emptyUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
 //Jetpack Deploy Functions
 void handleInputJetpackDeploy(GameData &gd, Resources &res, SDL_KeyboardEvent key);
 void updateJetpackDeploy(const SDLState &state, GameData &gd, Resources &res, float deltaTime);

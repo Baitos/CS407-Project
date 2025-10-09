@@ -45,6 +45,7 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
         }
         //gd.player.currentDirection = 0;
         gd.player.state_->update(state, gd, res,deltaTime);
+       
         if(gd.player.currentDirection){
             gd.player.dir = gd.player.currentDirection;
         }

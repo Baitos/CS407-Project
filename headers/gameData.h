@@ -8,6 +8,7 @@
 
 struct GameData {
     Player player;
+    Player player2;
     int numPlayers; 
     std::vector<BackgroundObject> bgTiles_;
     std::vector<Level> mapTiles_;

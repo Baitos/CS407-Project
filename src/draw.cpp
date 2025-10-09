@@ -141,6 +141,8 @@ void drawLevel(const SDLState &state, GameData &gd, Resources res, float deltaTi
     // draw player
     gd.player.draw(state, gd, TILE_SIZE, TILE_SIZE); // draw player class
 
+    gd.player2.draw(state, gd, TILE_SIZE, TILE_SIZE);
+
     //draw blast if needed for shotgun
     if(gd.player.blast != nullptr) {
         gd.player.blast->draw(state, gd, 80, 48);

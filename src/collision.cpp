@@ -102,6 +102,7 @@ void collisionCheckAndResponse(const SDLState &state, GameData &gd, Resources &r
 		} 
 	}
 	for (ItemBox &box : gd.itemBoxes_) {
+
 		SDL_FRect rectB{
 			.x = box.pos.x + box.collider.x,
 			.y = box.pos.y + box.collider.y,
@@ -122,6 +123,7 @@ void collisionCheckAndResponse(const SDLState &state, GameData &gd, Resources &r
 			}
 		}
 	}
+
 }
 
 
