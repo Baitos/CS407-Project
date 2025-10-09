@@ -12,7 +12,7 @@ SDL_Texture* Resources::loadTexture(SDL_Renderer *renderer, const std::string &f
 }
 
 void Resources::load(SDLState &state) { // First variable controls how many frames there are, second is how long each frame lasts (in seconds)
-    playerAnimsJ.resize(10); // 
+    playerAnimsJ.resize(12); // 
     playerAnimsJ[ANIM_PLAYER_IDLE] = Animation(1, 1.6f);
     playerAnimsJ[ANIM_PLAYER_WALK] = Animation(8, 1.0f);
     playerAnimsJ[ANIM_PLAYER_RUN] = Animation(8, 0.5f);
@@ -23,8 +23,10 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     playerAnimsJ[ANIM_PLAYER_LAUNCH] = Animation(3, 0.2f);
     playerAnimsJ[ANIM_PLAYER_SHOOT_JUMP] = Animation(1, 0.8f);
     playerAnimsJ[ANIM_PLAYER_ROLL] = Animation(5, 0.2f);
+    playerAnimsJ[ANIM_PLAYER_JETPACK_DEPLOY] = Animation(1, 2.0f);
+    playerAnimsJ[ANIM_PLAYER_SWORD_DEPLOY] = Animation(3, 0.3f);
 
-    playerAnims.resize(10); // 
+    playerAnims.resize(12); // 
     playerAnims[ANIM_PLAYER_IDLE] = Animation(1, 1.6f);
     playerAnims[ANIM_PLAYER_WALK] = Animation(8, 1.0f);
     playerAnims[ANIM_PLAYER_RUN] = Animation(8, 0.5f);
@@ -35,6 +37,8 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     playerAnims[ANIM_PLAYER_LAUNCH] = Animation(3, 0.2f);
     playerAnims[ANIM_PLAYER_SHOOT_JUMP] = Animation(1, 0.8f);
     playerAnims[ANIM_PLAYER_ROLL] = Animation(5, 0.2f);
+    playerAnims[ANIM_PLAYER_JETPACK_DEPLOY] = Animation(1, 2.0f);
+    playerAnims[ANIM_PLAYER_SWORD_DEPLOY] = Animation(3, 0.3f);
 
     itemAnims.resize(3); // 
     itemAnims[ANIM_ITEM_EMPTY] = Animation(1, 1.0f);
@@ -45,6 +49,8 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     portalAnims[PORTAL_IDLE] = Animation(3, 1.0f);
     charIconAnims.resize(1);
     charIconAnims[ICONS] = Animation(8, 0.0f);
+    shotgunAnims.resize(1);
+    shotgunAnims[SHOTGUN_BLAST] = Animation(3, 0.3f);
 
 
     //load shotgun character animations
@@ -79,6 +85,13 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     texShootJumpJ = loadTexture(state.renderer, "data/CharacterSprites/Jetpack/on_jetpack.png");
     texLaunchJ = loadTexture(state.renderer, "data/CharacterSprites/Jetpack/jumping_jetpack.png");
     texRollJ = loadTexture(state.renderer, "data/CharacterSprites/Jetpack/rolling_jetpack.png");
+
+    //load special deploy animations
+    texJDeploy = loadTexture(state.renderer, "data/CharacterSprites/Jetpack/on_jetpack.png");
+    texGDeploy = loadTexture(state.renderer, "data/CharacterSprites/Shotgun/shooting_shotgun.png");
+    texSDeploy = loadTexture(state.renderer, "data/CharacterSprites/Sword/swing_sword.png");
+
+    texShotgunBlast = loadTexture(state.renderer, "data/CharacterSprites/Shotgun/fire_shotgun.png");
 
     texCrosshair = loadTexture(state.renderer, "data/crosshair.png");
     texGrass = loadTexture(state.renderer, "data/grass.png");

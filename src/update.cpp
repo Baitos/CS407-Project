@@ -26,6 +26,10 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
             portal.update(state, gd, res, deltaTime);
         }
 
+        if (gd.player.blast != nullptr) {
+            gd.player.blast->update(state, gd, res, deltaTime);
+        }
+
         // update lasers
         for (Laser &laser : gd.lasers_) {
             laser.update(state, gd, res, deltaTime);
@@ -119,11 +123,50 @@ void levelInputs(SDLState &state, GameData &gd, Resources &res, float deltaTime)
                 case SDL_EVENT_MOUSE_BUTTON_DOWN:
                 {
                     //handleClick(state, gd, res, gd.player(), deltaTime);
+                    handleLevelClick(state, gd, res, deltaTime, event);
                     break;
                 } 
             }
         }
 }
+
+//handler for clicking in the level
+void handleLevelClick(SDLState &state, GameData &gd, Resources &res, float deltaTime, SDL_Event event) {
+    //LEFT CLICK FOR CHARACTER WEAPON DEPLOY
+    if(event.button.button == SDL_BUTTON_LEFT){
+        //JETPACK DEPLOY
+        if(((LevelState *)currState)->character == JETPACK) {
+            if(gd.player.cooldownTimer.isTimeOut()) {
+                    gd.player.state_->nextStateVal = JETPACK_DEPLOY;
+                    PlayerState *newState = changePlayerState(gd.player.state_);
+                    delete gd.player.state_;
+                    gd.player.state_ = newState;
+                    gd.player.state_->enter(gd.player, gd, res);
+            }
+        } else if (((LevelState *)currState)->character == SHOTGUN) {
+            //SHOTGUN DEPLOY
+            if(gd.player.cooldownTimer.isTimeOut()) {
+                gd.player.state_->nextStateVal = SHOTGUN_DEPLOY;
+                PlayerState *newState = changePlayerState(gd.player.state_);
+                delete gd.player.state_;
+                gd.player.state_ = newState;
+                gd.player.state_->enter(gd.player, gd, res);
+            }
+        } else if (((LevelState *)currState)->character == SWORD) {
+            //SWORD DEPLOY
+            if(gd.player.cooldownTimer.isTimeOut()) {
+                gd.player.state_->nextStateVal = SWORD_DEPLOY;
+                PlayerState *newState = changePlayerState(gd.player.state_);
+                delete gd.player.state_;
+                gd.player.state_ = newState;
+                gd.player.state_->enter(gd.player, gd, res);
+            }
+        }
+    } else if (event.button.button == SDL_BUTTON_RIGHT) {
+        //RIGHT CLICK FOR CHARACTER GRAPPLE (?)
+    }
+}
+
 //Input Function for Character Select Screen
 void charSelectInputs(SDLState &state, GameData &gd, Resources &res, float deltaTime){
     SDL_Event event { 0 };
@@ -305,14 +348,14 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
                 gd.charIcons_[0].spriteFrame = ci.spriteFrame;
             }
         }
-    } else if ((gd.mouseCoords.x >= 35 && gd.mouseCoords.x <= 218) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)){
+    } else if ((gd.mouseCoords.x >= 583 && gd.mouseCoords.x <= 766) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)){
         //Enter Stage
         //TO DO - ONLY DO WHEN PLAYERS AGREE TO READY UP
         int character = ((CharSelectState*) currState)->character;
         currState = changeState(currState, gd);
         ((LevelState*) currState)->character = character;
         currState->init(state,gd, res);
-    } else if ((gd.mouseCoords.x >= 583 && gd.mouseCoords.x <= 766) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)){
+    } else if ((gd.mouseCoords.x >= 35 && gd.mouseCoords.x <= 218) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)){
         //Exit to Title
         currState->nextStateVal = TITLE;
         currState = changeState(currState, gd);
