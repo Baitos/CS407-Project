@@ -10,4 +10,4 @@ void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
                     SDL_KeyboardEvent key, bool keyDown, float deltaTime); 
 void handleCrosshair(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
 void levelInputs(SDLState &state, GameData &gd, Resources &res, float deltaTime);
-void handleLevelClick(SDLState &state, GameData &gd, Resources &res, float deltaTime, SDL_Event event);
+void handleLevelClick(SDLState &state, GameData &gd, Resources &res, float deltaTime, SDL_Event event, bool buttonDown);

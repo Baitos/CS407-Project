@@ -52,12 +52,14 @@ class AnimatedObject : public Object { // obj with anims
         int curAnimation;    
         float dir;
         float flip; // anti gravity
+        bool visible; 
         AnimatedObject() : Object() { // default
             spriteFrame = 1;
             curAnimation = -1;
             dir = 1;
             flip = 1.0f;
             type = ANIMATED;
+            visible = true;
         }
         AnimatedObject(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : // generic obj constructor
         Object(pos_, colliderRect, tex) {
@@ -66,6 +68,7 @@ class AnimatedObject : public Object { // obj with anims
             dir = 1;
             flip = 1.0f;
             type = ANIMATED;
+            visible = true;
         }
 
         void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
@@ -139,6 +142,7 @@ class Hook : public AnimatedObject { // grappling hook projectile
         AnimatedObject(pos_, colliderRect, tex) { // generic obj constructor
 
         }
+        void draw(const SDLState &state, GameData &gd, float width, float height);
         void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
         void checkCollision(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
 };

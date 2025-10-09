@@ -17,17 +17,11 @@ void handleJumping (GameData &gd, Resources &res, SDL_KeyboardEvent key) {
         //printf("Jump handled");
         //printf("%d", gd.player.grounded);
         if (gd.player.grounded) { // single jump
-            gd.player.state_->nextStateVal = LAUNCH;
-            PlayerState * tempState = changePlayerState(gd, res, gd.player.state_);
-            delete gd.player.state_;
-            gd.player.state_ = tempState;
-            
+            gd.player.state_ = changePlayerState(gd, res, gd.player.state_, LAUNCH);
+
             gd.player.vel.y = changeVel(JUMP_FORCE, gd.player); 
         } else if (gd.player.canDoubleJump) { // double jump
-            gd.player.state_->nextStateVal = JUMP;
-            PlayerState * tempState = changePlayerState(gd, res, gd.player.state_);
-            delete gd.player.state_;
-            gd.player.state_ = tempState;
+            gd.player.state_ = changePlayerState(gd, res, gd.player.state_, JUMP);
             
             gd.player.vel.y = changeVel(JUMP_FORCE, gd.player);  
             gd.player.canDoubleJump = false;
@@ -47,17 +41,11 @@ void handleRunning (GameData &gd, Resources &res, SDL_KeyboardEvent key){
         //printf("running handled");
             if (key.down) { // if held down, increase speed
                 gd.player.maxSpeedX = gd.player.maxRunX;
-                gd.player.state_->nextStateVal = RUN;
-                PlayerState * tempState = changePlayerState(gd, res, gd.player.state_);
-                delete gd.player.state_;
-                gd.player.state_ = tempState;
+                gd.player.state_ = changePlayerState(gd, res, gd.player.state_, RUN);
                 
             } else {
                 gd.player.maxSpeedX = gd.player.maxWalkX;
-                gd.player.state_->nextStateVal = WALK;
-                PlayerState * tempState = changePlayerState(gd, res, gd.player.state_);
-                delete gd.player.state_;
-                gd.player.state_ = tempState;
+                gd.player.state_ = changePlayerState(gd, res, gd.player.state_, WALK);
                 
                 gd.player.sprintTimer.reset();
             }
@@ -71,10 +59,7 @@ void handleSprinting(GameData &gd, Resources &res, SDL_KeyboardEvent key){
         gd.player.curAnimation = res.ANIM_PLAYER_WALK;
         gd.player.sprintTimer.reset();
 
-        gd.player.state_->nextStateVal = WALK;
-        PlayerState *newState = changePlayerState(gd, res, gd.player.state_);
-        delete gd.player.state_;
-        gd.player.state_ = newState;
+        gd.player.state_ = changePlayerState(gd, res, gd.player.state_, WALK);
         
     }
 }
@@ -87,11 +72,7 @@ void handleFalling(GameData &gd, Resources &res, SDL_KeyboardEvent key){
             gd.player.fastFalling = true;
 
             //Enter Jumping State
-            /*gd.player.state_->nextStateVal = JUMP;
-            PlayerState * tempState = changePlayerState(gd, res, gd.player.state_);
-            delete gd.player.state_;
-            gd.player.state_ = tempState;
-            */
+            gd.player.state_ = changePlayerState(gd, res, gd.player.state_, JUMP);
             //Call enter on jumping state
         }
         gd.player.gravityScale = 3.0f;
@@ -121,10 +102,10 @@ void sharedUpdate(const SDLState &state, GameData &gd, Resources &res, float del
 }
 
 //Use tempPlayer->nextStateVal to return the new state of the player
-PlayerState * changePlayerState(GameData &gd, Resources &res, PlayerState * tempPlayer) {
+PlayerState * changePlayerState(GameData &gd, Resources &res, PlayerState * tempPlayer, PlayerStateValues newState) {
     PlayerState * newPlayer;
     //tempPlayer->exit(gd.player, gd, res);
-    switch(tempPlayer->nextStateVal){
+    switch(newState){
         case IDLE:
         {
             newPlayer = new IdleState();
@@ -237,6 +218,7 @@ PlayerState * changePlayerState(GameData &gd, Resources &res, PlayerState * temp
 
     //newPlayer->currStateVal = tempPlayer->nextStateVal;
     newPlayer->enter(gd.player, gd, res);
+    delete gd.player.state_;
     return newPlayer;
 }
 
@@ -283,9 +265,7 @@ void handleInputSprint(GameData &gd, Resources &res, SDL_KeyboardEvent key){
 }
 
 void handleInputGrapple(GameData &gd, Resources &res, SDL_KeyboardEvent key) {
-    handleRunning(gd,res,key);
-    handleJumping(gd,res,key);
-    handleFalling(gd,res,key);
+
 }
 
 //Might not need, idk how it would work with a nullptr as a function in the loop
@@ -309,13 +289,7 @@ void updateIdle(const SDLState &state, GameData &gd, Resources &res, float delta
     //gd.player.vel.x = 0;    
     sharedUpdate(state, gd,res,deltaTime);
     if(gd.player.currentDirection) { // if moving change to running
-        gd.player.state_->nextStateVal = WALK;
-        PlayerState * newState = changePlayerState(gd, res, gd.player.state_);
-        //PlayerState * oldState = gd.player.state_;
-        delete gd.player.state_;
-        gd.player.state_ = newState;
-        //delete oldState;
-        
+        gd.player.state_ = changePlayerState(gd, res, gd.player.state_, WALK);    
     }
 }
 
@@ -334,11 +308,7 @@ void updateWalk(const SDLState &state, GameData &gd, Resources &res, float delta
             //printf("Walk to Idle\n");
             gd.player.vel.x = 0;
             // once stopped, set player to idle
-            gd.player.state_->nextStateVal = IDLE;
-            PlayerState * newState = changePlayerState(gd, res, gd.player.state_);
-            delete gd.player.state_;
-            gd.player.state_ = newState;
-            
+            gd.player.state_ = changePlayerState(gd, res, gd.player.state_, IDLE);            
         }
         else {
             //printf("Velocity before: %f\n", gd.player.vel.x);
@@ -350,14 +320,11 @@ void updateWalk(const SDLState &state, GameData &gd, Resources &res, float delta
     if (isSliding(gd.player) && gd.player.grounded) { // moving in different direction of vel and pressing a direction, sliding
         //TO DO, FIGURE OUT SLIDING MAYBE?
         //gd.player.state_->nextStateVal = TURNING;
-        //PlayerState * newState = changePlayerState(gd, res, gd.player.state_);
-        //delete gd.player.state_;
-        //gd.player.sprinting = newState;
+        //gd.player.state_ = changePlayerState(gd, res, gd.player.state_);
+
     } else {
         /*gd.player.state_->nextStateVal = RUN;
-        PlayerState * newState = changePlayerState(gd, res, gd.player.state_);
-        delete gd.player.state_;
-        gd.player.state_ = newState;
+        gd.player.state_ = changePlayerState(gd, res, gd.player.state_);
         
         */
     }
@@ -370,11 +337,7 @@ void updateWalk(const SDLState &state, GameData &gd, Resources &res, float delta
             } else {
 
                 gd.player.maxSpeedX = gd.player.maxSprintX;
-                gd.player.state_->nextStateVal = SPRINT;
-                PlayerState * newState = changePlayerState(gd, res, gd.player.state_);
-                delete gd.player.state_;
-                gd.player.state_ = newState;
-                
+                gd.player.state_ = changePlayerState(gd, res, gd.player.state_, SPRINT);
             }
         } 
     } else {
@@ -389,11 +352,7 @@ void updateSprint(const SDLState &state, GameData &gd, Resources &res, float del
         (isSliding(gd.player) || std::abs(gd.player.vel.x) < (gd.player.maxRunX - LEEWAY))) {       
         gd.player.sprintTimer.reset();
         gd.player.maxSpeedX = gd.player.maxRunX;
-        gd.player.state_->nextStateVal = WALK;
-        PlayerState * newState = changePlayerState(gd, res, gd.player.state_);
-        delete gd.player.state_;
-        gd.player.state_ = newState;
-        
+        gd.player.state_ = changePlayerState(gd, res, gd.player.state_, WALK);
     }
 }
 
@@ -401,26 +360,13 @@ void updateJump(const SDLState &state, GameData &gd, Resources &res, float delta
     sharedUpdate(state, gd,res,deltaTime);
     if(gd.player.fastFalling && gd.player.grounded){
         gd.player.fastFalling = false;
-        gd.player.state_->nextStateVal = ROLL;
-        PlayerState * newState = changePlayerState(gd, res, gd.player.state_);
-        delete gd.player.state_;
-        gd.player.state_ = newState;
-        
-        gd.player.vel.y = changeVel(0, gd.player);
-        
+        gd.player.state_ = changePlayerState(gd, res, gd.player.state_, ROLL);       
+        gd.player.vel.y = changeVel(0, gd.player);        
     } else {
         if(gd.player.grounded && gd.player.dir == 0){
-            gd.player.state_->nextStateVal = IDLE;
-            PlayerState * newState = changePlayerState(gd, res, gd.player.state_);
-            delete gd.player.state_;
-            gd.player.state_ = newState;
-            
+            gd.player.state_ = changePlayerState(gd, res, gd.player.state_, IDLE);
         } else if(gd.player.grounded){
-            gd.player.state_->nextStateVal = WALK;
-            PlayerState * newState = changePlayerState(gd, res, gd.player.state_);
-            delete gd.player.state_;
-            gd.player.state_ = newState;
-              
+            gd.player.state_ = changePlayerState(gd, res, gd.player.state_, WALK);
         }
     }
         
@@ -431,9 +377,7 @@ void updateFalling(const SDLState &state, GameData &gd, Resources &res, float de
     sharedUpdate(state, gd,res,deltaTime);
 
     // gd.player.state_->nextStateVal = FALL;
-    // PlayerState * newState = changePlayerState(gd, res, gd.player.state_);
-    // delete gd.player.state_;
-    // gd.player.state_ = newState;
+    // gd.player.state_ = changePlayerState(gd, res, gd.player.state_);
     // 
 }
       
@@ -441,17 +385,10 @@ void updateLaunch(const SDLState &state, GameData &gd, Resources &res, float del
     sharedUpdate(state, gd,res,deltaTime);
         
     // gd.player.state_->nextStateVal = LAUNCH;
-    // PlayerState * newState = changePlayerState(gd, res, gd.player.state_);
-    // delete gd.player.state_;
-    // gd.player.state_ = newState;
-    // 
+    // gd.player.state_ = changePlayerState(gd, res, gd.player.state_); 
 
     if (gd.player.animations[gd.player.curAnimation].isDone()) {
-        gd.player.state_->nextStateVal = JUMP;
-        PlayerState * newState = changePlayerState(gd, res, gd.player.state_);
-        delete gd.player.state_;
-        gd.player.state_ = newState;
-        
+        gd.player.state_ = changePlayerState(gd, res, gd.player.state_, JUMP);
         gd.player.animations[gd.player.curAnimation].reset();
     }
 }
@@ -459,17 +396,12 @@ void updateLaunch(const SDLState &state, GameData &gd, Resources &res, float del
 void updateRoll(const SDLState &state, GameData &gd, Resources &res, float deltaTime){
     sharedUpdate(state, gd,res,deltaTime);
     // gd.player.state_->nextStateVal = ROLL;
-    // PlayerState * newState = changePlayerState(gd, res, gd.player.state_);
-    // delete gd.player.state_;
-    // gd.player.state_ = newState;
+    // gd.player.state_ = changePlayerState(gd, res, gd.player.state_);
     // 
 
     // when roll animation finishes, switch to moving
     if (gd.player.animations[gd.player.curAnimation].isDone()) {
-        gd.player.state_->nextStateVal = RUN;
-        PlayerState * newState = changePlayerState(gd, res, gd.player.state_);
-        delete gd.player.state_;
-        gd.player.state_ = newState;
+        gd.player.state_ = changePlayerState(gd, res, gd.player.state_, RUN);
         
         gd.player.animations[gd.player.curAnimation].reset();
     }
@@ -478,10 +410,7 @@ void updateRoll(const SDLState &state, GameData &gd, Resources &res, float delta
 void dummyUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime){
     sharedUpdate(state, gd,res,deltaTime);
     if(gd.player.grounded) { // if moving change to running
-        gd.player.state_->nextStateVal = ROLL;
-        PlayerState * newState = changePlayerState(gd, res, gd.player.state_);
-        delete gd.player.state_;
-        gd.player.state_ = newState;
+        gd.player.state_ = changePlayerState(gd, res, gd.player.state_, ROLL);
         
     }
 }
@@ -494,11 +423,7 @@ void updateJetpackDeploy(const SDLState &state, GameData &gd, Resources &res, fl
                 gd.player.jetpackTimer.step(deltaTime);
             } else {
                 gd.player.cooldownTimer.reset();
-                gd.player.state_->nextStateVal = IDLE;
-                PlayerState * newState = changePlayerState(gd, res, gd.player.state_);
-                delete gd.player.state_;
-                gd.player.state_ = newState;
-                gd.player.state_->enter(gd.player, gd, res);
+                gd.player.state_ = changePlayerState(gd, res, gd.player.state_, IDLE);
             }
 }
 
@@ -509,11 +434,7 @@ void updateShotgunDeploy(const SDLState &state, GameData &gd, Resources &res, fl
         delete gd.player.blast;
         gd.player.blast = nullptr;
         gd.player.cooldownTimer.reset();
-        gd.player.state_->nextStateVal = IDLE;
-        PlayerState * newState = changePlayerState(gd, res, gd.player.state_);
-        delete gd.player.state_;
-        gd.player.state_ = newState;
-        gd.player.state_->enter(gd.player, gd, res);
+        gd.player.state_ = changePlayerState(gd, res, gd.player.state_, IDLE);
     } else {
         if(gd.player.dir == 1) {
             gd.player.blast->pos = glm::vec2(gd.player.pos.x + 32, gd.player.pos.y - 4);
@@ -530,11 +451,7 @@ void updateSwordDeploy(const SDLState &state, GameData &gd, Resources &res, floa
 
      if(gd.player.animations[gd.player.curAnimation].isDone()) { 
         gd.player.cooldownTimer.reset();
-        gd.player.state_->nextStateVal = IDLE;
-        PlayerState * newState = changePlayerState(gd, res, gd.player.state_);
-        delete gd.player.state_;
-        gd.player.state_ = newState;
-        gd.player.state_->enter(gd.player, gd, res);
+        gd.player.state_ = changePlayerState(gd, res, gd.player.state_, IDLE);
     }
 }
 

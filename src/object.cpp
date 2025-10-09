@@ -111,6 +111,32 @@ void Laser::update(const SDLState &state, GameData &gd, Resources &res, float de
     }
 }
 
+void Hook::draw(const SDLState &state, GameData &gd, float width, float height) {
+    if (!(*this).visible) {
+        return;
+    }
+    SDL_SetRenderDrawColor(state.renderer, 30, 30, 30, 255); // draw line to hook
+    glm::vec2 pOffset = findCenterOfSprite(gd.player);
+    glm::vec2 hOffset = findCenterOfSprite(gd.hook);
+    //printf("x: %f, y: %f\n", gd.mouseCoords.x, gd.mouseCoords.y);
+    SDL_RenderLine(state.renderer, gd.player.pos.x - gd.mapViewport.x + pOffset.x, 
+                    gd.player.pos.y - gd.mapViewport.y + pOffset.y, 
+                    gd.hook.pos.x - gd.mapViewport.x + hOffset.x, 
+                    gd.hook.pos.y - gd.mapViewport.y + hOffset.y);
+    SDL_SetRenderDrawColor(state.renderer, 64, 51, 83, 255);
+    if (!isOnscreen(state, gd, (*this))) {
+        return;
+    }
+    SDL_FRect dst {
+        .x = (*this).pos.x - gd.mapViewport.x,
+        .y = (*this).pos.y - gd.mapViewport.y,
+        .w = width,
+        .h = height
+    };
+    SDL_RenderTexture(state.renderer, (*this).texture, nullptr, &dst);
+    (*this).drawDebug(state, gd, width, height);
+}
+
 void Hook::update(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
     (*this).pos += (*this).vel * deltaTime;
 }

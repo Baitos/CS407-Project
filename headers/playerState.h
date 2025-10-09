@@ -21,7 +21,6 @@ enum PlayerStateValues {
 class PlayerState {
     public:
         int currStateVal;
-        int nextStateVal;
         //virtual ~PlayerState() {}
         void (*handleInput)(GameData &gd, Resources &res, SDL_KeyboardEvent key);
         void (*update)(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
@@ -81,7 +80,7 @@ class GrappleState : public PlayerState {
 
 };
 
-PlayerState * changePlayerState(GameData &gd, Resources &res, PlayerState * tempPlayer);
+PlayerState * changePlayerState(GameData &gd, Resources &res, PlayerState * tempPlayer, PlayerStateValues newState);
 
 //Idle Functions
 void handleInputIdle(GameData &gd, Resources &res, SDL_KeyboardEvent key);

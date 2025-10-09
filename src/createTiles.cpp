@@ -292,6 +292,7 @@ void createTiles(const SDLState &state, GameData &gd, const Resources &res) { //
                             .h = static_cast<float>(HOOK_SIZE)
                         };
                         gd.hook = Hook(gd.player.pos, collider, res.texStone);
+                        gd.hook.visible = false;
                         break; 
                     }
                     case 7: //Background

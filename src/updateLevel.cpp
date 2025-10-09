@@ -104,7 +104,13 @@ void levelInputs(SDLState &state, GameData &gd, Resources &res, float deltaTime)
                 case SDL_EVENT_MOUSE_BUTTON_DOWN:
                 {
                     //handleClick(state, gd, res, gd.player(), deltaTime);
-                    handleLevelClick(state, gd, res, deltaTime, event);
+                    handleLevelClick(state, gd, res, deltaTime, event, true);
+                    break;
+                } 
+                case SDL_EVENT_MOUSE_BUTTON_UP:
+                {
+                    //handleClick(state, gd, res, gd.player(), deltaTime);
+                    handleLevelClick(state, gd, res, deltaTime, event, false);
                     break;
                 } 
             }
@@ -112,44 +118,33 @@ void levelInputs(SDLState &state, GameData &gd, Resources &res, float deltaTime)
 }
 
 //handler for clicking in the level
-void handleLevelClick(SDLState &state, GameData &gd, Resources &res, float deltaTime, SDL_Event event) {
+void handleLevelClick(SDLState &state, GameData &gd, Resources &res, float deltaTime, SDL_Event event, bool buttonDown) {
     //LEFT CLICK FOR CHARACTER WEAPON DEPLOY
-    if(event.button.button == SDL_BUTTON_LEFT){
+    if(event.button.button == SDL_BUTTON_LEFT && buttonDown){
         //JETPACK DEPLOY
         if(((LevelState *)currState)->character == JETPACK) {
             if(gd.player.cooldownTimer.isTimeOut()) {
-                    gd.player.state_->nextStateVal = JETPACK_DEPLOY;
-                    PlayerState *newState = changePlayerState(gd, res, gd.player.state_);
-                    delete gd.player.state_;
-                    gd.player.state_ = newState;
+                    gd.player.state_ = changePlayerState(gd, res, gd.player.state_, JETPACK_DEPLOY);
             }
         } else if (((LevelState *)currState)->character == SHOTGUN) {
             //SHOTGUN DEPLOY
             if(gd.player.cooldownTimer.isTimeOut()) {
-                gd.player.state_->nextStateVal = SHOTGUN_DEPLOY;
-                PlayerState *newState = changePlayerState(gd, res, gd.player.state_);
-                delete gd.player.state_;
-                gd.player.state_ = newState;
+                gd.player.state_ = changePlayerState(gd, res, gd.player.state_, SHOTGUN_DEPLOY);
             }
         } else if (((LevelState *)currState)->character == SWORD) {
             //SWORD DEPLOY
             if(gd.player.cooldownTimer.isTimeOut()) {
-                gd.player.state_->nextStateVal = SWORD_DEPLOY;
-                PlayerState *newState = changePlayerState(gd, res, gd.player.state_);
-                delete gd.player.state_;
-                gd.player.state_ = newState;
+                gd.player.state_ = changePlayerState(gd, res, gd.player.state_, SWORD_DEPLOY);
             }
         }
-    } else if (event.button.button == SDL_BUTTON_RIGHT) { // grapple
+    } else if (buttonDown && event.button.button == SDL_BUTTON_RIGHT) { // grapple
         gd.hook.pos = gd.player.pos;
-        glm::vec2 pOffset = findCenterOfSprite(gd.player);
-        float xDist = gd.mouseCoords.x - (gd.player.pos.x - gd.mapViewport.x + pOffset.x); // A
-        float yDist = gd.mouseCoords.y - (gd.player.pos.y - gd.mapViewport.y + pOffset.y); // O
-        float dist = std::sqrt(xDist * xDist + yDist * yDist); // distance formula, H
-        float aH = xDist / dist; // cos
-        float oH = yDist / dist; // sin
-        printf("xDist: %f, yDist: %f, dist: %f\n", xDist, yDist, dist);
-        gd.hook.vel = 500.0f * glm::vec2(aH, oH);
+        gd.hook.visible = true;
+        std::vector dist = distanceForm(gd, gd.player, gd.hook);
+        gd.hook.vel = 500.0f * glm::vec2(dist.at(3), dist.at(4));
+    } else if (!buttonDown && event.button.button == SDL_BUTTON_RIGHT) { // grapple release 
+        gd.hook.pos = glm::vec2(-1000.0f, -1000.0f); // maybe unnecessary
+        gd.hook.visible = false;
     }
 }
 
@@ -172,16 +167,7 @@ void handleCrosshair(const SDLState &state, GameData &gd, Resources &res, float 
         .w = CROSSHAIR_SIZE,
         .h = CROSSHAIR_SIZE
     };
-    SDL_SetRenderDrawColor(state.renderer, 255, 0, 0, 255); // draw line to crosshair
-    glm::vec2 pOffset = findCenterOfSprite(gd.player);
-    glm::vec2 hOffset = findCenterOfSprite(gd.hook);
-    //printf("x: %f, y: %f\n", gd.mouseCoords.x, gd.mouseCoords.y);
-    SDL_RenderLine(state.renderer, gd.player.pos.x - gd.mapViewport.x + pOffset.x, 
-                    gd.player.pos.y - gd.mapViewport.y + pOffset.y, 
-                    gd.hook.pos.x - gd.mapViewport.x + hOffset.x, 
-                    gd.hook.pos.y - gd.mapViewport.y + hOffset.y);
-    SDL_SetRenderDrawColor(state.renderer, 64, 51, 83, 255);
-    
+
     //printf("mouseX: %f, mouseY: %f\n", gd.mouseCoords.x, gd.mouseCoords.y);
     SDL_RenderTexture(state.renderer, res.texCrosshair, nullptr, &dst); // src is for sprite stripping, dest is for where sprite should be drawn*/ 
 }

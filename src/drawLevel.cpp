@@ -27,7 +27,9 @@ void drawLevel(const SDLState &state, GameData &gd, Resources res, float deltaTi
     }
 
     // draw player
-    gd.player.draw(state, gd, TILE_SIZE, TILE_SIZE); // draw player class
+    gd.hook.draw(state, gd, HOOK_SIZE, HOOK_SIZE);
+    gd.player.draw(state, gd, TILE_SIZE, TILE_SIZE); // draw player class  
+    handleCrosshair(state, gd, res, deltaTime);
 
     //draw blast if needed for shotgun
     if(gd.player.blast != nullptr) {
@@ -40,8 +42,5 @@ void drawLevel(const SDLState &state, GameData &gd, Resources res, float deltaTi
         }
     }
 
-    handleCrosshair(state, gd, res, deltaTime);
-
-    gd.hook.draw(state, gd, HOOK_SIZE, HOOK_SIZE);
 
 }
