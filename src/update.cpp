@@ -284,7 +284,6 @@ void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
         item.useItem(state, gd, res);
         gd.player.hasItem = false;
         clearItem(state, gd, res);
-        delete &item;
     }
     gd.player.state_->handleInput(gd, res, key);    
 }
