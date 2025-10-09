@@ -62,6 +62,16 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
             }
         }
 
+        if(gd.player.usingSugar){
+            ((Sugar *) &gd.player.item)->sugarTimer.step(deltaTime);
+            //printf("%d\n",gd.player.currentDirection);
+            gd.player.vel.x += 1.0f * gd.player.currentDirection;
+            if(((Sugar *) &gd.player.item)->sugarTimer.isTimeOut()){
+                //printf("Stopped sugar\n");
+                gd.player.usingSugar = false;
+            }
+        }
+
         // add vel to pos
         //printf("%f\n", gd.player.vel);
         gd.player.pos += gd.player.vel * deltaTime;
@@ -69,6 +79,8 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
         // collision
         bool foundGround = gd.player.grounded;
         gd.player.grounded = false;
+
+        
 
         //printf("Is fastfalling: %d\n", gd.player.fastFalling);
         collisionCheckAndResponse(state,gd,res,gd.player,deltaTime);

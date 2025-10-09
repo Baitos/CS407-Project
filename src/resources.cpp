@@ -164,6 +164,9 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
 
     texSugar = loadTexture(state.renderer, "data/ItemSprites/sugar.png");
 
+    texSugarEffectL = loadTexture(state.renderer, "data/ItemSprites/SugarEffectL.png");
+    texSugarEffectR = loadTexture(state.renderer, "data/ItemSprites/SugarEffectR.png");
+
     itemTextures = {texBombStorage, texBoomboxStorage, texBouncyBallStorage, texFogStorage,
         texIceStorage, texMissileStorage, texSugarStorage, texPieStorage};
 }

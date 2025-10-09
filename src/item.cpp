@@ -11,8 +11,11 @@ void useBouncyBall(const SDLState &state, GameData &gd, Resources &res) {}
 void useFog(const SDLState &state, GameData &gd, Resources &res) {}
 void useIce(const SDLState &state, GameData &gd, Resources &res) {}
 void useMissile(const SDLState &state, GameData &gd, Resources &res) {}
+
 void useSugar(const SDLState &state, GameData &gd, Resources &res) {
-    printf("COKE\n");
+    ((Sugar *) (&gd.player.item))->sugarTimer.reset();
+    gd.player.usingSugar = true;
+    //printf("COKE\n");
 }
 void usePie(const SDLState &state, GameData &gd, Resources &res) {}
 

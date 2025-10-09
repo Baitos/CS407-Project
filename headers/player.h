@@ -24,6 +24,7 @@ class Player : public AnimatedObject { // player
         bool sprinting = false;
         bool fastFalling = false;
         bool canDoubleJump = true;
+        bool usingSugar = false;
 
         float gravityScale; 
         float maxSpeedX; // will change depending on state

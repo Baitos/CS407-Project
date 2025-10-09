@@ -160,20 +160,22 @@ void ItemBox::generateItem(Player &player, GameData &gd, Resources &res) {
     // Limit items for top 25% of players
     if ((player.position / (float)gd.numPlayers) <= 0.25) {
         itemOptions = {itemType::BOMB, itemType::BOOMBOX, itemType::BOUNCYBALL, 
-            itemType::ICE, itemType::PIE, itemType::SUGAR};
+            itemType::ICE, itemType::SUGAR, itemType::PIE};
     }
     // Limit items for bottom 25% of players
     else if ((player.position / (float)gd.numPlayers) >= 0.75) {
         itemOptions = {itemType::BOOMBOX, itemType::BOUNCYBALL, 
-            itemType::FOG, itemType::MISSILE, itemType::PIE, itemType::SUGAR};
+            itemType::FOG, itemType::MISSILE, itemType::SUGAR, itemType::PIE};
     }
     else {
         // All items are available
         itemOptions = {itemType::BOMB, itemType::BOOMBOX, itemType::BOUNCYBALL, 
-            itemType::FOG, itemType::ICE, itemType::MISSILE, itemType::PIE, itemType::SUGAR};
+            itemType::FOG, itemType::ICE, itemType::MISSILE, itemType::SUGAR, itemType::PIE};
     }
     selected = rand() % itemOptions.size();
-    switch ((itemType)selected) {
+    //printf("%d %d\n", selected, itemOptions.size());
+    
+    switch (itemOptions[selected]) {
         case itemType::BOMB:
             newItem = Bomb(player.pos, defaultCollider, res.texBomb);
             break;
@@ -182,6 +184,7 @@ void ItemBox::generateItem(Player &player, GameData &gd, Resources &res) {
             break;
         case itemType::SUGAR:
             newItem = Sugar(player.pos, defaultCollider, res.texSugar);
+            break;
         default:
             printf("Your item is in another castle\n");
             newItem = Bomb(player.pos, defaultCollider, res.texBomb);
