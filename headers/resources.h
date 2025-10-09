@@ -49,6 +49,7 @@ struct Resources {
                 *texIdleJ, *texRunJ, *texJumpJ, *texLaunchJ, *texSlideJ, *texShootJ, *texDieJ, *texShootJumpJ, *texRollJ,
                 *texJDeploy, *texGDeploy, *texSDeploy,
                 *texShotgunBlast,
+                *texGrapple, *texGrappleAngle,
                 *texGrass, *texStone, *texBrick, *texFence, *texBush, 
                 *texBullet, *texBulletHit, *texSpiny, *texSpinyDead,
                 *texBg1, *texBg2, *texBg3, *texBg4, *texOnStage, *texOffStage, *texBg5, 

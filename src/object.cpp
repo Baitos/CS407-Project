@@ -133,12 +133,22 @@ void Hook::draw(const SDLState &state, GameData &gd, float width, float height) 
         .w = width,
         .h = height
     };
-    SDL_RenderTexture(state.renderer, (*this).texture, nullptr, &dst);
+    double angle = 0; // default texture faces right, sdl_render rotates clockwise
+    if ((*this).vel.y > 0 && std::abs((*this).vel.y) > std::abs((*this).vel.x)) {
+        angle = 90; // down
+    }
+    else if ((*this).vel.x < 0 && std::abs((*this).vel.x) > std::abs((*this).vel.y)) {
+        angle = 180; // left
+    }
+    else if ((*this).vel.y < 0 && std::abs((*this).vel.y) > std::abs((*this).vel.x)) {
+        angle = 270; // up
+    }
+    SDL_RenderTextureRotated(state.renderer, (*this).texture, nullptr, &dst, angle, nullptr, SDL_FLIP_NONE); // this could probably be done using the flip variable but there's no way to rotate the image that way
     (*this).drawDebug(state, gd, width, height);
 }
 
 void Hook::update(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
-    (*this).pos += (*this).vel * deltaTime;
+    (*this).pos += updatePos((*this), deltaTime);
 }
 
 void Hook::checkCollision(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {

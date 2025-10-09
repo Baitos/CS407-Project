@@ -154,12 +154,12 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
         int character = ((CharSelectState*) currState)->character;
         currState = changeState(currState, gd);
         ((LevelState*) currState)->character = character;
-        currState->init(state,gd, res);
+        currState->init(state, gd, res);
     } else if ((gd.mouseCoords.x >= 583 && gd.mouseCoords.x <= 766) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)){
         //Exit to Title
         currState->nextStateVal = TITLE;
         currState = changeState(currState, gd);
-        currState->init(state,gd, res);
+        currState->init(state, gd, res);
     }   
 }
 

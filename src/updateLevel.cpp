@@ -53,11 +53,11 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
         }
 
         // add vel to pos
-        //printf("%f\n", gd.player.vel);
-        gd.player.pos += gd.player.vel * deltaTime;
+        //printf("%f\n", gd.player.vel);  
+        gd.player.pos += updatePos(gd.player, deltaTime);
         //printf("%f", gd.player.vel);
         // collision
-        bool foundGround = gd.player.grounded;
+        //bool foundGround = gd.player.grounded;
         gd.player.grounded = false;
         
         //printf("Is fastfalling: %d\n", gd.player.fastFalling);
@@ -196,7 +196,7 @@ void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
         running = false;
     }
     if(key.scancode == SDL_SCANCODE_F2){
-        //printf("F2 key clicked");
+        printf("currState: %d, nextState: %d", currState->currStateVal, currState->nextStateVal);
         currState = changeState(currState, gd);
         currState->init(state, gd, res);
     }

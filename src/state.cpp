@@ -47,6 +47,7 @@ GameState * changeState(GameState * tempState, GameData &gd){
             newState->init = createTiles;    
             break;
         }
+
         case RESULTS:
         {
             break;

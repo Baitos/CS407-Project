@@ -44,3 +44,7 @@ std::vector<float> distanceForm(GameData &gd, Object &a, Object &b) {
     return res;
     //printf("xDist: %f, yDist: %f, dist: %f\n", xDist, yDist, dist);
 }
+
+glm::vec2 updatePos(Object &o, float deltaTime) {
+    return o.vel * deltaTime;
+}

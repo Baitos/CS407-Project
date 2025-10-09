@@ -3,48 +3,44 @@
 #include "../headers/player.h"
 #include "../headers/playerState.h"
 #include "../headers/state.h"
+#include "../headers/helper.h"
 
 void collisionCheckAndResponse(const SDLState &state, GameData &gd, Resources &res,
  	Player &a, float deltaTime)
  {
-	
+	SDL_FRect rectA{
+		.x = a.pos.x + a.collider.x,
+		.y = a.pos.y + a.collider.y,
+		.w = a.collider.w,
+		.h = a.collider.h
+	};
+	glm::vec2 resolution{ 0 };
 	for (Level &l : gd.mapTiles_){
-		SDL_FRect rectA{
-			.x = a.pos.x + a.collider.x,
-			.y = a.pos.y + a.collider.y,
-			.w = a.collider.w,
-			.h = a.collider.h
-		};
 		SDL_FRect rectB{
 			.x = l.pos.x + l.collider.x,
 			.y = l.pos.y + l.collider.y,
 			.w = l.collider.w,
 			.h = l.collider.h
 		};
-
-		glm::vec2 resolution{ 0 };
-		float MARGIN = 0.001f; // error checking for floating point imprecision
-		//glm::vec2 overlap = resolution;
 		if (intersectAABB(rectA, rectB, resolution)){
-			glm::vec2 overlap = resolution;
 			// found intersection, respond accordingly
-			if (overlap.x < overlap.y) {
+			if (resolution.x < resolution.y) {
 				if (a.pos.x < l.pos.x) {
-					a.pos.x -= overlap.x;
+					a.pos.x -= resolution.x;
 				} else {
-					a.pos.x += overlap.x;
+					a.pos.x += resolution.x;
 				}	
 				a.vel.x = 0;
 			} else {
 				if (a.pos.y < l.pos.y) {
-					a.pos.y -= overlap.y;
+					a.pos.y -= resolution.y;
                 	if (a.flip == 1) {
 						a.grounded = true;
 						a.canDoubleJump = true;
 						gd.player.gravityScale = 1.0f; // reset gravity
                 	}
 				} else {
-					a.pos.y += overlap.y;
+					a.pos.y += resolution.y;
 					if (a.flip == -1) {
 						a.grounded = true;
 						a.canDoubleJump = true;
@@ -55,22 +51,15 @@ void collisionCheckAndResponse(const SDLState &state, GameData &gd, Resources &r
 			}
 		}
 	}
-	//glm::vec2 overlap = resolution;
+	//glm::vec2 resolution = resolution;
 	for (Laser &l : gd.lasers_){
-		SDL_FRect rectA{
-			.x = a.pos.x + a.collider.x,
-			.y = a.pos.y + a.collider.y,
-			.w = a.collider.w,
-			.h = a.collider.h
-		};
+		resolution = glm::vec2(0);
 		SDL_FRect rectB{
 			.x = l.pos.x + l.collider.x,
 			.y = l.pos.y + l.collider.y,
 			.w = l.collider.w,
 			.h = l.collider.h
 		};
-
-		glm::vec2 resolution{ 0 };
 		if (intersectAABB(rectA, rectB, resolution)){
 			// found intersection, respond accordingly
 			if(l.laserActive){
@@ -90,20 +79,13 @@ void collisionCheckAndResponse(const SDLState &state, GameData &gd, Resources &r
 		}
 	}
 	for (Portal &p : gd.portals_){
-		SDL_FRect rectA{
-			.x = a.pos.x + a.collider.x,
-			.y = a.pos.y + a.collider.y,
-			.w = a.collider.w,
-			.h = a.collider.h
-		};
+		resolution = glm::vec2(0);
 		SDL_FRect rectB{
 			.x = p.pos.x + p.collider.x,
 			.y = p.pos.y + p.collider.y,
 			.w = p.collider.w,
 			.h = p.collider.h
 		};
-
-		glm::vec2 resolution{ 0 };
 		if (intersectAABB(rectA, rectB, resolution)){
 			// found intersection, respond accordingly
 			if (p.isEntrance == true){
@@ -113,7 +95,48 @@ void collisionCheckAndResponse(const SDLState &state, GameData &gd, Resources &r
 	}
 }
 
+bool deltaIntersectAABB(SDLState &state, Object &a, Object &b, glm::vec2 &overlap, float deltaTime) {
+	glm::vec2 delta = updatePos(a, deltaTime); // attempt to move forward
+	SDL_FPoint vertices[4];
+	vertices[0].x = a.pos.x + a.collider.x;
+	vertices[0].y = a.pos.y + a.collider.y;
+	
+	vertices[1].x = a.pos.x + a.collider.x;
+	vertices[1].y = a.pos.y + a.collider.y + a.collider.h;
+	
+	vertices[2].x = a.pos.x + a.collider.x + a.collider.w;
+	vertices[2].y = a.pos.y + a.collider.y;
+	
+	vertices[3].x = a.pos.x + a.collider.x + a.collider.w;
+	vertices[3].y = a.pos.y + a.collider.y + a.collider.h;
 
+
+	// SDL_Vertex vertices[6]; // create shape of delta between two positions, vertices are left to right, top to bottom (if you drew the shape)
+	// vertices[0].position.x = a.pos.x;
+	// vertices[0].position.y = a.pos.y;
+	// vertices[1].position.x = a.pos.x + a.collider.h;
+	// vertices[1].position.y = a.pos.y + a.collider.h;
+	// vertices[2].position.x = a.pos.x + a.collider.x;
+	// vertices[2].position.y = a.pos.y;
+
+	// vertices[3].position.x = vertices[1].position.x + delta.x;
+	// vertices[3].position.y = vertices[1].position.y + delta.y;
+	// vertices[4].position.x = vertices[2].position.x + delta.x;
+	// vertices[4].position.y = vertices[2].position.y + delta.y;
+	// vertices[5].position.x = vertices[0].position.x + delta.x + a.collider.x;
+	// vertices[5].position.y = vertices[0].position.y + delta.y + a.collider.y;
+	//SDL_SetRenderDrawColor(state.renderer, 255, 0, 0, 150);
+	//SDL_RenderGeometry(state.renderer, nullptr, vertices, 6, nullptr, 4);
+	//SDL_SetRenderDrawColor(state.renderer, 64, 51, 83, 255);
+
+	SDL_FRect rectB {
+		.x = b.pos.x + b.collider.x,
+		.y = b.pos.y + b.collider.y,
+		.w = b.collider.w,
+		.h = b.collider.h
+	};
+	return false;
+}
 
 bool intersectAABB(const SDL_FRect &a, const SDL_FRect &b, glm::vec2 &overlap)
 {

@@ -94,6 +94,9 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
 
     texShotgunBlast = loadTexture(state.renderer, "data/CharacterSprites/Shotgun/fire_shotgun.png");
 
+    texGrapple = loadTexture(state.renderer, "data/CharacterSprites/grapple.png");
+    texGrappleAngle = loadTexture(state.renderer, "data/CharacterSprites/grappleAngle.png");
+
     texCrosshair = loadTexture(state.renderer, "data/crosshair.png");
     texGrass = loadTexture(state.renderer, "data/grass.png");
     texBrick = loadTexture(state.renderer, "data/brick.png");
