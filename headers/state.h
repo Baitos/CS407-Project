@@ -6,7 +6,8 @@
 #include <string>
 #include <array>
 
-#include "../headers/update.h"
+#include "../headers/updateMenu.h"
+#include "../headers/updateLevel.h"
 #include "../headers/collision.h"
 #include "../headers/gameData.h"
 #include "../headers/initState.h"

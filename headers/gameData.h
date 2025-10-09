@@ -5,6 +5,7 @@
 #include "../ext/glm/glm.hpp"
 #include "initState.h"
 #include "player.h"
+#include "menu.h"
 
 struct GameData {
     Player player;

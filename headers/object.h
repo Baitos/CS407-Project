@@ -72,25 +72,15 @@ class AnimatedObject : public Object { // obj with anims
         void draw(const SDLState &state, GameData &gd, float width, float height);
 };
 
-class charIconObject : public Object { // obj with anims
+class BackgroundObject : public Object { // bg tiles
     public:
-        int spriteFrame;
-        std::vector<Animation> animations;
-        int curAnimation;    
-        float dir;
-        charIconObject() : Object() { // default
-            spriteFrame = 1;
-            curAnimation = -1;
-            dir = 1;
+        BackgroundObject() : Object() { // default 
+            type = BACKGROUND;
         }
-        charIconObject(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : // generic obj constructor
+        BackgroundObject(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : // generic obj constructor
         Object(pos_, colliderRect, tex) {
-            spriteFrame = 1;
-            curAnimation = -1;
-            dir = 1;
+            type = BACKGROUND;
         }
-
-        void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime, int newState);
         void draw(const SDLState &state, GameData &gd, float width, float height);
 };
 
@@ -103,18 +93,6 @@ class Level : public Object { // the level type!
         Object(pos_, colliderRect, tex) {
             type = LEVEL;
         }
-};
-
-class BackgroundObject : public Object { // bg tiles
-    public:
-        BackgroundObject() : Object() { // default 
-            type = BACKGROUND;
-        }
-        BackgroundObject(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : // generic obj constructor
-        Object(pos_, colliderRect, tex) {
-            type = BACKGROUND;
-        }
-        void draw(const SDLState &state, GameData &gd, float width, float height);
 };
 
 class Portal : public AnimatedObject { // portals
