@@ -27,7 +27,7 @@ void collisionCheckAndResponse(const SDLState &state, GameData &gd, Resources &r
 		if (intersectAABB(rectA, rectB, resolution)){
 			glm::vec2 overlap = resolution;
 			// found intersection, respond accordingly
-			if (overlap.x < overlap.y){
+			if (overlap.x < overlap.y) {
 				if (a.pos.x < l.pos.x) {
 					a.pos.x -= overlap.x;
 				} else {
@@ -37,20 +37,20 @@ void collisionCheckAndResponse(const SDLState &state, GameData &gd, Resources &r
 			} else {
 				if (a.pos.y < l.pos.y) {
 					a.pos.y -= overlap.y;
-                if (a.flip == 1) {
-				    a.grounded = true;
-					a.canDoubleJump = true;
-					gd.player.gravityScale = 1.0f; // reset gravity
-                }
-			} else {
-				a.pos.y += overlap.y;
-                if (a.flip == -1) {
-				    a.grounded = true;
-					a.canDoubleJump = true;
-					gd.player.gravityScale = 1.0f; // reset gravity
-                }
-			}
-			a.vel.y = 0;
+                	if (a.flip == 1) {
+						a.grounded = true;
+						a.canDoubleJump = true;
+						gd.player.gravityScale = 1.0f; // reset gravity
+                	}
+				} else {
+					a.pos.y += overlap.y;
+					if (a.flip == -1) {
+						a.grounded = true;
+						a.canDoubleJump = true;
+						gd.player.gravityScale = 1.0f; // reset gravity
+					}
+				}
+				a.vel.y = 0;
 			}
 		}
 	}

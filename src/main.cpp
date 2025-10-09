@@ -45,19 +45,19 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     //CHANGE if testing a different screen and you want it up on start
 
     
-    currState = new LevelState();
-    currState->nextStateVal = SPACESHIP;
-    currState->init = initCharSelect;
-    currState->update = charSelectUpdate;
-    currState->render = drawCharSelect;
-    currState->input = charSelectInputs;
-    
     // currState = new LevelState();
     // currState->nextStateVal = SPACESHIP;
-    // currState->init = createTiles;
-    // currState->update = levelUpdate;
-    // currState->render = drawLevel;
-    // currState->input = levelInputs;
+    // currState->init = initCharSelect;
+    // currState->update = charSelectUpdate;
+    // currState->render = drawCharSelect;
+    // currState->input = charSelectInputs;
+    
+    currState = new LevelState();
+    currState->nextStateVal = SPACESHIP;
+    currState->init = createTiles;
+    currState->update = levelUpdate;
+    currState->render = drawLevel;
+    currState->input = levelInputs;
 
     // setup game data
     GameData gd(state);

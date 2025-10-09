@@ -255,7 +255,6 @@ void createTiles(const SDLState &state, GameData &gd, const Resources &res) { //
                     }
                     case 6: //Player
                     {
-                        gd.hook = Hook(gd.player.pos, collider, res.texStone);
                         SDL_FRect collider = { 
                             .x = 1,
                             .y = 1,
@@ -285,6 +284,14 @@ void createTiles(const SDLState &state, GameData &gd, const Resources &res) { //
                         gd.player.dir = 0;
                         gd.player.flip =1;
                         gd.player.cooldownTimer.step(5.0f);
+
+                        collider = { 
+                            .x = 0,
+                            .y = 0,
+                            .w = static_cast<float>(HOOK_SIZE),
+                            .h = static_cast<float>(HOOK_SIZE)
+                        };
+                        gd.hook = Hook(gd.player.pos, collider, res.texStone);
                         break; 
                     }
                     case 7: //Background

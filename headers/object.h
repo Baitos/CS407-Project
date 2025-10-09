@@ -19,7 +19,7 @@ enum ObjectType{
     LASER
 };
 
-class Object {   // generic obj type    
+class Object { // generic obj type    
     public:
         glm::vec2 pos, vel, acc;
         SDL_Texture *texture;
@@ -140,4 +140,5 @@ class Hook : public AnimatedObject { // grappling hook projectile
 
         }
         void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+        void checkCollision(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
 };

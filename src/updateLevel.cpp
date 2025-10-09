@@ -40,8 +40,9 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
         }
 
         gd.hook.update(state, gd, res, deltaTime);
-        //printf("Velocity at Update: %f\n", gd.player.vel.x);
-        //printf("%f\n", gd.player.dir);
+
+
+        gd.hook.checkCollision(state, gd, res, deltaTime);
         
         gd.player.vel += static_cast<float>(gd.player.currentDirection) * gd.player.acc * deltaTime;
         //printf("Velocity after Update: %f\n", gd.player.vel.x);
@@ -173,11 +174,12 @@ void handleCrosshair(const SDLState &state, GameData &gd, Resources &res, float 
     };
     SDL_SetRenderDrawColor(state.renderer, 255, 0, 0, 255); // draw line to crosshair
     glm::vec2 pOffset = findCenterOfSprite(gd.player);
+    glm::vec2 hOffset = findCenterOfSprite(gd.hook);
     //printf("x: %f, y: %f\n", gd.mouseCoords.x, gd.mouseCoords.y);
     SDL_RenderLine(state.renderer, gd.player.pos.x - gd.mapViewport.x + pOffset.x, 
                     gd.player.pos.y - gd.mapViewport.y + pOffset.y, 
-                    gd.hook.pos.x - gd.mapViewport.x + pOffset.x, 
-                    gd.hook.pos.y - gd.mapViewport.y + pOffset.y);
+                    gd.hook.pos.x - gd.mapViewport.x + hOffset.x, 
+                    gd.hook.pos.y - gd.mapViewport.y + hOffset.y);
     SDL_SetRenderDrawColor(state.renderer, 64, 51, 83, 255);
     
     //printf("mouseX: %f, mouseY: %f\n", gd.mouseCoords.x, gd.mouseCoords.y);

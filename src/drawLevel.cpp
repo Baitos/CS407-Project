@@ -42,6 +42,6 @@ void drawLevel(const SDLState &state, GameData &gd, Resources res, float deltaTi
 
     handleCrosshair(state, gd, res, deltaTime);
 
-    gd.hook.draw(state, gd, TILE_SIZE, TILE_SIZE);
+    gd.hook.draw(state, gd, HOOK_SIZE, HOOK_SIZE);
 
 }
