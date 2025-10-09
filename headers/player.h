@@ -5,6 +5,7 @@
 #include <vector>
 #include "object.h"
 #include "timer.h"
+#include "item.h"
 
 struct SDLState;
 struct GameData;
@@ -13,24 +14,31 @@ class PlayerState;
 
 class Player : public AnimatedObject { // player
     public:
+        PlayerState* state_;
+        Item item;
+        Item nextItem;
         bool grounded; 
+        bool isDead = false;
+        bool hasItem = false;
+        bool pickingItem = false;
         bool sprinting = false;
         bool fastFalling = false;
+        bool canDoubleJump = true;
+        bool usingSugar = false;
+
         float gravityScale; 
         float maxSpeedX; // will change depending on state
-        bool canDoubleJump = true;
         float maxSpeedY = 550;
         float maxWalkX = 250; // walking
         float maxRunX = 650; // running 
         float maxSprintX = 850; // sprinting
         int currentDirection;
+        int position = 8;
         Timer sprintTimer;
         Timer jetpackTimer;
         Timer cooldownTimer;
 
         AnimatedObject* blast;
-
-        PlayerState* state_;
 
         virtual void handleInput(SDL_KeyboardEvent& key, GameData &gd, Resources &res, float deltaTime);
         virtual void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);

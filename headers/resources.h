@@ -25,12 +25,12 @@ struct Resources {
     std::vector<Animation> playerAnimsJ;
     const int SHOTGUN_BLAST = 0;
     std::vector<Animation> shotgunAnims;
-    const int ANIM_BULLET_MOVING = 0;
-    const int ANIM_BULLET_HIT = 1;
-    std::vector<Animation> bulletAnims;
-    const int ANIM_ENEMY = 0;
-    const int ANIM_ENEMY_DEAD = 1;
-    std::vector<Animation> enemyAnims;
+
+    const int ANIM_ITEM_EMPTY = 0;
+    const int ANIM_ITEM_CYCLE = 1;
+    const int ANIM_ITEM_PICKED = 2;
+    std::vector<Animation> itemAnims;
+    std::vector<SDL_Texture *> itemTextures;
     const int PORTAL_IDLE = 0;
     std::vector<Animation> portalAnims;
     const int ICONS = 0;
@@ -51,12 +51,17 @@ struct Resources {
                 *texShotgunBlast,
                 *texGrapple, *texGrappleAngle,
                 *texGrass, *texStone, *texBrick, *texFence, *texBush, 
-                *texBullet, *texBulletHit, *texSpiny, *texSpinyDead,
+                *texBullet, *texBulletHit,
                 *texBg1, *texBg2, *texBg3, *texBg4, *texOnStage, *texOffStage, *texBg5, 
                 *texLPortal, *texRPortal, *texLaser, 
                 *texFloor, *texTRCorner, *texRWall, *texBRCorner, *texLWall, *texBLCorner, *texTLCorner, *texCeiling, *texITLCorner, *texITRCorner, *texIBRCorner, *texIBLCorner, *texPlatform, 
                 *texFan, *texPanelOne, *texPanelTwo, *texPanelThree, *texVentOne, *texVentTwo, *texBackWall, 
-                *texCharSelectBackground, *texCursor, *texCharIcons, *texSword, *texShotgun, *texJetpack;
+                *texCharSelectBackground, *texCursor, *texCharIcons, *texSword, *texShotgun, *texJetpack, 
+                *texItemBox, *texItemStorage, *texItemRandomizer, 
+                *texBombStorage, *texBoomboxStorage, *texBouncyBallStorage, *texFogStorage,
+                *texIceStorage, *texMissileStorage, *texSugarStorage, *texPieStorage,
+                *texBomb, *texExplosion, *texBoombox, *texSoundwaves, *texSugar,
+                *texSugarEffectL, *texSugarEffectR;
     SDL_Texture *loadTexture(SDL_Renderer *renderer, const std::string &filepath);
     void load(SDLState &state);
     void unload();
