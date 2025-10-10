@@ -277,13 +277,13 @@ void createTiles(const SDLState &state, GameData &gd, const Resources &res) { //
                         gd.player.cooldownTimer.step(5.0f);
                         //gd.player2.state_ = newState;
 
-                        collider = { 
+                        SDL_FRect hookCollider = { 
                             .x = 0,
                             .y = 0,
                             .w = static_cast<float>(HOOK_SIZE),
                             .h = static_cast<float>(HOOK_SIZE)
                         };
-                        gd.hook = Hook(gd.player.pos, collider, res.texGrapple);
+                        gd.hook = Hook(gd.player.pos, hookCollider, res.texGrapple);
                         gd.hook.visible = false;
                         
                         // Add itemStorage
@@ -399,13 +399,13 @@ void createTiles(const SDLState &state, GameData &gd, const Resources &res) { //
                         gd.player2.state_->enter = dummyEnter;
 
                         // temp, remove this after sprint demo
-                        collider = { 
+                        SDL_FRect hookCollider = { 
                             .x = 0,
                             .y = 0,
                             .w = static_cast<float>(HOOK_SIZE),
                             .h = static_cast<float>(HOOK_SIZE)
                         };
-                        gd.hook2 = Hook(gd.player2.pos - (float)TILE_SIZE * 3, collider, res.texGrapple);
+                        gd.hook2 = Hook(gd.player2.pos - (float)TILE_SIZE * 3, hookCollider, res.texGrapple);
                         gd.hook2.visible = true;
                         //  
                     }
