@@ -6,7 +6,8 @@ enum PlayerStateValues {
     IDLE, 
     WALK, 
     RUN, 
-    SPRINT, 
+    SPRINT,
+    SLIDE, 
     LAUNCH, 
     JUMP, 
     ROLL, 
@@ -14,13 +15,13 @@ enum PlayerStateValues {
     DEAD,
     SWORD_DEPLOY,
     SHOTGUN_DEPLOY,
-    JETPACK_DEPLOY
+    JETPACK_DEPLOY,
+    GRAPPLE
 };
 
 class PlayerState {
     public:
         int currStateVal;
-        int nextStateVal;
         //virtual ~PlayerState() {}
         void (*handleInput)(GameData &gd, Resources &res, SDL_KeyboardEvent key);
         void (*update)(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
@@ -41,6 +42,10 @@ class RunState : public PlayerState {
 };
 
 class SprintState : public PlayerState {
+
+};
+
+class SlideState : public PlayerState {
 
 };
 
@@ -76,7 +81,11 @@ class JetpackDeployState : public PlayerState {
 
 };
 
-PlayerState * changePlayerState(PlayerState * tempPlayer);
+class GrappleState : public PlayerState {
+
+};
+
+PlayerState * changePlayerState(GameData &gd, Resources &res, PlayerState * tempPlayer, PlayerStateValues newState);
 
 //Idle Functions
 void handleInputIdle(GameData &gd, Resources &res, SDL_KeyboardEvent key);
@@ -88,7 +97,12 @@ void updateWalk(const SDLState &state, GameData &gd, Resources &res, float delta
 void enterWalk(Player& player, GameData &gd, Resources &res);
 //Run Fuctions
 void handleInputRun(GameData &gd, Resources &res, SDL_KeyboardEvent key);
+void updateRun(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
 void enterRun(Player& player, GameData &gd, Resources &res);
+// Slide Functions
+void handleInputSlide(GameData &gd, Resources &res, SDL_KeyboardEvent key);
+void updateSlide(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+void enterSlide(Player& player, GameData &gd, Resources &res);
 //Jump Functions
 void handleInputJump(GameData &gd, Resources &res, SDL_KeyboardEvent key);
 void updateJump(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
@@ -105,14 +119,20 @@ void enterRoll(Player& player, GameData &gd, Resources &res);
 void handleInputSprint(GameData &gd, Resources &res, SDL_KeyboardEvent key);
 void updateSprint(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
 void enterSprint(Player& player, GameData &gd, Resources &res);
+//Grapple Functions
+void handleInputGrapple(GameData &gd, Resources &res, SDL_KeyboardEvent key);
+void updateGrapple(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+void enterGrapple(Player& player, GameData &gd, Resources &res);
 //Fall Functions
 void updateFalling(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
 void enterFall(Player& player, GameData &gd, Resources &res);
 //Dead Functions
 void enterDead(Player& player, GameData &gd, Resources &res);
 //Dummy Functions?
+void dummyEnter(Player& player, GameData &gd, Resources &res);
 void dummyInput(GameData &gd, Resources &res, SDL_KeyboardEvent key);
 void dummyUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+void emptyUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
 //Jetpack Deploy Functions
 void handleInputJetpackDeploy(GameData &gd, Resources &res, SDL_KeyboardEvent key);
 void updateJetpackDeploy(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
@@ -125,6 +145,11 @@ void enterShotgunDeploy(Player& player, GameData &gd, Resources &res);
 void handleInputSwordDeploy(GameData &gd, Resources &res, SDL_KeyboardEvent key);
 void updateSwordDeploy(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
 void enterSwordDeploy(Player& player, GameData &gd, Resources &res);
+
+void handleInputGrapple(GameData &gd, Resources &res, SDL_KeyboardEvent key);
+void updateGrapple(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+void enterGrapple(Player& player, GameData &gd, Resources &res);
+
 //Handlers
 void handleJumping (GameData &gd, Resources &res, SDL_KeyboardEvent key);
 void handleRunning (GameData &gd, Resources &res, SDL_KeyboardEvent key);

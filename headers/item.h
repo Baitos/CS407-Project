@@ -30,12 +30,14 @@ class Item : public AnimatedObject {
     itemType type;
     bool deleteOnCollision = false;
     bool persistsOnCollision; // bomb
-    Item() : AnimatedObject(){}
+    Timer sugarTimer;
+    Item() : AnimatedObject(), sugarTimer(3.0f) {}
     Item(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) :
-    AnimatedObject(pos_, colliderRect, tex) {}
+    AnimatedObject(pos_, colliderRect, tex), sugarTimer(4.0f) {}
 
     void (*useItem)(const SDLState &state, GameData &gd, Resources &res);
     void (*setEffect)(GameData &gd, Resources &res, AnimatedObject obj);
+    void (*onCollision)(AnimatedObject &obj, GameData &gd, Resources &res);
 };
 
 class Bomb : public Item {
@@ -69,6 +71,7 @@ class Boombox : public Item {
 
 class Sugar : public Item {
     public:
+    
     Sugar(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) :
     Item(pos_, colliderRect, tex) {
         index = 6;

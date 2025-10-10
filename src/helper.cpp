@@ -32,3 +32,19 @@ bool isSliding(Player &p) { // checks if a player is sliding
 glm::vec2 findCenterOfSprite(Object &obj) { // finds center of sprite by collider
     return glm::vec2((float)obj.collider.w / 2, (float)obj.collider.h / 2);
 }
+
+std::vector<float> distanceForm(GameData &gd, Object &a, Object &b) {
+    glm::vec2 pOffset = findCenterOfSprite(gd.player);
+    float xDist = gd.mouseCoords.x - (gd.player.pos.x - gd.mapViewport.x + pOffset.x); // A
+    float yDist = gd.mouseCoords.y - (gd.player.pos.y - gd.mapViewport.y + pOffset.y); // O
+    float dist = std::sqrt(xDist * xDist + yDist * yDist); // distance formula, H
+    float aH = xDist / dist; // cos
+    float oH = yDist / dist; // sin
+    std::vector<float> res = {xDist, yDist, dist, aH, oH};
+    return res;
+    //printf("xDist: %f, yDist: %f, dist: %f\n", xDist, yDist, dist);
+}
+
+glm::vec2 updatePos(Object &o, float deltaTime) {
+    return o.vel * deltaTime;
+}

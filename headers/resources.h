@@ -37,6 +37,8 @@ struct Resources {
     std::vector<Animation> portalAnims;
     const int ICONS = 0;
     std::vector<Animation> charIconAnims;
+    const int ERROR = 0;
+    std::vector<Animation> errorAnims;
 
     //FOR NOW.. change to 0 for shotgun, 1 for sword, 2 for jetpack
     int character;
@@ -49,6 +51,7 @@ struct Resources {
                 *texIdleJ, *texRunJ, *texJumpJ, *texLaunchJ, *texSlideJ, *texShootJ, *texDieJ, *texShootJumpJ, *texRollJ,
                 *texJDeploy, *texGDeploy, *texSDeploy,
                 *texShotgunBlast,
+                *texGrapple, *texGrappleAngle,
                 *texGrass, *texStone, *texBrick, *texFence, *texBush, 
                 *texBullet, *texBulletHit,
                 *texBg1, *texBg2, *texBg3, *texBg4, *texOnStage, *texOffStage, *texBg5, 
@@ -59,7 +62,8 @@ struct Resources {
                 *texItemBox, *texItemStorage, *texItemRandomizer, 
                 *texBombStorage, *texBoomboxStorage, *texBouncyBallStorage, *texFogStorage,
                 *texIceStorage, *texMissileStorage, *texSugarStorage, *texPieStorage,
-                *texBomb, *texExplosion, *texBoombox, *texSoundwaves, *texSugar;
+                *texBomb, *texExplosion, *texBoombox, *texSoundwaves, *texSugar,
+                *texSugarEffectL, *texSugarEffectR;
     SDL_Texture *loadTexture(SDL_Renderer *renderer, const std::string &filepath);
     void load(SDLState &state);
     void unload();

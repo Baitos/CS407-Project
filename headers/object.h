@@ -6,6 +6,7 @@
 #include "animation.h"
 #include "globals.h"
 #include <vector>
+#include "resources.h"
 
 struct SDLState;
 struct GameData;
@@ -22,7 +23,7 @@ enum ObjectType{
     ITEMBOX
 };
 
-class Object {   // generic obj type    
+class Object { // generic obj type    
     public:
         glm::vec2 pos, vel, acc;
         SDL_Texture *texture;
@@ -30,6 +31,12 @@ class Object {   // generic obj type
         int type;
         Object() {           
             pos = vel = acc = glm::vec2(0);
+            collider = {
+                .x = 0,
+                .y = 0,
+                .w = (float)TILE_SIZE,
+                .h = (float)TILE_SIZE
+            };
         }
         Object(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) {
             pos = pos_;       
@@ -40,7 +47,7 @@ class Object {   // generic obj type
         void draw(const SDLState &state, GameData &gd, float width, float height);
         void drawDebug(const SDLState &state, GameData &gd, float width, float height);
         virtual ~Object() {}
-    };
+};
 
 class AnimatedObject : public Object { // obj with anims
     public:
@@ -51,7 +58,7 @@ class AnimatedObject : public Object { // obj with anims
         float height = TILE_SIZE; 
         float dir;
         float flip; // anti gravity
-        float stunLength;
+        bool visible; 
         float knockbackMultiplier;
         AnimatedObject() : Object() { // default
             spriteFrame = 1;
@@ -59,6 +66,7 @@ class AnimatedObject : public Object { // obj with anims
             dir = 1;
             flip = 1.0f;
             type = ANIMATED;
+            visible = true;
         }
         AnimatedObject(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : // generic obj constructor
         Object(pos_, colliderRect, tex) {
@@ -67,6 +75,7 @@ class AnimatedObject : public Object { // obj with anims
             dir = 1;
             flip = 1.0f;
             type = ANIMATED;
+            visible = true;
         }
         AnimatedObject(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex, float w, float h) : // generic obj constructor
         Object(pos_, colliderRect, tex) {
@@ -83,25 +92,15 @@ class AnimatedObject : public Object { // obj with anims
         void draw(const SDLState &state, GameData &gd, float width, float height);
 };
 
-class charIconObject : public Object { // obj with anims
+class BackgroundObject : public Object { // bg tiles
     public:
-        int spriteFrame;
-        std::vector<Animation> animations;
-        int curAnimation;    
-        float dir;
-        charIconObject() : Object() { // default
-            spriteFrame = 1;
-            curAnimation = -1;
-            dir = 1;
+        BackgroundObject() : Object() { // default 
+            type = BACKGROUND;
         }
-        charIconObject(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : // generic obj constructor
+        BackgroundObject(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : // generic obj constructor
         Object(pos_, colliderRect, tex) {
-            spriteFrame = 1;
-            curAnimation = -1;
-            dir = 1;
+            type = BACKGROUND;
         }
-
-        void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime, int newState);
         void draw(const SDLState &state, GameData &gd, float width, float height);
 };
 
@@ -114,18 +113,6 @@ class Level : public Object { // the level type!
         Object(pos_, colliderRect, tex) {
             type = LEVEL;
         }
-};
-
-class BackgroundObject : public Object { // bg tiles
-    public:
-        BackgroundObject() : Object() { // default 
-            type = BACKGROUND;
-        }
-        BackgroundObject(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : // generic obj constructor
-        Object(pos_, colliderRect, tex) {
-            type = BACKGROUND;
-        }
-        void draw(const SDLState &state, GameData &gd, float width, float height);
 };
 
 class Portal : public AnimatedObject { // portals
@@ -195,3 +182,35 @@ class ItemBox : public Object {
 // Stun for animated objects
 void angledStun(AnimatedObject &obj, GameData &gd, Resources &res);
 void effectExplosion(GameData &gd, Resources &res, AnimatedObject obj);
+
+
+class Hook : public AnimatedObject { // grappling hook projectile
+    public:
+        bool collided; // has hook hit something
+        Hook() : AnimatedObject() { // default 
+            collided = false;
+        }  
+        Hook(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : 
+        AnimatedObject(pos_, colliderRect, tex) { // generic obj constructor
+            collided = false;
+        }
+        void draw(const SDLState &state, GameData &gd, float width, float height);
+        void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+        void checkCollision(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+};
+
+
+class Hook : public AnimatedObject { // grappling hook projectile
+    public:
+        bool collided; // has hook hit something
+        Hook() : AnimatedObject() { // default 
+            collided = false;
+        }  
+        Hook(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : 
+        AnimatedObject(pos_, colliderRect, tex) { // generic obj constructor
+            collided = false;
+        }
+        void draw(const SDLState &state, GameData &gd, float width, float height);
+        void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+        void checkCollision(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+};

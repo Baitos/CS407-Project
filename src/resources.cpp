@@ -53,6 +53,9 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     shotgunAnims.resize(1);
     shotgunAnims[SHOTGUN_BLAST] = Animation(3, 0.3f);
 
+    errorAnims.resize(1); // default to prevent crashes
+    errorAnims[ERROR] = Animation(1, 1.0f);
+
 
     //load shotgun character animations
     texIdleG = loadTexture(state.renderer, "data/CharacterSprites/Shotgun/idle_shotgun.png");
@@ -94,6 +97,9 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
 
     texShotgunBlast = loadTexture(state.renderer, "data/CharacterSprites/Shotgun/fire_shotgun.png");
 
+    texGrapple = loadTexture(state.renderer, "data/CharacterSprites/grapple.png");
+    texGrappleAngle = loadTexture(state.renderer, "data/CharacterSprites/grappleAngle.png");
+
     texCrosshair = loadTexture(state.renderer, "data/crosshair.png");
     texGrass = loadTexture(state.renderer, "data/grass.png");
     texBrick = loadTexture(state.renderer, "data/brick.png");
@@ -101,9 +107,6 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     texBush = loadTexture(state.renderer, "data/bush.png");
     texFence = loadTexture(state.renderer, "data/fence.png");
     texBg1 = loadTexture(state.renderer, "data/Spaceship/Background.png");
-    texBg2 = loadTexture(state.renderer, "data/bg_layer2.png");
-    texBg3 = loadTexture(state.renderer, "data/bg_layer3.png");
-    texBg4 = loadTexture(state.renderer, "data/bg_layer4.png");
 
     //Spaceship
     texOnStage = loadTexture(state.renderer, "data/spaceship/OnStage.png");
@@ -164,6 +167,9 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     texSoundwaves = loadTexture(state.renderer, "data/ItemSprites/boombox_soundwaves.png");
 
     texSugar = loadTexture(state.renderer, "data/ItemSprites/sugar.png");
+
+    texSugarEffectL = loadTexture(state.renderer, "data/ItemSprites/SugarEffectL.png");
+    texSugarEffectR = loadTexture(state.renderer, "data/ItemSprites/SugarEffectR.png");
 
     itemTextures = {texBombStorage, texBoomboxStorage, texBouncyBallStorage, texFogStorage,
         texIceStorage, texMissileStorage, texSugarStorage, texPieStorage};
