@@ -28,6 +28,10 @@ struct GameData {
               mouseCoords, 
               clickCoords;
     ItemStorage itemStorage_;
+    Object settingsBorder;
+    std::vector<Object> settingsDials_;
+    //Note that volume ratio is dial.pos.x / (290-84)
+    Object * updatedDial;
     int playerIndex = -1;
     SDL_FRect mapViewport;
     bool debugMode = false;

@@ -454,6 +454,52 @@ void initCharSelect(const SDLState &state, GameData &gd, const Resources &res) {
         preview.animations = res.playerAnims;
         preview.curAnimation = res.ANIM_PLAYER_RUN;
         gd.previews_.push_back(preview);
+
+        Object border(pos, collider, res.texBigBorder);
+        
+        gd.settingsBorder = border;
+        gd.settingsBorder.pos.y =  500;
+        
+    //loadMap(foreground);
+    //assert(gd.playerIndex != -1);
+}
+
+
+void initSettings(const SDLState &state, GameData &gd, const Resources &res) { // 280 x 60
+        SDL_FRect collider = {
+            .x = 0,
+            .y = 0,
+            .w = 32,
+            .h = 32
+        };
+        
+        glm::vec2  pos = glm::vec2(0,0);
+        // Background
+        BackgroundObject bg(pos, collider, res.texSettingsBackground);
+        bg.collider.w = res.texCharSelectBackground->w;
+        bg.collider.h = res.texCharSelectBackground->h;
+        gd.bgTiles_.push_back(bg);
+
+        Object border(pos, collider, res.texBigBorder);
+        gd.settingsBorder = border;
+        gd.settingsBorder.pos.y =  500;
+
+        //Master
+        Object dial(pos, collider, res.texSlider);
+        dial.pos.x = 290.f;
+        dial.pos.y = 120.f;
+        gd.settingsDials_.push_back(dial);
+
+        //Music
+        dial.pos.x = 290.f;
+        dial.pos.y = 204.f;
+        gd.settingsDials_.push_back(dial);
+
+        //SFX dial
+        dial.pos.x = 290.f;
+        dial.pos.y = 288.f;
+        gd.settingsDials_.push_back(dial);
+
         
     //loadMap(foreground);
     //assert(gd.playerIndex != -1);
