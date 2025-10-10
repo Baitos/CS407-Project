@@ -73,6 +73,8 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
         // add vel to pos 
         gd.player.pos += updatePos(gd.player, deltaTime);
 
+        gd.player2.pos += updatePos(gd.player2, deltaTime);
+
         // collision
         gd.player.grounded = false;
         collisionCheckAndResponse(state,gd,res,gd.player,deltaTime);

@@ -178,13 +178,19 @@ void Hook::checkCollision(const SDLState &state, GameData &gd, Resources &res, f
             }
         }
     }
-    Player p = gd.player2;
+    Player p2 = gd.player2;
     rectB = {
-        .x = p.pos.x + p.collider.x,
-        .y = p.pos.y + p.collider.y,
-        .w = p.collider.w,
-        .h = p.collider.h
+        .x = p2.pos.x + p2.collider.x,
+        .y = p2.pos.y + p2.collider.y,
+        .w = p2.collider.w,
+        .h = p2.collider.h
     };
+    if (intersectAABB(rectA, rectB, resolution)) { // TODO: if touching player, hardcoded for player2 for now
+        gd.player.vel = 0.7f * (*this).vel;
+        p2.vel = -0.3f * (*this).vel;
+        (*this).visible = false;
+        (*this).collided = true;
+    }
 }
 
 void ItemBox::update(const SDLState &state, GameData &gd, Resources &res, float deltaTime) { // update item box timer every frame (when on cooldown)
