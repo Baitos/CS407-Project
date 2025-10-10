@@ -28,7 +28,7 @@ void drawCharSelect(const SDLState &state, GameData &gd, Resources res, float de
         //printf("drawing, %f", gd.settingsBorder->pos.y);
         gd.settingsBorder->draw(state, gd,static_cast<float>(gd.settingsBorder->texture->w) * 2, static_cast<float>(gd.settingsBorder->texture->h)*2);
     }
-    handleMousePointer(state, gd, res, deltaTime);
+    handleMousePointerCharSelect(state, gd, res, deltaTime);
 }
 
 
@@ -52,5 +52,5 @@ void drawSettings(const SDLState &state, GameData &gd, Resources res, float delt
         //printf("drawing, %f", gd.settingsBorder->pos.y);
         gd.settingsBorder->draw(state, gd,static_cast<float>(gd.settingsBorder->texture->w) * 2, static_cast<float>(gd.settingsBorder->texture->h)*2);
     }
-    handleMousePointer(state, gd, res, deltaTime);
+    handleMousePointerSettings(state, gd, res, deltaTime);
 }
