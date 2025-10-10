@@ -403,7 +403,6 @@ void handleSettingsClick(const SDLState &state, GameData &gd, Resources &res, fl
         waitingForKey = true;
         controls->currActionRebind = typeAction::ACTION_FASTFALL;
     }   
-    printf("Num dials = %d", gd.settingsDials_.size());
     for(Object &o : gd.settingsDials_){
         
         if((gd.mouseCoords.x >= o.pos.x && gd.mouseCoords.x <= o.pos.x + (static_cast<float>(o.texture->w) * 2)) && (gd.mouseCoords.y >= o.pos.y && gd.mouseCoords.y <= o.pos.y + (static_cast<float>(o.texture->h) * 2))){
