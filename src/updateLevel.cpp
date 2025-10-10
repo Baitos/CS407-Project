@@ -98,7 +98,7 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
 
         if(gd.player.usingSugar){
             ((Sugar *) &gd.player.item)->sugarTimer.step(deltaTime);
-            gd.player.vel.x += 1.0f * gd.player.currentDirection;
+            gd.player.vel.x += .5f * gd.player.currentDirection;
             if(((Sugar *) &gd.player.item)->sugarTimer.isTimeOut()){
                 //printf("Stopped sugar\n");
                 gd.player.usingSugar = false;
@@ -177,7 +177,7 @@ void handleLevelClick(SDLState &state, GameData &gd, Resources &res, float delta
     if(gd.controls->actionPerformed(ACTION_ABILITY, event) && buttonDown){
         //JETPACK DEPLOY
         if(((LevelState *)currState)->character == JETPACK) {
-            if(gd.player.cooldownTimer.isTimeOut()) {
+            if(gd.player.cooldownTimer.isTimeOut() && gd.player.state_->currStateVal != JETPACK_DEPLOY) {
                     gd.player.state_ = changePlayerState(gd, res, gd.player.state_, JETPACK_DEPLOY);
             }
         } else if (((LevelState *)currState)->character == SHOTGUN) {
@@ -198,7 +198,7 @@ void handleLevelClick(SDLState &state, GameData &gd, Resources &res, float delta
         std::vector dist = distanceForm(gd, gd.player, gd.hook);
         gd.hook.vel = 500.0f * glm::vec2(dist.at(3), dist.at(4));
     } else if (!buttonDown && gd.controls->actionPerformed(ACTION_GRAPPLE, event) ) { // grapple release 
-        gd.hook.pos = glm::vec2(-1000.0f, -1000.0f); // maybe unnecessary
+        gd.hook.pos = glm::vec2(-10000.0f, -10000.0f); // maybe unnecessary
         gd.hook.visible = false;
         if (gd.hook.collided) { // get out
             gd.player.state_ = changePlayerState(gd, res, gd.player.state_, JUMP);
@@ -265,6 +265,11 @@ void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
         printf("currState: %d, nextState: %d", currState->currStateVal, currState->nextStateVal);
         currState = changeState(currState, gd);
         currState->init(state, gd, res);
+    }
+    if (key.scancode == SDL_SCANCODE_F3) {
+        printf("teleporting to lasers");
+        gd.player.pos.x = 950;
+        gd.player.pos.y = -654;
     }
     if (gd.controls->actionPerformed(typeAction::ACTION_USEITEM, event) && gd.player.hasItem) {
         Item item = gd.player.item;

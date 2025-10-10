@@ -15,6 +15,9 @@ class Animation {
         float getLength() const {
             return timer.getLength();
         }
+        /*float setLength(float length) {
+            timer.setLength(length);
+        }*/
         int currentFrame() const {
             return static_cast<int>(timer.getTime() / timer.getLength() * frameCount);
         }
