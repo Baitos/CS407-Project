@@ -292,6 +292,7 @@ void handleCharSelectKeyInput(const SDLState &state, GameData &gd, Resources &re
     }
     if (key.scancode == SDL_SCANCODE_M) {
         // play music file
+        printf("Master = %.1f, music = %.1f, sfx = %f\n", masterVolume, musicVolume, sfxVolume);
         std::string filepath = "data/Audio/laser.wav";
         Sound * sound = new Sound(filepath, true);
         sound->SetupStream();
