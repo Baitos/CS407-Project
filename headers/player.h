@@ -27,14 +27,16 @@ class Player : public AnimatedObject { // player
         bool canDoubleJump = true;
         bool usingSugar = false;
 
+        int currentDirection;
+        int position = 8;
+        // TODO maybe keep consistent across clients
+        int index; // Currently for keeping track of item's owner 
         float gravityScale; 
         float maxSpeedX; // will change depending on state
         float maxSpeedY = 550;
         float maxWalkX = 250; // walking
         float maxRunX = 650; // running 
         float maxSprintX = 850; // sprinting
-        int currentDirection;
-        int position = 8;
         Timer sprintTimer;
         Timer jetpackTimer;
         Timer cooldownTimer;

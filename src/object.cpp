@@ -258,15 +258,13 @@ void ItemBox::generateItem(Player &player, GameData &gd, Resources &res) {
 }
 
 
-void angledStun(AnimatedObject &obj, GameData &gd, Resources &res) {
+void angledStun(AnimatedObject &obj, GameData &gd, Resources &res, Player &player) {
     // TODO properly implement angles
+    if (player.index == 1) {
+        gd.currPlayer = player;
+    }
     float baseKnockback = 100.0f;
-    Player player = gd.player;
-    player.state_->nextStateVal = DEAD;
-    PlayerState * newState = changePlayerState(player.state_);
-    delete player.state_;
-    player.state_ = newState;
-    player.state_->enter(player, gd, res);
+    player.state_ = changePlayerState(gd, res, player.state_, DEAD);
     if (player.vel.x > 0) {
         player.vel.x = changeVel(baseKnockback * obj.knockbackMultiplier, player);
     }
@@ -283,7 +281,14 @@ void angledStun(AnimatedObject &obj, GameData &gd, Resources &res) {
     player.gravityScale = 1.0f;
     player.isStunned = true;
     player.grounded = false;
-    gd.player = player;
+    // TODO rework this so it's generic
+    if (player.index == 0) {
+        gd.player = player;
+    }
+    else {
+        gd.player2 = player;
+    }
+    gd.currPlayer = gd.player;
 }
 
 void effectExplosion(GameData &gd, Resources &res, AnimatedObject obj) {

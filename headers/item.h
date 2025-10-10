@@ -21,11 +21,14 @@ void useMissile(const SDLState &state, GameData &gd, Resources &res);
 void useSugar(const SDLState &state, GameData &gd, Resources &res);
 void usePie(const SDLState &state, GameData &gd, Resources &res);
 
+void setNoEffect(GameData &gd, Resources &res, AnimatedObject obj);
+
 void clearItem(const SDLState &state, GameData &gd, Resources &res);
 void setItemPicked(GameData &gd, Resources &res);
 
 class Item : public AnimatedObject {
     public:
+    int ownerIndex = 0; // player index
     int index = 0;
     itemType type;
     bool deleteOnCollision = false;
@@ -36,8 +39,8 @@ class Item : public AnimatedObject {
     AnimatedObject(pos_, colliderRect, tex), sugarTimer(4.0f) {}
 
     void (*useItem)(const SDLState &state, GameData &gd, Resources &res);
-    void (*setEffect)(GameData &gd, Resources &res, AnimatedObject obj);
-    void (*onCollision)(AnimatedObject &obj, GameData &gd, Resources &res);
+    void (*setEffect)(GameData &gd, Resources &res, AnimatedObject obj) = setNoEffect;
+    void (*onCollision)(AnimatedObject &obj, GameData &gd, Resources &res, Player &player);
 };
 
 class Bomb : public Item {

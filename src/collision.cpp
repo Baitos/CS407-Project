@@ -116,10 +116,17 @@ void collisionCheckAndResponse(const SDLState &state, GameData &gd, Resources &r
 		}
 	}
 	for (int i = 0; i < gd.items_.size(); i++) {
-		if (player.isStunned || player.item.type == itemType::BOOMBOX) { // Avoid collision response from items if already stunned
+		// Avoid collision response from items if already stunned
+		if (player.isStunned) { 
 			continue;
     	}
 		Item item = gd.items_[i];
+
+		// Don't hit yourself with boombox
+		if (item.type == itemType::BOOMBOX && item.ownerIndex == player.index) {
+			printf("ignored self\n");
+			continue;
+		}
 		SDL_FRect rectB{
 			.x = item.pos.x + item.collider.x,
 			.y = item.pos.y + item.collider.y,
@@ -128,14 +135,13 @@ void collisionCheckAndResponse(const SDLState &state, GameData &gd, Resources &r
 		};
 		glm::vec2 resolution{ 0 };
 		if (intersectAABB(rectA, rectB, resolution)) {
-			item.onCollision(item, gd, res);
+			item.onCollision(item, gd, res, player);
 			item.setEffect(gd, res, item);
 			if (item.deleteOnCollision) {
 				gd.items_.erase(gd.items_.begin() + i);
 				i--;
 			}
 		}
-		// TODO add condition before checking collision to not fuck shit
 	}
 }
 

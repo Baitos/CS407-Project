@@ -273,6 +273,7 @@ void createTiles(const SDLState &state, GameData &gd, const Resources &res) { //
                         newState->currStateVal = IDLE;
                         gd.player.state_ = newState;
                         gd.player.dir = 0;
+                        gd.player.index = 0;
                         gd.player.flip = 1;
                         gd.player.cooldownTimer.step(5.0f);
                         //gd.player2.state_ = newState;
@@ -394,10 +395,11 @@ void createTiles(const SDLState &state, GameData &gd, const Resources &res) { //
 
                         Player * temp =  new Player(pos, collider, res.texIdleS, res.playerAnims, res.ANIM_PLAYER_IDLE, 250);
                         gd.player2 = *temp;
+                        gd.player2.index = 1;
                         gd.player2.state_ = newState;
-                        gd.player2.state_->update = emptyUpdate;
-                        gd.player2.state_->handleInput = dummyInput;
-                        gd.player2.state_->enter = dummyEnter;
+                        gd.player2.state_->update = updateIdle;
+                        gd.player2.state_->handleInput = handleInputIdle;
+                        gd.player2.state_->enter = enterIdle;
                     }
                 }
             }

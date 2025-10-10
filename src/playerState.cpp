@@ -228,7 +228,8 @@ PlayerState * changePlayerState(GameData &gd, Resources &res, PlayerState * temp
 
     //newPlayer->currStateVal = tempPlayer->nextStateVal;
     newPlayer->enter(gd.player, gd, res);
-    delete gd.player.state_;
+    // TODO was always deleting gd.player, but broke when changing state of player2. requires code refactoring
+    delete gd.currPlayer.state_;
     return newPlayer;
 }
 
@@ -460,10 +461,11 @@ void updateRoll(const SDLState &state, GameData &gd, Resources &res, float delta
 
 void dummyUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime){
     sharedUpdate(state, gd,res,deltaTime);
-    if(gd.player.grounded) { // if moving change to running
-        gd.player.isStunned = false;
-        gd.player.state_ = changePlayerState(gd, res, gd.player.state_, ROLL);
-        
+    // TODO Generalize to players, currently just uses currplayer 
+    printf("dummy update\n");
+    if(gd.currPlayer.grounded) { // if moving change to running
+        gd.currPlayer.isStunned = false;
+        gd.currPlayer.state_ = changePlayerState(gd, res, gd.currPlayer.state_, ROLL);
     }
 }
 

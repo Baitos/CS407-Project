@@ -74,15 +74,27 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
         if(gd.player.currentDirection){
             gd.player.dir = gd.player.currentDirection;
         }
+        gd.player2.state_->update(state, gd, res, deltaTime);
+        if(gd.player2.currentDirection){
+            gd.player2.dir = gd.player2.currentDirection;
+        }
 
         gd.hook.update(state, gd, res, deltaTime);
         gd.hook.checkCollision(state, gd, res, deltaTime);
         
         gd.player.vel += static_cast<float>(gd.player.currentDirection) * gd.player.acc * deltaTime;
+        gd.player2.vel += static_cast<float>(gd.player2.currentDirection) * gd.player2.acc * deltaTime;
 
         if (std::abs(gd.player.vel.x) > gd.player.maxSpeedX) {
             if (!isSliding(gd.player)) { // if not sliding slow down
                 gd.player.vel.x -= 1.5 * gd.player.acc.x * deltaTime * gd.player.currentDirection;
+            }
+            
+        }
+
+        if (std::abs(gd.player2.vel.x) > gd.player2.maxSpeedX) {
+            if (!isSliding(gd.player2)) { // if not sliding slow down
+                gd.player2.vel.x -= 1.5 * gd.player2.acc.x * deltaTime * gd.player2.currentDirection;
             }
             
         }
@@ -103,8 +115,9 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
 
         // collision
         gd.player.grounded = false;
+        gd.player2.grounded = false;
         collisionCheckAndResponse(state,gd,res,gd.player,deltaTime);
-
+        collisionCheckAndResponse(state,gd,res,gd.player2,deltaTime);
         //printf("%d\n", gd.player.state_->currStateVal);
         gd.itemStorage_.pos.x = gd.player.pos.x - 368;
         gd.itemStorage_.pos.y = gd.player.pos.y - 200;
@@ -139,7 +152,7 @@ void levelInputs(SDLState &state, GameData &gd, Resources &res, float deltaTime)
                     break;
                 }
                 case SDL_EVENT_KEY_UP:
-                {
+                {   
                     handleKeyInput(state, gd, res, event.key, false, deltaTime);
                     break;
                 }

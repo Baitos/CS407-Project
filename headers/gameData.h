@@ -10,6 +10,7 @@
 struct GameData {
     Player player;
     Player player2;
+    Player currPlayer = player;
     int numPlayers; 
     Hook hook;
     std::vector<BackgroundObject> bgTiles_;

@@ -82,7 +82,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         float deltaTime = (nowTime - prevTime) / 1000.0f; // convert to seconds from ms
 
         //Calls functions related to the current GameState
-        
+        //printf("new main loop");
         currState->input(state, gd, res, deltaTime);
         //printf("input done\n");
         currState->update(state, gd, res, deltaTime);

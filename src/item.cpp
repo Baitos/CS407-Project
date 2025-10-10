@@ -2,6 +2,8 @@
 #include "../headers/resources.h"
 #include "../headers/playerState.h"
 #include "../headers/helper.h"
+void setNoEffect(GameData &gd, Resources &res, AnimatedObject obj){}
+
 void useBomb(const SDLState &state, GameData &gd, Resources &res) {
     Item item = gd.player.item;
     int xdiff;
@@ -19,7 +21,6 @@ void useBomb(const SDLState &state, GameData &gd, Resources &res) {
 }
 
 void useBoombox(const SDLState &state, GameData &gd, Resources &res) {
-    printf("Start used\n");
     SDL_FRect soundCollider = {
         .x = 0,
         .y = 0,
