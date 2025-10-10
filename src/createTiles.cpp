@@ -450,6 +450,38 @@ void initCharSelect(const SDLState &state, GameData &gd, const Resources &res) {
         preview.animations = res.playerAnims;
         preview.curAnimation = res.ANIM_PLAYER_RUN;
         gd.previews_.push_back(preview);
+
+        Object * border = new Object(pos, collider, res.texBigBorder);
+        
+        gd.settingsBorder = border;
+        gd.settingsBorder->pos.y =  500;
+        //TODO remove border when leaving settings
+        
+    //loadMap(foreground);
+    //assert(gd.playerIndex != -1);
+}
+
+
+void initSettings(const SDLState &state, GameData &gd, const Resources &res) { // 280 x 60
+        SDL_FRect collider = {
+            .x = 0,
+            .y = 0,
+            .w = 32,
+            .h = 32
+        };
+        
+        glm::vec2  pos = glm::vec2(0,0);
+        // Background
+        BackgroundObject bg(pos, collider, res.texSettingsBackground);
+        bg.collider.w = res.texCharSelectBackground->w;
+        bg.collider.h = res.texCharSelectBackground->h;
+        gd.bgTiles_.push_back(bg);
+
+        Object * border = new Object(pos, collider, res.texBigBorder);
+        
+        gd.settingsBorder = border;
+        gd.settingsBorder->pos.y =  500;
+        //TODO remove border when leaving settings
         
     //loadMap(foreground);
     //assert(gd.playerIndex != -1);

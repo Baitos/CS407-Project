@@ -61,7 +61,8 @@ struct Resources {
                 *texBombStorage, *texBoomboxStorage, *texBouncyBallStorage, *texFogStorage,
                 *texIceStorage, *texMissileStorage, *texSugarStorage, *texPieStorage,
                 *texBomb, *texExplosion, *texBoombox, *texSoundwaves, *texSugar,
-                *texSugarEffectL, *texSugarEffectR;
+                *texSugarEffectL, *texSugarEffectR,
+                *texSettingsBackground, *texBigBorder;
     SDL_Texture *loadTexture(SDL_Renderer *renderer, const std::string &filepath);
     void load(SDLState &state);
     void unload();

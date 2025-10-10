@@ -4,6 +4,7 @@
 #include "../headers/updateLevel.h"
 #include "../headers/state.h"
 #include "../headers/collision.h"
+#include "../headers/drawMenu.h"
 
 //Function called to change the state
 //NOTE: When a state is changed, call currState->init() immediately after
@@ -35,6 +36,11 @@ GameState * changeState(GameState * tempState, GameData &gd){
         }
         case CHAR_SELECT:
         {
+            newState = new CharSelectState();
+            newState->init = initCharSelect;
+            newState->update = charSelectUpdate;
+            newState->render = drawCharSelect;
+            newState->input = charSelectInputs;
             break;           
         }
         case SPACESHIP:

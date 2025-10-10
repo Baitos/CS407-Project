@@ -8,6 +8,7 @@
 #include "../headers/state.h"
 #include "../headers/playerState.h"
 
+
 using namespace std;
 
 extern GameState * currState;
@@ -22,6 +23,11 @@ void charSelectUpdate(const SDLState &state, GameData &gd, Resources &res, float
             preview.update(state, gd, res, deltaTime);
         }
 
+}
+
+//Update for Settings Screen
+void settingsUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
+    
 }
 
 //
@@ -65,6 +71,43 @@ void charSelectInputs(SDLState &state, GameData &gd, Resources &res, float delta
             }
         }
 }
+//Input function for Settings Screen
+void settingsInputs(SDLState &state, GameData &gd, Resources &res, float deltaTime){
+    SDL_Event event { 0 };
+        while (SDL_PollEvent(&event)) {
+            switch (event.type) {
+                case SDL_EVENT_QUIT:
+                {
+                    running = false;
+                    break;
+                }
+                case SDL_EVENT_WINDOW_RESIZED: 
+                {
+                    state.width = event.window.data1;
+                    state.height = event.window.data2;
+                    //printf("Width = %d, Height = %d", state.width, state.height);
+                    break;
+                }
+                case SDL_EVENT_KEY_DOWN:
+                {
+                    
+                    
+                    break;
+                }
+                case SDL_EVENT_KEY_UP:
+                {
+                    
+                    break;
+                }
+                case SDL_EVENT_MOUSE_BUTTON_DOWN:
+                {
+                    handleSettingsClick(state,gd,res,deltaTime);
+                    break;
+                    
+                } 
+            }
+        }
+}
 
 //
 //INPUT HANDLERS
@@ -85,7 +128,27 @@ void handleMousePointer(const SDLState &state, GameData &gd, Resources &res, flo
         .w = (float)TILE_SIZE,
         .h = (float)TILE_SIZE
     };
+    if(currState->currStateVal == SETTINGS || currState->currStateVal == CHAR_SELECT){
+        if((gd.mouseCoords.x >= 35 && gd.mouseCoords.x <= 218) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)){ //Big Border on Exit
+            //printf("1\n");
+            gd.settingsBorder->pos = glm::vec2(38,366);
+            gd.settingsBorder->texture = res.texBigBorder;
+        } else if ((gd.mouseCoords.x >= 583 && gd.mouseCoords.x <= 766) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)){ //Big border on Save
+            //printf("2\n");
+            if(currState->currStateVal == SETTINGS){
+            gd.settingsBorder->pos = glm::vec2(585,366);
+            } else {
+               gd.settingsBorder->pos = glm::vec2(586,366); 
+            }
+            gd.settingsBorder->texture = res.texBigBorder;
+        } else {
+            //printf("3\n");
+            gd.settingsBorder->pos = glm::vec2(500,500);
+        }
+    }
+
     SDL_RenderTexture(state.renderer, res.texCursor, nullptr, &dst); // src is for sprite stripping, dest is for where sprite should be drawn*/ 
+    
 }
 
 //Key Input Handler for Char Select
@@ -162,3 +225,13 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
     }   
 }
 
+//Handles Clicking for Settings
+void handleSettingsClick(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
+    if ((gd.mouseCoords.x >= 583 && gd.mouseCoords.x <= 766) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)) {
+        //Saves
+    } else if ((gd.mouseCoords.x >= 35 && gd.mouseCoords.x <= 218) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)) {
+        currState->nextStateVal = CHAR_SELECT;
+        currState = changeState(currState, gd);
+        currState->init(state, gd, res);
+    }   
+}

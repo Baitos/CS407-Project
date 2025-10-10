@@ -26,6 +26,7 @@ struct GameData {
               mouseCoords, 
               clickCoords;
     ItemStorage itemStorage_;
+    Object * settingsBorder;
     int playerIndex = -1;
     SDL_FRect mapViewport;
     bool debugMode = false;
