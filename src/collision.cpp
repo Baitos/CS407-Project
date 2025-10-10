@@ -123,7 +123,7 @@ void collisionCheckAndResponse(const SDLState &state, GameData &gd, Resources &r
 		}
 	}
 	for (int i = 0; i < gd.items_.size(); i++) {
-		if (player.isStunned) { // Avoid collision response from items if already stunned
+		if (player.isStunned || player.item.type == itemType::BOOMBOX) { // Avoid collision response from items if already stunned
 			continue;
     	}
 		Item item = gd.items_[i];

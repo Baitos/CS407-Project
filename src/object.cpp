@@ -181,7 +181,8 @@ void ItemBox::generateItem(Player &player, GameData &gd, Resources &res) {
         itemOptions = {itemType::BOMB, itemType::BOOMBOX, itemType::BOUNCYBALL, 
             itemType::FOG, itemType::ICE, itemType::MISSILE, itemType::PIE, itemType::SUGAR};
     }
-    selected = 1;//rand() % itemOptions.size();
+    selected = rand() % itemOptions.size();
+    selected = selectedItem;
     switch (itemOptions[selected]) {
         case itemType::BOMB:
             newItem = Bomb(player.pos, defaultCollider, res.texBomb);
@@ -191,6 +192,7 @@ void ItemBox::generateItem(Player &player, GameData &gd, Resources &res) {
             break;
         case itemType::SUGAR:
             newItem = Sugar(player.pos, defaultCollider, res.texSugar);
+            break;
         default:
             printf("Your item is in another castle\n");
             newItem = Bomb(player.pos, defaultCollider, res.texBomb);
@@ -238,10 +240,11 @@ void effectExplosion(GameData &gd, Resources &res, AnimatedObject obj) {
     glm::vec2 expPos;
     expPos.x = obj.pos.x - TILE_SIZE * 2;
     expPos.y = obj.pos.y - TILE_SIZE * 2;
-    Effect * explosion = new Effect(expPos, expCollider, res.texExplosion);
+    Effect * explosion = new Effect(expPos, expCollider, res.texExplosion,
+         TILE_SIZE * 5, TILE_SIZE * 5);
     explosion->animations = res.itemAnims;
     explosion->followsPlayer = false;
     explosion->curAnimation = res.ANIM_ITEM_EXPLOSION;
-    explosion->animations[obj.curAnimation].reset();
+    explosion->animations[explosion->curAnimation].reset();
     gd.effects_.push_back(explosion);
 }

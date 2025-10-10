@@ -111,12 +111,11 @@ void drawLevel(const SDLState &state, GameData &gd, Resources res, float deltaTi
 
     // draw portal tiles
     for(Portal &portal : gd.portals_) {
-        portal.draw(state, gd, TILE_SIZE, TILE_SIZE * 2);
+        portal.draw(state, gd, portal.width, portal.height);
     }
     // draw effects
     for (Effect *effect : gd.effects_) {
-        printf("draw effect\n");
-        effect->draw(state, gd, TILE_SIZE * 5, TILE_SIZE * 5);
+        effect->draw(state, gd, effect->width, effect->height);
     }
     // draw player
     gd.player.draw(state, gd, TILE_SIZE, TILE_SIZE); // draw player class
@@ -138,6 +137,7 @@ void drawLevel(const SDLState &state, GameData &gd, Resources res, float deltaTi
         }
     }
     for (Item &item : gd.items_) {
+        printf("Draw item!\n");
         item.draw(state, gd, TILE_SIZE, TILE_SIZE);
     }
 

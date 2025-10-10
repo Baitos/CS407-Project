@@ -46,7 +46,9 @@ class AnimatedObject : public Object { // obj with anims
     public:
         std::vector<Animation> animations;
         int spriteFrame;
-        int curAnimation;    
+        int curAnimation;  
+        float width;
+        float height;  
         float dir;
         float flip; // anti gravity
         float stunLength;
@@ -65,6 +67,16 @@ class AnimatedObject : public Object { // obj with anims
             dir = 1;
             flip = 1.0f;
             type = ANIMATED;
+        }
+        AnimatedObject(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex, float w, float h) : // generic obj constructor
+        Object(pos_, colliderRect, tex) {
+            spriteFrame = 1;
+            curAnimation = -1;
+            dir = 1;
+            flip = 1.0f;
+            type = ANIMATED;
+            width = w;
+            height = h;
         }
         void (*onCollision)(AnimatedObject &obj, GameData &gd, Resources &res);
         void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
@@ -132,15 +144,19 @@ class Portal : public AnimatedObject { // portals
         isEntrance = false;
         portalID += 0.5;
         type = PORTAL;
+        width = TILE_SIZE;
+        height = TILE_SIZE * 2;
     }
 };
 
 class Effect : public AnimatedObject{
     public:
+    float width;
+    float height;
     bool  followsPlayer; // i.e. boombox
     Effect() : AnimatedObject(){}
-    Effect(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) :
-    AnimatedObject(pos_, colliderRect, tex) {}
+    Effect(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex, float w, float h) :
+    AnimatedObject(pos_, colliderRect, tex, w, h) {}
     void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
 };
 

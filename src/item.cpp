@@ -18,6 +18,7 @@ void useBomb(const SDLState &state, GameData &gd, Resources &res) {
     gd.items_.push_back(item);
 }
 void useBoombox(const SDLState &state, GameData &gd, Resources &res) {
+    printf("Start used\n");
     SDL_FRect soundCollider = {
         .x = 0,
         .y = 0,
@@ -28,9 +29,10 @@ void useBoombox(const SDLState &state, GameData &gd, Resources &res) {
     item.pos = gd.player.pos;
     item.collider = soundCollider;
     item.texture = res.texSoundwaves;
+    item.animations = res.itemAnims;
     item.curAnimation = res.ANIM_ITEM_SOUNDWAVE;
     item.animations[item.curAnimation].reset();
-    
+    gd.items_.push_back(item);
 }
 void useBouncyBall(const SDLState &state, GameData &gd, Resources &res) {}
 void useFog(const SDLState &state, GameData &gd, Resources &res) {}

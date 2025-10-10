@@ -42,7 +42,6 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
             }
         }
         for (int i = 0; i < gd.effects_.size(); i++) {
-            printf("update?");
             Effect *effect = gd.effects_[i];
             effect->update(state, gd, res, deltaTime);
             if (effect->animations[effect->curAnimation].isDone()) {
@@ -290,6 +289,16 @@ void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
     if (key.scancode == SDL_SCANCODE_F1)
     {
         running = false;
+    }
+    // Item select, assuming last place for now
+    if (key.scancode == SDL_SCANCODE_0) {
+        selectedItem = 0; // Boombox
+    }
+    if (key.scancode == SDL_SCANCODE_1) {
+        selectedItem = 1; // Bomb
+    }
+    if (key.scancode == SDL_SCANCODE_2) {
+        selectedItem = 5; // Sugar
     }
     if(key.scancode == SDL_SCANCODE_F2){
         //printf("F2 key clicked");

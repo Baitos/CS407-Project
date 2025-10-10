@@ -28,7 +28,7 @@ class Item : public AnimatedObject {
     public:
     int index = 0;
     itemType type;
-    bool deleteOnCollision;
+    bool deleteOnCollision = false;
     bool persistsOnCollision; // bomb
     Item() : AnimatedObject(){}
     Item(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) :
@@ -43,6 +43,7 @@ class Bomb : public Item {
     Bomb(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) :
     Item(pos_, colliderRect, tex) {
         deleteOnCollision = true;
+        type = itemType::BOMB;
         index = 0;
         this->useItem = useBomb;
         this->onCollision = angledStun;
@@ -56,6 +57,7 @@ class Boombox : public Item {
     Boombox(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) :
     Item(pos_, colliderRect, tex) {
         index = 1;
+        type = itemType::BOOMBOX;
         this->useItem = useBoombox;
         this->onCollision = angledStun;
         this->knockbackMultiplier = 3.0f;
