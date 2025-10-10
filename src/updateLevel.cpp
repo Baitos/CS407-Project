@@ -139,7 +139,7 @@ void handleLevelClick(SDLState &state, GameData &gd, Resources &res, float delta
     if(event.button.button == SDL_BUTTON_LEFT && buttonDown){
         //JETPACK DEPLOY
         if(((LevelState *)currState)->character == JETPACK) {
-            if(gd.player.cooldownTimer.isTimeOut()) {
+            if(gd.player.cooldownTimer.isTimeOut() && gd.player.state_->currStateVal != JETPACK_DEPLOY) {
                     gd.player.state_ = changePlayerState(gd, res, gd.player.state_, JETPACK_DEPLOY);
             }
         } else if (((LevelState *)currState)->character == SHOTGUN) {
