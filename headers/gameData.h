@@ -26,7 +26,8 @@ struct GameData {
               mouseCoords, 
               clickCoords;
     ItemStorage itemStorage_;
-    Object * settingsBorder;
+    Object settingsBorder;
+    std::vector<Object> settingsDials_;
     int playerIndex = -1;
     SDL_FRect mapViewport;
     bool debugMode = false;

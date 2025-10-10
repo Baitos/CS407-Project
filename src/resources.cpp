@@ -174,6 +174,7 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     texSettingsBackground = loadTexture(state.renderer, "data/SettingsSprites/background.png");
     texBigBorder = loadTexture(state.renderer, "data/SettingsSprites/lButtonOutline.png");
     texSmallBorder = loadTexture(state.renderer, "data/SettingsSprites/sButtonOutline.png");
+    texSlider = loadTexture(state.renderer, "data/SettingsSprites/Slider.png");
 
     itemTextures = {texBombStorage, texBoomboxStorage, texBouncyBallStorage, texFogStorage,
         texIceStorage, texMissileStorage, texSugarStorage, texPieStorage};
