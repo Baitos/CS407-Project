@@ -30,6 +30,7 @@ struct Resources {
     const int ANIM_ITEM_CYCLE = 1;
     const int ANIM_ITEM_PICKED = 2;
     const int ANIM_ITEM_EXPLOSION = 3;
+    const int ANIM_ITEM_SOUNDWAVE = 4;
     std::vector<Animation> itemAnims;
     std::vector<SDL_Texture *> itemTextures;
     const int PORTAL_IDLE = 0;
