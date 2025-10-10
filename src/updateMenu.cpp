@@ -104,7 +104,11 @@ void settingsInputs(SDLState &state, GameData &gd, Resources &res, float deltaTi
                     handleSettingsClick(state,gd,res,deltaTime);
                     break;
                     
-                } 
+                }  case SDL_EVENT_MOUSE_BUTTON_UP:
+
+                {
+                    gd.updatedDial = NULL;
+                }
             }
         }
 }
@@ -159,6 +163,16 @@ void handleMousePointerSettings(const SDLState &state, GameData &gd, Resources &
         .w = (float)TILE_SIZE,
         .h = (float)TILE_SIZE
     };
+    if(gd.updatedDial != NULL){
+        gd.updatedDial->pos.x = gd.mouseCoords.x;
+        if (gd.updatedDial->pos.x  > 290.f){ 
+            gd.updatedDial->pos.x  = 290.f;
+        } else if(gd.updatedDial->pos.x < 84.f) {
+            gd.updatedDial->pos.x  = 84.f;
+        }
+        gd.updatedDial->draw(state,gd,static_cast<float>( gd.updatedDial->texture->w) * 2, static_cast<float>( gd.updatedDial->texture->h) * 2);
+
+    } else {
         if((gd.mouseCoords.x >= 35 && gd.mouseCoords.x <= 218) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)){ //Big Border on Exit
             //printf("1\n");
             gd.settingsBorder.pos = glm::vec2(38,366);
@@ -192,7 +206,9 @@ void handleMousePointerSettings(const SDLState &state, GameData &gd, Resources &
             //printf("3\n");
             gd.settingsBorder.pos = glm::vec2(500,500);
         }
+    }
     
+
 
     SDL_RenderTexture(state.renderer, res.texCursor, nullptr, &dst); // src is for sprite stripping, dest is for where sprite should be drawn*/ 
     
@@ -295,4 +311,10 @@ void handleSettingsClick(const SDLState &state, GameData &gd, Resources &res, fl
     } else if((gd.mouseCoords.x >= 578 && gd.mouseCoords.x <= 690) && (gd.mouseCoords.y >= 260 && gd.mouseCoords.y <= 280)){ //Fast-Fall
         printf("Fast-fall\n");
     }   
+    for(Object &o : gd.settingsDials_){
+        
+        if((gd.mouseCoords.x >= o.pos.x && gd.mouseCoords.x <= o.pos.x + (static_cast<float>(o.texture->w) * 2)) && (gd.mouseCoords.y >= o.pos.y && gd.mouseCoords.y <= o.pos.y + (static_cast<float>(o.texture->h) * 2))){
+           gd.updatedDial = &o; 
+        }
+    }
 }
