@@ -81,11 +81,11 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         //Calls functions related to the current GameState
         
         currState->input(state, gd, res, deltaTime);
-        printf("input done\n");
+        //printf("input done\n");
         currState->update(state, gd, res, deltaTime);
-        printf("update done\n");
+        //printf("update done\n");
         currState->render(state, gd, res, deltaTime);
-        printf("draw done\n");
+        //printf("draw done\n");
         if (gd.debugMode) {
         // debug info
             SDL_SetRenderDrawColor(state.renderer, 255, 255, 255, 255);

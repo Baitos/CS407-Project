@@ -22,21 +22,17 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
 {
     // update portals
         //gd.player.currentDirection = 0;
-        printf("1\n");
         for (Portal &portal : gd.portals_) {
             portal.update(state, gd, res, deltaTime);
         }
-printf("2\n");
         if (gd.player.blast != nullptr) {
             printf("here\n");
             gd.player.blast->update(state, gd, res, deltaTime);
         }
-printf("3\n");
         // update lasers
         for (Laser &laser : gd.lasers_) {
             laser.update(state, gd, res, deltaTime);
         }
-printf("4\n");
         for (ItemBox &box : gd.itemBoxes_) {
             if (!box.itemBoxActive) {
                 box.update(state, gd, res, deltaTime);
@@ -58,14 +54,12 @@ printf("4\n");
         if (gd.player.pickingItem) {
             gd.itemStorage_.update(state, gd, res, deltaTime);
         }
-printf("5\n");
         //gd.player.currentDirection = 0;
 
         gd.player.state_->update(state, gd, res,deltaTime);
         if(gd.player.currentDirection){
             gd.player.dir = gd.player.currentDirection;
         }
-printf("6\n");
         //printf("Velocity at Update: %f\n", gd.player.vel.x);
         //printf("%f\n", gd.player.dir);
         
@@ -86,10 +80,10 @@ printf("6\n");
         // collision
         bool foundGround = gd.player.grounded;
         gd.player.grounded = false;
-printf("7\n");
+
         //printf("Is fastfalling: %d\n", gd.player.fastFalling);
         collisionCheckAndResponse(state,gd,res,gd.player,deltaTime);
-printf("8\n");
+
         //printf("%d\n", gd.player.state_->currStateVal);
         
         // UPDATE ITEM STORAGE
