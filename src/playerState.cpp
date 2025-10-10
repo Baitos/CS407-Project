@@ -229,7 +229,8 @@ PlayerState * changePlayerState(GameData &gd, Resources &res, PlayerState * temp
     //newPlayer->currStateVal = tempPlayer->nextStateVal;
     newPlayer->enter(gd.player, gd, res);
     // TODO was always deleting gd.player, but broke when changing state of player2. requires code refactoring
-    delete gd.currPlayer.state_;
+    //delete gd.currPlayer.state_;
+    delete tempPlayer;
     return newPlayer;
 }
 

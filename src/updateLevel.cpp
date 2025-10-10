@@ -52,7 +52,6 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
                 i--;
             }
         }
-        
         for (int i = 0; i < gd.effects_.size(); i++) {
             Effect *effect = gd.effects_[i];
             effect->update(state, gd, res, deltaTime);
@@ -68,7 +67,6 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
         if (gd.player.pickingItem) {
             gd.itemStorage_.update(state, gd, res, deltaTime);
         }
-
         //gd.player.currentDirection = 0;
         gd.player.state_->update(state, gd, res, deltaTime);
         if(gd.player.currentDirection){
@@ -117,7 +115,9 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
         gd.player.grounded = false;
         gd.player2.grounded = false;
         collisionCheckAndResponse(state,gd,res,gd.player,deltaTime);
+
         collisionCheckAndResponse(state,gd,res,gd.player2,deltaTime);
+
         //printf("%d\n", gd.player.state_->currStateVal);
         gd.itemStorage_.pos.x = gd.player.pos.x - 368;
         gd.itemStorage_.pos.y = gd.player.pos.y - 200;
