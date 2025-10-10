@@ -11,7 +11,11 @@ struct GameData {
     Player player;
     Player player2;
     int numPlayers; 
+    
     Hook hook;
+
+    Hook hook2; // uh
+
     std::vector<BackgroundObject> bgTiles_;
     std::vector<Level> mapTiles_;
     std::vector<Laser> lasers_;

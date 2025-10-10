@@ -32,7 +32,7 @@ void collisionCheckAndResponse(const SDLState &state, GameData &gd, Resources &r
 				}	
 				player.vel.x = 0;
 			} else {
-				if (player.pos.y < l.pos.y) {
+				if (player.pos.y - EPSILON < l.pos.y) {
 					player.pos.y -= resolution.y;
                 	if (player.flip == 1) {
 						player.grounded = true;
@@ -47,7 +47,7 @@ void collisionCheckAndResponse(const SDLState &state, GameData &gd, Resources &r
 						gd.player.gravityScale = 1.0f; // reset gravity
 					}
 				}
-				player.vel.y = 0;	
+				player.vel.y = 0;
 			}
 		}
 	}

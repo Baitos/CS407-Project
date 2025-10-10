@@ -160,7 +160,7 @@ void handleLevelClick(SDLState &state, GameData &gd, Resources &res, float delta
         std::vector dist = distanceForm(gd, gd.player, gd.hook);
         gd.hook.vel = 500.0f * glm::vec2(dist.at(3), dist.at(4));
     } else if (!buttonDown && event.button.button == SDL_BUTTON_RIGHT) { // grapple release 
-        gd.hook.pos = glm::vec2(-1000.0f, -1000.0f); // maybe unnecessary
+        gd.hook.pos = glm::vec2(-10000.0f, -10000.0f); // maybe unnecessary
         gd.hook.visible = false;
         if (gd.hook.collided) { // get out
             gd.player.state_ = changePlayerState(gd, res, gd.player.state_, JUMP);

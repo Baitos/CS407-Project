@@ -119,12 +119,12 @@ void Hook::draw(const SDLState &state, GameData &gd, float width, float height) 
     }
     SDL_SetRenderDrawColor(state.renderer, 30, 30, 30, 255); // draw line to hook
     glm::vec2 pOffset = findCenterOfSprite(gd.player);
-    glm::vec2 hOffset = findCenterOfSprite(gd.hook);
+    glm::vec2 hOffset = findCenterOfSprite((*this));
     //printf("x: %f, y: %f\n", gd.mouseCoords.x, gd.mouseCoords.y);
     SDL_RenderLine(state.renderer, gd.player.pos.x - gd.mapViewport.x + pOffset.x, 
                     gd.player.pos.y - gd.mapViewport.y + pOffset.y, 
-                    gd.hook.pos.x - gd.mapViewport.x + hOffset.x, 
-                    gd.hook.pos.y - gd.mapViewport.y + hOffset.y);
+                    (*this).pos.x - gd.mapViewport.x + hOffset.x, 
+                    (*this).pos.y - gd.mapViewport.y + hOffset.y);
     SDL_SetRenderDrawColor(state.renderer, 64, 51, 83, 255);
     if (!isOnscreen(state, gd, (*this))) {
         return;
@@ -178,6 +178,7 @@ void Hook::checkCollision(const SDLState &state, GameData &gd, Resources &res, f
             }
         }
     }
+    // remove this after sprint demo
     Player p2 = gd.player2;
     rectB = {
         .x = p2.pos.x + p2.collider.x,
@@ -191,6 +192,20 @@ void Hook::checkCollision(const SDLState &state, GameData &gd, Resources &res, f
         (*this).visible = false;
         (*this).collided = true;
     }
+    // remove this after sprint demo
+    Hook h2 = gd.hook2;
+    rectB = {
+        .x = h2.pos.x + h2.collider.x,
+        .y = h2.pos.y + h2.collider.y,
+        .w = h2.collider.w,
+        .h = h2.collider.h
+    };
+    if (intersectAABB(rectA, rectB, resolution) && gd.hook2.visible) { // Touching other hook
+        (*this).visible = false;
+        (*this).collided = true;
+        gd.hook2.visible = false;
+    }
+    //
 }
 
 void ItemBox::update(const SDLState &state, GameData &gd, Resources &res, float deltaTime) { // update item box timer every frame (when on cooldown)

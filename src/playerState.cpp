@@ -278,8 +278,9 @@ void handleInputGrapple(GameData &gd, Resources &res, SDL_KeyboardEvent key) {
 }
 
 void updateGrapple(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
-    glm::vec2 pOffset = findCenterOfSprite(gd.player); // this will go in helper function later
+    glm::vec2 pOffset = findCenterOfSprite(gd.player); 
     glm::vec2 hOffset = findCenterOfSprite(gd.hook);
+    // this will go in helper function later
     float xDist = (gd.hook.pos.x - gd.mapViewport.x + hOffset.x) - (gd.player.pos.x - gd.mapViewport.x + pOffset.x); // A
     float yDist = (gd.hook.pos.y - gd.mapViewport.y + hOffset.y) - (gd.player.pos.y - gd.mapViewport.y + pOffset.y); // O
     float dist = std::sqrt(xDist * xDist + yDist * yDist); // distance formula, H
@@ -593,7 +594,7 @@ void enterRun(Player& player, GameData &gd, Resources &res){
         player.texture = res.texRunJ;
     }
     player.curAnimation = res.ANIM_PLAYER_RUN; 
-    player.animations[gd.player.curAnimation].reset();
+    //player.animations[gd.player.curAnimation].reset();
     gd.player.maxSpeedX = gd.player.maxRunX;
     gd.player.sprintTimer.reset();
 }

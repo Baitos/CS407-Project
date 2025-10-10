@@ -285,6 +285,7 @@ void createTiles(const SDLState &state, GameData &gd, const Resources &res) { //
                         };
                         gd.hook = Hook(gd.player.pos, collider, res.texGrapple);
                         gd.hook.visible = false;
+                        
                         // Add itemStorage
                         SDL_FRect storageCollider; 
                         gd.itemStorage_ = ItemStorage(gd.player.pos, storageCollider, res.texItemStorage);
@@ -396,6 +397,17 @@ void createTiles(const SDLState &state, GameData &gd, const Resources &res) { //
                         gd.player2.state_->update = emptyUpdate;
                         gd.player2.state_->handleInput = dummyInput;
                         gd.player2.state_->enter = dummyEnter;
+
+                        // temp, remove this after sprint demo
+                        collider = { 
+                            .x = 0,
+                            .y = 0,
+                            .w = static_cast<float>(HOOK_SIZE),
+                            .h = static_cast<float>(HOOK_SIZE)
+                        };
+                        gd.hook2 = Hook(gd.player2.pos - (float)TILE_SIZE * 3, collider, res.texGrapple);
+                        gd.hook2.visible = true;
+                        //  
                     }
                 }
             }

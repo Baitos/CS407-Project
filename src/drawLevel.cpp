@@ -56,7 +56,11 @@ void drawLevel(const SDLState &state, GameData &gd, Resources res, float deltaTi
     gd.player.draw(state, gd, TILE_SIZE, TILE_SIZE); // draw player class  
     handleCrosshair(state, gd, res, deltaTime);
 
+    if (gd.hook2.visible) { // remove this after sprint demo
+        gd.hook2.Object::draw(state, gd, HOOK_SIZE, HOOK_SIZE); 
+    } 
     gd.player2.draw(state, gd, TILE_SIZE, TILE_SIZE);
+    
 
     //draw blast if needed for shotgun
     if(gd.player.blast != nullptr) {
