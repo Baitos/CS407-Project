@@ -79,7 +79,7 @@ class CharSelectState : public GameState{
 
 class LevelState : public GameState{
     public:
-        int character = SWORD;
+        int character = SHOTGUN;
 };
 
 /*class SpaceshipState : public LevelState {

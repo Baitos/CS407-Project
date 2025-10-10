@@ -242,6 +242,6 @@ void effectExplosion(GameData &gd, Resources &res, AnimatedObject obj) {
     explosion->animations = res.itemAnims;
     explosion->followsPlayer = false;
     explosion->curAnimation = res.ANIM_ITEM_EXPLOSION;
-    explosion->animations[obj.curAnimation].reset();
+    explosion->animations[explosion->curAnimation].reset();
     gd.effects_.push_back(explosion);
 }
