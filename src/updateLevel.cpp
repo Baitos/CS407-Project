@@ -218,6 +218,11 @@ void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
         currState = changeState(currState, gd);
         currState->init(state, gd, res);
     }
+    if (key.scancode == SDL_SCANCODE_F3) {
+        printf("teleporting to lasers");
+        gd.player.pos.x = 950;
+        gd.player.pos.y = -654;
+    }
     if (key.scancode == SDL_SCANCODE_Q && gd.player.hasItem) {
         Item item = gd.player.item;
         item.useItem(state, gd, res);
