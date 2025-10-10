@@ -38,6 +38,7 @@ GameState * changeState(GameState * tempState, GameData &gd){
         }
         case SPACESHIP:
         {
+            printf("space\n");
             //Creating LevelState with init of Spaceship
             newState = new LevelState();
             newState->input = levelInputs;

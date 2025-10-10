@@ -42,19 +42,19 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     //CHANGE if testing a different screen and you want it up on start
 
     
-    currState = new CharSelectState();
-    currState->nextStateVal = SPACESHIP;
-    currState->init = initCharSelect;
-    currState->update = charSelectUpdate;
-    currState->render = drawCharSelect;
-    currState->input = charSelectInputs;
-    /*
+    // currState = new CharSelectState();
+    // currState->nextStateVal = SPACESHIP;
+    // currState->init = initCharSelect;
+    // currState->update = charSelectUpdate;
+    // currState->render = drawCharSelect;
+    // currState->input = charSelectInputs;
+    
     currState = new LevelState();
     currState->nextStateVal = SPACESHIP;
     currState->init = createTiles;
     currState->update = levelUpdate;
     currState->render = drawLevel;
-    currState->input = levelInputs;*/
+    currState->input = levelInputs;
 
     // setup game data
     GameData gd(state);
@@ -79,10 +79,13 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         float deltaTime = (nowTime - prevTime) / 1000.0f; // convert to seconds from ms
 
         //Calls functions related to the current GameState
+        
         currState->input(state, gd, res, deltaTime);
+        //printf("input done\n");
         currState->update(state, gd, res, deltaTime);
+        //printf("update done\n");
         currState->render(state, gd, res, deltaTime);
-
+        //printf("draw done\n");
         if (gd.debugMode) {
         // debug info
             SDL_SetRenderDrawColor(state.renderer, 255, 255, 255, 255);
