@@ -63,7 +63,7 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
 
         if(gd.player.usingSugar){
             ((Sugar *) &gd.player.item)->sugarTimer.step(deltaTime);
-            gd.player.vel.x += 1.0f * gd.player.currentDirection;
+            gd.player.vel.x += .5f * gd.player.currentDirection;
             if(((Sugar *) &gd.player.item)->sugarTimer.isTimeOut()){
                 //printf("Stopped sugar\n");
                 gd.player.usingSugar = false;
