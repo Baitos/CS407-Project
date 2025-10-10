@@ -5,7 +5,7 @@
 
 bool initialize(SDLState &state) {
     bool initSuccess = true;
-    if (!SDL_Init(SDL_INIT_VIDEO)) {
+    if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO)) {
         SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", "Error Initializing SDL3", nullptr);
         printf("Error Initializing SDL3\n");
         initSuccess = false;

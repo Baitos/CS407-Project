@@ -7,3 +7,6 @@ extern int selectedItem;
 extern const float EPSILON;
 extern bool waitingForKey;
 extern bool hasNewKey;
+extern float masterVolume;
+extern float musicVolume;
+extern float sfxVolume;

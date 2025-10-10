@@ -8,7 +8,7 @@
 #include "../headers/state.h"
 #include "../headers/playerState.h"
 #include "../headers/controls.h"
-
+#include "../headers/sound.h"
 using namespace std;
 
 extern GameState * currState;
@@ -28,6 +28,7 @@ void charSelectUpdate(const SDLState &state, GameData &gd, Resources &res, float
 //Update for Settings Screen
 void settingsUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
     //printf("update\n");
+    // Update controls
     Controls * controls  = gd.controls;
     SettingsState * curSettings = ((SettingsState *)currState);
     controlStruct construct;
@@ -51,6 +52,33 @@ void settingsUpdate(const SDLState &state, GameData &gd, Resources &res, float d
         }
         curSettings->controlStrings[i] = keyName;
     }
+
+    // Update audio
+    //Note that volume ratio is dial.pos.x / (290-84)
+    masterVolume = gd.settingsDials_[0].pos.x / (290 - 84) -40.8;
+    if (masterVolume > 1.0f) {
+        masterVolume = 1.0f;
+    }
+    else if (masterVolume < 0.0f) {
+        masterVolume = 0.0f;
+    }
+    musicVolume = gd.settingsDials_[1].pos.x / (290 - 84) - 40.8;
+        if (musicVolume > 1.0f) {
+        musicVolume = 1.0f;
+    }
+    else if (masterVolume < 0.0f) {
+        musicVolume = 0.0f;
+    }
+    sfxVolume = gd.settingsDials_[2].pos.x / (290 - 84) - 40.8;
+        if (sfxVolume > 1.0f) {
+        sfxVolume = 1.0f;
+    }
+    else if (sfxVolume < 0.0f) {
+        sfxVolume = 0.0f;
+    }
+    
+
+    //printf("Master = %.1f, music = %.1f, sfx = %f\n", masterVolume, musicVolume, sfxVolume);
 }
 
 //
@@ -261,6 +289,21 @@ void handleCharSelectKeyInput(const SDLState &state, GameData &gd, Resources &re
     if(key.scancode == SDL_SCANCODE_F2){
         currState = changeState(currState, gd);
         currState->init(state,gd, res);
+    }
+    if (key.scancode == SDL_SCANCODE_M) {
+        // play music file
+        std::string filepath = "data/Audio/laser.wav";
+        Sound * sound = new Sound(filepath, true);
+        sound->SetupStream();
+        sound->PlaySound();
+    }   
+    if (key.scancode == SDL_SCANCODE_N) {
+        // play sfx file
+        std::string filepath = "data/Audio/laser.wav";
+        Sound * sound = new Sound(filepath, false);
+        sound->SetupStream();
+        sound->PlaySound();
+        delete sound;
     }
 }
 

@@ -8,3 +8,6 @@ int selectedItem = 0;
 const float EPSILON = 0.00001;
 bool waitingForKey = false;
 bool hasNewKey = false;
+float masterVolume = 100.0f;
+float musicVolume = 100.0f;
+float sfxVolume = 100.0f;
