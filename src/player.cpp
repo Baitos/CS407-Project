@@ -4,8 +4,8 @@
 #include "../headers/initState.h"
 #include "../headers/gameData.h"
 
-void Player::handleInput(SDL_KeyboardEvent& key, GameData &gd, Resources &res, float deltaTime){
-    state_->handleInput(gd, res, key);
+void Player::handleInput(SDL_Event &event, GameData &gd, Resources &res, float deltaTime){
+    state_->handleInput(gd, res, event);
 }
 
 void Player::update(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {

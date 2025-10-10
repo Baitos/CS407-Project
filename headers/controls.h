@@ -39,5 +39,14 @@ class Controls {
     int getActionKey(typeAction action) {
         return this->keyboardControls[action].key;
     }
+    bool actionPerformed(typeAction action, SDL_Event event) {
+        controlStruct con = this->keyboardControls[action];
+        if (con.isMouseButton) {
+            return event.button.button == con.key;
+        }
+        else { 
+            return SDL_GetScancodeFromKey(event.key.key, SDL_KMOD_NONE) == con.key;
+        }
+    }
 };
 

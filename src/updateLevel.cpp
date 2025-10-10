@@ -11,7 +11,6 @@
 using namespace std;
 
 extern GameState * currState;
-
 //
 //UPDATE FUNCTIONS
 //
@@ -147,13 +146,13 @@ void levelInputs(SDLState &state, GameData &gd, Resources &res, float deltaTime)
                 }
                 case SDL_EVENT_KEY_DOWN:
                 {
-                    handleKeyInput(state, gd, res, event.key, true, deltaTime);
+                    handleKeyInput(state, gd, res, event, true, deltaTime);
                     
                     break;
                 }
                 case SDL_EVENT_KEY_UP:
                 {   
-                    handleKeyInput(state, gd, res, event.key, false, deltaTime);
+                    handleKeyInput(state, gd, res, event, false, deltaTime);
                     break;
                 }
                 case SDL_EVENT_MOUSE_BUTTON_DOWN:
@@ -175,7 +174,7 @@ void levelInputs(SDLState &state, GameData &gd, Resources &res, float deltaTime)
 //handler for clicking in the level
 void handleLevelClick(SDLState &state, GameData &gd, Resources &res, float deltaTime, SDL_Event event, bool buttonDown) {
     //LEFT CLICK FOR CHARACTER WEAPON DEPLOY
-    if(event.button.button == SDL_BUTTON_LEFT && buttonDown){
+    if(gd.controls->actionPerformed(ACTION_ABILITY, event) && buttonDown){
         //JETPACK DEPLOY
         if(((LevelState *)currState)->character == JETPACK) {
             if(gd.player.cooldownTimer.isTimeOut()) {
@@ -192,13 +191,13 @@ void handleLevelClick(SDLState &state, GameData &gd, Resources &res, float delta
                 gd.player.state_ = changePlayerState(gd, res, gd.player.state_, SWORD_DEPLOY);
             }
         }
-    } else if (buttonDown && event.button.button == SDL_BUTTON_RIGHT) { // grapple
+    } else if (gd.controls->actionPerformed(ACTION_GRAPPLE, event) ) { // grapple
         glm::vec2 hOffset = findCenterOfSprite(gd.hook);
         gd.hook.pos = gd.player.pos + hOffset;
         gd.hook.visible = true;
         std::vector dist = distanceForm(gd, gd.player, gd.hook);
         gd.hook.vel = 500.0f * glm::vec2(dist.at(3), dist.at(4));
-    } else if (!buttonDown && event.button.button == SDL_BUTTON_RIGHT) { // grapple release 
+    } else if (!buttonDown && gd.controls->actionPerformed(ACTION_GRAPPLE, event) ) { // grapple release 
         gd.hook.pos = glm::vec2(-1000.0f, -1000.0f); // maybe unnecessary
         gd.hook.visible = false;
         if (gd.hook.collided) { // get out
@@ -234,8 +233,8 @@ void handleCrosshair(const SDLState &state, GameData &gd, Resources &res, float 
 
 //Key Input Handler for Level
 void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
-                    SDL_KeyboardEvent key, bool keyDown, float deltaTime) {
-
+                    SDL_Event event, bool keyDown, float deltaTime) {
+    SDL_KeyboardEvent key = event.key;
     if (key.scancode == SDL_SCANCODE_F12 && key.down && !key.repeat) { // debug
             gd.debugMode = !gd.debugMode;
     }
@@ -267,11 +266,11 @@ void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
         currState = changeState(currState, gd);
         currState->init(state, gd, res);
     }
-    if (key.scancode == SDL_SCANCODE_Q && gd.player.hasItem) {
+    if (gd.controls->actionPerformed(typeAction::ACTION_USEITEM, event) && gd.player.hasItem) {
         Item item = gd.player.item;
         item.useItem(state, gd, res);
         gd.player.hasItem = false;
         clearItem(state, gd, res);
     }
-    gd.player.state_->handleInput(gd, res, key);   
+    gd.player.state_->handleInput(gd, res, event);   
 }

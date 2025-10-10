@@ -43,7 +43,7 @@ class Player : public AnimatedObject { // player
 
         AnimatedObject* blast;
 
-        virtual void handleInput(SDL_KeyboardEvent& key, GameData &gd, Resources &res, float deltaTime);
+        virtual void handleInput(SDL_Event &event, GameData &gd, Resources &res, float deltaTime);
         virtual void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
         //void draw(const SDLState &state, GameData &gs, float width, float height);
         

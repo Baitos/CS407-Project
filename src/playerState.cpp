@@ -12,8 +12,9 @@ extern GameState * currState;
 const float JUMP_FORCE = -450.f;
 
 //Handlers
-void handleJumping (GameData &gd, Resources &res, SDL_KeyboardEvent key) {
-    if (key.scancode == gd.controls->getActionKey(typeAction::ACTION_JUMP) && key.down && !key.repeat) {
+void handleJumping (GameData &gd, Resources &res, SDL_Event event) {
+    SDL_KeyboardEvent key = event.key;
+    if (gd.controls->actionPerformed(ACTION_JUMP, event) && key.down && !key.repeat) {
         //printf("Jump handled");
         //printf("%d", gd.player.grounded);
         if (gd.player.grounded) { // single jump
@@ -27,7 +28,7 @@ void handleJumping (GameData &gd, Resources &res, SDL_KeyboardEvent key) {
             gd.player.canDoubleJump = false;
             gd.player.gravityScale = 1.0f; // reset gravity
         }
-    } else if (!key.down && key.scancode == gd.controls->getActionKey(typeAction::ACTION_JUMP)) { // letting go of jump
+    } else if (!key.down && gd.controls->actionPerformed(typeAction::ACTION_JUMP, event)) { // letting go of jump
             float termVel = -200.0f; // option 2: Set velocity to predefined amount when you let go. makes less sharp jumps
             float shouldFlip = gd.player.flip; // there might be a more modular way to do this. idk if we will actually use the gravity flip but having it is nice and cool
             if (shouldFlip * gd.player.vel.y < shouldFlip * termVel) { 
@@ -36,8 +37,9 @@ void handleJumping (GameData &gd, Resources &res, SDL_KeyboardEvent key) {
         }
 }
 
-void handleRunning (GameData &gd, Resources &res, SDL_KeyboardEvent key){
-    if (key.scancode == SDL_SCANCODE_LSHIFT) {
+void handleRunning (GameData &gd, Resources &res, SDL_Event event){
+    if (gd.controls->actionPerformed(ACTION_SPRINT, event)) {
+        SDL_KeyboardEvent key = event.key;
         //printf("running handled");
             if (key.down && gd.player.currentDirection) { // if held down, increase speed               
                 gd.player.state_ = changePlayerState(gd, res, gd.player.state_, RUN);
@@ -48,16 +50,18 @@ void handleRunning (GameData &gd, Resources &res, SDL_KeyboardEvent key){
         }
 }
 
-void handleSprinting(GameData &gd, Resources &res, SDL_KeyboardEvent key){
-    if (key.scancode == SDL_SCANCODE_LSHIFT && !key.down) {
+void handleSprinting(GameData &gd, Resources &res, SDL_Event event){
+    SDL_KeyboardEvent key = event.key;
+    if (gd.controls->actionPerformed(ACTION_SPRINT, event) && !key.down) {
         //printf("Sprinting handled");
         gd.player.state_ = changePlayerState(gd, res, gd.player.state_, WALK);
         
     }
 }
 
-void handleFalling(GameData &gd, Resources &res, SDL_KeyboardEvent key){
-    if (key.scancode == SDL_SCANCODE_S && key.down && !gd.player.grounded) { // fastfall
+void handleFalling(GameData &gd, Resources &res, SDL_Event event){
+    SDL_KeyboardEvent key = event.key;
+    if (key.scancode == gd.controls->getActionKey(typeAction::ACTION_FASTFALL) && key.down && !gd.player.grounded) { // fastfall
         //printf("Falling handled");
         if (!key.repeat && !gd.player.fastFalling) {
             gd.player.vel.y = changeVel(-250.0f, gd.player);
@@ -234,47 +238,47 @@ PlayerState * changePlayerState(GameData &gd, Resources &res, PlayerState * temp
 }
 
 //Handle Input Functions
-void handleInputIdle(GameData &gd, Resources &res, SDL_KeyboardEvent key){
-    handleJumping(gd,res,key);
+void handleInputIdle(GameData &gd, Resources &res, SDL_Event event){
+    handleJumping(gd,res,event);
 }
 
-void handleInputWalk(GameData &gd, Resources &res, SDL_KeyboardEvent key){
-    handleJumping(gd,res,key);
-    handleRunning(gd,res,key);
-    handleFalling(gd,res,key);
+void handleInputWalk(GameData &gd, Resources &res, SDL_Event event){
+    handleJumping(gd,res,event);
+    handleRunning(gd,res,event);
+    handleFalling(gd,res,event);
 }
 
-void handleInputRun(GameData &gd, Resources &res, SDL_KeyboardEvent key){
-    handleJumping(gd,res,key);
-    handleRunning(gd,res,key);
-    handleFalling(gd,res,key);
+void handleInputRun(GameData &gd, Resources &res, SDL_Event event){
+    handleJumping(gd,res,event);
+    handleRunning(gd,res,event);
+    handleFalling(gd,res,event);
 }
 
-void handleInputJump(GameData &gd, Resources &res, SDL_KeyboardEvent key){
-    handleRunning(gd,res,key);
-    handleJumping(gd,res,key);
-    handleFalling(gd,res,key);
+void handleInputJump(GameData &gd, Resources &res, SDL_Event event){
+    handleRunning(gd,res,event);
+    handleJumping(gd,res,event);
+    handleFalling(gd,res,event);
 }
 
-void handleInputLaunch(GameData &gd, Resources &res, SDL_KeyboardEvent key){
-    handleRunning(gd,res,key);
-    handleJumping(gd,res,key);
-    handleFalling(gd,res,key);
+void handleInputLaunch(GameData &gd, Resources &res, SDL_Event event){
+    handleRunning(gd,res,event);
+    handleJumping(gd,res,event);
+    handleFalling(gd,res,event);
 }
 
-void handleInputRoll(GameData &gd, Resources &res, SDL_KeyboardEvent key){
-    handleRunning(gd,res,key);
-    handleJumping(gd,res,key);
-    handleFalling(gd,res,key);
+void handleInputRoll(GameData &gd, Resources &res, SDL_Event event){
+    handleRunning(gd,res,event);
+    handleJumping(gd,res,event);
+    handleFalling(gd,res,event);
 }
 
-void handleInputSprint(GameData &gd, Resources &res, SDL_KeyboardEvent key){
-    handleSprinting(gd,res,key);
-    handleJumping(gd,res,key);
-    handleFalling(gd,res,key);
+void handleInputSprint(GameData &gd, Resources &res, SDL_Event event){
+    handleSprinting(gd,res,event);
+    handleJumping(gd,res,event);
+    handleFalling(gd,res,event);
 }
 
-void handleInputGrapple(GameData &gd, Resources &res, SDL_KeyboardEvent key) {
+void handleInputGrapple(GameData &gd, Resources &res, SDL_Event event) {
 
 }
 
@@ -306,19 +310,19 @@ void enterGrapple(Player& player, GameData &gd, Resources &res) {
 }
 
 //Might not need, idk how it would work with a nullptr as a function in the loop
-void dummyInput(GameData &gd, Resources &res, SDL_KeyboardEvent key){
+void dummyInput(GameData &gd, Resources &res, SDL_Event event){
 }
 
-void handleInputJetpackDeploy(GameData &gd, Resources &res, SDL_KeyboardEvent key) {
-    handleJumping(gd,res,key);
+void handleInputJetpackDeploy(GameData &gd, Resources &res, SDL_Event event) {
+    handleJumping(gd,res,event);
 }
 
-void handleInputShotgunDeploy(GameData &gd, Resources &res, SDL_KeyboardEvent key) {
-    handleJumping(gd,res,key);
+void handleInputShotgunDeploy(GameData &gd, Resources &res, SDL_Event event) {
+    handleJumping(gd,res,event);
 }
 
-void handleInputSwordDeploy(GameData &gd, Resources &res, SDL_KeyboardEvent key) {
-    handleJumping(gd,res,key);
+void handleInputSwordDeploy(GameData &gd, Resources &res, SDL_Event event) {
+    handleJumping(gd,res,event);
 }
 
 //Update Functions
@@ -348,14 +352,14 @@ void updateWalk(const SDLState &state, GameData &gd, Resources &res, float delta
     if (isSliding(gd.player) && gd.player.grounded) { // moving in different direction of vel and pressing a direction, sliding
         gd.player.state_ = changePlayerState(gd, res, gd.player.state_, SLIDE); 
     }
-    if (state.keys[SDL_SCANCODE_LSHIFT] && gd.player.currentDirection) {
+    if (state.keys[gd.controls->getActionKey(typeAction::ACTION_SPRINT)] && gd.player.currentDirection) {
         gd.player.state_ = changePlayerState(gd, res, gd.player.state_, RUN);
     }
 }
 
 void updateRun(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {   
     sharedUpdate(state, gd,res,deltaTime);
-    if (!state.keys[SDL_SCANCODE_LSHIFT] || !gd.player.currentDirection) { // if not pressing then reset
+    if (!state.keys[gd.controls->getActionKey(typeAction::ACTION_SPRINT)] || !gd.player.currentDirection) { // if not pressing then reset
         gd.player.state_ = changePlayerState(gd, res, gd.player.state_, WALK);
     }
 
@@ -407,9 +411,9 @@ void updateFalling(const SDLState &state, GameData &gd, Resources &res, float de
     // 
 }
 
-void handleInputSlide(GameData &gd, Resources &res, SDL_KeyboardEvent key) {;
-    handleRunning(gd,res,key);
-    handleJumping(gd,res,key);
+void handleInputSlide(GameData &gd, Resources &res, SDL_Event event) {;
+    handleRunning(gd,res,event);
+    handleJumping(gd,res,event);
 }
 void updateSlide(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
     sharedUpdate(state, gd,res,deltaTime);
