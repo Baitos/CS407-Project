@@ -34,7 +34,6 @@ void drawCharSelect(const SDLState &state, GameData &gd, Resources res, float de
 
 
 void drawSettings(const SDLState &state, GameData &gd, Resources res, float deltaTime){
-    printf("start draw settings\n");
     // used for camera system
     gd.mapViewport.x = 0; 
     gd.mapViewport.y = 0; 
