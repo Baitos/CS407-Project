@@ -47,8 +47,8 @@ class AnimatedObject : public Object { // obj with anims
         std::vector<Animation> animations;
         int spriteFrame;
         int curAnimation;  
-        float width;
-        float height;  
+        float width = TILE_SIZE;
+        float height = TILE_SIZE; 
         float dir;
         float flip; // anti gravity
         float stunLength;
@@ -151,8 +151,6 @@ class Portal : public AnimatedObject { // portals
 
 class Effect : public AnimatedObject{
     public:
-    float width;
-    float height;
     bool  followsPlayer; // i.e. boombox
     Effect() : AnimatedObject(){}
     Effect(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex, float w, float h) :

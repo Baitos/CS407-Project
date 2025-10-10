@@ -137,8 +137,7 @@ void drawLevel(const SDLState &state, GameData &gd, Resources res, float deltaTi
         }
     }
     for (Item &item : gd.items_) {
-        printf("Draw item!\n");
-        item.draw(state, gd, TILE_SIZE, TILE_SIZE);
+        item.draw(state, gd, item.width, item.height);
     }
 
     gd.itemStorage_.draw(state, gd, 68, 68);

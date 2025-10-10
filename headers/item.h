@@ -56,12 +56,15 @@ class Boombox : public Item {
     public:
     Boombox(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) :
     Item(pos_, colliderRect, tex) {
+        width = 196;
+        height = 196;
         index = 1;
         type = itemType::BOOMBOX;
         this->useItem = useBoombox;
         this->onCollision = angledStun;
         this->knockbackMultiplier = 3.0f;
     }
+    void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
 };
 
 class Sugar : public Item {
