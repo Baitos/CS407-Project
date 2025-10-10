@@ -44,11 +44,13 @@ class Object {   // generic obj type
 
 class AnimatedObject : public Object { // obj with anims
     public:
-        int spriteFrame;
         std::vector<Animation> animations;
+        int spriteFrame;
         int curAnimation;    
         float dir;
         float flip; // anti gravity
+        float stunLength;
+        float knockbackMultiplier;
         AnimatedObject() : Object() { // default
             spriteFrame = 1;
             curAnimation = -1;
@@ -64,7 +66,7 @@ class AnimatedObject : public Object { // obj with anims
             flip = 1.0f;
             type = ANIMATED;
         }
-
+        void (*onCollision)(AnimatedObject &obj, GameData &gd, Resources &res);
         void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
         void draw(const SDLState &state, GameData &gd, float width, float height);
 };
@@ -133,6 +135,15 @@ class Portal : public AnimatedObject { // portals
     }
 };
 
+class Effect : public AnimatedObject{
+    public:
+    bool  followsPlayer; // i.e. boombox
+    Effect() : AnimatedObject(){}
+    Effect(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) :
+    AnimatedObject(pos_, colliderRect, tex) {}
+    void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+};
+
 class Laser : public Object { // obstacle
     public:
         bool laserActive;
@@ -167,4 +178,6 @@ class ItemBox : public Object {
         void generateItem(Player &player, GameData &gd, Resources &res);
 };
 
-
+// Stun for animated objects
+void angledStun(AnimatedObject &obj, GameData &gd, Resources &res);
+void effectExplosion(GameData &gd, Resources &res, AnimatedObject obj);

@@ -1,7 +1,7 @@
 #pragma once
-#include "../headers/object.h"
-#include "../headers/player.h"
-
+#include "object.h"
+#include "player.h"
+#include "resources.h"
 enum class itemType {
     BOMB,
     BOOMBOX,
@@ -23,23 +23,31 @@ void usePie(const SDLState &state, GameData &gd, Resources &res);
 
 void clearItem(const SDLState &state, GameData &gd, Resources &res);
 void setItemPicked(GameData &gd, Resources &res);
+
 class Item : public AnimatedObject {
     public:
     int index = 0;
     itemType type;
+    bool deleteOnCollision;
+    bool persistsOnCollision; // bomb
     Item() : AnimatedObject(){}
     Item(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) :
     AnimatedObject(pos_, colliderRect, tex) {}
+
     void (*useItem)(const SDLState &state, GameData &gd, Resources &res);
-    //virtual void onCollision();
+    void (*setEffect)(GameData &gd, Resources &res, AnimatedObject obj);
 };
 
 class Bomb : public Item {
     public:
     Bomb(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) :
     Item(pos_, colliderRect, tex) {
+        deleteOnCollision = true;
         index = 0;
         this->useItem = useBomb;
+        this->onCollision = angledStun;
+        this->knockbackMultiplier = 5.0f;
+        this->setEffect = effectExplosion;
     }
 };
 
@@ -49,6 +57,8 @@ class Boombox : public Item {
     Item(pos_, colliderRect, tex) {
         index = 1;
         this->useItem = useBoombox;
+        this->onCollision = angledStun;
+        this->knockbackMultiplier = 3.0f;
     }
 };
 

@@ -88,6 +88,15 @@ void AnimatedObject::update(const SDLState &state, GameData &gd, Resources &res,
     }
 }
 
+void Effect::update(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
+    if (this->curAnimation != -1) {
+        this->animations[this->curAnimation].step(deltaTime);
+    }
+    if (this->followsPlayer) {
+        this->pos = gd.player.pos;
+    }
+}
+
 void charIconObject::draw(const SDLState &state, GameData &gd, float width, float height) {
 
     float srcX = ((*this).spriteFrame - 1) * width;
@@ -172,7 +181,7 @@ void ItemBox::generateItem(Player &player, GameData &gd, Resources &res) {
         itemOptions = {itemType::BOMB, itemType::BOOMBOX, itemType::BOUNCYBALL, 
             itemType::FOG, itemType::ICE, itemType::MISSILE, itemType::PIE, itemType::SUGAR};
     }
-    selected = rand() % itemOptions.size();
+    selected = 0;//rand() % itemOptions.size();
     switch ((itemType)selected) {
         case itemType::BOMB:
             newItem = Bomb(player.pos, defaultCollider, res.texBomb);
@@ -188,4 +197,51 @@ void ItemBox::generateItem(Player &player, GameData &gd, Resources &res) {
     }
     gd.player.nextItem = newItem;
     player.pickingItem = true;
+}
+
+
+void angledStun(AnimatedObject &obj, GameData &gd, Resources &res) {
+    // TODO properly implement angles
+    float baseKnockback = 100.0f;
+    Player player = gd.player;
+    player.state_->nextStateVal = DEAD;
+    PlayerState * newState = changePlayerState(player.state_);
+    delete player.state_;
+    player.state_ = newState;
+    player.state_->enter(player, gd, res);
+    if (player.vel.x > 0) {
+        player.vel.x = changeVel(baseKnockback * obj.knockbackMultiplier, player);
+    }
+    else if (player.vel.x < 0) {
+        player.vel.x = changeVel(-baseKnockback* obj.knockbackMultiplier, player);
+    }
+    player.vel.x = changeVel(-player.vel.x, player);
+    float shouldFlip = player.flip; // there might be a more modular way to do this. idk if we will actually use the gravity flip but having it is nice and cool
+    if(shouldFlip * obj.pos.y < shouldFlip * player.pos.y ){
+        player.vel.y = changeVel(baseKnockback * obj.knockbackMultiplier, player);
+    } else {
+        player.vel.y = changeVel(-baseKnockback* obj.knockbackMultiplier, player);
+    }
+    player.gravityScale = 1.0f;
+    player.isStunned = true;
+    player.grounded = false;
+    gd.player = player;
+}
+
+void effectExplosion(GameData &gd, Resources &res, AnimatedObject obj) {
+    SDL_FRect expCollider = {
+        .x = 0,
+        .y = 0,
+        .w = (float)TILE_SIZE,
+        .h = (float)TILE_SIZE
+    };
+    glm::vec2 expPos;
+    expPos.x = obj.pos.x - TILE_SIZE * 2;
+    expPos.y = obj.pos.y - TILE_SIZE * 2;
+    Effect * explosion = new Effect(expPos, expCollider, res.texExplosion);
+    explosion->animations = res.itemAnims;
+    explosion->followsPlayer = false;
+    explosion->curAnimation = res.ANIM_ITEM_EXPLOSION;
+    explosion->animations[obj.curAnimation].reset();
+    gd.effects_.push_back(explosion);
 }

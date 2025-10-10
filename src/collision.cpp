@@ -122,6 +122,28 @@ void collisionCheckAndResponse(const SDLState &state, GameData &gd, Resources &r
 			}
 		}
 	}
+	for (int i = 0; i < gd.items_.size(); i++) {
+		if (player.isStunned) { // Avoid collision response from items if already stunned
+			continue;
+    	}
+		Item item = gd.items_[i];
+		SDL_FRect rectB{
+			.x = item.pos.x + item.collider.x,
+			.y = item.pos.y + item.collider.y,
+			.w = item.collider.w,
+			.h = item.collider.h
+		};
+		glm::vec2 resolution{ 0 };
+		if (intersectAABB(rectA, rectB, resolution)) {
+			item.onCollision(item, gd, res);
+			item.setEffect(gd, res, item);
+			if (item.deleteOnCollision) {
+				gd.items_.erase(gd.items_.begin() + i);
+				i--;
+			}
+		}
+		// TODO add condition before checking collision to not fuck shit
+	}
 }
 
 

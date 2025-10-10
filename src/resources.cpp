@@ -40,10 +40,11 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     playerAnims[ANIM_PLAYER_JETPACK_DEPLOY] = Animation(1, 2.0f);
     playerAnims[ANIM_PLAYER_SWORD_DEPLOY] = Animation(3, 0.3f);
 
-    itemAnims.resize(3); // 
+    itemAnims.resize(4); // 
     itemAnims[ANIM_ITEM_EMPTY] = Animation(1, 1.0f);
     itemAnims[ANIM_ITEM_CYCLE] = Animation(8, 0.4f);
     itemAnims[ANIM_ITEM_PICKED] = Animation(1, 1.0f);
+    itemAnims[ANIM_ITEM_EXPLOSION] = Animation(3, 0.5f);
 
     portalAnims.resize(2);
     portalAnims[PORTAL_IDLE] = Animation(3, 1.0f);

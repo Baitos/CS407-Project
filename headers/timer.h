@@ -4,6 +4,7 @@ class Timer {
     float length, time;
     bool timeout;
 public:
+    Timer(){}
     Timer(float length) : length(length), time(0), timeout(false) {
     }
     bool step(float deltaTime) {

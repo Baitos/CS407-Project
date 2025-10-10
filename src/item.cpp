@@ -1,11 +1,25 @@
 #include "../headers/gameData.h"
 #include "../headers/resources.h"
+#include "../headers/playerState.h"
+#include "../headers/helper.h"
 void useBomb(const SDLState &state, GameData &gd, Resources &res) {
-    printf("BOOOOOOM\n");
+    Item item = gd.player.item;
+    int xdiff;
+    // Set item 1 tile behind player, but we want it to be drawn at the beginning of tile
+    if (gd.player.dir >= 0) { // moving right, place to left
+        xdiff = 32 + (int)gd.player.pos.x % 32;
+        item.pos.x = gd.player.pos.x - xdiff;
+    }
+    else {
+        xdiff = 32 + (32- (int)gd.player.pos.x % 32);
+        item.pos.x = gd.player.pos.x + xdiff;
+    }
+    item.pos.y = gd.player.pos.y;
+    gd.items_.push_back(item);
 }
-
 void useBoombox(const SDLState &state, GameData &gd, Resources &res) {
-    printf("BUMP THAT SHIT\n");
+    Item item = gd.player.item;
+
 }
 void useBouncyBall(const SDLState &state, GameData &gd, Resources &res) {}
 void useFog(const SDLState &state, GameData &gd, Resources &res) {}
@@ -46,3 +60,4 @@ void ItemStorage::update(const SDLState &state, GameData &gd, Resources &res, fl
         setItemPicked(gd, res, item.index);
     }
 }
+

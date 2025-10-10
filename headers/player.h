@@ -21,6 +21,7 @@ class Player : public AnimatedObject { // player
         bool isDead = false;
         bool hasItem = false;
         bool pickingItem = false;
+        bool isStunned = false;
         bool sprinting = false;
         bool fastFalling = false;
         bool canDoubleJump = true;

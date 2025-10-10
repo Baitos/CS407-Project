@@ -244,6 +244,7 @@ void updateRoll(const SDLState &state, GameData &gd, Resources &res, float delta
 void dummyUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime){
     sharedUpdate(state, gd,res,deltaTime);
     if(gd.player.grounded) { // if moving change to running
+        gd.player.isStunned = false;
         gd.player.state_->nextStateVal = ROLL;
         PlayerState * newState = changePlayerState(gd.player.state_);
         delete gd.player.state_;
@@ -405,6 +406,7 @@ void enterFall(Player& player, GameData &gd, Resources &res){
 }
 
 void enterDead(Player& player, GameData &gd, Resources &res){
+    printf("enter dead\n");
     if(((LevelState * )(currState))->character == SWORD){
         player.texture = res.texDieS;
     } else if(((LevelState * )(currState))->character == SHOTGUN){

@@ -7,7 +7,7 @@
 #include "../headers/resources.h"
 #include "../headers/state.h"
 #include "../headers/playerState.h"
-#include "../headers/item.h"
+
 
 using namespace std;
 
@@ -22,6 +22,7 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
 {
     // update portals
         //gd.player.currentDirection = 0;
+
         for (Portal &portal : gd.portals_) {
             portal.update(state, gd, res, deltaTime);
         }
@@ -40,10 +41,25 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
                 box.update(state, gd, res, deltaTime);
             }
         }
+        for (int i = 0; i < gd.effects_.size(); i++) {
+            printf("update?");
+            Effect *effect = gd.effects_[i];
+            effect->update(state, gd, res, deltaTime);
+            if (effect->animations[effect->curAnimation].isDone()) {
+                printf("erase it\n");
+                delete effect;
+                gd.effects_.erase(gd.effects_.begin() + i);
+                i--;
+                printf("erased\n");
+            }
+
+        }
         if (gd.player.pickingItem) {
             gd.itemStorage_.update(state, gd, res, deltaTime);
         }
+
         //gd.player.currentDirection = 0;
+
         gd.player.state_->update(state, gd, res,deltaTime);
         if(gd.player.currentDirection){
             gd.player.dir = gd.player.currentDirection;
@@ -76,6 +92,7 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
         //printf("%d\n", gd.player.state_->currStateVal);
         
         // UPDATE ITEM STORAGE
+        
         gd.itemStorage_.pos.x = gd.player.pos.x - 368;
         gd.itemStorage_.pos.y = gd.player.pos.y - 200;
 }

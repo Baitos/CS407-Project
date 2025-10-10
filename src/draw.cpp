@@ -113,7 +113,11 @@ void drawLevel(const SDLState &state, GameData &gd, Resources res, float deltaTi
     for(Portal &portal : gd.portals_) {
         portal.draw(state, gd, TILE_SIZE, TILE_SIZE * 2);
     }
-
+    // draw effects
+    for (Effect *effect : gd.effects_) {
+        printf("draw effect\n");
+        effect->draw(state, gd, TILE_SIZE * 5, TILE_SIZE * 5);
+    }
     // draw player
     gd.player.draw(state, gd, TILE_SIZE, TILE_SIZE); // draw player class
 
@@ -133,6 +137,10 @@ void drawLevel(const SDLState &state, GameData &gd, Resources res, float deltaTi
             box.draw(state, gd, TILE_SIZE, TILE_SIZE);
         }
     }
+    for (Item &item : gd.items_) {
+        item.draw(state, gd, TILE_SIZE, TILE_SIZE);
+    }
+
     gd.itemStorage_.draw(state, gd, 68, 68);
     handleCrosshair(state, gd, res, deltaTime);
 }
