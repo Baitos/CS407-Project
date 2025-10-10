@@ -5,7 +5,6 @@
 #include <vector>
 #include <string>
 #include <array>
-
 #include "../headers/updateMenu.h"
 #include "../headers/updateLevel.h"
 #include "../headers/collision.h"
@@ -62,7 +61,11 @@ class TitleState : public GameState{
 };
 
 class SettingsState : public GameState{
-
+    public:
+    std::vector<std::string> controlStrings = std::vector<std::string>(7);
+    float xStart = 600;
+    float yStart = 115;
+    float yOffset = 26;
 };
 
 class HostState : public GameState {

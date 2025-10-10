@@ -5,3 +5,5 @@ extern bool running;
 extern float portalID;
 extern int selectedItem;
 extern const float EPSILON;
+extern bool waitingForKey;
+extern bool hasNewKey;

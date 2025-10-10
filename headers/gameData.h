@@ -6,7 +6,7 @@
 #include "initState.h"
 #include "player.h"
 #include "menu.h"
-
+#include "controls.h"
 struct GameData {
     Player player;
     Player player2;
@@ -29,6 +29,7 @@ struct GameData {
               clickCoords;
     ItemStorage itemStorage_;
     Object settingsBorder;
+    Controls *controls;
     std::vector<Object> settingsDials_;
     //Note that volume ratio is dial.pos.x / (290-84)
     Object * updatedDial;
@@ -46,5 +47,6 @@ struct GameData {
             .h = static_cast<float>(state.logH)
         };
         debugMode = false;
+        controls = new Controls();
     }
 };

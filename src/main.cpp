@@ -90,7 +90,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         float deltaTime = (nowTime - prevTime) / 1000.0f; // convert to seconds from ms
 
         //Calls functions related to the current GameState
-        //printf("new main loop");
+        //printf("new main loop\n");
         currState->input(state, gd, res, deltaTime);
         //printf("input done\n");
         currState->update(state, gd, res, deltaTime);
@@ -103,11 +103,11 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
             SDL_RenderDebugText(state.renderer, 5, 5,
                             std::format("FPS: {}, State: {}, Grounded: {}, X: {}, Y: {}", 
                             static_cast<int>(FPS), static_cast<int>(gd.player.state_->currStateVal), gd.player.grounded, gd.mapViewport.x, gd.mapViewport.y).c_str());
+            SDL_RenderDebugText(state.renderer, 10, 10, "hello");
         }
         //swap buffers and present
         SDL_RenderPresent(state.renderer);
         prevTime = nowTime;
-        
     }
 
     delete currState;

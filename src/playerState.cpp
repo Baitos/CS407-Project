@@ -13,7 +13,7 @@ const float JUMP_FORCE = -450.f;
 
 //Handlers
 void handleJumping (GameData &gd, Resources &res, SDL_KeyboardEvent key) {
-    if (key.scancode == SDL_SCANCODE_SPACE && key.down && !key.repeat) {
+    if (key.scancode == gd.controls->getActionKey(typeAction::ACTION_JUMP) && key.down && !key.repeat) {
         //printf("Jump handled");
         //printf("%d", gd.player.grounded);
         if (gd.player.grounded) { // single jump
@@ -27,7 +27,7 @@ void handleJumping (GameData &gd, Resources &res, SDL_KeyboardEvent key) {
             gd.player.canDoubleJump = false;
             gd.player.gravityScale = 1.0f; // reset gravity
         }
-    } else if (!key.down && key.scancode == SDL_SCANCODE_SPACE) { // letting go of jump
+    } else if (!key.down && key.scancode == gd.controls->getActionKey(typeAction::ACTION_JUMP)) { // letting go of jump
             float termVel = -200.0f; // option 2: Set velocity to predefined amount when you let go. makes less sharp jumps
             float shouldFlip = gd.player.flip; // there might be a more modular way to do this. idk if we will actually use the gravity flip but having it is nice and cool
             if (shouldFlip * gd.player.vel.y < shouldFlip * termVel) { 

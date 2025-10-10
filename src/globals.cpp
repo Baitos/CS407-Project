@@ -6,3 +6,5 @@ bool running = true;
 float portalID = 0;
 int selectedItem = 0;
 const float EPSILON = 0.00001;
+bool waitingForKey = false;
+bool hasNewKey = false;

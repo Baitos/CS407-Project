@@ -1,7 +1,8 @@
 #include "../headers/drawMenu.h"
 #include "../headers/helper.h"
 #include "../headers/state.h"
-
+#include "../headers/controls.h"
+extern GameState * currState;
 void drawCharSelect(const SDLState &state, GameData &gd, Resources res, float deltaTime){
     // used for camera system
     gd.mapViewport.x = 0; 
@@ -33,6 +34,7 @@ void drawCharSelect(const SDLState &state, GameData &gd, Resources res, float de
 
 
 void drawSettings(const SDLState &state, GameData &gd, Resources res, float deltaTime){
+    printf("start draw settings\n");
     // used for camera system
     gd.mapViewport.x = 0; 
     gd.mapViewport.y = 0; 
@@ -46,6 +48,12 @@ void drawSettings(const SDLState &state, GameData &gd, Resources res, float delt
     }
     for (Object &o : gd.settingsDials_) {
         o.draw(state, gd, static_cast<float>(o.texture->w) * 2, static_cast<float>(o.texture->h) * 2); 
+    }
+    SettingsState * curSettings = ((SettingsState *)currState);
+    std::vector<std::string> controlStrings = curSettings->controlStrings;
+    for (int i = 0; i < controlStrings.size(); i++) {
+        SDL_RenderDebugText(state.renderer, curSettings->xStart,
+             curSettings->yStart + i * curSettings->yOffset, controlStrings[i].c_str());
     }
 
     

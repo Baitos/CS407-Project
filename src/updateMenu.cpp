@@ -7,7 +7,7 @@
 #include "../headers/resources.h"
 #include "../headers/state.h"
 #include "../headers/playerState.h"
-
+#include "../headers/controls.h"
 
 using namespace std;
 
@@ -27,7 +27,30 @@ void charSelectUpdate(const SDLState &state, GameData &gd, Resources &res, float
 
 //Update for Settings Screen
 void settingsUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
-    
+    //printf("update\n");
+    Controls * controls  = gd.controls;
+    SettingsState * curSettings = ((SettingsState *)currState);
+    controlStruct construct;
+    std::string keyName;
+    for (int i = 0; i < 7; i++) {
+        construct = controls->keyboardControls[i];
+        if (construct.isMouseButton) {
+            if (construct.key == SDL_BUTTON_LEFT) {
+                keyName = std::string("LMB");
+            }
+            else if (construct.key == SDL_BUTTON_RIGHT) {
+                keyName = std::string("RMB");
+            }
+            else {
+                keyName = std::string("Mouse3"); // middle click
+            }
+        }
+        else {
+            // gets the name of the key for the current action
+            keyName = std::string(SDL_GetKeyName(SDL_GetKeyFromScancode((SDL_Scancode)construct.key, SDL_KMOD_NONE, false)));
+        }
+        curSettings->controlStrings[i] = keyName;
+    }
 }
 
 //
@@ -90,7 +113,11 @@ void settingsInputs(SDLState &state, GameData &gd, Resources &res, float deltaTi
                 }
                 case SDL_EVENT_KEY_DOWN:
                 {
-                    
+                    if(waitingForKey) {
+                        hasNewKey = true;
+                        gd.controls->setControls(gd.controls->currActionRebind, {event.key.scancode, false});
+                        waitingForKey = false;
+                    }
                     
                     break;
                 }
@@ -101,7 +128,14 @@ void settingsInputs(SDLState &state, GameData &gd, Resources &res, float deltaTi
                 }
                 case SDL_EVENT_MOUSE_BUTTON_DOWN:
                 {
-                    handleSettingsClick(state,gd,res,deltaTime);
+                    if (waitingForKey) {
+                        hasNewKey = true;
+                        gd.controls->setControls(gd.controls->currActionRebind, {event.button.button, true});
+                        waitingForKey = false;
+                    }
+                    else {
+                        handleSettingsClick(state,gd,res,deltaTime);
+                    }
                     break;
                     
                 }  case SDL_EVENT_MOUSE_BUTTON_UP:
@@ -290,6 +324,7 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
 
 //Handles Clicking for Settings
 void handleSettingsClick(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
+    Controls * controls = gd.controls;
     if ((gd.mouseCoords.x >= 583 && gd.mouseCoords.x <= 766) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)) {
         printf("Save\n");
     } else if ((gd.mouseCoords.x >= 35 && gd.mouseCoords.x <= 218) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)) {
@@ -298,19 +333,34 @@ void handleSettingsClick(const SDLState &state, GameData &gd, Resources &res, fl
         currState->init(state, gd, res);
     } else if((gd.mouseCoords.x >= 578 && gd.mouseCoords.x <= 690) && (gd.mouseCoords.y >= 106 && gd.mouseCoords.y <= 126)){ //Sprint
         printf("Sprint\n");
+        waitingForKey = true;
+        controls->currActionRebind = typeAction::ACTION_SPRINT;
     } else if((gd.mouseCoords.x >= 578 && gd.mouseCoords.x <= 690) && (gd.mouseCoords.y >= 130 && gd.mouseCoords.y <= 150)){ //Grapple
         printf("Grapple\n");
+        waitingForKey = true;
+        controls->currActionRebind = typeAction::ACTION_GRAPPLE;
     } else if((gd.mouseCoords.x >= 578 && gd.mouseCoords.x <= 690) && (gd.mouseCoords.y >= 156 && gd.mouseCoords.y <= 174)){ //Ability
         printf("Ability\n");
+        waitingForKey = true;
+        controls->currActionRebind = typeAction::ACTION_ABILITY;
     } else if((gd.mouseCoords.x >= 578 && gd.mouseCoords.x <= 690) && (gd.mouseCoords.y >= 182 && gd.mouseCoords.y <= 202)){ //Jump
         printf("Jump\n");
+        waitingForKey = true;
+        controls->currActionRebind = typeAction::ACTION_JUMP;
     } else if((gd.mouseCoords.x >= 578 && gd.mouseCoords.x <= 690) && (gd.mouseCoords.y >= 208 && gd.mouseCoords.y <= 228)){ //Use Item
         printf("Use Item\n");
+        waitingForKey = true;
+        controls->currActionRebind = typeAction::ACTION_USEITEM;
     } else if((gd.mouseCoords.x >= 578 && gd.mouseCoords.x <= 690) && (gd.mouseCoords.y >= 234 && gd.mouseCoords.y <= 254)){ //Pause
         printf("Pause\n");
+        waitingForKey = true;
+        controls->currActionRebind = typeAction::ACTION_PAUSE;
     } else if((gd.mouseCoords.x >= 578 && gd.mouseCoords.x <= 690) && (gd.mouseCoords.y >= 260 && gd.mouseCoords.y <= 280)){ //Fast-Fall
         printf("Fast-fall\n");
+        waitingForKey = true;
+        controls->currActionRebind = typeAction::ACTION_FASTFALL;
     }   
+    printf("Num dials = %d", gd.settingsDials_.size());
     for(Object &o : gd.settingsDials_){
         
         if((gd.mouseCoords.x >= o.pos.x && gd.mouseCoords.x <= o.pos.x + (static_cast<float>(o.texture->w) * 2)) && (gd.mouseCoords.y >= o.pos.y && gd.mouseCoords.y <= o.pos.y + (static_cast<float>(o.texture->h) * 2))){
