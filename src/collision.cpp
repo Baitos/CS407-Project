@@ -64,8 +64,8 @@ void collisionCheckAndResponse(const SDLState &state, GameData &gd, Resources &r
 			// found intersection, respond accordingly
 			if(l.laserActive){
 				//printf("FALLING");
-				PlayerState* dState = new JetpackDeployState();
-                player.handleState(dState, gd, res);
+				PlayerState* stState = new StunnedState();
+                player.handleState(stState, gd, res);
 			
 				player.vel.x = changeVel(-player.vel.x, player);
 				float shouldFlip = player.flip; // there might be a more modular way to do this. idk if we will actually use the gravity flip but having it is nice and cool

@@ -267,6 +267,7 @@ void createTiles(const SDLState &state, GameData &gd, const Resources &res) { //
                             player.cooldownTimer = Timer(1.0f);
                         }
                         
+                        player.character = ((LevelState*) currState)->character;
                         player.state_ = new IdleState();
                         player.dir = 0;
                         player.flip = 1;

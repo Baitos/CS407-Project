@@ -57,7 +57,7 @@ class Player : public AnimatedObject { // player
         
         Player(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex, std::vector<Animation> anims, int curAnim, float maxSpeedX_) :
         AnimatedObject(pos_, colliderRect, tex), sprintTimer(1.5f), jetpackTimer(1.0f), cooldownTimer(5.0f) {
-            acc = glm::vec2(350, 0); // default for now
+            acc = glm::vec2(300, 0); // default for now
             animations = anims;
             curAnimation = curAnim;
             currentDirection = 0;

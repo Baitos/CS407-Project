@@ -23,7 +23,7 @@ std::string getStateFromEnum(PlayerStateValue ps) {
         case LAUNCH:           return "LAUNCH";
         case JUMP:             return "JUMP";
         case ROLL:             return "ROLL";
-        case FALL:             return "FALL";
+        case STUNNED:             return "STUNNED";
         case DEAD:             return "DEAD";
         case SWORD_DEPLOY:     return "SWORD_DEPLOY";
         case SHOTGUN_DEPLOY:   return "SHOTGUN_DEPLOY";
@@ -34,66 +34,64 @@ std::string getStateFromEnum(PlayerStateValue ps) {
 }
 
 //Handlers
-PlayerState* handleJumping(GameData &gd, Resources &res, SDL_KeyboardEvent key) {
-    // if (key.scancode == SDL_SCANCODE_SPACE && key.down && !key.repeat) {
-    //     //printf("Jump handled");
-    //     //printf("%d", gd.player.grounded);
-    //     if (gd.player.grounded) { // single jump
-    //         return new LaunchState();
-
-    //         gd.player.vel.y = changeVel(JUMP_FORCE, gd.player); 
-    //     } else if (gd.player.canDoubleJump) { // double jump
+PlayerState* handleJumping(GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key) {
+    if (key.scancode == SDL_SCANCODE_SPACE && key.down && !key.repeat) {
+        //printf("Jump handled");
+        //printf("%d", p.grounded);
+        if (p.grounded) { // single jump
+            return new LaunchState();
+        }
+    //     } else if (p.canDoubleJump) { // double jump
     //         return new JumpState();
             
-    //         // gd.player.vel.y = changeVel(JUMP_FORCE, gd.player);  
-    //         // gd.player.canDoubleJump = false;
-    //         // gd.player.gravityScale = 1.0f; // reset gravity
+    //         // p.vel.y = changeVel(JUMP_FORCE, p);  
+    //         // p.canDoubleJump = false;
+    //         // p.gravityScale = 1.0f; // reset gravity
     //     }
     // } else if (!key.down && key.scancode == SDL_SCANCODE_SPACE) { // letting go of jump
     //     float termVel = -200.0f; // option 2: Set velocity to predefined amount when you let go. makes less sharp jumps
-    //     float shouldFlip = gd.player.flip; // there might be a more modular way to do this. idk if we will actually use the gravity flip but having it is nice and cool
-    //     if (shouldFlip * gd.player.vel.y < shouldFlip * termVel) { 
-    //         gd.player.vel.y = changeVel(termVel, gd.player);
+    //     float shouldFlip = p.flip; // there might be a more modular way to do this. idk if we will actually use the gravity flip but having it is nice and cool
+    //     if (shouldFlip * p.vel.y < shouldFlip * termVel) { 
+    //         p.vel.y = changeVel(termVel, p);
     //     }
-    // }
+    }
+    
     return nullptr;
 }
 
-PlayerState* handleRunning(GameData &gd, Resources &res, SDL_KeyboardEvent key) {
-    // if (key.scancode == SDL_SCANCODE_LSHIFT) {
-    //     //printf("running handled");
-    //         if (key.down && gd.player.currentDirection) { // if held down, increase speed               
-    //             gd.player.state_ = changePlayerState(gd, res, gd.player.state_, RUN);
-                
-    //         } else {
-    //             gd.player.state_ = changePlayerState(gd, res, gd.player.state_, WALK);                
-    //         }
-    //     }
+PlayerState* handleRunning(GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key) {
+    /*if (key.scancode == SDL_SCANCODE_LSHIFT) {
+        //printf("running handled");
+            if (key.down && p.currentDirection) { // if held down, increase speed               
+                return new RunState(); 
+            } else {
+                return new WalkState();               
+            }
+        }*/
     return nullptr;
 }
 
-PlayerState* handleSprinting(GameData &gd, Resources &res, SDL_KeyboardEvent key) {
-    // if (key.scancode == SDL_SCANCODE_LSHIFT && !key.down) {
-    //     //printf("Sprinting handled");
-    //     gd.player.state_ = changePlayerState(gd, res, gd.player.state_, WALK);
-        
-    // }
+PlayerState* handleSprinting(GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key) {
+    /*if (key.scancode == SDL_SCANCODE_LSHIFT && !key.down) {
+        //printf("Sprinting handled");
+        return new WalkState();
+    }*/
     return nullptr;
 }
 
-PlayerState* handleFalling(GameData &gd, Resources &res, SDL_KeyboardEvent key) {
-    // if (key.scancode == SDL_SCANCODE_S && key.down && !gd.player.grounded) { // fastfall
-    //     //printf("Falling handled");
-    //     if (!key.repeat && !gd.player.fastFalling) {
-    //         gd.player.vel.y = changeVel(-250.0f, gd.player);
-    //         gd.player.fastFalling = true;
+PlayerState* handleFalling(GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key) {
+    /*if (key.scancode == SDL_SCANCODE_S && key.down && !p.grounded) { // fastfall
+        //printf("Falling handled");
+        if (!key.repeat && !p.fastFalling) {
+            p.vel.y = changeVel(-250.0f, p);
+            p.fastFalling = true;
 
-    //         //Enter Jumping State
-    //         gd.player.state_ = changePlayerState(gd, res, gd.player.state_, JUMP);
-    //         //Call enter on jumping state
-    //     }
-    //     gd.player.gravityScale = 3.0f;
-    // }
+            //Enter Jumping State
+            return new JumpState();
+            //Call enter on jumping state
+        }
+        p.gravityScale = 3.0f;
+    }*/
     return nullptr;
 }
 
@@ -105,6 +103,13 @@ void sharedMovement(const SDLState &state, Player &p) { // basic movement functi
     if (state.keys[SDL_SCANCODE_D]) { // don't set to else cuz the two keys cancel e/o out
         p.currentDirection += 1.f;
     }
+    if (p.currentDirection) {
+        p.dir = p.currentDirection;
+    }
+}
+
+void sharedGravity(Player &p, float deltaTime) { // call on airborne states
+    p.vel.y += changeVel(700 * p.gravityScale * deltaTime, p); // gravity
 }
 
 void sharedUpdate(const SDLState &state, Player &p, float deltaTime) { // basic animation and cooldown function, should always be called pretty much
@@ -117,12 +122,6 @@ void sharedUpdate(const SDLState &state, Player &p, float deltaTime) { // basic 
         p.dir = p.currentDirection;
     }
 
-    if (std::abs(p.vel.x) > p.maxSpeedX) {
-        if (!isSliding(p)) { // if not sliding slow down
-            p.vel.x -= 1.5 * p.acc.x * deltaTime * p.currentDirection;
-        }
-    }
-
     if(p.usingSugar) {
         ((Sugar *) &p.item)->sugarTimer.step(deltaTime);
         p.vel.x += .5f * p.currentDirection;
@@ -131,29 +130,32 @@ void sharedUpdate(const SDLState &state, Player &p, float deltaTime) { // basic 
             p.usingSugar = false;
         }
     }
+    if (!p.grounded) { 
+        sharedGravity(p, deltaTime);
+    }
+    
 
     // add vel to pos 
     p.pos += updatePos(p, deltaTime);
 }
 
-void sharedGravity(Player &p, float deltaTime) { // call on airborne states
-    p.vel.y += changeVel(700 * p.gravityScale * deltaTime, p); // gravity
-}
-
 // IDLE
 PlayerState* IdleState::handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key) {
-    //handleJumping(gd,res,key);
-    printf("Idle Input\n");
+    
     sharedMovement(state, p);
     if (p.currentDirection) { // if moving change to walking
-
         return new WalkState(); 
     }
+    PlayerState* ret = handleJumping(gd, res, p, key);
+    if (ret != nullptr) {
+        return ret;
+    }
+
     return nullptr;
 }
 
 PlayerState* IdleState::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
-    //gd.player.vel.x = 0;    
+    //p.vel.x = 0;    
     sharedUpdate(state, p, deltaTime);
     return nullptr;
 }
@@ -168,12 +170,19 @@ void IdleState::enter(GameData &gd, Resources &res, Player &p) {
 // WALK
 PlayerState* WalkState::handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key) {
     sharedMovement(state, p);
-
+    PlayerState* ret = handleJumping(gd, res, p, key);
+    if (ret != nullptr) {
+        return ret;
+    }
+    ret = handleRunning(gd, res, p, key);
+    if (ret != nullptr) {
+        return ret;
+    }
     return nullptr;
 }
 
-PlayerState* WalkState::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
-    //gd.player.vel.x = 0;    
+PlayerState* WalkState::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {   
+    sharedUpdate(state, p, deltaTime);
     if (!p.currentDirection && p.grounded) { // if not moving, slow down
         const float factor = p.vel.x > 0 ? -1.0f : 1.0f;
         float amount = factor * p.acc.x * deltaTime;
@@ -207,15 +216,16 @@ void WalkState::enter(GameData &gd, Resources &res, Player &p) {
 void WalkState::exit(GameData &gd, Resources &res, Player &p) {} // do nothing
 
 // RUN
-PlayerState* RunState::handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key){
-    handleJumping(gd,res,key);
-    handleRunning(gd,res,key);
-    handleFalling(gd,res,key);
+PlayerState* RunState::handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key) {
+    sharedMovement(state, p);
+    handleJumping(gd, res, p, key);
+    handleRunning(gd, res, p, key);
+    handleFalling(gd, res, p, key);
     return nullptr;
 }
 
 PlayerState* RunState::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {   
-    sharedUpdate(state, gd,res,deltaTime);
+    sharedUpdate(state, p, deltaTime);
     if (!state.keys[SDL_SCANCODE_LSHIFT] || !p.currentDirection) { // if not pressing then reset
         return new WalkState();
     }
@@ -231,6 +241,7 @@ PlayerState* RunState::update(const SDLState &state, GameData &gd, Resources &re
     if (isSliding(p) && p.grounded) { // moving in different direction of vel and pressing a direction, sliding
         return new SlideState();
     }
+    return nullptr;
 }
 
 void RunState::enter(GameData &gd, Resources &res, Player &p) {
@@ -243,18 +254,19 @@ void RunState::enter(GameData &gd, Resources &res, Player &p) {
 void RunState::exit(GameData &gd, Resources &res, Player &p) {} // do nothing
 
 // JUMP 
-PlayerState* JumpState::handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key){
-    handleRunning(gd,res,key);
-    handleJumping(gd,res,key);
-    handleFalling(gd,res,key);
+PlayerState* JumpState::handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key) {
+    sharedMovement(state, p);
+    handleJumping(gd, res, p, key);
+    handleRunning(gd, res, p, key);
+    handleFalling(gd, res, p, key);
     return nullptr;
 }
 
 PlayerState* JumpState::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {   
-    sharedUpdate(state, gd,res,deltaTime);
-    if(p.grounded && p.dir == 0) {
+    sharedUpdate(state, p, deltaTime);
+    if (p.grounded && p.dir == 0) {
         return new IdleState();
-    } else if(p.grounded) {
+    } else if (p.grounded) {
         return new WalkState();
     }
     return nullptr;
@@ -266,50 +278,206 @@ void JumpState::enter(GameData &gd, Resources &res, Player &p) {
     p.animations[p.curAnimation].reset();
 }
 
+void JumpState::exit(GameData &gd, Resources &res, Player &p) {} // do nothing
 
 // LAUNCH
-PlayerState* LaunchState::handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key){
-    handleRunning(gd,res,key);
-    handleJumping(gd,res,key);
-    handleFalling(gd,res,key);
+PlayerState* LaunchState::handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key) {
+    sharedMovement(state, p);
+    handleJumping(gd, res, p, key);
+    handleRunning(gd, res, p, key);
+    handleFalling(gd, res, p, key);
     return nullptr;
 }
+
+PlayerState* LaunchState::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) { // TODO:
+    sharedUpdate(state, p, deltaTime);
+    if (p.animations[p.curAnimation].isDone()) {
+        return new JumpState();
+    }
+    return nullptr;
+}
+
+void LaunchState::enter(GameData &gd, Resources &res, Player &p) {
+    p.texture = res.texLaunch[p.character];
+    p.curAnimation = res.ANIM_PLAYER_LAUNCH; 
+    p.animations[p.curAnimation].reset();
+    p.vel.y = changeVel(JUMP_FORCE, p); // launch! 
+}
+
+void LaunchState::exit(GameData &gd, Resources &res, Player &p) {} // do nothing
 
 // ROLL
-PlayerState* RollState::handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key){
-    handleRunning(gd,res,key);
-    handleJumping(gd,res,key);
-    handleFalling(gd,res,key);
+PlayerState* RollState::handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key) {
+    sharedMovement(state, p);
+    handleJumping(gd, res, p, key);
+    handleRunning(gd, res, p, key);
+    handleFalling(gd, res, p, key);
     return nullptr;
 }
+
+PlayerState* RollState::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) { // TODO:
+    sharedUpdate(state, p, deltaTime);
+    return nullptr;
+}
+
+void RollState::enter(GameData &gd, Resources &res, Player &p) {
+    p.texture = res.texRoll[p.character];
+    p.curAnimation = res.ANIM_PLAYER_ROLL; 
+    p.animations[p.curAnimation].reset();
+}
+
+void RollState::exit(GameData &gd, Resources &res, Player &p) {} // do nothing
 
 // SPRINT
-PlayerState* SprintState::handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key){
-    handleSprinting(gd,res,key);
-    handleJumping(gd,res,key);
-    handleFalling(gd,res,key);
+PlayerState* SprintState::handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key) {
+    sharedMovement(state, p);
+    handleJumping(gd, res, p, key);
+    handleSprinting(gd, res, p, key);
+    handleFalling(gd, res, p, key);
     return nullptr;
 }
 
-
-
-//Might not need, idk how it would work with a nullptr as a function in the loop
-void dummyInput(GameData &gd, Resources &res, SDL_KeyboardEvent key){
+PlayerState* SprintState::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) { // TODO:
+    sharedUpdate(state, p, deltaTime);
+    return nullptr;
 }
 
-void handleInputJetpackDeploy(GameData &gd, Resources &res, SDL_KeyboardEvent key) {
-    handleJumping(gd,res,key);
+void SprintState::enter(GameData &gd, Resources &res, Player &p) {
+    p.texture = res.texRun[p.character];
+    p.curAnimation = res.ANIM_PLAYER_RUN; 
+    p.animations[p.curAnimation].reset();
+    p.maxSpeedX = p.maxSprintX;
 }
 
-void handleInputShotgunDeploy(GameData &gd, Resources &res, SDL_KeyboardEvent key) {
-    handleJumping(gd,res,key);
+void SprintState::exit(GameData &gd, Resources &res, Player &p) {} // do nothing
+
+// SLIDE
+PlayerState* SlideState::handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key) {
+    sharedMovement(state, p);
+    handleJumping(gd, res, p, key);
+    handleRunning(gd, res, p, key);
+    return nullptr;
 }
 
-void handleInputSwordDeploy(GameData &gd, Resources &res, SDL_KeyboardEvent key) {
-    handleJumping(gd,res,key);
+PlayerState* SlideState::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) { // TODO:
+    sharedUpdate(state, p, deltaTime);
+    if (p.currentDirection == 0) { // this entire function is awful and making me sad
+        p.currentDirection = p.dir;
+    } 
+    if (!isSliding(p)) {
+        return new RunState();
+    }
+    return nullptr;
 }
+
+void SlideState::enter(GameData &gd, Resources &res, Player &p) {
+    p.texture = res.texSlide[p.character];
+    p.curAnimation = res.ANIM_PLAYER_SLIDE; 
+    p.animations[p.curAnimation].reset();
+    p.sprintTimer.reset();
+}
+
+void SlideState::exit(GameData &gd, Resources &res, Player &p) {} // do nothing
+
+// FASTFALL
+PlayerState* FastfallState::handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key) {
+    sharedMovement(state, p);
+    return new JumpState();
+}
+
+PlayerState* FastfallState::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) { // TODO:
+    sharedUpdate(state, p, deltaTime);
+    return nullptr;
+}
+
+void FastfallState::enter(GameData &gd, Resources &res, Player &p) { // todo
+
+}
+
+void FastfallState::exit(GameData &gd, Resources &res, Player &p) {} // do nothing
+
+// STUNNED
+PlayerState* StunnedState::handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key) {
+    sharedMovement(state, p);
+    return nullptr;
+}
+
+PlayerState* StunnedState::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) { // TODO:
+    sharedUpdate(state, p, deltaTime);
+    return nullptr;
+}
+
+void StunnedState::enter(GameData &gd, Resources &res, Player &p) { // todo
+
+}
+
+void StunnedState::exit(GameData &gd, Resources &res, Player &p) {} // do nothing
+
+// DEAD
+void DeadState::enter(GameData &gd, Resources &res, Player &p) {
+    p.texture = res.texDie[p.character];
+    p.curAnimation = res.ANIM_PLAYER_DIE; 
+    p.animations[p.curAnimation].reset();
+}
+
+// SWORD DEPLOY
+PlayerState* SwordDeployState::handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key) {
+    sharedMovement(state, p);
+    handleJumping(gd, res, p, key);
+    return nullptr;
+}
+
+PlayerState* SwordDeployState::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) { // TODO:
+    sharedUpdate(state, p, deltaTime);
+    return nullptr;
+}
+
+void SwordDeployState::enter(GameData &gd, Resources &res, Player &p) { // todo
+
+}
+
+void SwordDeployState::exit(GameData &gd, Resources &res, Player &p) {} // do nothing
+
+// SHOTGUN DEPLOY
+PlayerState* ShotgunDeployState::handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key) {
+    sharedMovement(state, p);
+    handleJumping(gd, res, p, key);
+    return nullptr;
+}
+
+PlayerState* ShotgunDeployState::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) { // TODO:
+    sharedUpdate(state, p, deltaTime);
+    return nullptr;
+}
+
+void ShotgunDeployState::enter(GameData &gd, Resources &res, Player &p) { // todo
+
+}
+
+void ShotgunDeployState::exit(GameData &gd, Resources &res, Player &p) {} // do nothing
+
+// JETPACK DEPLOY
+PlayerState* JetpackDeployState::handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key) {
+    sharedMovement(state, p);
+    handleJumping(gd, res, p, key);
+    return nullptr;
+}
+
+PlayerState* JetpackDeployState::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) { // TODO:
+    sharedUpdate(state, p, deltaTime);
+    return nullptr;
+}
+
+void JetpackDeployState::enter(GameData &gd, Resources &res, Player &p) { // todo
+
+}
+
+void JetpackDeployState::exit(GameData &gd, Resources &res, Player &p) {} // do nothing
+
 
 // GRAPPLE
+
+
 PlayerState* GrappleState::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
     glm::vec2 pOffset = findCenterOfSprite(p); 
     glm::vec2 hOffset = findCenterOfSprite(p.hook);
@@ -335,25 +503,15 @@ void GrappleState::exit(GameData &gd, Resources &res, Player &p) {
     p.hook.visible = false;
     p.hook.pos += glm::vec2(-10000.0f, -10000.0f); // maybe unnecessary
 }
-
-// void updateSprint(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
-//     sharedUpdate(state, gd,res,deltaTime);
-//     float LEEWAY = 20;
-//     if (gd.player.grounded && // if on ground and sliding or too slow reset sprint
-//         (isSliding(gd.player) || std::abs(gd.player.vel.x) < (gd.player.maxRunX - LEEWAY))) {       
-//         gd.player.sprintTimer.reset();
-//         gd.player.state_ = changePlayerState(gd, res, gd.player.state_, RUN);
-//     }
-// }
-        
+   
     
 // }
 
 // void updateFalling(const SDLState &state, GameData &gd, Resources &res, float deltaTime){
 //     sharedUpdate(state, gd,res,deltaTime);
 
-//     // gd.player.state_->nextStateVal = FALL;
-//     // gd.player.state_ = changePlayerState(gd, res, gd.player.state_);
+//     // p.state_->nextStateVal = FALL;
+//     // p.state_ = changePlayerState(gd, res, p.state_);
 //     // 
 // }
 
@@ -363,30 +521,17 @@ void GrappleState::exit(GameData &gd, Resources &res, Player &p) {
 // }
 // void updateSlide(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
 //     sharedUpdate(state, gd,res,deltaTime);
-//     if (gd.player.currentDirection == 0) { // this entire function is awful and making me sad
-//         gd.player.currentDirection = gd.player.dir;
+//     if (p.currentDirection == 0) { // this entire function is awful and making me sad
+//         p.currentDirection = p.dir;
 //     } 
-//     if (!isSliding(gd.player)) {
-//         gd.player.state_ = changePlayerState(gd, res, gd.player.state_, RUN);
+//     if (!isSliding(p)) {
+//         p.state_ = changePlayerState(gd, res, p.state_, RUN);
 //     }
 // }
-// void enterSlide(Player& player, GameData &gd, Resources &res) {
-//     if(((LevelState * )(currState))->character == SWORD){
-//         player.texture = res.texSlideS;
-//     } else if(((LevelState * )(currState))->character == SHOTGUN){
-//         player.texture = res.texSlideG;
-//     } else {
-//         player.texture = res.texSlideJ;
-//     }
-//     player.curAnimation = res.ANIM_PLAYER_SLIDE; 
-//     player.animations[gd.player.curAnimation].reset();
-//     gd.player.sprintTimer.reset();
-// }
-
 // void updateLaunch(const SDLState &state, GameData &gd, Resources &res, float deltaTime){
 //     sharedUpdate(state, gd,res,deltaTime);
         
-//     // gd.player.state_->nextStateVal = LAUNCH;
+//     // p.state_->nextStateVal = LAUNCH;
 //     // gd.player.state_ = changePlayerState(gd, res, gd.player.state_); 
 
 //     if (gd.player.animations[gd.player.curAnimation].isDone()) {
@@ -523,46 +668,8 @@ void GrappleState::exit(GameData &gd, Resources &res, Player &p) {
 //     gd.player.sprintTimer.reset();
 // }
 
-// void enterSprint(Player& player, GameData &gd, Resources &res){
-//     if(((LevelState * )(currState))->character == SWORD){
-//         player.texture = res.texRunS;
-//     } else if(((LevelState * )(currState))->character == SHOTGUN){
-//         player.texture = res.texRunG;
-//     } else {
-//         player.texture = res.texRunJ;
-//     }
-//     //Change?
-//     player.curAnimation = res.ANIM_PLAYER_RUN; 
-//     player.animations[gd.player.curAnimation].reset();
-//     gd.player.maxSpeedX = gd.player.maxSprintX;
-// }
-
-// void enterLaunch(Player& player, GameData &gd, Resources &res){
-    
-//     if(((LevelState * )(currState))->character == SWORD){
-//         player.texture = res.texLaunchS;
-//     } else if(((LevelState * )(currState))->character == SHOTGUN){
-//         player.texture = res.texLaunchG;
-//     } else {
-//         player.texture = res.texLaunchJ;
-//     }
-//     player.curAnimation = res.ANIM_PLAYER_LAUNCH; 
-//     player.animations[gd.player.curAnimation].reset();
-// }
 
 
-
-// void enterRoll(Player& player, GameData &gd, Resources &res){
-//     if(((LevelState * )(currState))->character == SWORD){
-//         player.texture = res.texRollS;
-//     } else if(((LevelState * )(currState))->character == SHOTGUN){
-//         player.texture = res.texRollG;
-//     } else {
-//         player.texture = res.texRollJ;
-//     }
-//     player.curAnimation = res.ANIM_PLAYER_ROLL; 
-//     player.animations[gd.player.curAnimation].reset();
-// }
 
 // void enterFall(Player& player, GameData &gd, Resources &res){
 //     /*if(((LevelState * )(currState))->character == SWORD){
@@ -576,17 +683,7 @@ void GrappleState::exit(GameData &gd, Resources &res, Player &p) {
 //     player.animations[gd.player.curAnimation].reset();*/
 // }
 
-// void enterDead(Player& player, GameData &gd, Resources &res){
-//     if(((LevelState * )(currState))->character == SWORD){
-//         player.texture = res.texDieS;
-//     } else if(((LevelState * )(currState))->character == SHOTGUN){
-//         player.texture = res.texDieG;
-//     } else {
-//         player.texture = res.texDieJ;
-//     }
-//     player.curAnimation = res.ANIM_PLAYER_DIE; 
-//     player.animations[gd.player.curAnimation].reset();
-// }
+
 
 // void enterJetpackDeploy(Player& player, GameData &gd, Resources &res) {
 
