@@ -113,16 +113,16 @@ void Laser::update(const SDLState &state, GameData &gd, Resources &res, float de
     }
 }
 
-void Hook::draw(const SDLState &state, GameData &gd, float width, float height) {
+void Hook::draw(const SDLState &state, GameData &gd, Player &p, float width, float height) {
     if (!(*this).visible) {
         return;
     }
     SDL_SetRenderDrawColor(state.renderer, 30, 30, 30, 255); // draw line to hook
-    glm::vec2 pOffset = findCenterOfSprite(gd.player);
+    glm::vec2 pOffset = findCenterOfSprite(p);
     glm::vec2 hOffset = findCenterOfSprite((*this));
     //printf("x: %f, y: %f\n", gd.mouseCoords.x, gd.mouseCoords.y);
-    SDL_RenderLine(state.renderer, gd.player.pos.x - gd.mapViewport.x + pOffset.x, 
-                    gd.player.pos.y - gd.mapViewport.y + pOffset.y, 
+    SDL_RenderLine(state.renderer, p.pos.x - gd.mapViewport.x + pOffset.x, 
+                    p.pos.y - gd.mapViewport.y + pOffset.y, 
                     (*this).pos.x - gd.mapViewport.x + hOffset.x, 
                     (*this).pos.y - gd.mapViewport.y + hOffset.y);
     SDL_SetRenderDrawColor(state.renderer, 64, 51, 83, 255);
@@ -153,7 +153,7 @@ void Hook::update(const SDLState &state, GameData &gd, Resources &res, float del
     (*this).pos += updatePos((*this), deltaTime);
 }
 
-void Hook::checkCollision(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
+void Hook::checkCollision(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
     SDL_FRect rectA{
 		.x = (*this).pos.x + (*this).collider.x,
 		.y = (*this).pos.y + (*this).collider.y,
@@ -173,39 +173,12 @@ void Hook::checkCollision(const SDLState &state, GameData &gd, Resources &res, f
 	    {
             (*this).vel = glm::vec2(0);
             if (!(*this).collided) {
-                gd.player.state_ = changePlayerState(gd, res, gd.player.state_, GRAPPLE);
+                PlayerState* grappleState = new GrappleState();
+                p.handleState(grappleState, gd, res);
                 (*this).collided = true;
             }
         }
     }
-    // remove this after sprint demo
-    Player p2 = gd.player2;
-    rectB = {
-        .x = p2.pos.x + p2.collider.x,
-        .y = p2.pos.y + p2.collider.y,
-        .w = p2.collider.w,
-        .h = p2.collider.h
-    };
-    if (intersectAABB(rectA, rectB, resolution)) { // TODO: if touching player, hardcoded for player2 for now
-        gd.player.vel = 0.7f * (*this).vel;
-        p2.vel = -0.3f * (*this).vel;
-        (*this).visible = false;
-        (*this).collided = true;
-    }
-    // remove this after sprint demo
-    Hook h2 = gd.hook2;
-    rectB = {
-        .x = h2.pos.x + h2.collider.x,
-        .y = h2.pos.y + h2.collider.y,
-        .w = h2.collider.w,
-        .h = h2.collider.h
-    };
-    if (intersectAABB(rectA, rectB, resolution) && gd.hook2.visible) { // Touching other hook
-        (*this).visible = false;
-        (*this).collided = true;
-        gd.hook2.visible = false;
-    }
-    //
 }
 
 void ItemBox::update(const SDLState &state, GameData &gd, Resources &res, float deltaTime) { // update item box timer every frame (when on cooldown)
@@ -260,6 +233,6 @@ void ItemBox::generateItem(Player &player, GameData &gd, Resources &res) {
             printf("Your item is in another castle\n");
             newItem = Bomb(player.pos, defaultCollider, res.texBomb);
     }
-    gd.player.nextItem = newItem;
+    player.nextItem = newItem;
     player.pickingItem = true;
 }

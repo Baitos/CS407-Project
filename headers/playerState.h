@@ -2,12 +2,14 @@
 
 class Player;
 
-enum PlayerStateValues {
+enum PlayerStateValue {
+    NONE,
     IDLE, 
     WALK, 
     RUN, 
     SPRINT,
-    SLIDE, 
+    SLIDE,
+    FASTFALL, 
     LAUNCH, 
     JUMP, 
     ROLL, 
@@ -21,71 +23,186 @@ enum PlayerStateValues {
 
 class PlayerState {
     public:
-        int currStateVal;
-        //virtual ~PlayerState() {}
-        void (*handleInput)(GameData &gd, Resources &res, SDL_KeyboardEvent key);
-        void (*update)(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
-        void (*enter)(Player& player, GameData &gd, Resources &res);
-    
+        PlayerStateValue stateVal; // enum for state value
+        virtual ~PlayerState() = default;
+        // Generic handlers (The player's state will call these by default if they don't have a new version defined, mostly for enter/exit)
+        virtual PlayerState* handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key) { return nullptr; }
+        virtual PlayerState* update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) { return nullptr; }
+        virtual void enter(GameData &gd, Resources &res, Player &p) {}
+        virtual void exit(GameData &gd, Resources &res, Player &p) {}
+        PlayerState() {
+            stateVal = NONE; // if it's ever this we have a problem
+        }
 };
 
 class IdleState : public PlayerState {
-
+    public:
+        PlayerState* handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key);
+        PlayerState* update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime);
+        void enter(GameData &gd, Resources &res, Player &p);
+        void exit(GameData &gd, Resources &res, Player &p);
+        IdleState() {
+            stateVal = IDLE;
+        }
 };
 
 class WalkState : public PlayerState {
-
+    public:
+        PlayerState* handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key);
+        PlayerState* update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime);
+        void enter(GameData &gd, Resources &res, Player &p);
+        void exit(GameData &gd, Resources &res, Player &p);
+        WalkState() {
+            stateVal = WALK;
+        }
 };
 
 class RunState : public PlayerState {
-
+    public:
+        PlayerState* handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key);
+        PlayerState* update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime);
+        void enter(GameData &gd, Resources &res, Player &p);
+        void exit(GameData &gd, Resources &res, Player &p);
+        RunState() {
+            stateVal = RUN;
+        }
 };
 
 class SprintState : public PlayerState {
-
+    public:
+        PlayerState* handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key);
+        PlayerState* update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime);
+        void enter(GameData &gd, Resources &res, Player &p);
+        void exit(GameData &gd, Resources &res, Player &p);
+        SprintState() {
+            stateVal = SPRINT;
+        }
 };
 
 class SlideState : public PlayerState {
-
+    public:
+        PlayerState* handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key);
+        PlayerState* update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime);
+        void enter(GameData &gd, Resources &res, Player &p);
+        void exit(GameData &gd, Resources &res, Player &p);
+        SlideState() {
+            stateVal = SLIDE;
+        }
 };
 
-class JumpLaunchState : public PlayerState {
-
+class LaunchState : public PlayerState {
+    public:
+        PlayerState* handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key);
+        PlayerState* update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime);
+        void enter(GameData &gd, Resources &res, Player &p);
+        void exit(GameData &gd, Resources &res, Player &p);
+        LaunchState() {
+            stateVal = LAUNCH;
+        }
 };
 
 class JumpState : public PlayerState {
-
+    public:
+        PlayerState* handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key);
+        PlayerState* update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime);
+        void enter(GameData &gd, Resources &res, Player &p);
+        void exit(GameData &gd, Resources &res, Player &p);
+        JumpState() {
+            stateVal = JUMP;
+        }
 };
 
 class RollState : public PlayerState {
-
+    public:
+        PlayerState* handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key);
+        PlayerState* update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime);
+        void enter(GameData &gd, Resources &res, Player &p);
+        void exit(GameData &gd, Resources &res, Player &p);
+        RollState() {
+            stateVal = ROLL;
+        }
 };
 
 class FallState : public PlayerState {
-
+    public:
+        PlayerState* handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key);
+        PlayerState* update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime);
+        void enter(GameData &gd, Resources &res, Player &p);
+        void exit(GameData &gd, Resources &res, Player &p);
+        FallState() {
+            stateVal = FALL;
+        }
 };
 
 class DeadState : public PlayerState {
-
+    public:
+        PlayerState* handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key);
+        PlayerState* update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime);
+        void enter(GameData &gd, Resources &res, Player &p);
+        void exit(GameData &gd, Resources &res, Player &p);
+        DeadState() {
+            stateVal = DEAD;
+        }
 };
 
 class ShotgunDeployState : public PlayerState {
-
+    public:
+        PlayerState* handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key);
+        PlayerState* update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime);
+        void enter(GameData &gd, Resources &res, Player &p);
+        void exit(GameData &gd, Resources &res, Player &p);
+        ShotgunDeployState() {
+            stateVal = SHOTGUN_DEPLOY;
+        }
 };
 
 class SwordDeployState : public PlayerState {
-
+    public:
+        PlayerState* handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key);
+        PlayerState* update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime);
+        void enter(GameData &gd, Resources &res, Player &p);
+        void exit(GameData &gd, Resources &res, Player &p);
+        SwordDeployState() {
+            stateVal = SWORD_DEPLOY;
+        }
 };
 
 class JetpackDeployState : public PlayerState {
-
+    public:
+        PlayerState* handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key);
+        PlayerState* update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime);
+        void enter(GameData &gd, Resources &res, Player &p);
+        void exit(GameData &gd, Resources &res, Player &p);
+        JetpackDeployState() {
+            stateVal = JETPACK_DEPLOY;
+        }
 };
 
 class GrappleState : public PlayerState {
-
+    public:
+        PlayerState* handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key);
+        PlayerState* update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime);
+        void enter(GameData &gd, Resources &res, Player &p);
+        void exit(GameData &gd, Resources &res, Player &p);
+        GrappleState() {
+            stateVal = GRAPPLE;
+        }
 };
 
-PlayerState * changePlayerState(GameData &gd, Resources &res, PlayerState * tempPlayer, PlayerStateValues newState);
+class FastfallState : public PlayerState {
+    public:
+        PlayerState* handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key);
+        PlayerState* update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime);
+        void enter(GameData &gd, Resources &res, Player &p);
+        void exit(GameData &gd, Resources &res, Player &p);
+        FastfallState() {
+            stateVal = FASTFALL;
+        }
+};
+
+std::string getStateFromEnum(PlayerStateValue ps);
+
+//PlayerState * changePlayerState(GameData &gd, Resources &res, PlayerState * tempPlayer, PlayerStateValue newState);
 
 //Idle Functions
 void handleInputIdle(GameData &gd, Resources &res, SDL_KeyboardEvent key);
@@ -151,8 +268,8 @@ void updateGrapple(const SDLState &state, GameData &gd, Resources &res, float de
 void enterGrapple(Player& player, GameData &gd, Resources &res);
 
 //Handlers
-void handleJumping (GameData &gd, Resources &res, SDL_KeyboardEvent key);
-void handleRunning (GameData &gd, Resources &res, SDL_KeyboardEvent key);
-void handleSprinting (GameData &gd, Resources &res, SDL_KeyboardEvent key);
-void handleFalling (GameData &gd, Resources &res, SDL_KeyboardEvent key);
+PlayerState* handleJumping (GameData &gd, Resources &res, SDL_KeyboardEvent key);
+PlayerState* handleRunning (GameData &gd, Resources &res, SDL_KeyboardEvent key);
+PlayerState* handleSprinting (GameData &gd, Resources &res, SDL_KeyboardEvent key);
+PlayerState* handleFalling (GameData &gd, Resources &res, SDL_KeyboardEvent key);
 void sharedUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime);

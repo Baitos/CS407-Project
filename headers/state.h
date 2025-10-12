@@ -27,11 +27,6 @@ enum gameStates {
     RESULTS,
     CREDITS
 };
-enum characterType {
-    SHOTGUN,
-    SWORD,
-    JETPACK
-};
 
 class GameState{
     public:

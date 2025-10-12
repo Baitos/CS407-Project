@@ -5,8 +5,8 @@
 //Draw Function for level Spaceship
 void drawLevel(const SDLState &state, GameData &gd, Resources res, float deltaTime){
     // used for camera system
-    gd.mapViewport.x = (gd.player.pos.x + TILE_SIZE / 2) - (gd.mapViewport.w / 2); 
-    gd.mapViewport.y = (gd.player.pos.y + TILE_SIZE / 2) - (gd.mapViewport.h / 2); 
+    gd.mapViewport.x = (gd.players_[0].pos.x + TILE_SIZE / 2) - (gd.mapViewport.w / 2); 
+    gd.mapViewport.y = (gd.players_[0].pos.y + TILE_SIZE / 2) - (gd.mapViewport.h / 2); 
     //draw bg
     SDL_SetRenderDrawColor(state.renderer, 64, 51, 83, 255);
     SDL_RenderClear(state.renderer);
@@ -26,51 +26,16 @@ void drawLevel(const SDLState &state, GameData &gd, Resources res, float deltaTi
         portal.draw(state, gd, TILE_SIZE, TILE_SIZE * 2);
     }
 
-    if(gd.player.usingSugar){
-        //Draw sugar effect
-        if(gd.player.dir == 1){
-        glm::vec2 pos = glm::vec2(gd.player.pos.x - 30.f, gd.player.pos.y);
-        SDL_FRect collider = {
-            .x = 28 * (gd.player.dir),
-            .y = 0,
-            .w = 0.f,
-            .h = 0.f
-            };
-        Object sugarEffectObject(pos, collider, res.texSugarEffectL);
-        sugarEffectObject.draw(state,gd,32,32);
-        } else {
-            glm::vec2 pos = glm::vec2(gd.player.pos.x + 30.f, gd.player.pos.y);
-            SDL_FRect collider = {
-                .x = 28 * (gd.player.dir),
-                .y = 0,
-                .w = 0.f,
-                .h = 0.f
-                };
-            Object sugarEffectObject(pos, collider, res.texSugarEffectR);
-            sugarEffectObject.draw(state,gd,32,32);
-        }
-    }
-
-    // draw player
-    gd.hook.draw(state, gd, HOOK_SIZE, HOOK_SIZE);
-    gd.player.draw(state, gd, TILE_SIZE, TILE_SIZE); // draw player class  
-    handleCrosshair(state, gd, res, deltaTime);
-
-    if (gd.hook2.visible) { // remove this after sprint demo
-        gd.hook2.Object::draw(state, gd, HOOK_SIZE, HOOK_SIZE); 
-    } 
-    gd.player2.draw(state, gd, TILE_SIZE, TILE_SIZE);
-    
-
-    //draw blast if needed for shotgun
-    if(gd.player.blast != nullptr) {
-        gd.player.blast->draw(state, gd, 80, 48);
-    }
-
+    // draw lasers
     for(Laser &laser : gd.lasers_) {
         if (laser.laserActive) {
             laser.draw(state, gd, TILE_SIZE, TILE_SIZE);
         }
+    }
+
+    // draw players
+    for(Player &p : gd.players_) {
+        p.draw(state, gd, TILE_SIZE, TILE_SIZE);
     }
 
     for(ItemBox &box : gd.itemBoxes_) {
@@ -80,4 +45,6 @@ void drawLevel(const SDLState &state, GameData &gd, Resources res, float deltaTi
     }
     gd.itemStorage_.draw(state, gd, 68, 68);
 
+    handleCrosshair(state, gd, res, deltaTime);
+    
 }

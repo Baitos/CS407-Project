@@ -72,7 +72,7 @@ void createTiles(const SDLState &state, GameData &gd, const Resources &res) { //
 0,8,8,8,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,8,0,0,0,0,0,0,0,8,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,8,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,8,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,8,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,1,0,0,0,0,0,0,19,0,0,0,2,2,0,0,1,1,1,1,1,0,0,0,0,0,0,0,8,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,1,0,5,0,0,0,1,1,1,1,0,0,0,0,0,8,0,0,0,1,0,0,0,0,0,0,0,8,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,1,0,0,0,6,0,8,0,0,1,0,0,20,0,0,8,0,0,0,1,0,0,0,0,0,0,0,8,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,1,0,0,0,6,0,8,0,0,1,0,0,6,0,0,8,0,0,0,1,0,0,0,0,0,0,0,8,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,8,1,1,1,1,1,8,0,0,8,1,1,1,1,1,8,0,0,0,8,1,1,1,1,1,1,1,8,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -168,6 +168,12 @@ void createTiles(const SDLState &state, GameData &gd, const Resources &res) { //
             .w = (float)TILE_SIZE,
             .h = (float)TILE_SIZE
         };
+        SDL_FRect hookCollider = { 
+            .x = 0,
+            .y = 0,
+            .w = static_cast<float>(HOOK_SIZE),
+            .h = static_cast<float>(HOOK_SIZE)
+        };
         for (int r = 0; r < MAP_ROWS; r++) {
             for (int c = 0; c < MAP_COLS; c++) {
                 glm::vec2 pos = glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r) * TILE_SIZE);
@@ -249,46 +255,30 @@ void createTiles(const SDLState &state, GameData &gd, const Resources &res) { //
                         //printf("%d",((LevelState*) currState)->character);
                         //Player player2(pos, collider, res.texIdleS, res.playerAnims, res.ANIM_PLAYER_IDLE, 250);
                         //gd.player2 = player2;
+                        Player player;
                         if(((LevelState*) currState)->character == SWORD){
-                                Player player(pos, collider, res.texIdleS, res.playerAnims, res.ANIM_PLAYER_IDLE, 250);
-                                gd.player = player;
-                                gd.player.cooldownTimer = Timer(3.0f);
-                                gd.player.cooldownTimer.step(3.0f);
+                            player = Player(pos, collider, res.texIdle[SWORD], res.playerAnims, res.ANIM_PLAYER_IDLE, 250);         
+                            player.cooldownTimer = Timer(3.0f);
                         } else if(((LevelState*) currState)->character == SHOTGUN){
-                                Player player(pos, collider, res.texIdleG, res.playerAnims, res.ANIM_PLAYER_IDLE, 250);
-                                gd.player = player;
-                                gd.player.cooldownTimer = Timer(5.0f);
-                                gd.player.cooldownTimer.step(5.0f);
+                            player = Player(pos, collider, res.texIdle[SHOTGUN], res.playerAnims, res.ANIM_PLAYER_IDLE, 250);
+                            player.cooldownTimer = Timer(5.0f);
                         } else {
-                                Player player(pos, collider, res.texIdleJ, res.playerAnimsJ, res.ANIM_PLAYER_IDLE, 250);
-                                gd.player = player;
-                                gd.player.cooldownTimer = Timer(1.0f);
-                                gd.player.cooldownTimer.step(1.0f);
+                            player = Player(pos, collider, res.texIdle[JETPACK], res.playerAnims, res.ANIM_PLAYER_IDLE, 250);
+                            player.cooldownTimer = Timer(1.0f);
                         }
                         
-                        PlayerState * newState = new PlayerState();
-                        newState->handleInput = handleInputIdle;
-                        newState->update = updateIdle;
-                        newState->enter = enterIdle;
-                        newState->currStateVal = IDLE;
-                        gd.player.state_ = newState;
-                        gd.player.dir = 0;
-                        gd.player.flip = 1;
-                        gd.player.cooldownTimer.step(5.0f);
+                        player.state_ = new IdleState();
+                        player.dir = 0;
+                        player.flip = 1;
+                        player.cooldownTimer.step(5.0f);
                         //gd.player2.state_ = newState;
 
-                        SDL_FRect hookCollider = { 
-                            .x = 0,
-                            .y = 0,
-                            .w = static_cast<float>(HOOK_SIZE),
-                            .h = static_cast<float>(HOOK_SIZE)
-                        };
-                        gd.hook = Hook(gd.player.pos, hookCollider, res.texGrapple);
-                        gd.hook.visible = false;
+                        player.hook = Hook(player.pos, hookCollider, res.texGrapple);
+                        gd.players_.push_back(player);
                         
                         // Add itemStorage
                         SDL_FRect storageCollider; 
-                        gd.itemStorage_ = ItemStorage(gd.player.pos, storageCollider, res.texItemStorage);
+                        gd.itemStorage_ = ItemStorage(player.pos, storageCollider, res.texItemStorage);
                         gd.itemStorage_.animations = res.itemAnims;
                         gd.itemStorage_.curAnimation = res.ANIM_ITEM_EMPTY;
                         break; 
@@ -375,19 +365,13 @@ void createTiles(const SDLState &state, GameData &gd, const Resources &res) { //
                     }
                     case 19: // Item Box
                     {
-                        SDL_FRect itemBoxCollider = {
-                            .x = 0,
-                            .y = 0,
-                            .w = (float)TILE_SIZE,
-                            .h = (float)TILE_SIZE
-                        };
-                        ItemBox box(pos, itemBoxCollider, res.texItemBox);
+                        ItemBox box(pos, collider, res.texItemBox);
                         gd.itemBoxes_.push_back(box);
                         break; 
                     }
                     case 20:{
 
-                        PlayerState * newState = new PlayerState();
+                        /*PlayerState * newState = new PlayerState();
                         newState->currStateVal = IDLE;
                         
 
@@ -396,18 +380,7 @@ void createTiles(const SDLState &state, GameData &gd, const Resources &res) { //
                         gd.player2.state_ = newState;
                         gd.player2.state_->update = emptyUpdate;
                         gd.player2.state_->handleInput = dummyInput;
-                        gd.player2.state_->enter = dummyEnter;
-
-                        // temp, remove this after sprint demo
-                        SDL_FRect hookCollider = { 
-                            .x = 0,
-                            .y = 0,
-                            .w = static_cast<float>(HOOK_SIZE),
-                            .h = static_cast<float>(HOOK_SIZE)
-                        };
-                        gd.hook2 = Hook(gd.player2.pos - (float)TILE_SIZE * 3, hookCollider, res.texGrapple);
-                        gd.hook2.visible = true;
-                        //  
+                        gd.player2.state_->enter = dummyEnter;*/
                     }
                 }
             }

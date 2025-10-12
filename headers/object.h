@@ -156,19 +156,19 @@ class ItemBox : public Object {
 };
 
 
-
-
 class Hook : public AnimatedObject { // grappling hook projectile
     public:
         bool collided; // has hook hit something
         Hook() : AnimatedObject() { // default 
             collided = false;
+            visible = false;
         }  
         Hook(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : 
         AnimatedObject(pos_, colliderRect, tex) { // generic obj constructor
             collided = false;
+            visible = false;
         }
-        void draw(const SDLState &state, GameData &gd, float width, float height);
+        void draw(const SDLState &state, GameData &gd, Player &p, float width, float height);
         void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
-        void checkCollision(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+        void checkCollision(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime);
 };

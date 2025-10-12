@@ -1,23 +1,23 @@
 #include "../headers/gameData.h"
 #include "../headers/resources.h"
-void useBomb(const SDLState &state, GameData &gd, Resources &res) {
+void useBomb(const SDLState &state, GameData &gd, Resources &res, Player &p) {
     printf("BOOOOOOM\n");
 }
 
-void useBoombox(const SDLState &state, GameData &gd, Resources &res) {
+void useBoombox(const SDLState &state, GameData &gd, Resources &res, Player &p) {
     printf("BUMP THAT SHIT\n");
 }
-void useBouncyBall(const SDLState &state, GameData &gd, Resources &res) {}
-void useFog(const SDLState &state, GameData &gd, Resources &res) {}
-void useIce(const SDLState &state, GameData &gd, Resources &res) {}
-void useMissile(const SDLState &state, GameData &gd, Resources &res) {}
+void useBouncyBall(const SDLState &state, GameData &gd, Resources &res, Player &p) {}
+void useFog(const SDLState &state, GameData &gd, Resources &res, Player &p) {}
+void useIce(const SDLState &state, GameData &gd, Resources &res, Player &p) {}
+void useMissile(const SDLState &state, GameData &gd, Resources &res, Player &p) {}
 
-void useSugar(const SDLState &state, GameData &gd, Resources &res) {
-    ((Sugar *) (&gd.player.item))->sugarTimer.reset();
-    gd.player.usingSugar = true;
+void useSugar(const SDLState &state, GameData &gd, Resources &res, Player &p) {
+    ((Sugar *) (&p.item))->sugarTimer.reset();
+    p.usingSugar = true;
     //printf("COKE\n");
 }
-void usePie(const SDLState &state, GameData &gd, Resources &res) {}
+void usePie(const SDLState &state, GameData &gd, Resources &res, Player &p) {}
 
 void clearItem(const SDLState &state, GameData &gd, Resources &res) {
     gd.itemStorage_.texture = res.texItemStorage;
@@ -32,7 +32,7 @@ void setItemPicked(GameData &gd, Resources &res, int index) {
         gd.itemStorage_.animations[gd.itemStorage_.curAnimation].reset();
 }
 
-void ItemStorage::update(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
+void ItemStorage::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
     if (this->curAnimation != -1) {
         this->animations[this->curAnimation].step(deltaTime);
     }
@@ -40,11 +40,11 @@ void ItemStorage::update(const SDLState &state, GameData &gd, Resources &res, fl
     if (this->cycleTimer.isTimeOut()) {
         // Reset timer and set item
         this->cycleTimer.reset();
-        Item item = gd.player.nextItem;
+        Item item = p.nextItem;
         this->item = item;
-        gd.player.item = item;
-        gd.player.pickingItem = false;
-        gd.player.hasItem = true;
+        p.item = item;
+        p.pickingItem = false;
+        p.hasItem = true;
 
         setItemPicked(gd, res, item.index);
     }

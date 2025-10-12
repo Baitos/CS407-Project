@@ -34,9 +34,9 @@ glm::vec2 findCenterOfSprite(Object &obj) { // finds center of sprite by collide
 }
 
 std::vector<float> distanceForm(GameData &gd, Object &a, Object &b) {
-    glm::vec2 pOffset = findCenterOfSprite(gd.player);
-    float xDist = gd.mouseCoords.x - (gd.player.pos.x - gd.mapViewport.x + pOffset.x); // A
-    float yDist = gd.mouseCoords.y - (gd.player.pos.y - gd.mapViewport.y + pOffset.y); // O
+    glm::vec2 pOffset = findCenterOfSprite(a);
+    float xDist = gd.mouseCoords.x - (a.pos.x - gd.mapViewport.x + pOffset.x); // A
+    float yDist = gd.mouseCoords.y - (a.pos.y - gd.mapViewport.y + pOffset.y); // O
     float dist = std::sqrt(xDist * xDist + yDist * yDist); // distance formula, H
     float aH = xDist / dist; // cos
     float oH = yDist / dist; // sin

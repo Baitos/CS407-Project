@@ -12,9 +12,18 @@ struct GameData;
 struct Resources;
 class PlayerState;
 
+enum characterType {
+    SHOTGUN,
+    SWORD,
+    JETPACK
+};
+
 class Player : public AnimatedObject { // player
     public:
+        characterType character; // who are you  
         PlayerState* state_;
+        
+        Hook hook;
         Item item;
         Item nextItem;
         bool grounded; 
@@ -40,13 +49,15 @@ class Player : public AnimatedObject { // player
 
         AnimatedObject* blast;
 
-        virtual void handleInput(SDL_KeyboardEvent& key, GameData &gd, Resources &res, float deltaTime);
+        void draw(const SDLState &state, GameData &gd, float width, float height);
+        virtual void handleInput(const SDLState &state, GameData &gd, Resources &res, SDL_KeyboardEvent& key, float deltaTime);
         virtual void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+        void handleState(PlayerState* &pState, GameData &gd, Resources &res);
         //void draw(const SDLState &state, GameData &gs, float width, float height);
         
         Player(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex, std::vector<Animation> anims, int curAnim, float maxSpeedX_) :
         AnimatedObject(pos_, colliderRect, tex), sprintTimer(1.5f), jetpackTimer(1.0f), cooldownTimer(5.0f) {
-            acc = glm::vec2(300, 0); // default for now
+            acc = glm::vec2(350, 0); // default for now
             animations = anims;
             curAnimation = curAnim;
             currentDirection = 0;
@@ -54,8 +65,7 @@ class Player : public AnimatedObject { // player
             sprinting = false;
             maxSpeedX = maxSpeedX_; // should be walk speed
             gravityScale = 1.0f;
-            
-            
+            character = SHOTGUN;            
         }
         Player(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : // generic obj constructor
         AnimatedObject(pos_, colliderRect, tex), sprintTimer(1.5f), jetpackTimer(1.0f), cooldownTimer(5.0f) {
@@ -64,6 +74,7 @@ class Player : public AnimatedObject { // player
             currentDirection = 0;
             gravityScale = 1.0f;
             maxSpeedX = 250; // walk speed default
+            character = SHOTGUN; 
         }
 
         Player() : AnimatedObject(), sprintTimer(1.5f), jetpackTimer(1.0f), cooldownTimer(5.0f) {
@@ -71,6 +82,6 @@ class Player : public AnimatedObject { // player
             gravityScale = 1.0f;
             currentDirection = 0;
             maxSpeedX = 250; // walk speed default
-        }
-        
+            character = SHOTGUN; 
+        } 
 };

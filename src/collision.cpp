@@ -37,14 +37,14 @@ void collisionCheckAndResponse(const SDLState &state, GameData &gd, Resources &r
                 	if (player.flip == 1) {
 						player.grounded = true;
 						player.canDoubleJump = true;
-						gd.player.gravityScale = 1.0f; // reset gravity
+						player.gravityScale = 1.0f; // reset gravity
                 	}
 				} else {
 					player.pos.y += resolution.y;
 					if (player.flip == -1) {
 						player.grounded = true;
 						player.canDoubleJump = true;
-						gd.player.gravityScale = 1.0f; // reset gravity
+						player.gravityScale = 1.0f; // reset gravity
 					}
 				}
 				player.vel.y = 0;
@@ -64,7 +64,8 @@ void collisionCheckAndResponse(const SDLState &state, GameData &gd, Resources &r
 			// found intersection, respond accordingly
 			if(l.laserActive){
 				//printf("FALLING");
-				gd.player.state_ = changePlayerState(gd, res, player.state_, DEAD);
+				PlayerState* dState = new JetpackDeployState();
+                player.handleState(dState, gd, res);
 			
 				player.vel.x = changeVel(-player.vel.x, player);
 				float shouldFlip = player.flip; // there might be a more modular way to do this. idk if we will actually use the gravity flip but having it is nice and cool

@@ -8,13 +8,8 @@
 #include "menu.h"
 
 struct GameData {
-    Player player;
-    Player player2;
+    std::vector<Player> players_;
     int numPlayers; 
-    
-    Hook hook;
-
-    Hook hook2; // uh
 
     std::vector<BackgroundObject> bgTiles_;
     std::vector<Level> mapTiles_;

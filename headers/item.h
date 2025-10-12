@@ -12,14 +12,14 @@ enum class itemType {
     SUGAR,
     PIE
 };
-void useBomb(const SDLState &state, GameData &gd, Resources &res);
-void useBoombox(const SDLState &state, GameData &gd, Resources &res);
-void useBouncyBall(const SDLState &state, GameData &gd, Resources &res);
-void useFog(const SDLState &state, GameData &gd, Resources &res);
-void useIce(const SDLState &state, GameData &gd, Resources &res);
-void useMissile(const SDLState &state, GameData &gd, Resources &res);
-void useSugar(const SDLState &state, GameData &gd, Resources &res);
-void usePie(const SDLState &state, GameData &gd, Resources &res);
+void useBomb(const SDLState &state, GameData &gd, Resources &res, Player &p);
+void useBoombox(const SDLState &state, GameData &gd, Resources &res, Player &p);
+void useBouncyBall(const SDLState &state, GameData &gd, Resources &res, Player &p);
+void useFog(const SDLState &state, GameData &gd, Resources &res, Player &p);
+void useIce(const SDLState &state, GameData &gd, Resources &res, Player &p);
+void useMissile(const SDLState &state, GameData &gd, Resources &res, Player &p);
+void useSugar(const SDLState &state, GameData &gd, Resources &res, Player &p);
+void usePie(const SDLState &state, GameData &gd, Resources &res, Player &p);
 
 void clearItem(const SDLState &state, GameData &gd, Resources &res);
 void setItemPicked(GameData &gd, Resources &res);
@@ -31,7 +31,7 @@ class Item : public AnimatedObject {
     Item() : AnimatedObject(), sugarTimer(3.0f) {}
     Item(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) :
     AnimatedObject(pos_, colliderRect, tex), sugarTimer(4.0f) {}
-    void (*useItem)(const SDLState &state, GameData &gd, Resources &res);
+    void (*useItem)(const SDLState &state, GameData &gd, Resources &res, Player &p);
     //virtual void onCollision();
     
 };
@@ -70,5 +70,5 @@ class ItemStorage : public AnimatedObject {
     ItemStorage() : AnimatedObject(), cycleTimer(2.0f){}
     ItemStorage(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) :
     AnimatedObject(pos_, colliderRect, tex), cycleTimer(2.0f) {}
-    void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+    void update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime);
 };
