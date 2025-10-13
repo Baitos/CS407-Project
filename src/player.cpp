@@ -47,7 +47,9 @@ void Player::update(const SDLState &state, GameData &gd, Resources &res, float d
     (*this).hook.update(state, gd, res, deltaTime); // update this player's hook and handle its collision
     (*this).hook.checkCollision(state, gd, res, (*this), deltaTime);
     
+    //printf("currentDirection: %d\n", (*this).currentDirection);
     (*this).vel += static_cast<float>((*this).currentDirection) * (*this).acc * deltaTime; // update player velocity based on acceleration and direction
+    (*this).pos += updatePos((*this), deltaTime); // update pos
     
     if (std::abs((*this).vel.x) > (*this).maxSpeedX) {
         if (!isSliding((*this))) { // if not sliding slow down

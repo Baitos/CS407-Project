@@ -76,7 +76,7 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
 //
 
 //Input Function for level Spaceship
-void levelInputs(SDLState &state, GameData &gd, Resources &res, float deltaTime){
+void levelInputs(SDLState &state, GameData &gd, Resources &res, float deltaTime) {
     SDL_Event event { 0 };
         while (SDL_PollEvent(&event)) {
             switch (event.type) {
@@ -161,6 +161,9 @@ void handleLevelClick(SDLState &state, GameData &gd, Resources &res, Player &p, 
             p.handleState(jState, gd, res);
         }
         p.hook.visible = false;
+        p.hook.collided = false;
+        p.hook.pos += glm::vec2(-10000.0f, -10000.0f); // maybe unnecessary
+        p.hook.vel = glm::vec2(0);
     }
 }
 

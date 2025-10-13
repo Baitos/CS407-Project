@@ -32,7 +32,7 @@ void collisionCheckAndResponse(const SDLState &state, GameData &gd, Resources &r
 				}	
 				player.vel.x = 0;
 			} else {
-				if (player.pos.y < l.pos.y + EPSILON) {
+				if (player.pos.y < l.pos.y) {
 					player.pos.y -= resolution.y;
                 	if (player.flip == 1) {
 						player.grounded = true;
