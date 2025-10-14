@@ -23,7 +23,7 @@ float changeVel(float vel, Player &p) { // this is for ease of accounting for ob
 }
 
 bool isSliding(Player &p) { // checks if a player is sliding
-    if (p.vel.x * p.dir < 0) {
+    if (p.vel.x * p.dir < 0 && p.grounded) {
        return true;     
     }
     return false;

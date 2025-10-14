@@ -13,48 +13,29 @@ const float JUMP_FORCE = -450.f;
 
 std::string getStateFromEnum(PlayerStateValue ps) {
     switch (ps) {
-        case NONE:
-            return "NONE";
-        case IDLE:
-            return "IDLE";
-        case WALK:
-            return "WALK";
-        case RUN:
-            return "RUN";
-        case SPRINT:
-            return "SPRINT";
-        case SLIDE:
-            return "SLIDE";
-        case FASTFALL:
-            return "FASTFALL";
-        case LAUNCH:
-            return "LAUNCH";
-        case JUMP:
-            return "JUMP";
-        case ROLL:
-            return "ROLL";
-        case STUNNED:
-            return "STUNNED";
-        case DEAD:
-            return "DEAD";
-        case SWORD_DEPLOY:
-            return "SWORD_DEPLOY";
-        case SHOTGUN_DEPLOY:
-            return "SHOTGUN_DEPLOY";
-        case JETPACK_DEPLOY:
-            return "JETPACK_DEPLOY";
-        case GRAPPLE:
-            return "GRAPPLE";
-        default:
-            return "ERROR";
+        case NONE: return "NONE";
+        case IDLE: return "IDLE";
+        case WALK: return "WALK";
+        case RUN: return "RUN";
+        case SPRINT: return "SPRINT";
+        case SLIDE: return "SLIDE";
+        case FASTFALL: return "FASTFALL";
+        case LAUNCH: return "LAUNCH";
+        case JUMP: return "JUMP";
+        case ROLL: return "ROLL";
+        case STUNNED: return "STUNNED";
+        case DEAD: return "DEAD";
+        case SWORD_DEPLOY: return "SWORD_DEPLOY";
+        case SHOTGUN_DEPLOY: return "SHOTGUN_DEPLOY";
+        case JETPACK_DEPLOY: return "JETPACK_DEPLOY";
+        case GRAPPLE: return "GRAPPLE";
+        default: return "ERROR";
     }        
 }
 
 //Handlers
 PlayerState* handleJumping(GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key) {
     if (key.scancode == SDL_SCANCODE_SPACE && key.down && !key.repeat) {
-        //printf("Jump handled");
-        //printf("%d", p.grounded);
         if (p.grounded) { // single jump
             return new LaunchState();
         } else if (p.canDoubleJump) { // double jump
@@ -62,25 +43,11 @@ PlayerState* handleJumping(GameData &gd, Resources &res, Player &p, SDL_Keyboard
             p.vel.y = changeVel(JUMP_FORCE, p); // this could be put into a double jump state 
             return new JumpState();
         }
-        // p.vel.y = changeVel(JUMP_FORCE, p);  
-        // p.canDoubleJump = false;
-        // p.gravityScale = 1.0f; // reset gravity
     } else if (!key.down && key.scancode == SDL_SCANCODE_SPACE) { // letting go of jump
         float termVel = -200.0f; // option 2: Set velocity to predefined amount when you let go. makes less sharp jumps
         float shouldFlip = p.flip; // there might be a more modular way to do this. idk if we will actually use the gravity flip but having it is nice and cool
         if (shouldFlip * p.vel.y < shouldFlip * termVel) { 
             p.vel.y = changeVel(termVel, p);
-        }
-    }
-    return nullptr;
-}
-
-PlayerState* handleRunning(GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key) {
-    if (key.scancode == SDL_SCANCODE_LSHIFT) {
-        if (key.down && p.currentDirection) { // if held down, increase speed               
-            return new RunState(); 
-        } else {
-            return new WalkState();               
         }
     }
     return nullptr;
@@ -165,16 +132,15 @@ void IdleState::enter(GameData &gd, Resources &res, Player &p) {
 // WALK
 PlayerState* WalkState::handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key) {
     if (auto retState = handleFalling(gd, res, p, key)) return retState;
-    if (auto retState = handleRunning(gd, res, p, key)) return retState;
     if (auto retState = handleJumping(gd, res, p, key)) return retState;
-    if (state.keys[SDL_SCANCODE_LSHIFT] && p.currentDirection) {
-        return new RunState();
-    }
     return nullptr;
 }
 
 PlayerState* WalkState::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {   
     sharedUpdate(state, p, deltaTime);
+    if (state.keys[SDL_SCANCODE_LSHIFT] && p.currentDirection) {
+        return new RunState();
+    }
     if (!p.currentDirection && p.grounded) { // if not moving, slow down
         const float factor = p.vel.x > 0 ? -1.0f : 1.0f;
         float amount = factor * p.acc.x * deltaTime;
@@ -188,7 +154,7 @@ PlayerState* WalkState::update(const SDLState &state, GameData &gd, Resources &r
             p.vel.x += amount;
         }
     }
-    if (isSliding(p) && p.grounded) { // moving in different direction of vel and pressing a direction, sliding
+    if (isSliding(p)) { // moving in different direction of vel and pressing a direction, sliding
         return new SlideState();
     }
     return nullptr;
@@ -199,14 +165,11 @@ void WalkState::enter(GameData &gd, Resources &res, Player &p) {
     p.curAnimation = res.ANIM_PLAYER_WALK; 
     p.animations[p.curAnimation].reset();
     p.maxSpeedX = p.maxWalkX;
-    p.sprintTimer.reset();
 }
 
 // RUN
 PlayerState* RunState::handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key) {
-    ;
     if (auto retState = handleJumping(gd, res, p, key)) return retState;
-    if (auto retState = handleRunning(gd, res, p, key)) return retState;
     if (auto retState = handleFalling(gd, res, p, key)) return retState;
     return nullptr;
 }
@@ -216,16 +179,17 @@ PlayerState* RunState::update(const SDLState &state, GameData &gd, Resources &re
     if (!state.keys[SDL_SCANCODE_LSHIFT] || !p.currentDirection) { // if not pressing then reset
         return new WalkState();
     }
-
-    float LEEWAY = 20;
+    float LEEWAY = 25;
     if (p.grounded && std::abs(p.vel.x) >= (p.maxRunX - LEEWAY)) { // if grounded and moving fast enter sprint (eventually)                
-        if (!p.sprintTimer.isTimeOut()) {
-            p.sprintTimer.step(deltaTime);
+        if (!(*this).sprintTimer.isTimeOut()) {
+            (*this).sprintTimer.step(deltaTime);
         } else {
             return new SprintState();
         }
-    } 
-    if (isSliding(p) && p.grounded) { // moving in different direction of vel and pressing a direction, sliding
+    } else {
+        (*this).sprintTimer.reset();
+    }
+    if (isSliding(p)) { // moving in different direction of vel and pressing a direction, sliding
         return new SlideState();
     }
     return nullptr;
@@ -235,7 +199,7 @@ void RunState::enter(GameData &gd, Resources &res, Player &p) {
     p.texture = res.texRun[p.character];
     p.curAnimation = res.ANIM_PLAYER_RUN; 
     p.maxSpeedX = p.maxRunX;
-    p.sprintTimer.reset();
+    (*this).sprintTimer.reset();
 }
 
 // SPRINT
@@ -248,10 +212,10 @@ PlayerState* SprintState::handleInput(const SDLState &state, GameData &gd, Resou
 
 PlayerState* SprintState::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
     sharedUpdate(state, p, deltaTime);
-    float LEEWAY = 20;
+    float LEEWAY = 25;
     if (p.grounded && // if on ground and sliding or too slow reset sprint
-        (isSliding(p) || std::abs(p.vel.x) < (p.maxRunX - LEEWAY))) {       
-        return new RunState();
+        (isSliding(p) || std::abs(p.vel.x) < (p.maxRunX - LEEWAY) || !p.currentDirection)) {       
+        return new WalkState();
     }
     return nullptr;
 }
@@ -266,7 +230,6 @@ void SprintState::enter(GameData &gd, Resources &res, Player &p) {
 // JUMP 
 PlayerState* JumpState::handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key) {
     if (auto retState = handleJumping(gd, res, p, key)) return retState;
-    if (auto retState = handleRunning(gd, res, p, key)) return retState;
     if (auto retState = handleFalling(gd, res, p, key)) return retState;
     return nullptr;
 }
@@ -290,7 +253,6 @@ void JumpState::enter(GameData &gd, Resources &res, Player &p) {
 // LAUNCH
 PlayerState* LaunchState::handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key) {
     if (auto retState = handleJumping(gd, res, p, key)) return retState;
-    if (auto retState = handleRunning(gd, res, p, key)) return retState;
     if (auto retState = handleFalling(gd, res, p, key)) return retState;
     return nullptr;
 }
@@ -313,7 +275,6 @@ void LaunchState::enter(GameData &gd, Resources &res, Player &p) {
 // ROLL
 PlayerState* RollState::handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key) {
     if (auto retState = handleJumping(gd, res, p, key)) return retState;
-    if (auto retState = handleRunning(gd, res, p, key)) return retState;
     if (auto retState = handleFalling(gd, res, p, key)) return retState;
     return nullptr;
 }
@@ -335,7 +296,6 @@ void RollState::enter(GameData &gd, Resources &res, Player &p) {
 // SLIDE
 PlayerState* SlideState::handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key) {
     if (auto retState = handleJumping(gd, res, p, key)) return retState;
-    if (auto retState = handleRunning(gd, res, p, key)) return retState;
     return nullptr;
 }
 
@@ -344,8 +304,8 @@ PlayerState* SlideState::update(const SDLState &state, GameData &gd, Resources &
     if (p.currentDirection == 0) { // prevents you from sliding forever when you let go
         p.currentDirection = p.dir;
     } 
-    if (!isSliding(p) || !p.grounded) {
-        return new RunState();
+    if (!isSliding(p)) {
+        return new WalkState();
     }
     return nullptr;
 }
@@ -354,13 +314,11 @@ void SlideState::enter(GameData &gd, Resources &res, Player &p) {
     p.texture = res.texSlide[p.character];
     p.curAnimation = res.ANIM_PLAYER_SLIDE; 
     p.animations[p.curAnimation].reset();
-    p.sprintTimer.reset();
 }
 
 // FASTFALL
 PlayerState* FastfallState::handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key) {
     if (auto retState = handleJumping(gd, res, p, key)) return retState;
-    if (auto retState = handleRunning(gd, res, p, key)) return retState;
     if (auto retState = handleFalling(gd, res, p, key)) return retState;
     return nullptr;
 }
@@ -389,7 +347,7 @@ void FastfallState::exit(GameData &gd, Resources &res, Player &p) {
 
 PlayerState* StunnedState::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
     sharedUpdate(state, p, deltaTime);
-    if(p.grounded) { // if moving change to running
+    if (p.grounded) { // if moving change to running
         return new RollState();  
     }
     return nullptr;

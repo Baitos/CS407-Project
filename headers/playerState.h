@@ -1,5 +1,6 @@
 #pragma once
 
+class Timer;
 class Player;
 
 enum PlayerStateValue {
@@ -62,18 +63,20 @@ class WalkState : public PlayerState {
 
 class RunState : public PlayerState {
     public:
+        Timer sprintTimer;
         void draw(const SDLState &state, GameData &gd) {} // do nothing
         PlayerState* handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key);
         PlayerState* update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime);
         void enter(GameData &gd, Resources &res, Player &p);
         void exit(GameData &gd, Resources &res, Player &p) {} // do nothing
-        RunState() {
+        RunState() : sprintTimer(1.5f) {
             stateVal = RUN;
         }
 };
 
 class SprintState : public PlayerState {
     public:
+        AnimatedObject afterImage[3];
         void draw(const SDLState &state, GameData &gd) {} // do nothing
         PlayerState* handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key);
         PlayerState* update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime);
@@ -220,7 +223,6 @@ class FastfallState : public PlayerState {
 std::string getStateFromEnum(PlayerStateValue ps);
 //Handlers
 PlayerState* handleJumping (GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key);
-PlayerState* handleRunning (GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key);
 PlayerState* handleSprinting (GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key);
 PlayerState* handleFalling (GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key);
 void sharedUpdate(const SDLState &state, GameData &gd, Player &p, Resources &res, float deltaTime);

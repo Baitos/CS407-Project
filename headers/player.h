@@ -26,26 +26,28 @@ class Player : public AnimatedObject { // player
         Hook hook;
         Item item;
         Item nextItem;
-        bool grounded; 
-        bool isDead = false;
         bool hasItem = false;
         bool pickingItem = false;
+
+        bool grounded; 
+        bool isDead = false;
+        
         bool sprinting = false;
-        bool fastFalling = false;
+
         bool canDoubleJump = true;
         bool usingSugar = false;
 
         float gravityScale; 
         float maxSpeedX; // will change depending on state
-        float maxSpeedY = 550;
-        float maxWalkX = 250; // walking
-        float maxRunX = 650; // running 
-        float maxSprintX = 850; // sprinting
+        float maxWalkX = 300; // walking
+        float maxRunX = 700; // running 
+        float maxSprintX = 900; // sprinting
         int currentDirection;
-        int position = 8;
-        Timer sprintTimer;
+        
         Timer jetpackTimer;
         Timer cooldownTimer;
+
+        int position = 8;
 
         void draw(const SDLState &state, GameData &gd, float width, float height);
         virtual void handleInput(const SDLState &state, GameData &gd, Resources &res, SDL_KeyboardEvent& key, float deltaTime);
@@ -54,8 +56,8 @@ class Player : public AnimatedObject { // player
         //void draw(const SDLState &state, GameData &gs, float width, float height);
         
         Player(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex, std::vector<Animation> anims, int curAnim, float maxSpeedX_) :
-        AnimatedObject(pos_, colliderRect, tex), sprintTimer(1.5f), jetpackTimer(1.0f), cooldownTimer(5.0f) {
-            acc = glm::vec2(300, 0); // default for now
+        AnimatedObject(pos_, colliderRect, tex), jetpackTimer(1.0f), cooldownTimer(5.0f) {
+            acc = glm::vec2(330, 0); // default for now
             animations = anims;
             curAnimation = curAnim;
             currentDirection = 0;
@@ -66,7 +68,7 @@ class Player : public AnimatedObject { // player
             character = SHOTGUN;            
         }
         Player(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : // generic obj constructor
-        AnimatedObject(pos_, colliderRect, tex), sprintTimer(1.5f), jetpackTimer(1.0f), cooldownTimer(5.0f) {
+        AnimatedObject(pos_, colliderRect, tex), jetpackTimer(1.0f), cooldownTimer(5.0f) {
             grounded = false;
             sprinting = false;
             currentDirection = 0;
@@ -75,7 +77,7 @@ class Player : public AnimatedObject { // player
             character = SHOTGUN; 
         }
 
-        Player() : AnimatedObject(), sprintTimer(1.5f), jetpackTimer(1.0f), cooldownTimer(5.0f) {
+        Player() : AnimatedObject(), jetpackTimer(1.0f), cooldownTimer(5.0f) {
             grounded = false;
             gravityScale = 1.0f;
             currentDirection = 0;
