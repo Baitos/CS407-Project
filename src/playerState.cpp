@@ -399,6 +399,7 @@ void StunnedState::enter(GameData &gd, Resources &res, Player &p) {
     p.texture = res.texDie[p.character];
     p.curAnimation = res.ANIM_PLAYER_DIE; 
     p.animations[p.curAnimation].reset();
+    removeHook(p);
 }
 
 // DEAD
