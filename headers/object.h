@@ -28,6 +28,7 @@ class Object { // generic obj type
         glm::vec2 pos, vel, acc;
         SDL_Texture *texture;
         SDL_FRect collider; // rectangle for collision
+        float width, height; // size for drawing
         int type;
         Object() {           
             pos = vel = acc = glm::vec2(0);
@@ -37,6 +38,7 @@ class Object { // generic obj type
                 .w = (float)TILE_SIZE,
                 .h = (float)TILE_SIZE
             };
+            width = height = TILE_SIZE;
         }
         Object(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) {
             pos = pos_;       

@@ -143,16 +143,11 @@ void sharedUpdate(const SDLState &state, Player &p, float deltaTime) { // basic 
 
 // IDLE
 PlayerState* IdleState::handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key) {   
-    PlayerState* ret = handleJumping(gd, res, p, key);
-    if (ret != nullptr) {
-        return ret;
-    }
-
+    if (auto retState = handleJumping(gd, res, p, key)) return retState;
     return nullptr;
 }
 
 PlayerState* IdleState::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
-    //p.vel.x = 0;    
     sharedUpdate(state, p, deltaTime);
     if (p.currentDirection) { // if moving change to walking
         return new WalkState(); 
@@ -169,10 +164,9 @@ void IdleState::enter(GameData &gd, Resources &res, Player &p) {
 
 // WALK
 PlayerState* WalkState::handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key) {
-    ;
-    if (auto ret = handleFalling(gd, res, p, key)) return ret;
-    if (auto ret = handleRunning(gd, res, p, key)) return ret;
-    if (auto ret = handleJumping(gd, res, p, key)) return ret;
+    if (auto retState = handleFalling(gd, res, p, key)) return retState;
+    if (auto retState = handleRunning(gd, res, p, key)) return retState;
+    if (auto retState = handleJumping(gd, res, p, key)) return retState;
     if (state.keys[SDL_SCANCODE_LSHIFT] && p.currentDirection) {
         return new RunState();
     }
@@ -208,14 +202,12 @@ void WalkState::enter(GameData &gd, Resources &res, Player &p) {
     p.sprintTimer.reset();
 }
 
-void WalkState::exit(GameData &gd, Resources &res, Player &p) {} // do nothing
-
 // RUN
 PlayerState* RunState::handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key) {
     ;
-    if (auto ret = handleJumping(gd, res, p, key)) return ret;
-    if (auto ret = handleRunning(gd, res, p, key)) return ret;
-    if (auto ret = handleFalling(gd, res, p, key)) return ret;
+    if (auto retState = handleJumping(gd, res, p, key)) return retState;
+    if (auto retState = handleRunning(gd, res, p, key)) return retState;
+    if (auto retState = handleFalling(gd, res, p, key)) return retState;
     return nullptr;
 }
 
@@ -246,13 +238,11 @@ void RunState::enter(GameData &gd, Resources &res, Player &p) {
     p.sprintTimer.reset();
 }
 
-void RunState::exit(GameData &gd, Resources &res, Player &p) {} // do nothing
-
 // SPRINT
 PlayerState* SprintState::handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key) {
-    if (auto ret = handleJumping(gd, res, p, key)) return ret;
-    if (auto ret = handleSprinting(gd, res, p, key)) return ret;
-    if (auto ret = handleFalling(gd, res, p, key)) return ret;
+    if (auto retState = handleJumping(gd, res, p, key)) return retState;
+    if (auto retState = handleSprinting(gd, res, p, key)) return retState;
+    if (auto retState = handleFalling(gd, res, p, key)) return retState;
     return nullptr;
 }
 
@@ -273,13 +263,11 @@ void SprintState::enter(GameData &gd, Resources &res, Player &p) {
     p.maxSpeedX = p.maxSprintX;
 }
 
-void SprintState::exit(GameData &gd, Resources &res, Player &p) {} // do nothing
-
 // JUMP 
 PlayerState* JumpState::handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key) {
-    if (auto ret = handleJumping(gd, res, p, key)) return ret;
-    if (auto ret = handleRunning(gd, res, p, key)) return ret;
-    if (auto ret = handleFalling(gd, res, p, key)) return ret;
+    if (auto retState = handleJumping(gd, res, p, key)) return retState;
+    if (auto retState = handleRunning(gd, res, p, key)) return retState;
+    if (auto retState = handleFalling(gd, res, p, key)) return retState;
     return nullptr;
 }
 
@@ -299,13 +287,11 @@ void JumpState::enter(GameData &gd, Resources &res, Player &p) {
     p.animations[p.curAnimation].reset();
 }
 
-void JumpState::exit(GameData &gd, Resources &res, Player &p) {} // do nothing
-
 // LAUNCH
 PlayerState* LaunchState::handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key) {
-    if (auto ret = handleJumping(gd, res, p, key)) return ret;
-    if (auto ret = handleRunning(gd, res, p, key)) return ret;
-    if (auto ret = handleFalling(gd, res, p, key)) return ret;
+    if (auto retState = handleJumping(gd, res, p, key)) return retState;
+    if (auto retState = handleRunning(gd, res, p, key)) return retState;
+    if (auto retState = handleFalling(gd, res, p, key)) return retState;
     return nullptr;
 }
 
@@ -324,13 +310,11 @@ void LaunchState::enter(GameData &gd, Resources &res, Player &p) {
     p.vel.y = changeVel(JUMP_FORCE, p); // launch! 
 }
 
-void LaunchState::exit(GameData &gd, Resources &res, Player &p) {} // do nothing
-
 // ROLL
 PlayerState* RollState::handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key) {
-    if (auto ret = handleJumping(gd, res, p, key)) return ret;
-    if (auto ret = handleRunning(gd, res, p, key)) return ret;
-    if (auto ret = handleFalling(gd, res, p, key)) return ret;
+    if (auto retState = handleJumping(gd, res, p, key)) return retState;
+    if (auto retState = handleRunning(gd, res, p, key)) return retState;
+    if (auto retState = handleFalling(gd, res, p, key)) return retState;
     return nullptr;
 }
 
@@ -348,12 +332,10 @@ void RollState::enter(GameData &gd, Resources &res, Player &p) {
     p.animations[p.curAnimation].reset();
 }
 
-void RollState::exit(GameData &gd, Resources &res, Player &p) {} // do nothing
-
 // SLIDE
 PlayerState* SlideState::handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key) {
-    if (auto ret = handleJumping(gd, res, p, key)) return ret;
-    if (auto ret = handleRunning(gd, res, p, key)) return ret;
+    if (auto retState = handleJumping(gd, res, p, key)) return retState;
+    if (auto retState = handleRunning(gd, res, p, key)) return retState;
     return nullptr;
 }
 
@@ -375,13 +357,11 @@ void SlideState::enter(GameData &gd, Resources &res, Player &p) {
     p.sprintTimer.reset();
 }
 
-void SlideState::exit(GameData &gd, Resources &res, Player &p) {} // do nothing
-
 // FASTFALL
 PlayerState* FastfallState::handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key) {
-    if (auto ret = handleJumping(gd, res, p, key)) return ret;
-    if (auto ret = handleRunning(gd, res, p, key)) return ret;
-    if (auto ret = handleFalling(gd, res, p, key)) return ret;
+    if (auto retState = handleJumping(gd, res, p, key)) return retState;
+    if (auto retState = handleRunning(gd, res, p, key)) return retState;
+    if (auto retState = handleFalling(gd, res, p, key)) return retState;
     return nullptr;
 }
 
@@ -406,9 +386,6 @@ void FastfallState::exit(GameData &gd, Resources &res, Player &p) {
 } 
 
 // STUNNED
-PlayerState* StunnedState::handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key) {
-    return nullptr;
-} // do nothing
 
 PlayerState* StunnedState::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
     sharedUpdate(state, p, deltaTime);
@@ -424,8 +401,6 @@ void StunnedState::enter(GameData &gd, Resources &res, Player &p) {
     p.animations[p.curAnimation].reset();
 }
 
-void StunnedState::exit(GameData &gd, Resources &res, Player &p) {} // do nothing
-
 // DEAD
 void DeadState::enter(GameData &gd, Resources &res, Player &p) {
     p.texture = res.texDie[p.character];
@@ -435,7 +410,7 @@ void DeadState::enter(GameData &gd, Resources &res, Player &p) {
 
 // SWORD DEPLOY
 PlayerState* SwordDeployState::handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key) {
-    if (auto ret = handleJumping(gd, res, p, key)) return ret;
+    if (auto retState = handleJumping(gd, res, p, key)) return retState;
     return nullptr;
 }
 
@@ -458,20 +433,27 @@ void SwordDeployState::enter(GameData &gd, Resources &res, Player &p) {
     p.animations[p.curAnimation].reset();
 }
 
-void SwordDeployState::exit(GameData &gd, Resources &res, Player &p) {} // do nothing
-
 // SHOTGUN DEPLOY
+void ShotgunDeployState::draw(const SDLState &state, GameData &gd) {
+    //draw blast if needed for shotgun
+    if((*this).blast != nullptr) {
+        (*this).blast->draw(state, gd, 80, 48);
+    }  
+}
+
 PlayerState* ShotgunDeployState::handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key) {
-    if (auto ret = handleJumping(gd, res, p, key)) return ret;
+    if (auto retState = handleJumping(gd, res, p, key)) return retState;
     return nullptr;
 }
 
 PlayerState* ShotgunDeployState::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
     sharedUpdate(state, p, deltaTime);
-    if(p.blast->animations[p.blast->curAnimation].isDone()) { 
-        delete p.blast;
-        p.blast = nullptr;
-        p.cooldownTimer.reset();
+    
+    if ((*this).blast != nullptr) { // update shotgun blast
+        (*this).blast->update(state, gd, res, deltaTime);
+    }
+    
+    if((*this).blast->animations[(*this).blast->curAnimation].isDone()) { 
         if(p.vel.x != 0) {
             return new WalkState();
         } else {
@@ -479,13 +461,19 @@ PlayerState* ShotgunDeployState::update(const SDLState &state, GameData &gd, Res
         }
     } else {
         if(p.dir == 1) {
-            p.blast->pos = glm::vec2(p.pos.x + 32, p.pos.y - 4);
-            p.blast->dir = 1;
+            (*this).blast->pos = glm::vec2(p.pos.x + 32, p.pos.y - 4);
+            (*this).blast->dir = 1;
         } else if (p.dir == -1) {
-            p.blast->pos = glm::vec2(p.pos.x - 80, p.pos.y - 4);
-            p.blast->dir = -1;
+            (*this).blast->pos = glm::vec2(p.pos.x - 80, p.pos.y - 4);
+            (*this).blast->dir = -1;
         }
     }
+
+    //draw blast if needed for shotgun, could be put into its own draw function absolutely
+    if((*this).blast != nullptr) {
+        (*this).blast->draw(state, gd, 80, 48);
+    }
+
     return nullptr;
 }
 
@@ -511,14 +499,18 @@ void ShotgunDeployState::enter(GameData &gd, Resources &res, Player &p) {
     }
     blast->animations = res.shotgunAnims;
     blast->curAnimation = res.SHOTGUN_BLAST;
-    p.blast = blast;
+    (*this).blast = blast;
 }
 
-void ShotgunDeployState::exit(GameData &gd, Resources &res, Player &p) {} // do nothing
+void ShotgunDeployState::exit(GameData &gd, Resources &res, Player &p) {
+    delete (*this).blast;
+    (*this).blast = nullptr;
+    p.cooldownTimer.reset();
+}
 
 // JETPACK DEPLOY
 PlayerState* JetpackDeployState::handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key) {
-    if (auto ret = handleJumping(gd, res, p, key)) return ret;
+    if (auto retState = handleJumping(gd, res, p, key)) return retState;
     return nullptr;
 }
 
@@ -576,13 +568,10 @@ void JetpackDeployState::enter(GameData &gd, Resources &res, Player &p) {
     p.jetpackTimer.reset();
 }
 
-void JetpackDeployState::exit(GameData &gd, Resources &res, Player &p) {} // do nothing
-
-
 // GRAPPLE
 
 PlayerState* GrappleState::handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key) {
-    if (auto ret = handleJumping(gd, res, p, key)) return ret;
+    if (auto retState = handleJumping(gd, res, p, key)) return retState;
     return nullptr;
 }
 

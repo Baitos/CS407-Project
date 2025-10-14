@@ -47,8 +47,6 @@ class Player : public AnimatedObject { // player
         Timer jetpackTimer;
         Timer cooldownTimer;
 
-        AnimatedObject* blast;
-
         void draw(const SDLState &state, GameData &gd, float width, float height);
         virtual void handleInput(const SDLState &state, GameData &gd, Resources &res, SDL_KeyboardEvent& key, float deltaTime);
         virtual void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);

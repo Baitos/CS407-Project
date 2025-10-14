@@ -10,12 +10,7 @@
 void Player::draw(const SDLState &state, GameData &gd, float width, float height) {
     (*this).hook.draw(state, gd, (*this), HOOK_SIZE, HOOK_SIZE); // draw hook under player
     
-    AnimatedObject::draw(state, gd, width, height); // do generic object draw
-
-    //draw blast if needed for shotgun
-    if((*this).blast != nullptr) {
-        (*this).blast->draw(state, gd, 80, 48);
-    }
+    AnimatedObject::draw(state, gd, width, height); // do generic object draw for player
 }
 
 void Player::handleState(PlayerState* &pState, GameData &gd, Resources &res) {
@@ -35,10 +30,6 @@ void Player::handleInput(const SDLState &state, GameData &gd, Resources &res, SD
 void Player::update(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
     PlayerState* pState = state_->update(state, gd, res, (*this), deltaTime);
     (*this).handleState(pState, gd, res);
-
-    if ((*this).blast != nullptr) { // update shotgun blast
-        (*this).blast->update(state, gd, res, deltaTime);
-    }
 
     if ((*this).pickingItem) { // update item roulette
         gd.itemStorage_.update(state, gd, res, (*this), deltaTime);

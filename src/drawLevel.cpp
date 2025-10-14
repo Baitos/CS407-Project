@@ -36,7 +36,9 @@ void drawLevel(const SDLState &state, GameData &gd, Resources res, float deltaTi
     // draw players
     for(Player &p : gd.players_) {
         p.draw(state, gd, TILE_SIZE, TILE_SIZE);
+        p.state_->draw(state, gd); // currently only for shotgun but could be used in future for state based particles/power up effects
     }
+
 
     for(ItemBox &box : gd.itemBoxes_) {
         if (box.itemBoxActive) {

@@ -179,6 +179,36 @@ void Hook::checkCollision(const SDLState &state, GameData &gd, Resources &res, P
             }
         }
     }
+    for (Player &p2 : gd.players_) {
+        if (&p != &p2) { // do not check on self
+            rectB = {
+                .x = p2.pos.x + p2.collider.x,
+                .y = p2.pos.y + p2.collider.y,
+                .w = p2.collider.w,
+                .h = p2.collider.h
+            };
+            if (intersectAABB(rectA, rectB, resolution)) {
+                p.vel = 0.7f * (*this).vel;
+                p2.vel = -0.3f * (*this).vel;
+                removeHook(p);
+                removeHook(p2);
+                PlayerState* stunState = new StunnedState();
+                p2.handleState(stunState, gd, res); // stun player you hit and disable their hook
+            }
+            Hook h2 = p2.hook;
+            rectB = {
+                .x = h2.pos.x + h2.collider.x,
+                .y = h2.pos.y + h2.collider.y,
+                .w = h2.collider.w,
+                .h = h2.collider.h
+            };
+            if (intersectAABB(rectA, rectB, resolution) && h2.visible) { // Touching other hook
+                removeHook(p);
+                removeHook(p2);
+            }
+        } 
+    }
+    
 }
 
 void ItemBox::update(const SDLState &state, GameData &gd, Resources &res, float deltaTime) { // update item box timer every frame (when on cooldown)

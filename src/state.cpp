@@ -10,8 +10,8 @@
 //NOTE: When a state is changed, call currState->init() immediately after
 
 //Init functions should be located in createTiles.cpp
-//Input and Update functions should be located in update.cpp
-//Render functions should be located in draw.cpp
+//Input and Update functions should be located in updateLevel/Menu.cpp
+//Render functions should be located in drawLevel/Menu.cpp
 
 GameState * changeState(GameState * tempState, GameData &gd){
     GameState * newState;

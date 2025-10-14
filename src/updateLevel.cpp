@@ -37,7 +37,7 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
     for (Player &p : gd.players_) {
         p.update(state, gd, res, deltaTime);
 
-        /*if (p.usingSugar){
+        if (p.usingSugar) { // TODO: this currently draws below the screen, and this should probably be in draw
             //Draw sugar effect
             if(p.dir == 1) {
                 glm::vec2 pos = glm::vec2(p.pos.x - 30.f, p.pos.y);
@@ -60,8 +60,7 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
                 Object sugarEffectObject(pos, collider, res.texSugarEffectR);
                 sugarEffectObject.draw(state,gd,32,32);
             }
-        }*/
-
+        }
     }
 
     //printf("%d\n", gd.player.state_->currStateVal);
@@ -126,19 +125,19 @@ void handleLevelClick(SDLState &state, GameData &gd, Resources &res, Player &p, 
     if(event.button.button == SDL_BUTTON_LEFT && buttonDown){
         //JETPACK DEPLOY
         if(((LevelState *)currState)->character == JETPACK) {
-            if(p.cooldownTimer.isTimeOut() && p.state_->stateVal != JETPACK_DEPLOY) {
+            if (p.cooldownTimer.isTimeOut() && p.state_->stateVal != JETPACK_DEPLOY) {
                 PlayerState* jpState = new JetpackDeployState();
                 p.handleState(jpState, gd, res);
             }
         } else if (((LevelState *)currState)->character == SHOTGUN) {
             //SHOTGUN DEPLOY
-            if(p.cooldownTimer.isTimeOut()) {
+            if(p.cooldownTimer.isTimeOut() && p.state_->stateVal != SHOTGUN_DEPLOY) {
                 PlayerState* sgState = new ShotgunDeployState();
                 p.handleState(sgState, gd, res);
             }
         } else if (((LevelState *)currState)->character == SWORD) {
             //SWORD DEPLOY
-            if(p.cooldownTimer.isTimeOut()) {
+            if(p.cooldownTimer.isTimeOut() && p.state_->stateVal != SWORD_DEPLOY) {
                 PlayerState* swState = new SwordDeployState();
                 p.handleState(swState, gd, res);
             }
@@ -160,10 +159,7 @@ void handleLevelClick(SDLState &state, GameData &gd, Resources &res, Player &p, 
             PlayerState* jState = new JumpState();
             p.handleState(jState, gd, res);
         }
-        p.hook.visible = false;
-        p.hook.collided = false;
-        p.hook.pos += glm::vec2(-10000.0f, -10000.0f); // maybe unnecessary
-        p.hook.vel = glm::vec2(0);
+        removeHook(p);
     }
 }
 
