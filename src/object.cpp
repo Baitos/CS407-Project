@@ -187,7 +187,7 @@ void Hook::checkCollision(const SDLState &state, GameData &gd, Resources &res, P
                 .w = p2.collider.w,
                 .h = p2.collider.h
             };
-            if (intersectAABB(rectA, rectB, resolution)) {
+            if (intersectAABB(rectA, rectB, resolution) && !(*this).collided) {
                 p.vel = 0.7f * (*this).vel;
                 p2.vel = -0.3f * (*this).vel;
                 removeHook(p);
@@ -202,7 +202,7 @@ void Hook::checkCollision(const SDLState &state, GameData &gd, Resources &res, P
                 .w = h2.collider.w,
                 .h = h2.collider.h
             };
-            if (intersectAABB(rectA, rectB, resolution) && h2.visible) { // Touching other hook
+            if (intersectAABB(rectA, rectB, resolution) && !(*this).collided && h2.visible) { // Touching other hook
                 removeHook(p);
                 removeHook(p2);
             }
