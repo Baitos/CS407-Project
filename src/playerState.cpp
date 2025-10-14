@@ -319,7 +319,6 @@ void SlideState::enter(GameData &gd, Resources &res, Player &p) {
 // FASTFALL
 PlayerState* FastfallState::handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key) {
     if (auto retState = handleJumping(gd, res, p, key)) return retState;
-    if (auto retState = handleFalling(gd, res, p, key)) return retState;
     return nullptr;
 }
 
