@@ -19,6 +19,8 @@ pngPath = sys.argv[1]
 png = Image.open(pngPath).convert("RGBA")
 width, height = png.size
 
+print(width, height)
+
 pixels = np.array(png)
 colorIdDict = {}
 idCounter = int(sys.argv[2])
@@ -33,12 +35,10 @@ for y in range(height):
             colorIdDict[color] = (idCounter, (x,y))
             idCounter += 1
         
-        if colorIdDict[color][0] == 10:
-            resultArray[y,x] = random.choice([10,14,15,16,17,18])
         else:
             resultArray[y,x] = colorIdDict[color][0]
 
-filename = "C:/Users/hohma/OneDrive/Desktop/CS 407/Stage Design/Spaceship/" + "StageArray.txt"
+filename = "C:/Users/spear/OneDrive - purdue.edu/College Documents/Fall 25/CS407/CS407-Project/data/Grasslands/" + "StageArray.txt"
 
 with open(filename, 'w') as outputFile:
     for row in resultArray:
