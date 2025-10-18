@@ -34,6 +34,7 @@ for y in range(height):
         if color not in colorIdDict:
             colorIdDict[color] = (idCounter, (x,y))
             idCounter += 1
+            resultArray[y,x] = colorIdDict[color][0]
         
         else:
             resultArray[y,x] = colorIdDict[color][0]

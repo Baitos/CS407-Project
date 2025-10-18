@@ -102,11 +102,6 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     texGrappleAngle = loadTexture(state.renderer, "data/CharacterSprites/grappleAngle.png");
 
     texCrosshair = loadTexture(state.renderer, "data/crosshair.png");
-    texGrass = loadTexture(state.renderer, "data/grass.png");
-    texBrick = loadTexture(state.renderer, "data/brick.png");
-    texStone = loadTexture(state.renderer, "data/stone.png");
-    texBush = loadTexture(state.renderer, "data/bush.png");
-    texFence = loadTexture(state.renderer, "data/fence.png");
     texBg1 = loadTexture(state.renderer, "data/Spaceship/Background.png");
 
     //Spaceship
@@ -138,6 +133,20 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     texVentOne = loadTexture(state.renderer, "data/spaceship/BackgroundTiles/VentOne.png");
     texVentTwo = loadTexture(state.renderer, "data/spaceship/BackgroundTiles/VentTwo.png");
     texBackWall = loadTexture(state.renderer, "data/spaceship/BackgroundTiles/BackWall.png");
+
+
+    //Grasslands
+    texCloud= loadTexture(state.renderer, "data/Grasslands/cloud.png");
+    texWood= loadTexture(state.renderer, "data/Grasslands/wood.png");
+    texLeaves= loadTexture(state.renderer, "data/Grasslands/leaves.png");
+    texStone= loadTexture(state.renderer, "data/Grasslands/stone.png");
+    texWater= loadTexture(state.renderer, "data/Grasslands/water.png");
+    texLava= loadTexture(state.renderer, "data/Grasslands/lava.png");
+    texGrass= loadTexture(state.renderer, "data/Grasslands/grass.png");
+    texDirt= loadTexture(state.renderer, "data/Grasslands/dirt.png");
+    texBgStone = loadTexture(state.renderer, "data/Grasslands/bg_stone.png");
+    texBgWood = loadTexture(state.renderer, "data/Grasslands/bg_wood.png");
+    texBgSky = loadTexture(state.renderer, "data/Grasslands/bg_sky.png");
 
     //Char Select Background
     
