@@ -17,6 +17,9 @@ struct GameData {
     std::vector<ItemBox> itemBoxes_;
     std::vector<Item> items_;
     std::vector<Portal> portals_;
+    std::vector<Sign> signs_;
+    std::vector<Water> water_;
+    std::vector<Lava> lava_;
 
     std::vector<charIconObject> charIcons_;
     std::vector<AnimatedObject> previews_;

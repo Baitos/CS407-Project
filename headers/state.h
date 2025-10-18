@@ -25,6 +25,7 @@ enum gameStates {
     JOIN,
     CHAR_SELECT,
     SPACESHIP,
+    GRASSLANDS,
     RESULTS,
     CREDITS
 };

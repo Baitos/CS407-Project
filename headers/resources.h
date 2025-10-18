@@ -68,6 +68,7 @@ struct Resources {
                 *texFan, *texPanelOne, *texPanelTwo, *texPanelThree, *texVentOne, *texVentTwo, *texBackWall,
                 *texCloud, *texWood, *texLeaves, *texStone, *texWater, *texLava, *texGrass, *texDirt,
                 *texBgWood, *texBgSky, *texBgStone,
+                *texSignUp, *texSignDown, *texSignRight, *texSignLeft,
                 *texCharSelectBackground, *texCursor, *texCharIcons, *texSword, *texShotgun, *texJetpack, 
                 *texItemBox, *texItemStorage, *texItemRandomizer, 
                 *texBombStorage, *texBoomboxStorage, *texBouncyBallStorage, *texFogStorage,

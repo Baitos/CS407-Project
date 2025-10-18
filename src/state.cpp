@@ -50,7 +50,17 @@ GameState * changeState(GameState * tempState, GameData &gd){
             newState->input = levelInputs;
             newState->update = levelUpdate;
             newState->render = drawLevel;
-            newState->init = createTiles;    
+            newState->init = createTilesSpaceship;    
+            break;
+        }
+        case GRASSLANDS:
+        {
+            //Creating LevelState with init of Spaceship
+            newState = new LevelState();
+            newState->input = levelInputs;
+            newState->update = levelUpdate;
+            newState->render = drawLevel;
+            newState->init = createTilesGrassland;    
             break;
         }
 

@@ -33,6 +33,18 @@ void drawLevel(const SDLState &state, GameData &gd, Resources res, float deltaTi
         }
     }
 
+    //draw signs
+    for(Sign &sign : gd.signs_) {
+        sign.draw(state, gd, TILE_SIZE, TILE_SIZE);
+    }
+    //draw lava
+    for(Lava &lava : gd.lava_) {
+        lava.draw(state, gd, TILE_SIZE, TILE_SIZE);
+    }
+    //draw water
+    for(Water &water : gd.water_) {
+        water.draw(state, gd, TILE_SIZE, TILE_SIZE);
+    }
     // draw players
     for(Player &p : gd.players_) {
         p.draw(state, gd, TILE_SIZE, TILE_SIZE);

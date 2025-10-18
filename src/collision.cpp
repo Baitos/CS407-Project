@@ -94,6 +94,43 @@ void collisionCheckAndResponse(const SDLState &state, GameData &gd, Resources &r
 			}
 		}
 	}
+	for(Water &water : gd.water_) {
+		SDL_FRect rectB{
+			.x = water.pos.x + water.collider.x,
+			.y = water.pos.y + water.collider.y,
+			.w = water.collider.w,
+			.h = water.collider.h
+		};
+		glm::vec2 resolution{ 0 };
+		if (intersectAABB(rectA, rectB, resolution)){
+			if(abs(player.vel.x) >= 50) {
+				if(player.vel.x > 0) {
+					player.vel.x-=.5;
+				} else {
+					player.vel.x+=.5;
+				}
+			}
+			if(abs(player.vel.y) >= 50) {
+				if(player.vel.y > 0) {
+					player.vel.y-=.5;
+				} else {
+					player.vel.y+=.5;
+				}
+			}
+		}
+	}
+	for(Lava &lava : gd.lava_) {
+		SDL_FRect rectB{
+			.x = lava.pos.x + lava.collider.x,
+			.y = lava.pos.y + lava.collider.y,
+			.w = lava.collider.w,
+			.h = lava.collider.h
+		};
+		glm::vec2 resolution{ 0 };
+		if (intersectAABB(rectA, rectB, resolution)){
+			printf("LAVA!!");
+		}
+	}
 	for (ItemBox &box : gd.itemBoxes_) {
 
 		SDL_FRect rectB{

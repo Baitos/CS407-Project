@@ -147,6 +147,10 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     texBgStone = loadTexture(state.renderer, "data/Grasslands/bg_stone.png");
     texBgWood = loadTexture(state.renderer, "data/Grasslands/bg_wood.png");
     texBgSky = loadTexture(state.renderer, "data/Grasslands/bg_sky.png");
+    texSignUp = loadTexture(state.renderer, "data/Grasslands/sign_up.png");
+    texSignDown = loadTexture(state.renderer, "data/Grasslands/sign_down.png");
+    texSignRight = loadTexture(state.renderer, "data/Grasslands/sign_right.png");
+    texSignLeft = loadTexture(state.renderer, "data/Grasslands/sign_left.png");
 
     //Char Select Background
     
