@@ -48,6 +48,7 @@ class Player : public AnimatedObject { // player
         Timer cooldownTimer;
 
         int position = 8;
+        int index;
 
         void draw(const SDLState &state, GameData &gd, float width, float height);
         virtual void handleInput(const SDLState &state, GameData &gd, Resources &res, SDL_KeyboardEvent& key, float deltaTime);

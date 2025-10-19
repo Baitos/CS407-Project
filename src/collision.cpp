@@ -130,6 +130,7 @@ void collisionCheckAndResponse(const SDLState &state, GameData &gd, Resources &r
 		if (intersectAABB(rectA, rectB, resolution)){
 			/*UPDATE TO RESPAWN ONC CHECKPOINTS IN PLACE*/
 			PlayerState* stState = new StunnedState();
+			player.isDead = true;
             player.handleState(stState, gd, res);
 			
 			player.vel.x = 0;
@@ -155,6 +156,54 @@ void collisionCheckAndResponse(const SDLState &state, GameData &gd, Resources &r
 					gd.itemStorage_.animations[gd.itemStorage_.curAnimation].reset();
     			}
 				box.itemBoxActive = false;
+			}
+		}
+	}
+	//check for weapon deployment
+	for (Player &p : gd.players_) {
+		if(p.index!=player.index) {
+			//check if in shotgun player blast state
+			if(ShotgunDeployState *s = dynamic_cast<ShotgunDeployState*>(p.state_)) {
+				//check if currently blocking/deploying sword
+				if(!dynamic_cast<SwordDeployState*> (player.state_)) {
+					SDL_FRect rectB{
+						.x = s->blast->pos.x + s->blast->collider.x,
+						.y = s->blast->pos.y + s->blast->collider.y,
+						.w = s->blast->collider.w,
+						.h = s->blast->collider.h
+					};
+					glm::vec2 resolution{ 0 };
+					if (intersectAABB(rectA, rectB, resolution)){
+						printf("Player %d shot by player %d\n", player.index, p.index);
+						PlayerState* stState = new StunnedState();
+						player.isDead = true;
+						player.handleState(stState, gd, res);
+						
+						player.vel.x = 0;
+						player.vel.y = 0;
+					}
+				} else {
+					//sword blocks
+					printf("Player %d BLOCKED shot by player %d\n", player.index, p.index);
+				}
+			} else if (SwordDeployState *s = dynamic_cast<SwordDeployState*>(p.state_)) {
+				//check if in sword player swing state
+				SDL_FRect rectB{
+					.x = p.pos.x + p.collider.x - 5,
+					.y = p.pos.y + p.collider.y - 5,
+					.w = p.collider.w + 10,
+					.h = p.collider.h + 10
+				};
+				glm::vec2 resolution{ 0 };
+				if (intersectAABB(rectA, rectB, resolution)){
+					printf("Player %d hit by player %d's sword\n", player.index, p.index);
+					PlayerState* stState = new StunnedState();
+					player.isDead = true;
+					player.handleState(stState, gd, res);
+					
+					player.vel.x = 0;
+					player.vel.y = 0;
+				}
 			}
 		}
 	}
