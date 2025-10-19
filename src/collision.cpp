@@ -128,7 +128,12 @@ void collisionCheckAndResponse(const SDLState &state, GameData &gd, Resources &r
 		};
 		glm::vec2 resolution{ 0 };
 		if (intersectAABB(rectA, rectB, resolution)){
-			printf("LAVA!!");
+			/*UPDATE TO RESPAWN ONC CHECKPOINTS IN PLACE*/
+			PlayerState* stState = new StunnedState();
+            player.handleState(stState, gd, res);
+			
+			player.vel.x = 0;
+			player.vel.y = 0;
 		}
 	}
 	for (ItemBox &box : gd.itemBoxes_) {
