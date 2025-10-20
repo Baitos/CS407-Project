@@ -77,7 +77,7 @@ class CharSelectState : public GameState{
 
 class LevelState : public GameState{
     public:
-        characterType character = SWORD;
+        characterType character = SHOTGUN;
 };
 
 /*class SpaceshipState : public LevelState {
