@@ -4,6 +4,7 @@
 #include "../headers/playerState.h"
 #include "../headers/state.h"
 #include "../headers/helper.h"
+#include "../headers/createCheckpoints.h"
 
 void collisionCheckAndResponse(const SDLState &state, GameData &gd, Resources &res,
  	Player &player, float deltaTime)
@@ -204,6 +205,23 @@ void collisionCheckAndResponse(const SDLState &state, GameData &gd, Resources &r
 					player.vel.x = 0;
 					player.vel.y = 0;
 				}
+			}
+		}
+	}
+	//check for checkpoint system
+	for (Checkpoint cp: gd.checkpoints_) {
+		if (cp.index == (player.lastCheckpoint+1)%(gd.checkpoints_.size())){
+			SDL_FRect rectB = cp.collider;
+			//printf("checking %d\n", cp.index);
+			glm::vec2 resolution{ 0 };
+			if (intersectAABB(rectA, rectB, resolution)){
+				printf("INTERSECT!!!");
+				if(player.lastCheckpoint == gd.checkpoints_.size() - 1) {
+					player.lapsCompleted++;
+					printf("Completed the %dth lap!\n", player.lapsCompleted);
+				}
+				player.lastCheckpoint = (player.lastCheckpoint+1)%(gd.checkpoints_.size());
+				printf("passed checkpoint %d\n%f, %f\n%f, %f", player.lastCheckpoint, cp.collider.x, cp.collider.y, player.pos.x, player.pos.y);
 			}
 		}
 	}

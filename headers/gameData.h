@@ -6,7 +6,7 @@
 #include "initState.h"
 #include "player.h"
 #include "menu.h"
-
+#include "createCheckpoints.h"
 struct GameData {
     std::vector<Player> players_;
     int numPlayers; 
@@ -20,6 +20,8 @@ struct GameData {
     std::vector<Sign> signs_;
     std::vector<Water> water_;
     std::vector<Lava> lava_;
+
+    std::vector<Checkpoint> checkpoints_;
 
     std::vector<charIconObject> charIcons_;
     std::vector<AnimatedObject> previews_;

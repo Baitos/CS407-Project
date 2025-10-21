@@ -47,6 +47,9 @@ class Player : public AnimatedObject { // player
         Timer jetpackTimer;
         Timer cooldownTimer;
 
+        int lapsCompleted = 0;
+        int lastCheckpoint = 0;
+
         int position = 8;
         int index;
 
