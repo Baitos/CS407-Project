@@ -59,7 +59,8 @@ void drawLevel(const SDLState &state, GameData &gd, Resources res, float deltaTi
     }
     gd.itemStorage_.draw(state, gd, 68, 68);
 
-    renderCheckpoints(state.renderer, courseCheckpointsGrassland, gd);
+    //dont need unless debugging checkpoint system and need to see checkpoints
+    renderCheckpoints(state.renderer, courseCheckpoints, gd);
 
     handleCrosshair(state, gd, res, deltaTime);
     

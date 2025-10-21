@@ -60,12 +60,21 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     // currState->render = drawCharSelect;
     // currState->input = charSelectInputs;
     
-    currState = new LevelState();
-    currState->nextStateVal = SPACESHIP;
-    currState->init = createTilesGrassland;
-    currState->update = levelUpdate;
-    currState->render = drawLevel;
-    currState->input = levelInputs;
+        // currState = new LevelState();
+        // currState->currStateVal = GRASSLANDS;
+        // currState->nextStateVal = SPACESHIP;
+        // currState->init = createTilesGrassland;
+        // currState->update = levelUpdate;
+        // currState->render = drawLevel;
+        // currState->input = levelInputs;
+
+        currState = new LevelState();
+        currState->currStateVal = SPACESHIP;
+        currState->nextStateVal = SPACESHIP;
+        currState->init = createTilesSpaceship;
+        currState->update = levelUpdate;
+        currState->render = drawLevel;
+        currState->input = levelInputs;
 
     // setup game data
     GameData gd(state);

@@ -390,6 +390,8 @@ void createTilesSpaceship(const SDLState &state, GameData &gd, const Resources &
     };
     loadMap(map);
     loadMap(background);
+
+    createCheckpointsSpaceship(state, gd, res);
     //loadMap(foreground);
     //assert(gd.playerIndex != -1);
 }

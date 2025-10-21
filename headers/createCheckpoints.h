@@ -13,8 +13,10 @@ struct Checkpoint {
     int index;
 };
 
-extern std::vector<Checkpoint> courseCheckpointsGrassland;
+extern std::vector<Checkpoint> courseCheckpoints;
 
 void createCheckpointsGrassland(const SDLState &state, GameData &gd, const Resources &res);
+
+void createCheckpointsSpaceship(const SDLState &state, GameData &gd, const Resources &res);
 
 void renderCheckpoints(SDL_Renderer* renderer, const std::vector<Checkpoint>& checkpoints, GameData &gd);

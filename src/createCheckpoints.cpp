@@ -11,12 +11,12 @@
 
 extern GameState* currState;
 
-std::vector<Checkpoint> courseCheckpointsGrassland;
+std::vector<Checkpoint> courseCheckpoints;
 
 void createCheckpointsGrassland(const SDLState &state, GameData &gd, const Resources &res) {
     float tileSize = TILE_SIZE;
     //initialize the Rects for each checkpoint in form {{x*tileSize, state.logH - (MAP_ROWS - y)*tileSize, w, h*tileSize}, indx}
-    courseCheckpointsGrassland = {
+    courseCheckpoints = {
         { {31*tileSize, state.logH - (100 - 15)*tileSize, 16, 32*tileSize}, 0 },
         { {66*tileSize, state.logH - (100 - 14)*tileSize, 16, 28*tileSize}, 1 },
         { {130*tileSize, state.logH - (100 - 19)*tileSize, 16, 28*tileSize}, 2 },
@@ -41,7 +41,35 @@ void createCheckpointsGrassland(const SDLState &state, GameData &gd, const Resou
         { {42*tileSize, state.logH - (100 - 66)*tileSize, 16, 4*tileSize}, 21 },
         { {31*tileSize, state.logH - (100 - 78)*tileSize, 16, 3*tileSize}, 22 }
     };
-    gd.checkpoints_ = courseCheckpointsGrassland;
+    gd.checkpoints_ = courseCheckpoints;
+}
+
+void createCheckpointsSpaceship(const SDLState &state, GameData &gd, const Resources &res) {
+    printf("getting here");
+    float tileSize = TILE_SIZE;
+    //initialize the Rects for each checkpoint in form {{x*tileSize, state.logH - (MAP_ROWS - y)*tileSize, w, h*tileSize}, indx}
+    courseCheckpoints = {
+        { {3*tileSize, state.logH - (60 - 55)*tileSize, 16, 2*tileSize}, 0 },
+        { {16*tileSize, state.logH - (60 - 50)*tileSize, 16, 4*tileSize}, 1 },
+        { {18*tileSize, state.logH - (60 - 32)*tileSize, 16, 7*tileSize}, 2 },
+        { {9*tileSize, state.logH - (60 - 32)*tileSize, 16, 7*tileSize}, 3 },
+        { {8*tileSize, state.logH - (60 - 18)*tileSize, 16, 11*tileSize}, 4 },
+        { {36*tileSize, state.logH - (60 - 18)*tileSize, 16, 11*tileSize}, 5 },
+        { {43*tileSize, state.logH - (60 - 47)*tileSize, 16, 6*tileSize}, 6 },
+        { {72*tileSize, state.logH - (60 - 46)*tileSize, 16, 7*tileSize}, 7 },
+        { {98*tileSize, state.logH - (60 - 34)*tileSize, 16, 6*tileSize}, 8 },
+        { {112*tileSize, state.logH - (60 - 34)*tileSize, 16, 6*tileSize}, 9 },
+        { {119*tileSize, state.logH - (60 - 7)*tileSize, 16, 7*tileSize}, 10 },
+        { {158*tileSize, state.logH - (60 - 8)*tileSize, 16, 45*tileSize}, 11 },
+        { {200*tileSize, state.logH - (60 - 8)*tileSize, 16, 45*tileSize}, 12 },
+        { {225*tileSize, state.logH - (60 - 8)*tileSize, 16, 45*tileSize}, 13 },
+        { {237*tileSize, state.logH - (60 - 26)*tileSize, 16, 4*tileSize}, 14 },
+    };
+    gd.checkpoints_ = courseCheckpoints;
+
+    for (const auto& cp : gd.checkpoints_) {
+        printf("Checkppoint %d - x:%f y:%f h:%f\n", cp.index, cp.collider.x, cp.collider.y, cp.collider.h);
+    }
 }
 
 void renderCheckpoints(SDL_Renderer* renderer, const std::vector<Checkpoint>& checkpoints, GameData &gd){
@@ -54,9 +82,6 @@ void renderCheckpoints(SDL_Renderer* renderer, const std::vector<Checkpoint>& ch
             (cp.collider.w),
             (cp.collider.h)
         };
-
-        // printf("Rendering checkpoint %d: %d,%d %d x %d\n",
-        //        cp.index, screenRect.x, screenRect.y, screenRect.w, screenRect.h);
 
         SDL_RenderFillRect(renderer, &screenRect);
     }
