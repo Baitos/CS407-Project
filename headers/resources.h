@@ -40,6 +40,13 @@ struct Resources {
     const int ERROR = 0;
     std::vector<Animation> errorAnims;
 
+    //anim for map select
+    const int MAP_SELECT = 0;
+    std::vector<Animation> mapAnims;
+    const int LEFT_ARROW = 0;
+    const int RIGHT_ARROW = 1;
+    std::vector<Animation> arrowAnims;
+
     //FOR NOW.. change to 0 for shotgun, 1 for sword, 2 for jetpack
     int character;
 
@@ -70,6 +77,7 @@ struct Resources {
                 *texBgWood, *texBgSky, *texBgStone,
                 *texSignUp, *texSignDown, *texSignRight, *texSignLeft,
                 *texCharSelectBackground, *texCursor, *texCharIcons, *texSword, *texShotgun, *texJetpack, 
+                *texMapSelect, *texLeftArrow, *texRightArrow,
                 *texItemBox, *texItemStorage, *texItemRandomizer, 
                 *texBombStorage, *texBoomboxStorage, *texBouncyBallStorage, *texFogStorage,
                 *texIceStorage, *texMissileStorage, *texSugarStorage, *texPieStorage,

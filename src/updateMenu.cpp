@@ -145,6 +145,16 @@ void handleMousePointerCharSelect(const SDLState &state, GameData &gd, Resources
         gd.settingsBorder.pos = glm::vec2(500,500);
     }
 
+    //hover for arrows
+    if((gd.mouseCoords.x >= 107 && gd.mouseCoords.x <= 125) && (gd.mouseCoords.y >= 286 && gd.mouseCoords.y <= 310)){
+        gd.arrows_[0].visible = true;
+    } else if ((gd.mouseCoords.x >= 274 && gd.mouseCoords.x <= 292) && (gd.mouseCoords.y >= 286 && gd.mouseCoords.y <= 310)) {
+        gd.arrows_[1].visible = true;
+    } else {
+        gd.arrows_[0].visible = false;
+        gd.arrows_[1].visible = false;
+    }
+
     SDL_RenderTexture(state.renderer, res.texCursor, nullptr, &dst); // src is for sprite stripping, dest is for where sprite should be drawn*/ 
     
 }
@@ -285,7 +295,19 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
         currState->nextStateVal = TITLE;
         currState = changeState(currState, gd);
         currState->init(state, gd, res);
-    }   
+    } else if ((gd.mouseCoords.x >= 107 && gd.mouseCoords.x <= 125) && (gd.mouseCoords.y >= 286 && gd.mouseCoords.y <= 310)){
+        //move map sprite - one frame
+        for (AnimatedObject &map_preview : gd.map_previews_) {
+            map_preview.update(state, gd, res, deltaTime);
+        }
+        printf("left\n");
+    } else if ((gd.mouseCoords.x >= 274 && gd.mouseCoords.x <= 292) && (gd.mouseCoords.y >= 286 && gd.mouseCoords.y <= 310)) {
+        //move map sprite + one 
+        printf("right\n");
+        for (AnimatedObject &map_preview : gd.map_previews_) {
+            map_preview.update(state, gd, res, deltaTime);
+        }
+    }
 }
 
 //Handles Clicking for Settings

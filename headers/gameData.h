@@ -25,6 +25,8 @@ struct GameData {
 
     std::vector<charIconObject> charIcons_;
     std::vector<AnimatedObject> previews_;
+    std::vector<AnimatedObject> map_previews_;
+    std::vector<AnimatedObject> arrows_;
     glm::vec2 ExitPortal, 
               EntrancePortal, 
               mouseCoords, 

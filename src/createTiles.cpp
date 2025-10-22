@@ -830,6 +830,8 @@ void initCharSelect(const SDLState &state, GameData &gd, const Resources &res) {
         c.curAnimation = 0;
         c.spriteFrame = 7;
         gd.charIcons_.push_back(c);
+
+        
         
         //Put player options on right side
         //Sword
@@ -858,6 +860,29 @@ void initCharSelect(const SDLState &state, GameData &gd, const Resources &res) {
         preview.animations = res.playerAnims;
         preview.curAnimation = res.ANIM_PLAYER_RUN;
         gd.previews_.push_back(preview);
+
+        //put map icons on side
+        AnimatedObject map_preview(pos, collider, res.texMapSelect);
+        map_preview.pos = glm::vec2(94,168);
+        map_preview.animations = res.mapAnims;
+        map_preview.curAnimation = res.MAP_SELECT;
+        gd.map_previews_.push_back(map_preview);
+
+        AnimatedObject arrowL(pos, collider, res.texLeftArrow);
+        arrowL.pos = glm::vec2(105,284);
+        arrowL.animations = res.arrowAnims;
+        arrowL.curAnimation = res.LEFT_ARROW;
+        gd.arrows_.push_back(arrowL);
+
+        gd.arrows_[res.LEFT_ARROW].visible = false;
+
+        AnimatedObject arrowR(pos, collider, res.texRightArrow);
+        arrowR.pos = glm::vec2(272,284);
+        arrowR.animations = res.arrowAnims;
+        arrowR.curAnimation = res.RIGHT_ARROW;
+        gd.arrows_.push_back(arrowR);
+
+        gd.arrows_[res.RIGHT_ARROW].visible = false;
 
         Object border(pos, collider, res.texBigBorder);
         

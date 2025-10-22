@@ -52,13 +52,13 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     // currState->render = drawSettings;
     // currState->input = settingsInputs;
     
-    // currState = new CharSelectState();
-    // currState->currStateVal =  CHAR_SELECT;
-    // currState->nextStateVal = SPACESHIP;
-    // currState->init = initCharSelect;
-    // currState->update = charSelectUpdate;
-    // currState->render = drawCharSelect;
-    // currState->input = charSelectInputs;
+    currState = new CharSelectState();
+    currState->currStateVal =  CHAR_SELECT;
+    currState->nextStateVal = SPACESHIP;
+    currState->init = initCharSelect;
+    currState->update = charSelectUpdate;
+    currState->render = drawCharSelect;
+    currState->input = charSelectInputs;
     
         // currState = new LevelState();
         // currState->currStateVal = GRASSLANDS;
@@ -68,13 +68,13 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         // currState->render = drawLevel;
         // currState->input = levelInputs;
 
-        currState = new LevelState();
-        currState->currStateVal = SPACESHIP;
-        currState->nextStateVal = SPACESHIP;
-        currState->init = createTilesSpaceship;
-        currState->update = levelUpdate;
-        currState->render = drawLevel;
-        currState->input = levelInputs;
+        // currState = new LevelState();
+        // currState->currStateVal = SPACESHIP;
+        // currState->nextStateVal = SPACESHIP;
+        // currState->init = createTilesSpaceship;
+        // currState->update = levelUpdate;
+        // currState->render = drawLevel;
+        // currState->input = levelInputs;
 
     // setup game data
     GameData gd(state);

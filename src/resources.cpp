@@ -57,6 +57,13 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     errorAnims.resize(1); // default to prevent crashes
     errorAnims[ERROR] = Animation(1, 1.0f);
 
+    mapAnims.resize(1);
+    mapAnims[MAP_SELECT] = Animation(5, 1.0f);
+
+    arrowAnims.resize(2);
+    arrowAnims[RIGHT_ARROW] = Animation(1, 1.0f);
+    arrowAnims[LEFT_ARROW] = Animation(1, 1.0f);
+
 
     //load shotgun character animations
     texIdle[SHOTGUN] = loadTexture(state.renderer, "data/CharacterSprites/Shotgun/idle_shotgun.png");
@@ -160,6 +167,10 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     texSword = loadTexture(state.renderer, "data/CharSelect/running_sword_large.png");
     texShotgun = loadTexture(state.renderer, "data/CharSelect/running_shotgun_large.png");
     texJetpack = loadTexture(state.renderer, "data/CharSelect/running_jetpack_large.png");
+
+    texMapSelect = loadTexture(state.renderer, "data/CharSelect/map_previews.png");
+    texLeftArrow = loadTexture(state.renderer, "data/CharSelect/left_arrow.png");
+    texRightArrow = loadTexture(state.renderer, "data/CharSelect/right_arrow.png");
 
     //Items
     texItemBox = loadTexture(state.renderer, "data/ItemSprites/item_box.png");
