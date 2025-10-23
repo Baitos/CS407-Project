@@ -26,7 +26,10 @@ void drawCharSelect(const SDLState &state, GameData &gd, Resources res, float de
 
     //draw map option
     for (AnimatedObject &map:gd.map_previews_){
-        map.draw(state, gd, static_cast<float>(map.texture->w)/5, static_cast<float>(map.texture->h));
+        map.draw(state, gd, static_cast<float>(map.texture->w), static_cast<float>(map.texture->h));
+    }
+    for (AnimatedObject &map:gd.map_previews_text_){
+        map.draw(state, gd, static_cast<float>(map.texture->w), static_cast<float>(map.texture->h));
     }
 
     //draw arrows

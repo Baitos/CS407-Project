@@ -862,11 +862,17 @@ void initCharSelect(const SDLState &state, GameData &gd, const Resources &res) {
         gd.previews_.push_back(preview);
 
         //put map icons on side
-        AnimatedObject map_preview(pos, collider, res.texMapSelect);
+        AnimatedObject map_preview(pos, collider, res.texMapPreviews[0]);
         map_preview.pos = glm::vec2(94,168);
         map_preview.animations = res.mapAnims;
-        map_preview.curAnimation = res.MAP_SELECT;
+        map_preview.curAnimation = res.MAP_GRASSLAND;
         gd.map_previews_.push_back(map_preview);
+
+        AnimatedObject map_preview_text(pos, collider, res.texMapTextPreviews[0]);
+        map_preview_text.pos = glm::vec2(124,282);
+        map_preview_text.animations = res.mapTextAnims;
+        map_preview_text.curAnimation = res.MAP_GRASSLAND_TEXT;
+        gd.map_previews_text_.push_back(map_preview_text);
 
         AnimatedObject arrowL(pos, collider, res.texLeftArrow);
         arrowL.pos = glm::vec2(105,284);

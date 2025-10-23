@@ -41,8 +41,18 @@ struct Resources {
     std::vector<Animation> errorAnims;
 
     //anim for map select
-    const int MAP_SELECT = 0;
+    const int MAP_GRASSLAND = 0;
+    const int MAP_SPACESHIP = 1;
+    const int MAP_3 = 2;
+    const int MAP_4 = 3;
+    const int MAP_5 = 4;
     std::vector<Animation> mapAnims;
+    const int MAP_GRASSLAND_TEXT = 0;
+    const int MAP_SPACESHIP_TEXT = 1;
+    const int MAP_3_TEXT = 2;
+    const int MAP_4_TEXT = 3;
+    const int MAP_5_TEXT = 4;
+    std::vector<Animation> mapTextAnims;
     const int LEFT_ARROW = 0;
     const int RIGHT_ARROW = 1;
     std::vector<Animation> arrowAnims;
@@ -60,6 +70,8 @@ struct Resources {
     SDL_Texture *texShootJump[3];
     SDL_Texture *texRoll[3];
     SDL_Texture *texDeploy[3];
+    SDL_Texture *texMapPreviews[5];
+    SDL_Texture *texMapTextPreviews[5];
     std::vector<SDL_Texture *> textures;
     SDL_Texture *texCrosshair, 
                 // *texIdleS, *texRunS, *texJumpS, *texLaunchS, *texSlideS, *texShootS, *texDieS, *texShootJumpS, *texRollS,
@@ -77,7 +89,7 @@ struct Resources {
                 *texBgWood, *texBgSky, *texBgStone,
                 *texSignUp, *texSignDown, *texSignRight, *texSignLeft,
                 *texCharSelectBackground, *texCursor, *texCharIcons, *texSword, *texShotgun, *texJetpack, 
-                *texMapSelect, *texLeftArrow, *texRightArrow,
+                *texLeftArrow, *texRightArrow,
                 *texItemBox, *texItemStorage, *texItemRandomizer, 
                 *texBombStorage, *texBoomboxStorage, *texBouncyBallStorage, *texFogStorage,
                 *texIceStorage, *texMissileStorage, *texSugarStorage, *texPieStorage,

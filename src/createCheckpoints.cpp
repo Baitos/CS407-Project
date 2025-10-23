@@ -45,7 +45,6 @@ void createCheckpointsGrassland(const SDLState &state, GameData &gd, const Resou
 }
 
 void createCheckpointsSpaceship(const SDLState &state, GameData &gd, const Resources &res) {
-    printf("getting here");
     float tileSize = TILE_SIZE;
     //initialize the Rects for each checkpoint in form {{x*tileSize, state.logH - (MAP_ROWS - y)*tileSize, w, h*tileSize}, indx}
     courseCheckpoints = {
@@ -67,9 +66,9 @@ void createCheckpointsSpaceship(const SDLState &state, GameData &gd, const Resou
     };
     gd.checkpoints_ = courseCheckpoints;
 
-    for (const auto& cp : gd.checkpoints_) {
+    /*for (const auto& cp : gd.checkpoints_) {
         printf("Checkppoint %d - x:%f y:%f h:%f\n", cp.index, cp.collider.x, cp.collider.y, cp.collider.h);
-    }
+    }*/
 }
 
 void renderCheckpoints(SDL_Renderer* renderer, const std::vector<Checkpoint>& checkpoints, GameData &gd){

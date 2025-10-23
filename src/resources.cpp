@@ -57,8 +57,19 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     errorAnims.resize(1); // default to prevent crashes
     errorAnims[ERROR] = Animation(1, 1.0f);
 
-    mapAnims.resize(1);
-    mapAnims[MAP_SELECT] = Animation(5, 1.0f);
+    mapAnims.resize(5);
+    mapAnims[MAP_GRASSLAND] = Animation(1, 1.0f);
+    mapAnims[MAP_SPACESHIP] = Animation(1, 1.0f);
+    mapAnims[MAP_3] = Animation(1, 1.0f);
+    mapAnims[MAP_4] = Animation(1, 1.0f);
+    mapAnims[MAP_5] = Animation(1, 1.0f);
+
+    mapTextAnims.resize(5);
+    mapTextAnims[MAP_GRASSLAND_TEXT] = Animation(1, 1.0f);
+    mapTextAnims[MAP_SPACESHIP_TEXT] = Animation(1, 1.0f);
+    mapTextAnims[MAP_3_TEXT] = Animation(1, 1.0f);
+    mapTextAnims[MAP_4_TEXT] = Animation(1, 1.0f);
+    mapTextAnims[MAP_5_TEXT] = Animation(1, 1.0f);
 
     arrowAnims.resize(2);
     arrowAnims[RIGHT_ARROW] = Animation(1, 1.0f);
@@ -168,7 +179,18 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     texShotgun = loadTexture(state.renderer, "data/CharSelect/running_shotgun_large.png");
     texJetpack = loadTexture(state.renderer, "data/CharSelect/running_jetpack_large.png");
 
-    texMapSelect = loadTexture(state.renderer, "data/CharSelect/map_previews.png");
+    texMapPreviews[MAP_GRASSLAND] = loadTexture(state.renderer, "data/CharSelect/grasslands_preview.png");
+    texMapPreviews[MAP_SPACESHIP] = loadTexture(state.renderer, "data/CharSelect/spaceship_preview.png");
+    texMapPreviews[MAP_3] = loadTexture(state.renderer, "data/CharSelect/stage_3_preview.png");
+    texMapPreviews[MAP_4] = loadTexture(state.renderer, "data/CharSelect/stage_4_preview.png");
+    texMapPreviews[MAP_5] = loadTexture(state.renderer, "data/CharSelect/stage_5_preview.png");
+
+    texMapTextPreviews[MAP_GRASSLAND_TEXT] = loadTexture(state.renderer, "data/CharSelect/grasslands_preview_text.png");
+    texMapTextPreviews[MAP_SPACESHIP_TEXT] = loadTexture(state.renderer, "data/CharSelect/spaceship_preview_text.png");
+    texMapTextPreviews[MAP_3_TEXT] = loadTexture(state.renderer, "data/CharSelect/stage_3_preview_text.png");
+    texMapTextPreviews[MAP_4_TEXT] = loadTexture(state.renderer, "data/CharSelect/stage_4_preview_text.png");
+    texMapTextPreviews[MAP_5_TEXT] = loadTexture(state.renderer, "data/CharSelect/stage_5_preview_text.png");
+
     texLeftArrow = loadTexture(state.renderer, "data/CharSelect/left_arrow.png");
     texRightArrow = loadTexture(state.renderer, "data/CharSelect/right_arrow.png");
 

@@ -288,6 +288,14 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
         //Enter Stage
         //TO DO - ONLY DO WHEN PLAYERS AGREE TO READY UP
         characterType character = ((CharSelectState*) currState)->character;
+        if(gd.map_previews_[0].curAnimation == res.MAP_SPACESHIP) {
+            currState->nextStateVal = SPACESHIP;
+        } else if(gd.map_previews_[0].curAnimation == res.MAP_GRASSLAND)  {
+            currState->nextStateVal = GRASSLANDS;
+        } else {
+            printf("INVALID MAP\n");
+            return;
+        }
         currState = changeState(currState, gd);
         ((LevelState*) currState)->character = character;
         currState->init(state, gd, res);
@@ -298,14 +306,48 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
     } else if ((gd.mouseCoords.x >= 107 && gd.mouseCoords.x <= 125) && (gd.mouseCoords.y >= 286 && gd.mouseCoords.y <= 310)){
         //move map sprite - one frame
         for (AnimatedObject &map_preview : gd.map_previews_) {
-            map_preview.update(state, gd, res, deltaTime);
+            int index = map_preview.curAnimation;
+            index--;
+            if(index<0) {
+                index = 4;
+            }
+            map_preview.texture = res.texMapPreviews[index];
+            map_preview.curAnimation = index; 
+            map_preview.animations[map_preview.curAnimation].reset();
         }
-        printf("left\n");
+        //move map text sprite - one frame
+        for (AnimatedObject &map_preview_text : gd.map_previews_text_) {
+            int index = map_preview_text.curAnimation;
+            index--;
+            if(index<0) {
+                index = 4;
+            }
+            map_preview_text.texture = res.texMapTextPreviews[index];
+            map_preview_text.curAnimation = index; 
+            map_preview_text.animations[map_preview_text.curAnimation].reset();
+        }
     } else if ((gd.mouseCoords.x >= 274 && gd.mouseCoords.x <= 292) && (gd.mouseCoords.y >= 286 && gd.mouseCoords.y <= 310)) {
         //move map sprite + one 
-        printf("right\n");
         for (AnimatedObject &map_preview : gd.map_previews_) {
-            map_preview.update(state, gd, res, deltaTime);
+            int index = map_preview.curAnimation;
+            index++;
+            if(index>4) {
+                index = 0;
+            }
+            map_preview.texture = res.texMapPreviews[index];
+            map_preview.curAnimation = index; 
+            map_preview.animations[map_preview.curAnimation].reset();
+        }
+        //move map text sprite + one frame
+        for (AnimatedObject &map_preview_text : gd.map_previews_text_) {
+            int index = map_preview_text.curAnimation;
+            index++;
+            if(index>4) {
+                index = 0;
+            }
+            map_preview_text.texture = res.texMapTextPreviews[index];
+            map_preview_text.curAnimation = index; 
+            map_preview_text.animations[map_preview_text.curAnimation].reset();
         }
     }
 }
