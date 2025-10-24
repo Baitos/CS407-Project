@@ -9,3 +9,4 @@ struct Resources;
 
 void drawCharSelect(const SDLState &state, GameData &gd, Resources res, float deltaTime);
 void drawSettings(const SDLState &state, GameData &gd, Resources res, float deltaTime);
+void drawGameplaySettings(const SDLState &state, GameData &gd, Resources res, float deltaTime);

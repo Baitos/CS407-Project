@@ -95,7 +95,9 @@ struct Resources {
                 *texIceStorage, *texMissileStorage, *texSugarStorage, *texPieStorage,
                 *texBomb, *texExplosion, *texBoombox, *texSoundwaves, *texSugar,
                 *texSugarEffectL, *texSugarEffectR,
-                *texSettingsBackground, *texBigBorder, *texSmallBorder, *texSlider;
+                *texSettingsBackground, *texBigBorder, *texSmallBorder, *texSlider,
+                *texGameplaySettingsBackground, *texGameplaySettingsLeftBracket, *texGameplaySettingsRightBracket,
+                *texGameplaySettings1,*texGameplaySettings2,*texGameplaySettings3,*texGameplaySettings4,*texGameplaySettings5;
     SDL_Texture *loadTexture(SDL_Renderer *renderer, const std::string &filepath);
     void load(SDLState &state);
     void unload();

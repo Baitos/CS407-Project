@@ -16,3 +16,8 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res,
                      float deltaTime) ;
 void settingsInputs(SDLState &state, GameData &gd, Resources &res, float deltaTime);
 void handleSettingsClick(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+
+void gameplaySettingsUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime) ;
+void handleMousePointerGameplaySettings(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+void gameplaySettingsInput(SDLState &state, GameData &gd, Resources &res, float deltaTime);
+void handleGameplaySettingsClick(const SDLState &state, GameData &gd, Resources &res, float deltaTime);

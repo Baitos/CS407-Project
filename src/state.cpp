@@ -63,6 +63,16 @@ GameState * changeState(GameState * tempState, GameData &gd){
             newState->init = createTilesGrassland;    
             break;
         }
+        case GAMEPLAY_SETTINGS:
+        {
+             //Creating LevelState with init of Spaceship
+            newState = new GameplaySettingsState();
+            newState->input = gameplaySettingsInput;
+            newState->update = gameplaySettingsUpdate;
+            newState->render = drawGameplaySettings;
+            newState->init = initGameplaySettings;    
+            break;
+        }
 
         case RESULTS:
         {

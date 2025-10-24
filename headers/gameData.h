@@ -28,18 +28,28 @@ struct GameData {
     std::vector<AnimatedObject> map_previews_;
     std::vector<AnimatedObject> map_previews_text_;
     std::vector<AnimatedObject> arrows_;
+
     glm::vec2 ExitPortal, 
               EntrancePortal, 
               mouseCoords, 
               clickCoords;
     ItemStorage itemStorage_;
+
     Object settingsBorder;
     std::vector<Object> settingsDials_;
+    std::vector<Object> gameplaySettingsBrackets1_;
+    std::vector<Object> gameplaySettingsBrackets2_;
+    std::vector<Object> gameplaySettingsNumLaps_;
+    std::vector<Object> gameplaySettingsModeHighlights_;
+
     //Note that volume ratio is dial.pos.x / (290-84)
     Object * updatedDial;
     int playerIndex = -1;
     SDL_FRect mapViewport;
     bool debugMode = false;
+
+    bool isGrandPrix = false;
+    int laps_per_race = 3;
     
     GameData(const SDLState &state) {
         playerIndex = -1; // will change when map is loaded
@@ -51,5 +61,7 @@ struct GameData {
             .h = static_cast<float>(state.logH)
         };
         debugMode = false;
+
+        int gameplay_mode;
     }
 };

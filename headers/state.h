@@ -27,7 +27,8 @@ enum gameStates {
     SPACESHIP,
     GRASSLANDS,
     RESULTS,
-    CREDITS
+    CREDITS,
+    GAMEPLAY_SETTINGS
 };
 
 class GameState{
@@ -48,6 +49,11 @@ class GameState{
             gd.previews_.clear();
             gd.lasers_.clear();
             gd.portals_.clear();
+            gd.arrows_.clear();
+            gd.lava_.clear();
+            gd.water_.clear();
+            gd.signs_.clear();
+            gd.checkpoints_.clear();
             //TO-DO Add clearing players
         }
 
@@ -95,6 +101,10 @@ class ResultsState : public GameState {
 };
 
 class CreditsState : public GameState {
+
+};
+
+class GameplaySettingsState : public GameState{
 
 };
 

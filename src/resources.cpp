@@ -224,6 +224,16 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     texSmallBorder = loadTexture(state.renderer, "data/SettingsSprites/sButtonOutline.png");
     texSlider = loadTexture(state.renderer, "data/SettingsSprites/Slider.png");
 
+    //Gameplay Settings
+    texGameplaySettingsBackground = loadTexture(state.renderer, "data/GameplaySettings/gameplay_settings.png");
+    texGameplaySettingsLeftBracket = loadTexture(state.renderer, "data/GameplaySettings/left_bracket.png");
+    texGameplaySettingsRightBracket = loadTexture(state.renderer, "data/GameplaySettings/right_bracket.png");
+    texGameplaySettings1 = loadTexture(state.renderer, "data/GameplaySettings/1.png");
+    texGameplaySettings2 = loadTexture(state.renderer, "data/GameplaySettings/2.png");
+    texGameplaySettings3 = loadTexture(state.renderer, "data/GameplaySettings/3.png");
+    texGameplaySettings4 = loadTexture(state.renderer, "data/GameplaySettings/4.png");
+    texGameplaySettings5 = loadTexture(state.renderer, "data/GameplaySettings/5.png");
+
     itemTextures = {texBombStorage, texBoomboxStorage, texBouncyBallStorage, texFogStorage,
         texIceStorage, texMissileStorage, texSugarStorage, texPieStorage};
 }

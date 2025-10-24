@@ -30,6 +30,10 @@ void settingsUpdate(const SDLState &state, GameData &gd, Resources &res, float d
     
 }
 
+void gameplaySettingsUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
+    
+}
+
 //
 //INPUT FUNCTIONS
 //
@@ -112,7 +116,47 @@ void settingsInputs(SDLState &state, GameData &gd, Resources &res, float deltaTi
             }
         }
 }
+//Input function for GAmeplaySettings Screen
+void gameplaySettingsInput(SDLState &state, GameData &gd, Resources &res, float deltaTime){
+    SDL_Event event { 0 };
+        while (SDL_PollEvent(&event)) {
+            switch (event.type) {
+                case SDL_EVENT_QUIT:
+                {
+                    running = false;
+                    break;
+                }
+                case SDL_EVENT_WINDOW_RESIZED: 
+                {
+                    state.width = event.window.data1;
+                    state.height = event.window.data2;
+                    //printf("Width = %d, Height = %d", state.width, state.height);
+                    break;
+                }
+                case SDL_EVENT_KEY_DOWN:
+                {
+                    
+                    
+                    break;
+                }
+                case SDL_EVENT_KEY_UP:
+                {
+                    
+                    break;
+                }
+                case SDL_EVENT_MOUSE_BUTTON_DOWN:
+                {
+                    handleGameplaySettingsClick(state,gd,res,deltaTime);
+                    break;
+                    
+                }  case SDL_EVENT_MOUSE_BUTTON_UP:
 
+                {
+                    //gd.updatedDial = NULL;
+                }
+            }
+        }
+}
 //
 //INPUT HANDLERS
 //
@@ -223,7 +267,42 @@ void handleMousePointerSettings(const SDLState &state, GameData &gd, Resources &
     SDL_RenderTexture(state.renderer, res.texCursor, nullptr, &dst); // src is for sprite stripping, dest is for where sprite should be drawn*/ 
     
 }
+void handleMousePointerGameplaySettings (const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
+    SDL_GetMouseState(&gd.mouseCoords.x, &gd.mouseCoords.y);
+    float CROSSHAIR_SIZE = 15;
+    float OFFSET = 7;
+    float yRatio = (float)state.logH / state.height;
+    float xRatio = (float)state.logW / state.width;
+    gd.mouseCoords.x = gd.mouseCoords.x * xRatio;
+    gd.mouseCoords.y = gd.mouseCoords.y * yRatio;
+    SDL_FRect dst { 
+        .x = gd.mouseCoords.x - OFFSET,
+        .y = gd.mouseCoords.y - OFFSET,
+        .w = (float)TILE_SIZE,
+        .h = (float)TILE_SIZE
+    };
+    
+    //hover over back button
+    if((gd.mouseCoords.x >= 35 && gd.mouseCoords.x <= 218) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)){ //Big Border on Exit
+        gd.settingsBorder.pos = glm::vec2(38,366);
+        gd.settingsBorder.texture = res.texBigBorder;
+    } else {
+        gd.settingsBorder.pos = glm::vec2(500,500);
+    }
 
+    //hover for arrows
+    if((gd.mouseCoords.x >= 494 && gd.mouseCoords.x <= 512) && (gd.mouseCoords.y >= 254 && gd.mouseCoords.y <= 272)){
+        gd.arrows_[0].visible = true;
+    } else if ((gd.mouseCoords.x >= 548 && gd.mouseCoords.x <= 566) && (gd.mouseCoords.y >= 254 && gd.mouseCoords.y <= 272)) {
+        gd.arrows_[1].visible = true;
+    } else {
+        gd.arrows_[0].visible = false;
+        gd.arrows_[1].visible = false;
+    }
+
+
+    SDL_RenderTexture(state.renderer, res.texCursor, nullptr, &dst); // src is for sprite stripping, dest is for where sprite should be drawn*/ 
+}
 //Key Input Handler for Char Select
 void handleCharSelectKeyInput(const SDLState &state, GameData &gd, Resources &res,
                     SDL_KeyboardEvent key, bool keyDown, float deltaTime) {
@@ -380,5 +459,69 @@ void handleSettingsClick(const SDLState &state, GameData &gd, Resources &res, fl
         if((gd.mouseCoords.x >= o.pos.x && gd.mouseCoords.x <= o.pos.x + (static_cast<float>(o.texture->w) * 2)) && (gd.mouseCoords.y >= o.pos.y && gd.mouseCoords.y <= o.pos.y + (static_cast<float>(o.texture->h) * 2))){
            gd.updatedDial = &o; 
         }
+    }
+}
+
+void handleGameplaySettingsClick(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
+    //click back
+    if ((gd.mouseCoords.x >= 35 && gd.mouseCoords.x <= 218) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)) {
+        //set the num of laps
+        for(Object &ob: gd.gameplaySettingsNumLaps_) {
+            if(ob.texture == res.texGameplaySettings1) {
+                gd.laps_per_race = 1;
+            } else if(ob.texture == res.texGameplaySettings2) {
+                gd.laps_per_race = 2;
+            } else if(ob.texture == res.texGameplaySettings3) {
+                gd.laps_per_race = 3;
+            } else if(ob.texture == res.texGameplaySettings4) {
+                gd.laps_per_race = 4;
+            } else if(ob.texture == res.texGameplaySettings5) {
+                gd.laps_per_race = 5;
+            }
+        }
+
+        currState->nextStateVal = CHAR_SELECT;
+        currState = changeState(currState, gd);
+        currState->init(state, gd, res);
+    }
+
+    //click for arrows
+    if((gd.mouseCoords.x >= 494 && gd.mouseCoords.x <= 512) && (gd.mouseCoords.y >= 254 && gd.mouseCoords.y <= 272)){
+        //move left
+        for(Object &ob: gd.gameplaySettingsNumLaps_) {
+            if(ob.texture == res.texGameplaySettings1) {
+                ob.texture = res.texGameplaySettings5;
+            } else if(ob.texture == res.texGameplaySettings2) {
+                ob.texture = res.texGameplaySettings1;
+            } else if(ob.texture == res.texGameplaySettings3) {
+                ob.texture = res.texGameplaySettings2;
+            } else if(ob.texture == res.texGameplaySettings4) {
+                ob.texture = res.texGameplaySettings3;
+            } else if(ob.texture == res.texGameplaySettings5) {
+                ob.texture = res.texGameplaySettings4;
+            }
+        }
+    } else if ((gd.mouseCoords.x >= 548 && gd.mouseCoords.x <= 566) && (gd.mouseCoords.y >= 254 && gd.mouseCoords.y <= 272)) {
+        //move right
+        for(Object &ob: gd.gameplaySettingsNumLaps_) {
+            if(ob.texture == res.texGameplaySettings1) {
+                ob.texture = res.texGameplaySettings2;
+            } else if(ob.texture == res.texGameplaySettings2) {
+                ob.texture = res.texGameplaySettings3;
+            } else if(ob.texture == res.texGameplaySettings3) {
+                ob.texture = res.texGameplaySettings4;
+            } else if(ob.texture == res.texGameplaySettings4) {
+                ob.texture = res.texGameplaySettings5;
+            } else if(ob.texture == res.texGameplaySettings5) {
+                ob.texture = res.texGameplaySettings1;
+            }
+        }
+    }
+
+    //click for game mode
+    if((gd.mouseCoords.x >= 175 && gd.mouseCoords.x <= 380) && (gd.mouseCoords.y >= 152 && gd.mouseCoords.y <= 185)) {
+        gd.isGrandPrix = false;
+    } else if((gd.mouseCoords.x >= 400 && gd.mouseCoords.x <= 605) && (gd.mouseCoords.y >= 152 && gd.mouseCoords.y <= 185)) {
+        gd.isGrandPrix = true;
     }
 }

@@ -816,6 +816,9 @@ void createTilesGrassland(const SDLState &state, GameData &gd, const Resources &
 }
 
 void initCharSelect(const SDLState &state, GameData &gd, const Resources &res) { // 280 x 60
+
+    printf("laps/round: %d", gd.laps_per_race);
+    printf("grand prix mode ? %s", gd.isGrandPrix ? "true":"false");
         SDL_FRect collider = {
             .x = 0,
             .y = 0,
@@ -938,4 +941,74 @@ void initSettings(const SDLState &state, GameData &gd, const Resources &res) { /
         
     //loadMap(foreground);
     //assert(gd.playerIndex != -1);
+}
+
+void initGameplaySettings(const SDLState &state, GameData &gd, const Resources &res) {
+     SDL_FRect collider = {
+            .x = 0,
+            .y = 0,
+            .w = 32,
+            .h = 32
+        };
+        
+        glm::vec2  pos = glm::vec2(0,0);
+        // Background
+        BackgroundObject bg(pos, collider, res.texGameplaySettingsBackground);
+        bg.collider.w = res.texGameplaySettingsBackground->w;
+        bg.collider.h = res.texGameplaySettingsBackground->h;
+        gd.bgTiles_.push_back(bg);
+
+        Object border(pos, collider, res.texBigBorder);
+        gd.settingsBorder = border;
+        gd.settingsBorder.pos.y =  500;
+
+        //brackets
+        pos = glm::vec2(175,152);
+        BackgroundObject leftBracket(pos, collider, res.texGameplaySettingsLeftBracket);
+        leftBracket.collider.w = res.texGameplaySettingsLeftBracket->w;
+        leftBracket.collider.h = res.texGameplaySettingsLeftBracket->h;
+        gd.gameplaySettingsBrackets1_.push_back(leftBracket);
+    
+
+        pos = glm::vec2(370,152);
+        BackgroundObject rightBracket(pos, collider, res.texGameplaySettingsRightBracket);
+        rightBracket.collider.w = res.texGameplaySettingsRightBracket->w;
+        rightBracket.collider.h = res.texGameplaySettingsRightBracket->h;
+        gd.gameplaySettingsBrackets1_.push_back(rightBracket);
+
+        pos = glm::vec2(400,152);
+        BackgroundObject leftBracket2(pos, collider, res.texGameplaySettingsLeftBracket);
+        leftBracket2.collider.w = res.texGameplaySettingsLeftBracket->w;
+        leftBracket2.collider.h = res.texGameplaySettingsLeftBracket->h;
+        gd.gameplaySettingsBrackets2_.push_back(leftBracket2);
+
+        pos = glm::vec2(620,152);
+        BackgroundObject rightBracket2(pos, collider, res.texGameplaySettingsRightBracket);
+        rightBracket2.collider.w = res.texGameplaySettingsRightBracket->w;
+        rightBracket2.collider.h = res.texGameplaySettingsRightBracket->h;
+        gd.gameplaySettingsBrackets2_.push_back(rightBracket2);
+
+        //numLaps
+        pos = glm::vec2(517,245);
+        Object numLaps(pos, collider, res.texGameplaySettings3);
+        numLaps.collider.w = res.texGameplaySettings3->w;
+        numLaps.collider.h = res.texGameplaySettings3->h;
+        gd.gameplaySettingsNumLaps_.push_back(numLaps);
+
+        //arrows
+        AnimatedObject arrowL(pos, collider, res.texLeftArrow);
+        arrowL.pos = glm::vec2(492,249);
+        arrowL.animations = res.arrowAnims;
+        arrowL.curAnimation = res.LEFT_ARROW;
+        gd.arrows_.push_back(arrowL);
+
+        gd.arrows_[res.LEFT_ARROW].visible = false;
+
+        AnimatedObject arrowR(pos, collider, res.texRightArrow);
+        arrowR.pos = glm::vec2(548,249);
+        arrowR.animations = res.arrowAnims;
+        arrowR.curAnimation = res.RIGHT_ARROW;
+        gd.arrows_.push_back(arrowR);
+
+        gd.arrows_[res.RIGHT_ARROW].visible = false;
 }
