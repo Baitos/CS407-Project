@@ -57,12 +57,13 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     errorAnims.resize(1); // default to prevent crashes
     errorAnims[ERROR] = Animation(1, 1.0f);
 
-    mapAnims.resize(5);
+    mapAnims.resize(6);
     mapAnims[MAP_GRASSLAND] = Animation(1, 1.0f);
     mapAnims[MAP_SPACESHIP] = Animation(1, 1.0f);
     mapAnims[MAP_3] = Animation(1, 1.0f);
     mapAnims[MAP_4] = Animation(1, 1.0f);
     mapAnims[MAP_5] = Animation(1, 1.0f);
+    mapAnims[MAP_GRAND_PRIX] = Animation(1, 1.0f);
 
     mapTextAnims.resize(5);
     mapTextAnims[MAP_GRASSLAND_TEXT] = Animation(1, 1.0f);
@@ -184,6 +185,7 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     texMapPreviews[MAP_3] = loadTexture(state.renderer, "data/CharSelect/stage_3_preview.png");
     texMapPreviews[MAP_4] = loadTexture(state.renderer, "data/CharSelect/stage_4_preview.png");
     texMapPreviews[MAP_5] = loadTexture(state.renderer, "data/CharSelect/stage_5_preview.png");
+    texMapPreviews[MAP_GRAND_PRIX] = loadTexture(state.renderer, "data/CharSelect/grand_prix_preview.png");
 
     texMapTextPreviews[MAP_GRASSLAND_TEXT] = loadTexture(state.renderer, "data/CharSelect/grasslands_preview_text.png");
     texMapTextPreviews[MAP_SPACESHIP_TEXT] = loadTexture(state.renderer, "data/CharSelect/spaceship_preview_text.png");

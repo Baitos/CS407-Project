@@ -817,8 +817,8 @@ void createTilesGrassland(const SDLState &state, GameData &gd, const Resources &
 
 void initCharSelect(const SDLState &state, GameData &gd, const Resources &res) { // 280 x 60
 
-    printf("laps/round: %d", gd.laps_per_race);
-    printf("grand prix mode ? %s", gd.isGrandPrix ? "true":"false");
+    printf("laps/round: %d\n", gd.laps_per_race);
+    printf("grand prix mode? %d\n", gd.isGrandPrix);
         SDL_FRect collider = {
             .x = 0,
             .y = 0,
@@ -865,11 +865,19 @@ void initCharSelect(const SDLState &state, GameData &gd, const Resources &res) {
         gd.previews_.push_back(preview);
 
         //put map icons on side
-        AnimatedObject map_preview(pos, collider, res.texMapPreviews[0]);
-        map_preview.pos = glm::vec2(94,168);
-        map_preview.animations = res.mapAnims;
-        map_preview.curAnimation = res.MAP_GRASSLAND;
-        gd.map_previews_.push_back(map_preview);
+        if(!gd.isGrandPrix) {
+            AnimatedObject map_preview(pos, collider, res.texMapPreviews[0]);
+            map_preview.pos = glm::vec2(94,168);
+            map_preview.animations = res.mapAnims;
+            map_preview.curAnimation = res.MAP_GRASSLAND;
+            gd.map_previews_.push_back(map_preview);
+        } else {
+            AnimatedObject map_preview(pos, collider, res.texMapPreviews[res.MAP_GRAND_PRIX]);
+            map_preview.pos = glm::vec2(94,168);
+            map_preview.animations = res.mapAnims;
+            map_preview.curAnimation = res.MAP_GRAND_PRIX;
+            gd.map_previews_.push_back(map_preview);
+        }
 
         AnimatedObject map_preview_text(pos, collider, res.texMapTextPreviews[0]);
         map_preview_text.pos = glm::vec2(124,282);

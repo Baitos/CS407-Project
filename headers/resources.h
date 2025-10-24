@@ -52,6 +52,7 @@ struct Resources {
     const int MAP_3_TEXT = 2;
     const int MAP_4_TEXT = 3;
     const int MAP_5_TEXT = 4;
+    const int MAP_GRAND_PRIX = 5;
     std::vector<Animation> mapTextAnims;
     const int LEFT_ARROW = 0;
     const int RIGHT_ARROW = 1;
@@ -70,7 +71,7 @@ struct Resources {
     SDL_Texture *texShootJump[3];
     SDL_Texture *texRoll[3];
     SDL_Texture *texDeploy[3];
-    SDL_Texture *texMapPreviews[5];
+    SDL_Texture *texMapPreviews[6];
     SDL_Texture *texMapTextPreviews[5];
     std::vector<SDL_Texture *> textures;
     SDL_Texture *texCrosshair, 

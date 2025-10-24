@@ -190,13 +190,15 @@ void handleMousePointerCharSelect(const SDLState &state, GameData &gd, Resources
     }
 
     //hover for arrows
-    if((gd.mouseCoords.x >= 107 && gd.mouseCoords.x <= 125) && (gd.mouseCoords.y >= 286 && gd.mouseCoords.y <= 310)){
-        gd.arrows_[0].visible = true;
-    } else if ((gd.mouseCoords.x >= 274 && gd.mouseCoords.x <= 292) && (gd.mouseCoords.y >= 286 && gd.mouseCoords.y <= 310)) {
-        gd.arrows_[1].visible = true;
-    } else {
-        gd.arrows_[0].visible = false;
-        gd.arrows_[1].visible = false;
+    if(!gd.isGrandPrix) {
+        if((gd.mouseCoords.x >= 107 && gd.mouseCoords.x <= 125) && (gd.mouseCoords.y >= 286 && gd.mouseCoords.y <= 310)){
+            gd.arrows_[0].visible = true;
+        } else if ((gd.mouseCoords.x >= 274 && gd.mouseCoords.x <= 292) && (gd.mouseCoords.y >= 286 && gd.mouseCoords.y <= 310)) {
+            gd.arrows_[1].visible = true;
+        } else {
+            gd.arrows_[0].visible = false;
+            gd.arrows_[1].visible = false;
+        }
     }
 
     SDL_RenderTexture(state.renderer, res.texCursor, nullptr, &dst); // src is for sprite stripping, dest is for where sprite should be drawn*/ 
@@ -383,50 +385,54 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
         currState = changeState(currState, gd);
         currState->init(state, gd, res);
     } else if ((gd.mouseCoords.x >= 107 && gd.mouseCoords.x <= 125) && (gd.mouseCoords.y >= 286 && gd.mouseCoords.y <= 310)){
-        //move map sprite - one frame
-        for (AnimatedObject &map_preview : gd.map_previews_) {
-            int index = map_preview.curAnimation;
-            index--;
-            if(index<0) {
-                index = 4;
+        if(!gd.isGrandPrix) {
+            //move map sprite - one frame
+            for (AnimatedObject &map_preview : gd.map_previews_) {
+                int index = map_preview.curAnimation;
+                index--;
+                if(index<0) {
+                    index = 4;
+                }
+                map_preview.texture = res.texMapPreviews[index];
+                map_preview.curAnimation = index; 
+                map_preview.animations[map_preview.curAnimation].reset();
             }
-            map_preview.texture = res.texMapPreviews[index];
-            map_preview.curAnimation = index; 
-            map_preview.animations[map_preview.curAnimation].reset();
-        }
-        //move map text sprite - one frame
-        for (AnimatedObject &map_preview_text : gd.map_previews_text_) {
-            int index = map_preview_text.curAnimation;
-            index--;
-            if(index<0) {
-                index = 4;
+            //move map text sprite - one frame
+            for (AnimatedObject &map_preview_text : gd.map_previews_text_) {
+                int index = map_preview_text.curAnimation;
+                index--;
+                if(index<0) {
+                    index = 4;
+                }
+                map_preview_text.texture = res.texMapTextPreviews[index];
+                map_preview_text.curAnimation = index; 
+                map_preview_text.animations[map_preview_text.curAnimation].reset();
             }
-            map_preview_text.texture = res.texMapTextPreviews[index];
-            map_preview_text.curAnimation = index; 
-            map_preview_text.animations[map_preview_text.curAnimation].reset();
         }
     } else if ((gd.mouseCoords.x >= 274 && gd.mouseCoords.x <= 292) && (gd.mouseCoords.y >= 286 && gd.mouseCoords.y <= 310)) {
-        //move map sprite + one 
-        for (AnimatedObject &map_preview : gd.map_previews_) {
-            int index = map_preview.curAnimation;
-            index++;
-            if(index>4) {
-                index = 0;
+        if(!gd.isGrandPrix) {
+            //move map sprite + one 
+            for (AnimatedObject &map_preview : gd.map_previews_) {
+                int index = map_preview.curAnimation;
+                index++;
+                if(index>4) {
+                    index = 0;
+                }
+                map_preview.texture = res.texMapPreviews[index];
+                map_preview.curAnimation = index; 
+                map_preview.animations[map_preview.curAnimation].reset();
             }
-            map_preview.texture = res.texMapPreviews[index];
-            map_preview.curAnimation = index; 
-            map_preview.animations[map_preview.curAnimation].reset();
-        }
-        //move map text sprite + one frame
-        for (AnimatedObject &map_preview_text : gd.map_previews_text_) {
-            int index = map_preview_text.curAnimation;
-            index++;
-            if(index>4) {
-                index = 0;
+            //move map text sprite + one frame
+            for (AnimatedObject &map_preview_text : gd.map_previews_text_) {
+                int index = map_preview_text.curAnimation;
+                index++;
+                if(index>4) {
+                    index = 0;
+                }
+                map_preview_text.texture = res.texMapTextPreviews[index];
+                map_preview_text.curAnimation = index; 
+                map_preview_text.animations[map_preview_text.curAnimation].reset();
             }
-            map_preview_text.texture = res.texMapTextPreviews[index];
-            map_preview_text.curAnimation = index; 
-            map_preview_text.animations[map_preview_text.curAnimation].reset();
         }
     }
 }
@@ -520,8 +526,8 @@ void handleGameplaySettingsClick(const SDLState &state, GameData &gd, Resources 
 
     //click for game mode
     if((gd.mouseCoords.x >= 175 && gd.mouseCoords.x <= 380) && (gd.mouseCoords.y >= 152 && gd.mouseCoords.y <= 185)) {
-        gd.isGrandPrix = false;
-    } else if((gd.mouseCoords.x >= 400 && gd.mouseCoords.x <= 605) && (gd.mouseCoords.y >= 152 && gd.mouseCoords.y <= 185)) {
         gd.isGrandPrix = true;
+    } else if((gd.mouseCoords.x >= 400 && gd.mouseCoords.x <= 605) && (gd.mouseCoords.y >= 152 && gd.mouseCoords.y <= 185)) {
+        gd.isGrandPrix = false;
     }
 }

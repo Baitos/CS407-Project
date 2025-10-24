@@ -28,8 +28,10 @@ void drawCharSelect(const SDLState &state, GameData &gd, Resources res, float de
     for (AnimatedObject &map:gd.map_previews_){
         map.draw(state, gd, static_cast<float>(map.texture->w), static_cast<float>(map.texture->h));
     }
-    for (AnimatedObject &map:gd.map_previews_text_){
-        map.draw(state, gd, static_cast<float>(map.texture->w), static_cast<float>(map.texture->h));
+    if(!gd.isGrandPrix){
+        for (AnimatedObject &map:gd.map_previews_text_){
+            map.draw(state, gd, static_cast<float>(map.texture->w), static_cast<float>(map.texture->h));
+        }
     }
 
     //draw arrows
@@ -86,7 +88,7 @@ void drawGameplaySettings(const SDLState &state, GameData &gd, Resources res, fl
         bg.draw(state, gd, static_cast<float>(bg.texture->w), static_cast<float>(bg.texture->h)); 
     }
     //braw brackets around grand prix or other
-    if(gd.isGrandPrix) {
+    if(!gd.isGrandPrix) {
         for (Object &bg : gd.gameplaySettingsBrackets2_) {
             bg.draw(state, gd, static_cast<float>(bg.texture->w), static_cast<float>(bg.texture->h)); 
         }
