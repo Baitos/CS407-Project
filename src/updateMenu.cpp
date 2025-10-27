@@ -555,6 +555,19 @@ void handleMousePointerTitle(const SDLState &state, GameData &gd, Resources &res
     } else {
         SDL_RenderTexture(state.renderer, res.texCursor, nullptr, &dst);
     }
+
+    if ((gd.mouseCoords.x >= 40 && gd.mouseCoords.x <= 219) && (gd.mouseCoords.y >= 368 && gd.mouseCoords.y <= 436)) {
+        gd.settingsBorder.pos = glm::vec2(38,366);
+        gd.settingsBorder.texture = res.texBigBorder;
+    } else if((gd.mouseCoords.x >= 315 && gd.mouseCoords.x <= 485) && (gd.mouseCoords.y >= 368 && gd.mouseCoords.y <= 436)){        //Join
+        gd.settingsBorder.pos = glm::vec2(312,366);
+        gd.settingsBorder.texture = res.texBigBorder;
+    }else if((gd.mouseCoords.x >= 589 && gd.mouseCoords.x <= 767) && (gd.mouseCoords.y >= 368 && gd.mouseCoords.y <= 436)){         //Settings
+        gd.settingsBorder.pos = glm::vec2(586,366);
+        gd.settingsBorder.texture = res.texBigBorder;
+    } else {
+        gd.settingsBorder.pos = glm::vec2(500,500);
+    }
 }
 
 void titleInput(SDLState &state, GameData &gd, Resources &res, float deltaTime){
@@ -599,7 +612,6 @@ void titleInput(SDLState &state, GameData &gd, Resources &res, float deltaTime){
         }
 }
 void handleTitleClick(const SDLState &state, GameData &gd, Resources &res, float deltaTime){
-    printf("%f %f\n", gd.mouseCoords.x, gd.mouseCoords.y);
     if((gd.mouseCoords.x >= 363 && gd.mouseCoords.x <= 595) && (gd.mouseCoords.y >= 165 && gd.mouseCoords.y <= 200)) {
         //Text box   
     } else if ((gd.mouseCoords.x >= 40 && gd.mouseCoords.x <= 219) && (gd.mouseCoords.y >= 368 && gd.mouseCoords.y <= 436)){       //Host

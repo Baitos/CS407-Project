@@ -129,6 +129,10 @@ void drawTitle(const SDLState &state, GameData &gd, Resources res, float deltaTi
     for (BackgroundObject &bg : gd.bgTiles_) {
         bg.draw(state, gd, static_cast<float>(bg.texture->w), static_cast<float>(bg.texture->h)); 
     }
+    if(gd.settingsBorder.pos.y != 500.f){
+        //printf("drawing, %f", gd.settingsBorder->pos.y);
+        gd.settingsBorder.draw(state, gd,static_cast<float>(gd.settingsBorder.texture->w) * 2, static_cast<float>(gd.settingsBorder.texture->h)*2);
+    }
 
     handleMousePointerTitle(state, gd, res, deltaTime);
 }

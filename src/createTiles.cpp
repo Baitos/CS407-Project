@@ -643,7 +643,7 @@ void createTilesGrassland(const SDLState &state, GameData &gd, const Resources &
                 glm::vec2 pos = glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r) * TILE_SIZE);
                 switch (layer[r][c]) {
                     case 0: //Cloud
-                    {
+                    {   
                         Level l(pos, collider, res.texCloud);
                         gd.mapTiles_.push_back(l);
                         break; 
@@ -1036,4 +1036,8 @@ void initTitle(const SDLState &state, GameData &gd, const Resources &res) {
         bg.collider.w = res.texTitle->w;
         bg.collider.h = res.texTitle->h;
         gd.bgTiles_.push_back(bg);
+
+        Object border(pos, collider, res.texBigBorder);
+        gd.settingsBorder = border;
+        gd.settingsBorder.pos.y =  500;
 }
