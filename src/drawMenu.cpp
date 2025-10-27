@@ -116,3 +116,19 @@ void drawGameplaySettings(const SDLState &state, GameData &gd, Resources res, fl
 
     handleMousePointerGameplaySettings(state, gd, res, deltaTime);
 }
+
+void drawTitle(const SDLState &state, GameData &gd, Resources res, float deltaTime){
+    // used for camera system
+    gd.mapViewport.x = 0; 
+    gd.mapViewport.y = 0; 
+    //draw bg
+    SDL_SetRenderDrawColor(state.renderer, 13, 22, 59, 255);
+    SDL_RenderClear(state.renderer);
+
+    // draw bg tiles
+    for (BackgroundObject &bg : gd.bgTiles_) {
+        bg.draw(state, gd, static_cast<float>(bg.texture->w), static_cast<float>(bg.texture->h)); 
+    }
+
+    handleMousePointerTitle(state, gd, res, deltaTime);
+}

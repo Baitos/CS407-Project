@@ -236,6 +236,9 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     texGameplaySettings4 = loadTexture(state.renderer, "data/GameplaySettings/4.png");
     texGameplaySettings5 = loadTexture(state.renderer, "data/GameplaySettings/5.png");
 
+    texTitle = loadTexture(state.renderer, "data/TitleScreen/title.png");
+    texTextCursor = loadTexture(state.renderer, "data/TitleScreen/text_cursor.png");
+
     itemTextures = {texBombStorage, texBoomboxStorage, texBouncyBallStorage, texFogStorage,
         texIceStorage, texMissileStorage, texSugarStorage, texPieStorage};
 }

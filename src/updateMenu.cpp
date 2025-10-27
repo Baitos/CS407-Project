@@ -442,7 +442,7 @@ void handleSettingsClick(const SDLState &state, GameData &gd, Resources &res, fl
     if ((gd.mouseCoords.x >= 583 && gd.mouseCoords.x <= 766) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)) {
         printf("Save\n");
     } else if ((gd.mouseCoords.x >= 35 && gd.mouseCoords.x <= 218) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)) {
-        currState->nextStateVal = CHAR_SELECT;
+        currState->nextStateVal = TITLE;
         currState = changeState(currState, gd);
         currState->init(state, gd, res);
     } else if((gd.mouseCoords.x >= 578 && gd.mouseCoords.x <= 690) && (gd.mouseCoords.y >= 106 && gd.mouseCoords.y <= 126)){ //Sprint
@@ -529,5 +529,90 @@ void handleGameplaySettingsClick(const SDLState &state, GameData &gd, Resources 
         gd.isGrandPrix = true;
     } else if((gd.mouseCoords.x >= 400 && gd.mouseCoords.x <= 605) && (gd.mouseCoords.y >= 152 && gd.mouseCoords.y <= 185)) {
         gd.isGrandPrix = false;
+    }
+}
+
+void titleUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime){
+
+}
+void handleMousePointerTitle(const SDLState &state, GameData &gd, Resources &res, float deltaTime){
+    SDL_GetMouseState(&gd.mouseCoords.x, &gd.mouseCoords.y);
+    float CROSSHAIR_SIZE = 15;
+    float OFFSET = 7;
+    float yRatio = (float)state.logH / state.height;
+    float xRatio = (float)state.logW / state.width;
+    gd.mouseCoords.x = gd.mouseCoords.x * xRatio;
+    gd.mouseCoords.y = gd.mouseCoords.y * yRatio;
+    SDL_FRect dst { 
+        .x = gd.mouseCoords.x - OFFSET,
+        .y = gd.mouseCoords.y - OFFSET,
+        .w = (float)TILE_SIZE,
+        .h = (float)TILE_SIZE
+    };
+
+    if((gd.mouseCoords.x >= 363 && gd.mouseCoords.x <= 595) && (gd.mouseCoords.y >= 165 && gd.mouseCoords.y <= 200)) {
+        SDL_RenderTexture(state.renderer, res.texTextCursor, nullptr, &dst);
+    } else {
+        SDL_RenderTexture(state.renderer, res.texCursor, nullptr, &dst);
+    }
+}
+
+void titleInput(SDLState &state, GameData &gd, Resources &res, float deltaTime){
+     SDL_Event event { 0 };
+        while (SDL_PollEvent(&event)) {
+            switch (event.type) {
+                case SDL_EVENT_QUIT:
+                {
+                    running = false;
+                    break;
+                }
+                case SDL_EVENT_WINDOW_RESIZED: 
+                {
+                    state.width = event.window.data1;
+                    state.height = event.window.data2;
+                    //printf("Width = %d, Height = %d", state.width, state.height);
+                    break;
+                }
+                case SDL_EVENT_KEY_DOWN:
+                {
+                    
+                    
+                    break;
+                }
+                case SDL_EVENT_KEY_UP:
+                {
+                    
+                    break;
+                }
+                case SDL_EVENT_MOUSE_BUTTON_DOWN:
+                {
+                    handleTitleClick(state,gd,res,deltaTime);
+                    break;
+                    
+                }  case SDL_EVENT_MOUSE_BUTTON_UP:
+
+                {
+                    //handleTitleClick(state,gd, res, deltaTime);
+                    //gd.updatedDial = NULL;
+                }
+            }
+        }
+}
+void handleTitleClick(const SDLState &state, GameData &gd, Resources &res, float deltaTime){
+    printf("%f %f\n", gd.mouseCoords.x, gd.mouseCoords.y);
+    if((gd.mouseCoords.x >= 363 && gd.mouseCoords.x <= 595) && (gd.mouseCoords.y >= 165 && gd.mouseCoords.y <= 200)) {
+        //Text box   
+    } else if ((gd.mouseCoords.x >= 40 && gd.mouseCoords.x <= 219) && (gd.mouseCoords.y >= 368 && gd.mouseCoords.y <= 436)){       //Host
+        currState->nextStateVal = CHAR_SELECT;
+        currState = changeState(currState, gd);
+        currState->init(state, gd, res);
+    } else if((gd.mouseCoords.x >= 315 && gd.mouseCoords.x <= 485) && (gd.mouseCoords.y >= 368 && gd.mouseCoords.y <= 436)){        //Join
+        currState->nextStateVal = CHAR_SELECT;
+        currState = changeState(currState, gd);
+        currState->init(state, gd, res);
+    }else if((gd.mouseCoords.x >= 589 && gd.mouseCoords.x <= 767) && (gd.mouseCoords.y >= 368 && gd.mouseCoords.y <= 436)){         //Settings
+        currState->nextStateVal = SETTINGS;
+        currState = changeState(currState, gd);
+        currState->init(state, gd, res);
     }
 }

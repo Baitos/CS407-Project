@@ -97,6 +97,7 @@ struct Resources {
                 *texBomb, *texExplosion, *texBoombox, *texSoundwaves, *texSugar,
                 *texSugarEffectL, *texSugarEffectR,
                 *texSettingsBackground, *texBigBorder, *texSmallBorder, *texSlider,
+                *texTitle, *texTextCursor,
                 *texGameplaySettingsBackground, *texGameplaySettingsLeftBracket, *texGameplaySettingsRightBracket,
                 *texGameplaySettings1,*texGameplaySettings2,*texGameplaySettings3,*texGameplaySettings4,*texGameplaySettings5;
     SDL_Texture *loadTexture(SDL_Renderer *renderer, const std::string &filepath);

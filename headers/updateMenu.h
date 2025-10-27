@@ -21,3 +21,8 @@ void gameplaySettingsUpdate(const SDLState &state, GameData &gd, Resources &res,
 void handleMousePointerGameplaySettings(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
 void gameplaySettingsInput(SDLState &state, GameData &gd, Resources &res, float deltaTime);
 void handleGameplaySettingsClick(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+
+void titleUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime) ;
+void handleMousePointerTitle(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+void titleInput(SDLState &state, GameData &gd, Resources &res, float deltaTime);
+void handleTitleClick(const SDLState &state, GameData &gd, Resources &res, float deltaTime);

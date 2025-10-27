@@ -912,6 +912,7 @@ void initCharSelect(const SDLState &state, GameData &gd, const Resources &res) {
 
 
 void initSettings(const SDLState &state, GameData &gd, const Resources &res) { // 280 x 60
+    printf("INITIALIZING SETTINGS");
         SDL_FRect collider = {
             .x = 0,
             .y = 0,
@@ -1019,4 +1020,20 @@ void initGameplaySettings(const SDLState &state, GameData &gd, const Resources &
         gd.arrows_.push_back(arrowR);
 
         gd.arrows_[res.RIGHT_ARROW].visible = false;
+}
+
+void initTitle(const SDLState &state, GameData &gd, const Resources &res) {
+     SDL_FRect collider = {
+            .x = 0,
+            .y = 0,
+            .w = 32,
+            .h = 32
+        };
+        
+        glm::vec2  pos = glm::vec2(0,0);
+        // Background
+        BackgroundObject bg(pos, collider, res.texTitle);
+        bg.collider.w = res.texTitle->w;
+        bg.collider.h = res.texTitle->h;
+        gd.bgTiles_.push_back(bg);
 }
