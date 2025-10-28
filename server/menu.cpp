@@ -1,10 +1,10 @@
 #include <SDL3/SDL.h>
 #include <cstdio>
-#include "../headers/menu.h"
-#include "../headers/playerState.h"
-#include "../headers/initState.h"
-#include "../headers/gameData.h"
-#include "../headers/helper.h"
+#include "../serverHeaders/menu.h"
+#include "../serverHeaders/playerState.h"
+#include "../serverHeaders/initState.h"
+#include "../serverHeaders/gameData.h"
+#include "../serverHeaders/helper.h"
 
 void charIconObject::draw(const SDLState &state, GameData &gd, float width, float height) {
 

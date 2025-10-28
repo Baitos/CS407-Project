@@ -1,7 +1,7 @@
 #include <stdio.h>
-#include "../headers/initState.h"
-#include "../headers/globals.h"
-#include "../headers/gameData.h"
+#include "../serverHeaders/initState.h"
+#include "../serverHeaders/globals.h"
+#include "../serverHeaders/gameData.h"
 
 bool initialize(SDLState &state) {
     bool initSuccess = true;

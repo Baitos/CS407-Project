@@ -2,33 +2,33 @@
 #include <stdio.h>
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
-#include <SDL3_image/SDL_image.h>
+//#include <SDL3_image/SDL_image.h>
 #include <vector>
 #include <string>
 #include <array>
 #include <iostream>
-#include <format>
+//#include <format>
 #include <set>
 #include <unistd.h>
 
-#include "../headers/initState.h"
-#include "../headers/gameData.h"
-#include "../headers/resources.h"
-#include "../headers/player.h"
-#include "../headers/globals.h"
-#include "../headers/createTiles.h"
-#include "../headers/updateMenu.h"
-#include "../headers/updateLevel.h"
-#include "../headers/helper.h"
-#include "../headers/drawMenu.h"
-#include "../headers/drawLevel.h"
-#include "../headers/state.h"
-#include "../headers/playerState.h"
-#include "../headers/menu.h"
+#include "../serverHeaders/initState.h"
+#include "../serverHeaders/gameData.h"
+#include "../serverHeaders/resources.h"
+#include "../serverHeaders/player.h"
+#include "../serverHeaders/globals.h"
+#include "../serverHeaders/createTiles.h"
+#include "../serverHeaders/updateMenu.h"
+#include "../serverHeaders/updateLevel.h"
+#include "../serverHeaders/helper.h"
+#include "../serverHeaders/drawMenu.h"
+#include "../serverHeaders/drawLevel.h"
+#include "../serverHeaders/state.h"
+#include "../serverHeaders/playerState.h"
+#include "../serverHeaders/menu.h"
 
-#include "../headers/enet.h"
+#include "../serverHeaders/enet.h"
 
-int fork();
+//int fork();
 
 //Globals for Game
 GameState * currState;
@@ -251,13 +251,13 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         currState->update(state, gd, res, deltaTime);
         //currState->render(state, gd, res, deltaTime);
 
-        if (gd.debugMode) {
-        // debug info
-            SDL_SetRenderDrawColor(state.renderer, 255, 255, 255, 255);
-            SDL_RenderDebugText(state.renderer, 5, 5,
-                            std::format("FPS: {}, State: {}, Grounded: {}, X: {}, Y: {}", 
-                            static_cast<int>(FPS), getStateFromEnum(gd.players_[0].state_->stateVal), gd.players_[0].grounded, gd.mapViewport.x, gd.mapViewport.y).c_str());
-        }
+        // if (gd.debugMode) {
+        // // debug info
+        //     SDL_SetRenderDrawColor(state.renderer, 255, 255, 255, 255);
+        //     SDL_RenderDebugText(state.renderer, 5, 5,
+        //                     std::format("FPS: {}, State: {}, Grounded: {}, X: {}, Y: {}", 
+        //                     static_cast<int>(FPS), getStateFromEnum(gd.players_[0].state_->stateVal), gd.players_[0].grounded, gd.mapViewport.x, gd.mapViewport.y).c_str());
+        // }
         //swap buffers and present
         SDL_RenderPresent(state.renderer);
         prevTime = nowTime;

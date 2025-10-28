@@ -1,10 +1,10 @@
-#include "../headers/createTiles.h"
-#include "../headers/drawLevel.h"
-#include "../headers/updateMenu.h"
-#include "../headers/updateLevel.h"
-#include "../headers/state.h"
-#include "../headers/collision.h"
-#include "../headers/drawMenu.h"
+#include "../serverHeaders/createTiles.h"
+#include "../serverHeaders/drawLevel.h"
+#include "../serverHeaders/updateMenu.h"
+#include "../serverHeaders/updateLevel.h"
+#include "../serverHeaders/state.h"
+#include "../serverHeaders/collision.h"
+#include "../serverHeaders/drawMenu.h"
 
 //Function called to change the state
 //NOTE: When a state is changed, call currState->init() immediately after

@@ -1,10 +1,10 @@
-#include "../headers/helper.h"
-#include "../headers/initState.h"
-#include "../headers/gameData.h"
-#include "../headers/resources.h"
-#include "../headers/player.h"
-#include "../headers/globals.h"
-#include "../headers/object.h"
+#include "../serverHeaders/helper.h"
+#include "../serverHeaders/initState.h"
+#include "../serverHeaders/gameData.h"
+#include "../serverHeaders/resources.h"
+#include "../serverHeaders/player.h"
+#include "../serverHeaders/globals.h"
+#include "../serverHeaders/object.h"
 
 bool isOnscreen(const SDLState &state, GameData &gd, Object &obj) { // checks if obj is onscreen (with some leeway)
     bool onscreen = true;

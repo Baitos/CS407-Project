@@ -1,6 +1,6 @@
-#include "../headers/drawLevel.h"
-#include "../headers/helper.h"
-#include "../headers/state.h"
+#include "../serverHeaders/drawLevel.h"
+#include "../serverHeaders/helper.h"
+#include "../serverHeaders/state.h"
 
 //Draw Function for level Spaceship
 void drawLevel(const SDLState &state, GameData &gd, Resources res, float deltaTime){

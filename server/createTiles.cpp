@@ -1,11 +1,11 @@
-#include "../headers/createTiles.h"
-#include "../headers/initState.h"
-#include "../headers/gameData.h"
-#include "../headers/resources.h"
-#include "../headers/player.h"
-#include "../headers/globals.h"
-#include "../headers/state.h"
-#include "../headers/playerState.h"
+#include "../serverHeaders/createTiles.h"
+#include "../serverHeaders/initState.h"
+#include "../serverHeaders/gameData.h"
+#include "../serverHeaders/resources.h"
+#include "../serverHeaders/player.h"
+#include "../serverHeaders/globals.h"
+#include "../serverHeaders/state.h"
+#include "../serverHeaders/playerState.h"
 
 const int MAP_ROWS = 60;
 const int MAP_COLS = 280;

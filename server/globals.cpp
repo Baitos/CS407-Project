@@ -1,4 +1,4 @@
-#include "../headers/globals.h"
+#include "../serverHeaders/globals.h"
 
 int TILE_SIZE = 32;
 int HOOK_SIZE = 16;

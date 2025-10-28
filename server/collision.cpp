@@ -1,9 +1,9 @@
-#include "../headers/collision.h"
-#include "../headers/object.h"
-#include "../headers/player.h"
-#include "../headers/playerState.h"
-#include "../headers/state.h"
-#include "../headers/helper.h"
+#include "../serverHeaders/collision.h"
+#include "../serverHeaders/object.h"
+#include "../serverHeaders/player.h"
+#include "../serverHeaders/playerState.h"
+#include "../serverHeaders/state.h"
+#include "../serverHeaders/helper.h"
 
 void collisionCheckAndResponse(const SDLState &state, GameData &gd, Resources &res,
  	Player &player, float deltaTime)

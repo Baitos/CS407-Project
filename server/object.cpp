@@ -1,13 +1,13 @@
 #include <SDL3/SDL.h>
 #include <cstdio>
-#include "../headers/player.h"
-#include "../headers/playerState.h"
-#include "../headers/initState.h"
-#include "../headers/gameData.h"
-#include "../headers/helper.h"
-#include "../headers/collision.h"
-#include "../headers/item.h"
-#include "../headers/resources.h"
+#include "../serverHeaders/player.h"
+#include "../serverHeaders/playerState.h"
+#include "../serverHeaders/initState.h"
+#include "../serverHeaders/gameData.h"
+#include "../serverHeaders/helper.h"
+#include "../serverHeaders/collision.h"
+#include "../serverHeaders/item.h"
+#include "../serverHeaders/resources.h"
 
 void Object::draw(const SDLState &state, GameData &gd, float width, float height) {
     if (!isOnscreen(state, gd, (*this))) {

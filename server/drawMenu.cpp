@@ -1,6 +1,6 @@
-#include "../headers/drawMenu.h"
-#include "../headers/helper.h"
-#include "../headers/state.h"
+#include "../serverHeaders/drawMenu.h"
+#include "../serverHeaders/helper.h"
+#include "../serverHeaders/state.h"
 
 void drawCharSelect(const SDLState &state, GameData &gd, Resources res, float deltaTime){
     // used for camera system

@@ -1,12 +1,12 @@
-#include "../headers/updateMenu.h"
-#include "../headers/collision.h"
-#include "../headers/gameData.h"
-#include "../headers/initState.h"
-#include "../headers/helper.h"
-#include "../headers/globals.h"
-#include "../headers/resources.h"
-#include "../headers/state.h"
-#include "../headers/playerState.h"
+#include "../serverHeaders/updateMenu.h"
+#include "../serverHeaders/collision.h"
+#include "../serverHeaders/gameData.h"
+#include "../serverHeaders/initState.h"
+#include "../serverHeaders/helper.h"
+#include "../serverHeaders/globals.h"
+#include "../serverHeaders/resources.h"
+#include "../serverHeaders/state.h"
+#include "../serverHeaders/playerState.h"
 
 
 using namespace std;

@@ -1,11 +1,11 @@
 #include <SDL3/SDL.h>
 
-#include "../headers/gameData.h"
-#include "../headers/player.h"
-#include "../headers/playerState.h"
-#include "../headers/helper.h"
-#include "../headers/resources.h"
-#include "../headers/state.h"
+#include "../serverHeaders/gameData.h"
+#include "../serverHeaders/player.h"
+#include "../serverHeaders/playerState.h"
+#include "../serverHeaders/helper.h"
+#include "../serverHeaders/resources.h"
+#include "../serverHeaders/state.h"
 #include <vector>
 
 extern GameState * currState;

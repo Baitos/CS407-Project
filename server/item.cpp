@@ -1,5 +1,5 @@
-#include "../headers/gameData.h"
-#include "../headers/resources.h"
+#include "../serverHeaders/gameData.h"
+#include "../serverHeaders/resources.h"
 void useBomb(const SDLState &state, GameData &gd, Resources &res, Player &p) {
     printf("BOOOOOOM\n");
 }

@@ -1,11 +1,11 @@
 #include <SDL3/SDL.h>
-#include "../headers/player.h"
-#include "../headers/playerState.h"
-#include "../headers/initState.h"
-#include "../headers/gameData.h"
-#include "../headers/collision.h"
-#include "../headers/globals.h"
-#include "../headers/helper.h"
+#include "../serverHeaders/player.h"
+#include "../serverHeaders/playerState.h"
+#include "../serverHeaders/initState.h"
+#include "../serverHeaders/gameData.h"
+#include "../serverHeaders/collision.h"
+#include "../serverHeaders/globals.h"
+#include "../serverHeaders/helper.h"
 
 void Player::draw(const SDLState &state, GameData &gd, float width, float height) {
     (*this).hook.draw(state, gd, (*this), HOOK_SIZE, HOOK_SIZE); // draw hook under player
