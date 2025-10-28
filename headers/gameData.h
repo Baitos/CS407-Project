@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SDL3/SDL.h>
+#include <SDL3_ttf/SDL_ttf.h>
 #include <vector>
 #include "../ext/glm/glm.hpp"
 #include "initState.h"
@@ -41,6 +42,8 @@ struct GameData {
     std::vector<Object> gameplaySettingsBrackets2_;
     std::vector<Object> gameplaySettingsNumLaps_;
     std::vector<Object> gameplaySettingsModeHighlights_;
+    //font for drawing on screen
+    TTF_Font* font;
 
     //Note that volume ratio is dial.pos.x / (290-84)
     Object * updatedDial;

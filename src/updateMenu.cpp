@@ -614,6 +614,7 @@ void titleInput(SDLState &state, GameData &gd, Resources &res, float deltaTime){
 void handleTitleClick(const SDLState &state, GameData &gd, Resources &res, float deltaTime){
     if((gd.mouseCoords.x >= 363 && gd.mouseCoords.x <= 595) && (gd.mouseCoords.y >= 165 && gd.mouseCoords.y <= 200)) {
         //Text box   
+
     } else if ((gd.mouseCoords.x >= 40 && gd.mouseCoords.x <= 219) && (gd.mouseCoords.y >= 368 && gd.mouseCoords.y <= 436)){       //Host
         currState->nextStateVal = CHAR_SELECT;
         currState = changeState(currState, gd);

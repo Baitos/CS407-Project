@@ -7,6 +7,7 @@
 #include "../headers/state.h"
 #include "../headers/playerState.h"
 #include "../headers/createCheckpoints.h"
+#include <SDL3_ttf/SDL_ttf.h>
 
 
 extern GameState *currState;
@@ -912,7 +913,6 @@ void initCharSelect(const SDLState &state, GameData &gd, const Resources &res) {
 
 
 void initSettings(const SDLState &state, GameData &gd, const Resources &res) { // 280 x 60
-    printf("INITIALIZING SETTINGS");
         SDL_FRect collider = {
             .x = 0,
             .y = 0,
@@ -1040,4 +1040,13 @@ void initTitle(const SDLState &state, GameData &gd, const Resources &res) {
         Object border(pos, collider, res.texBigBorder);
         gd.settingsBorder = border;
         gd.settingsBorder.pos.y =  500;
+
+        //initialize font
+        if(!gd.font){
+            gd.font = TTF_OpenFont("data/Fonts/retro.ttf", 18); // 18 = point size
+            if (!gd.font) {
+                SDL_Log("Failed to load font");
+                return;
+            }
+        }
 }

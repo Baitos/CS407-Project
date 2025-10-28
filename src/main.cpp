@@ -2,6 +2,7 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 #include <SDL3_image/SDL_image.h>
+#include <SDL3_ttf/SDL_ttf.h>
 #include <vector>
 #include <string>
 #include <array>
@@ -39,6 +40,12 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     // load game assets
     Resources res;
     res.load(state);
+
+    //initialize SDL text
+    if (TTF_Init() < 0) {
+        SDL_Log("SDL_ttf init failed");
+        return 1;
+    }
     
 
     //Initial Game State

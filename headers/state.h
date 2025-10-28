@@ -54,6 +54,7 @@ class GameState{
             gd.water_.clear();
             gd.signs_.clear();
             gd.checkpoints_.clear();
+            //TTF_CloseFont(gd.font);
             //TO-DO Add clearing players
         }
 
