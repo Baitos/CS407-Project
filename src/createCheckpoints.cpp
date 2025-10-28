@@ -36,7 +36,7 @@ void createCheckpointsGrassland(const SDLState &state, GameData &gd, const Resou
         { {315*tileSize, state.logH - (100 - 62)*tileSize, 16, 19*tileSize}, 16 },
         { {255*tileSize, state.logH - (100 - 75)*tileSize, 16, 5*tileSize}, 17 },
         { {182*tileSize, state.logH - (100 - 69)*tileSize, 16, 12*tileSize}, 18 },
-        { {130*tileSize, state.logH - (100 - 74)*tileSize, 16, 6*tileSize}, 19 },
+        { {130*tileSize, state.logH - (100 - 74)*tileSize, 16, 5*tileSize}, 19 },
         { {98*tileSize, state.logH - (100 - 61)*tileSize, 16, 5*tileSize}, 20 },
         { {42*tileSize, state.logH - (100 - 66)*tileSize, 16, 4*tileSize}, 21 },
         { {31*tileSize, state.logH - (100 - 78)*tileSize, 16, 3*tileSize}, 22 }

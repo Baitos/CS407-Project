@@ -49,7 +49,8 @@ struct GameData {
     bool debugMode = false;
 
     bool isGrandPrix = false;
-    int laps_per_race = 3;
+    int laps_per_race = 1;
+    bool round_is_over = false;
     
     GameData(const SDLState &state) {
         playerIndex = -1; // will change when map is loaded

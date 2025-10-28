@@ -46,6 +46,7 @@ class Player : public AnimatedObject { // player
         
         Timer jetpackTimer;
         Timer cooldownTimer;
+        Timer respawnTimer;
 
         int lapsCompleted = 0;
         int lastCheckpoint = 0;
@@ -60,7 +61,7 @@ class Player : public AnimatedObject { // player
         //void draw(const SDLState &state, GameData &gs, float width, float height);
         
         Player(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex, std::vector<Animation> anims, int curAnim, float maxSpeedX_) :
-        AnimatedObject(pos_, colliderRect, tex), jetpackTimer(1.0f), cooldownTimer(5.0f) {
+        AnimatedObject(pos_, colliderRect, tex), jetpackTimer(1.0f), cooldownTimer(5.0f), respawnTimer(2.0f) {
             acc = glm::vec2(330, 0); // default for now
             animations = anims;
             curAnimation = curAnim;
@@ -72,7 +73,7 @@ class Player : public AnimatedObject { // player
             character = SHOTGUN;            
         }
         Player(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : // generic obj constructor
-        AnimatedObject(pos_, colliderRect, tex), jetpackTimer(1.0f), cooldownTimer(5.0f) {
+        AnimatedObject(pos_, colliderRect, tex), jetpackTimer(1.0f), cooldownTimer(5.0f), respawnTimer(2.0f) {
             grounded = false;
             sprinting = false;
             currentDirection = 0;
@@ -81,7 +82,7 @@ class Player : public AnimatedObject { // player
             character = SHOTGUN; 
         }
 
-        Player() : AnimatedObject(), jetpackTimer(1.0f), cooldownTimer(5.0f) {
+        Player() : AnimatedObject(), jetpackTimer(1.0f), cooldownTimer(5.0f), respawnTimer(2.0f) {
             grounded = false;
             gravityScale = 1.0f;
             currentDirection = 0;

@@ -129,10 +129,13 @@ void collisionCheckAndResponse(const SDLState &state, GameData &gd, Resources &r
 		};
 		glm::vec2 resolution{ 0 };
 		if (intersectAABB(rectA, rectB, resolution)){
-			/*UPDATE TO RESPAWN ONC CHECKPOINTS IN PLACE*/
-			PlayerState* stState = new StunnedState();
-			player.isDead = true;
-            player.handleState(stState, gd, res);
+			if(player.state_->stateVal!=DEAD) {
+				/*set player to dead and start the respawn counter*/
+				PlayerState* stState = new DeadState();
+				player.respawnTimer.reset();
+				player.isDead = true;
+				player.handleState(stState, gd, res);
+			}
 			
 			player.vel.x = 0;
 			player.vel.y = 0;
@@ -222,6 +225,30 @@ void collisionCheckAndResponse(const SDLState &state, GameData &gd, Resources &r
 				}
 				player.lastCheckpoint = (player.lastCheckpoint+1)%(gd.checkpoints_.size());
 				printf("passed checkpoint %d\n%f, %f\n%f, %f", player.lastCheckpoint, cp.collider.x, cp.collider.y, player.pos.x, player.pos.y);
+			}
+		}
+	}
+	//check for game end
+	if(!gd.round_is_over) {
+		if(gd.players_.size() == 1) {
+			if(player.lapsCompleted >= gd.laps_per_race) {
+				printf("\n\nGAME OVER\n\n");
+				gd.round_is_over = true;
+			}
+		} else {
+			int numDone = 0;
+			for(Player p: gd.players_) {
+				if(p.lapsCompleted >= gd.laps_per_race) {
+					numDone++;
+				}
+			}
+			if(numDone >= gd.players_.size()-1) {
+				printf("\n\nGAME OVER\n\n");
+				gd.round_is_over = true;
+			}else if(numDone==1) {
+				//start timer after first player ends
+
+				//if timer out, game over
 			}
 		}
 	}
