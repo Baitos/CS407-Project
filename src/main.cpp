@@ -7,7 +7,7 @@
 #include <string>
 #include <array>
 #include <iostream>
-#include <format>
+//#include <format>
 
 #include "../headers/initState.h"
 #include "../headers/gameData.h"
@@ -163,9 +163,9 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         if (gd.debugMode) {
         // debug info
             SDL_SetRenderDrawColor(state.renderer, 255, 255, 255, 255);
-            SDL_RenderDebugText(state.renderer, 5, 5,
-                            std::format("FPS: {}, State: {}, Grounded: {}, X: {}, Y: {}", 
-                            static_cast<int>(FPS), getStateFromEnum(gd.players_[0].state_->stateVal), gd.players_[0].grounded, gd.mapViewport.x, gd.mapViewport.y).c_str());
+        //     SDL_RenderDebugText(state.renderer, 5, 5,
+        //                     std::format("FPS: {}, State: {}, Grounded: {}, X: {}, Y: {}", 
+        //                     static_cast<int>(FPS), getStateFromEnum(gd.players_[0].state_->stateVal), gd.players_[0].grounded, gd.mapViewport.x, gd.mapViewport.y).c_str());
         }
         //swap buffers and present
         SDL_RenderPresent(state.renderer);

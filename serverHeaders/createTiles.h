@@ -1,0 +1,9 @@
+#pragma once
+
+struct SDLState;
+struct GameData;
+struct Resources;
+
+void createTiles(const SDLState &state, GameData &gd, const Resources &res);
+void initCharSelect(const SDLState &state, GameData &gd, const Resources &res);
+void initSettings(const SDLState &state, GameData &gd, const Resources &res);
