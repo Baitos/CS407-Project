@@ -31,8 +31,10 @@ struct GameData {
     Object * updatedDial;
     int playerIndex = -1;
     SDL_FRect mapViewport;
-    bool debugMode = false;
     
+    bool debugMode = false;
+    int playerTypes[8] = {-1};
+
     GameData(const SDLState &state) {
         playerIndex = -1; // will change when map is loaded
         numPlayers = 8;

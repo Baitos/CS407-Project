@@ -15,6 +15,7 @@
 
 GameState * changeState(GameState * tempState, GameData &gd){
     GameState * newState;
+    //tempState->nextStateVal = CHAR_SELECT;
     //Initialize nextState
     switch (tempState->nextStateVal){
         case TITLE:
@@ -65,6 +66,6 @@ GameState * changeState(GameState * tempState, GameData &gd){
     newState->prevState = tempState;
 
     //To be removed when new screens are added
-    newState->nextStateVal = SPACESHIP;
+    //newState->nextStateVal = SPACESHIP;
     return newState;
 }
