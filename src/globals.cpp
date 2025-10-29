@@ -5,3 +5,5 @@ int HOOK_SIZE = 16;
 bool running = true;
 float portalID = 0;
 const float EPSILON = 0.01;
+
+std::string username = " ";

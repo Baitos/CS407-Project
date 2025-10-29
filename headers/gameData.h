@@ -42,6 +42,12 @@ struct GameData {
     std::vector<Object> gameplaySettingsBrackets2_;
     std::vector<Object> gameplaySettingsNumLaps_;
     std::vector<Object> gameplaySettingsModeHighlights_;
+
+    bool usernameEditing = false;
+    std::string tempUsername = " ";
+    std::string displayName;
+    int lastCursorToggle = 0;
+    bool showCursor = true;
     //font for drawing on screen
     TTF_Font* font;
 

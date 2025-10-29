@@ -533,7 +533,12 @@ void handleGameplaySettingsClick(const SDLState &state, GameData &gd, Resources 
 }
 
 void titleUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime){
+    Uint64 now = SDL_GetTicks();
 
+    if (now - gd.lastCursorToggle > 500) { // blink rate
+        gd.showCursor = !gd.showCursor;
+        gd.lastCursorToggle = now;
+    }
 }
 void handleMousePointerTitle(const SDLState &state, GameData &gd, Resources &res, float deltaTime){
     SDL_GetMouseState(&gd.mouseCoords.x, &gd.mouseCoords.y);
@@ -550,7 +555,12 @@ void handleMousePointerTitle(const SDLState &state, GameData &gd, Resources &res
         .h = (float)TILE_SIZE
     };
 
-    if((gd.mouseCoords.x >= 363 && gd.mouseCoords.x <= 595) && (gd.mouseCoords.y >= 165 && gd.mouseCoords.y <= 200)) {
+    if(gd.usernameEditing){
+        gd.displayName = gd.tempUsername;
+        if (gd.usernameEditing && gd.showCursor) {
+            gd.displayName += '|';
+        }
+    } else if((gd.mouseCoords.x >= 363 && gd.mouseCoords.x <= 595) && (gd.mouseCoords.y >= 165 && gd.mouseCoords.y <= 200)) {
         SDL_RenderTexture(state.renderer, res.texTextCursor, nullptr, &dst);
     } else {
         SDL_RenderTexture(state.renderer, res.texCursor, nullptr, &dst);
@@ -588,7 +598,38 @@ void titleInput(SDLState &state, GameData &gd, Resources &res, float deltaTime){
                 }
                 case SDL_EVENT_KEY_DOWN:
                 {
-                    
+                    if (!event.key.repeat && gd.usernameEditing) {
+                        SDL_Scancode sc = event.key.scancode;
+                        if (sc == SDL_SCANCODE_BACKSPACE) {
+                            if(!gd.tempUsername.empty()) {
+                                gd.tempUsername.pop_back();
+                            }
+                        } else if (sc == SDL_SCANCODE_RETURN) {
+                            gd.usernameEditing = false;
+                            username = gd.tempUsername;
+                        } else {
+                            bool shift = (SDL_GetModState() & SDL_KMOD_SHIFT);
+                            char c = 0;
+
+                            if (sc >= SDL_SCANCODE_A && sc <= SDL_SCANCODE_Z) {
+                                c = (shift) ? ('A' + (sc - SDL_SCANCODE_A))
+                                            : ('a' + (sc - SDL_SCANCODE_A));
+                            }
+                            else if (sc >= SDL_SCANCODE_1 && sc <= SDL_SCANCODE_9) {
+                                c = '1' + (sc - SDL_SCANCODE_1);
+                            }
+                            else if (sc == SDL_SCANCODE_0) {
+                                c = '0';
+                            }
+                            else if (sc == SDL_SCANCODE_SPACE) {
+                                c = ' ';
+                            }
+
+                            if (c && gd.tempUsername.length() < 12) { // limit length
+                                gd.tempUsername += c;
+                            }
+                        }
+                    }
                     
                     break;
                 }
@@ -599,6 +640,17 @@ void titleInput(SDLState &state, GameData &gd, Resources &res, float deltaTime){
                 }
                 case SDL_EVENT_MOUSE_BUTTON_DOWN:
                 {
+                    if (gd.mouseCoords.x >= 363 && gd.mouseCoords.x <= 595 &&
+                        gd.mouseCoords.y >= 165 && gd.mouseCoords.y <= 200 &&
+                        gd.usernameEditing == false) {
+                        gd.usernameEditing = true;
+                        gd.tempUsername = username;
+                    } else {
+                        if (gd.usernameEditing) {
+                            gd.usernameEditing = false; // Clicked away
+                            username = gd.tempUsername;
+                        }
+                    }
                     handleTitleClick(state,gd,res,deltaTime);
                     break;
                     

@@ -135,14 +135,18 @@ void drawTitle(const SDLState &state, GameData &gd, Resources res, float deltaTi
     }
 
     //draw username
-    std::string username = "temp";
+    //std::string username = "temp";
     SDL_Color color = {0, 239, 255, 255};
-    SDL_Surface* textSurface = TTF_RenderText_Blended(gd.font, username.c_str(), username.length(), color);
-    SDL_Texture* textTex = SDL_CreateTextureFromSurface(state.renderer, textSurface);
-    SDL_FRect rect = { 370, 173, (float)textSurface->w, (float)textSurface->h };
-    SDL_RenderTexture(state.renderer, textTex, nullptr, &rect);
-    SDL_DestroyTexture(textTex);
-    SDL_DestroySurface(textSurface);
+    if(gd.displayName != "") {
+        SDL_Surface* textSurface = TTF_RenderText_Blended(gd.font, gd.displayName.c_str(), gd.displayName.length(), color);
+        SDL_Texture* textTex = SDL_CreateTextureFromSurface(state.renderer, textSurface);
+        SDL_SetTextureScaleMode(textTex, SDL_SCALEMODE_NEAREST);
+        SDL_FRect rect = { 370, 175, (float)textSurface->w, (float)textSurface->h };
+
+        SDL_RenderTexture(state.renderer, textTex, nullptr, &rect);
+        SDL_DestroyTexture(textTex);
+        SDL_DestroySurface(textSurface);
+    }
 
     handleMousePointerTitle(state, gd, res, deltaTime);
 }
