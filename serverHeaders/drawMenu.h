@@ -7,5 +7,5 @@ struct SDLState;
 struct GameData;
 struct Resources;
 
-void drawCharSelect(const SDLState &state, GameData &gd, Resources res, float deltaTime);
-void drawSettings(const SDLState &state, GameData &gd, Resources res, float deltaTime);
+//void drawCharSelect(const SDLState &state, GameData &gd, Resources res, float deltaTime);
+//void drawSettings(const SDLState &state, GameData &gd, Resources res, float deltaTime);

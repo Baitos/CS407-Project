@@ -39,7 +39,7 @@ GameState * changeState(GameState * tempState, GameData &gd){
             newState = new CharSelectState();
             newState->init = initCharSelect;
             newState->update = charSelectUpdate;
-            newState->render = drawCharSelect;
+            //newState->render = drawCharSelect;
             newState->input = charSelectInputs;
             break;           
         }
@@ -49,7 +49,7 @@ GameState * changeState(GameState * tempState, GameData &gd){
             newState = new LevelState();
             newState->input = levelInputs;
             newState->update = levelUpdate;
-            newState->render = drawLevel;
+            //newState->render = drawLevel;
             newState->init = createTiles;    
             break;
         }

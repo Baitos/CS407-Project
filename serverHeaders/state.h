@@ -43,8 +43,8 @@ class GameState{
        
         void unloadGameState(GameData &gd){
             gd.mapTiles_.clear();
-            gd.bgTiles_.clear();
-            gd.previews_.clear();
+            //gd.bgTiles_.clear();
+            //gd.previews_.clear();
             gd.lasers_.clear();
             gd.portals_.clear();
             //TO-DO Add clearing players

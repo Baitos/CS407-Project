@@ -8,9 +8,9 @@
 #include "../serverHeaders/helper.h"
 
 void Player::draw(const SDLState &state, GameData &gd, float width, float height) {
-    (*this).hook.draw(state, gd, (*this), HOOK_SIZE, HOOK_SIZE); // draw hook under player
+    //(*this).hook.draw(state, gd, (*this), HOOK_SIZE, HOOK_SIZE); // draw hook under player
     
-    AnimatedObject::draw(state, gd, width, height); // do generic object draw for player
+    //AnimatedObject::draw(state, gd, width, height); // do generic object draw for player
 }
 
 void Player::handleState(PlayerState* &pState, GameData &gd, Resources &res) {

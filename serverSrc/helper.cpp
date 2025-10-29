@@ -7,15 +7,16 @@
 #include "../serverHeaders/object.h"
 
 bool isOnscreen(const SDLState &state, GameData &gd, Object &obj) { // checks if obj is onscreen (with some leeway)
-    bool onscreen = true;
-    if (obj.pos.x - gd.mapViewport.x + 2 * TILE_SIZE < 0 || // left side
-        obj.pos.x - gd.mapViewport.x - 2 * TILE_SIZE > state.logW || // right side
-        obj.pos.y - gd.mapViewport.y + 2 * TILE_SIZE < 0 || // up
-        obj.pos.y - gd.mapViewport.y - 2 * TILE_SIZE > state.logH) // down
-    {
-        onscreen = false;
-    }
-    return onscreen;
+    // bool onscreen = true;
+    // if (obj.pos.x - gd.mapViewport.x + 2 * TILE_SIZE < 0 || // left side
+    //     obj.pos.x - gd.mapViewport.x - 2 * TILE_SIZE > state.logW || // right side
+    //     obj.pos.y - gd.mapViewport.y + 2 * TILE_SIZE < 0 || // up
+    //     obj.pos.y - gd.mapViewport.y - 2 * TILE_SIZE > state.logH) // down
+    // {
+    //     onscreen = false;
+    // }
+    //return onscreen;
+    return 1;
 }
 
 float changeVel(float vel, Player &p) { // this is for ease of accounting for obj_flip without having to have it every time, use when you change/need vel/pos
@@ -35,8 +36,10 @@ glm::vec2 findCenterOfSprite(Object &obj) { // finds center of sprite by collide
 
 std::vector<float> distanceForm(GameData &gd, Object &a, Object &b) {
     glm::vec2 pOffset = findCenterOfSprite(a);
-    float xDist = gd.mouseCoords.x - (a.pos.x - gd.mapViewport.x + pOffset.x); // A
-    float yDist = gd.mouseCoords.y - (a.pos.y - gd.mapViewport.y + pOffset.y); // O
+    // float xDist = gd.mouseCoords.x - (a.pos.x - gd.mapViewport.x + pOffset.x); // A
+    // float yDist = gd.mouseCoords.y - (a.pos.y - gd.mapViewport.y + pOffset.y); // O
+    float xDist = 0;
+    float yDist = 0;
     float dist = std::sqrt(xDist * xDist + yDist * yDist); // distance formula, H
     float aH = xDist / dist; // cos
     float oH = yDist / dist; // sin

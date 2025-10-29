@@ -286,8 +286,8 @@ void createTiles(const SDLState &state, GameData &gd, const Resources &res) { //
                     }
                     case 7: //Background
                     {
-                        BackgroundObject b(pos, collider, res.texBg5);
-                        gd.bgTiles_.push_back(b);
+                        //BackgroundObject b(pos, collider, res.texBg5);
+                        //gd.bgTiles_.push_back(b);
                         break;
                     }
                     case 8: //Alternative Base Grond (Inside Corners, Ceiling, Right Wall)
@@ -322,48 +322,7 @@ void createTiles(const SDLState &state, GameData &gd, const Resources &res) { //
                         gd.mapTiles_.push_back(l);
                         break; 
                     }
-                    case 10:
-                    {
-                        BackgroundObject b(pos, collider, res.texPanelOne);
-                        gd.bgTiles_.push_back(b);
-                        break;
-                    }
-                    case 12:
-                    {
-                        BackgroundObject b(pos, collider, res.texBackWall);
-                        gd.bgTiles_.push_back(b);
-                        break;
-                    }
-                    case 14:
-                    {
-                        BackgroundObject b(pos, collider, res.texPanelTwo);
-                        gd.bgTiles_.push_back(b);
-                        break;
-                    }
-                    case 15:
-                    {
-                        BackgroundObject b(pos, collider, res.texPanelThree);
-                        gd.bgTiles_.push_back(b);
-                        break;
-                    }
-                    case 16:
-                    {
-                        BackgroundObject b(pos, collider, res.texFan);
-                        gd.bgTiles_.push_back(b);
-                        break;
-                    }
-                    case 17:
-                    {
-                        BackgroundObject b(pos, collider, res.texVentOne);
-                        gd.bgTiles_.push_back(b);
-                        break;
-                    }
-                    case 18:
-                    {
-                        BackgroundObject b(pos, collider, res.texVentTwo);
-                        gd.bgTiles_.push_back(b);
-                        break;
-                    }
+                    
                     case 19: // Item Box
                     {
                         ItemBox box(pos, collider, res.texItemBox);
@@ -407,27 +366,22 @@ void initCharSelect(const SDLState &state, GameData &gd, const Resources &res) {
         c.animations = res.charIconAnims;
         c.curAnimation = 0;
         c.spriteFrame = 7;
-        gd.charIcons_.push_back(c);
+        
         
         //Put player options on right side
         //Sword
         c.pos = glm::vec2(658,156);
-        gd.charIcons_.push_back(c);
+        
         //Jetpack
         c.pos = glm::vec2(658,220);
         c.spriteFrame = 2;
-        gd.charIcons_.push_back(c);
+        
         //Shotgun
         c.pos = glm::vec2(658,284);
         c.spriteFrame = 1;
-        gd.charIcons_.push_back(c);
+    
 
-        // Background
-        BackgroundObject bg(pos, collider, res.texCharSelectBackground);
-        bg.pos = glm::vec2(0,0);
-        bg.collider.w = res.texCharSelectBackground->w;
-        bg.collider.h = res.texCharSelectBackground->h;
-        gd.bgTiles_.push_back(bg);
+        
 
         
         // Preview
@@ -435,7 +389,7 @@ void initCharSelect(const SDLState &state, GameData &gd, const Resources &res) {
         preview.pos = glm::vec2(530,200);
         preview.animations = res.playerAnims;
         preview.curAnimation = res.ANIM_PLAYER_RUN;
-        gd.previews_.push_back(preview);
+        
 
         Object border(pos, collider, res.texBigBorder);
         
@@ -446,43 +400,3 @@ void initCharSelect(const SDLState &state, GameData &gd, const Resources &res) {
     //assert(gd.playerIndex != -1);
 }
 
-
-void initSettings(const SDLState &state, GameData &gd, const Resources &res) { // 280 x 60
-        SDL_FRect collider = {
-            .x = 0,
-            .y = 0,
-            .w = 32,
-            .h = 32
-        };
-        
-        glm::vec2  pos = glm::vec2(0,0);
-        // Background
-        BackgroundObject bg(pos, collider, res.texSettingsBackground);
-        bg.collider.w = res.texCharSelectBackground->w;
-        bg.collider.h = res.texCharSelectBackground->h;
-        gd.bgTiles_.push_back(bg);
-
-        Object border(pos, collider, res.texBigBorder);
-        gd.settingsBorder = border;
-        gd.settingsBorder.pos.y =  500;
-
-        //Master
-        Object dial(pos, collider, res.texSlider);
-        dial.pos.x = 290.f;
-        dial.pos.y = 120.f;
-        gd.settingsDials_.push_back(dial);
-
-        //Music
-        dial.pos.x = 290.f;
-        dial.pos.y = 204.f;
-        gd.settingsDials_.push_back(dial);
-
-        //SFX dial
-        dial.pos.x = 290.f;
-        dial.pos.y = 288.f;
-        gd.settingsDials_.push_back(dial);
-
-        
-    //loadMap(foreground);
-    //assert(gd.playerIndex != -1);
-}
