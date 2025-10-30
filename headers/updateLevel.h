@@ -12,3 +12,4 @@ void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
 void handleCrosshair(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
 void levelInputs(SDLState &state, GameData &gd, Resources &res, float deltaTime);
 void handleLevelClick(SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime, SDL_Event event, bool buttonDown);
+void placement(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
