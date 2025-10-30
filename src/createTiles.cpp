@@ -275,6 +275,9 @@ void createTilesSpaceship(const SDLState &state, GameData &gd, const Resources &
                         player.cooldownTimer.step(5.0f);
                         //gd.player2.state_ = newState;
 
+                        //add player's username (as of now, all same, will need to change w multiplayer)
+                        player.username = gd.md.tempUsername;
+
                         player.hook = Hook(player.pos, hookCollider, res.texGrapple);
                         player.index = gd.players_.size();
                         gd.players_.push_back(player);
@@ -833,22 +836,22 @@ void initCharSelect(const SDLState &state, GameData &gd, const Resources &res) {
         c.animations = res.charIconAnims;
         c.curAnimation = 0;
         c.spriteFrame = 7;
-        gd.charIcons_.push_back(c);
+        gd.md.charIcons_.push_back(c);
 
         
         
         //Put player options on right side
         //Sword
         c.pos = glm::vec2(658,156);
-        gd.charIcons_.push_back(c);
+        gd.md.charIcons_.push_back(c);
         //Jetpack
         c.pos = glm::vec2(658,220);
         c.spriteFrame = 2;
-        gd.charIcons_.push_back(c);
+        gd.md.charIcons_.push_back(c);
         //Shotgun
         c.pos = glm::vec2(658,284);
         c.spriteFrame = 1;
-        gd.charIcons_.push_back(c);
+        gd.md.charIcons_.push_back(c);
 
         // Background
         BackgroundObject bg(pos, collider, res.texCharSelectBackground);
@@ -863,7 +866,7 @@ void initCharSelect(const SDLState &state, GameData &gd, const Resources &res) {
         preview.pos = glm::vec2(530,200);
         preview.animations = res.playerAnims;
         preview.curAnimation = res.ANIM_PLAYER_RUN;
-        gd.previews_.push_back(preview);
+        gd.md.previews_.push_back(preview);
 
         //put map icons on side
         if(!gd.isGrandPrix) {
@@ -871,41 +874,41 @@ void initCharSelect(const SDLState &state, GameData &gd, const Resources &res) {
             map_preview.pos = glm::vec2(94,168);
             map_preview.animations = res.mapAnims;
             map_preview.curAnimation = res.MAP_GRASSLAND;
-            gd.map_previews_.push_back(map_preview);
+            gd.md.map_previews_.push_back(map_preview);
         } else {
             AnimatedObject map_preview(pos, collider, res.texMapPreviews[res.MAP_GRAND_PRIX]);
             map_preview.pos = glm::vec2(94,168);
             map_preview.animations = res.mapAnims;
             map_preview.curAnimation = res.MAP_GRAND_PRIX;
-            gd.map_previews_.push_back(map_preview);
+            gd.md.map_previews_.push_back(map_preview);
         }
 
         AnimatedObject map_preview_text(pos, collider, res.texMapTextPreviews[0]);
         map_preview_text.pos = glm::vec2(124,282);
         map_preview_text.animations = res.mapTextAnims;
         map_preview_text.curAnimation = res.MAP_GRASSLAND_TEXT;
-        gd.map_previews_text_.push_back(map_preview_text);
+        gd.md.map_previews_text_.push_back(map_preview_text);
 
         AnimatedObject arrowL(pos, collider, res.texLeftArrow);
         arrowL.pos = glm::vec2(105,284);
         arrowL.animations = res.arrowAnims;
         arrowL.curAnimation = res.LEFT_ARROW;
-        gd.arrows_.push_back(arrowL);
+        gd.md.arrows_.push_back(arrowL);
 
-        gd.arrows_[res.LEFT_ARROW].visible = false;
+        gd.md.arrows_[res.LEFT_ARROW].visible = false;
 
         AnimatedObject arrowR(pos, collider, res.texRightArrow);
         arrowR.pos = glm::vec2(272,284);
         arrowR.animations = res.arrowAnims;
         arrowR.curAnimation = res.RIGHT_ARROW;
-        gd.arrows_.push_back(arrowR);
+        gd.md.arrows_.push_back(arrowR);
 
-        gd.arrows_[res.RIGHT_ARROW].visible = false;
+        gd.md.arrows_[res.RIGHT_ARROW].visible = false;
 
         Object border(pos, collider, res.texBigBorder);
         
-        gd.settingsBorder = border;
-        gd.settingsBorder.pos.y =  500;
+        gd.md.settingsBorder = border;
+        gd.md.settingsBorder.pos.y =  500;
         
     //loadMap(foreground);
     //assert(gd.playerIndex != -1);
@@ -928,24 +931,24 @@ void initSettings(const SDLState &state, GameData &gd, const Resources &res) { /
         gd.bgTiles_.push_back(bg);
 
         Object border(pos, collider, res.texBigBorder);
-        gd.settingsBorder = border;
-        gd.settingsBorder.pos.y =  500;
+        gd.md.settingsBorder = border;
+        gd.md.settingsBorder.pos.y =  500;
 
         //Master
         Object dial(pos, collider, res.texSlider);
         dial.pos.x = 290.f;
         dial.pos.y = 120.f;
-        gd.settingsDials_.push_back(dial);
+        gd.md.settingsDials_.push_back(dial);
 
         //Music
         dial.pos.x = 290.f;
         dial.pos.y = 204.f;
-        gd.settingsDials_.push_back(dial);
+        gd.md.settingsDials_.push_back(dial);
 
         //SFX dial
         dial.pos.x = 290.f;
         dial.pos.y = 288.f;
-        gd.settingsDials_.push_back(dial);
+        gd.md.settingsDials_.push_back(dial);
 
         
     //loadMap(foreground);
@@ -968,58 +971,58 @@ void initGameplaySettings(const SDLState &state, GameData &gd, const Resources &
         gd.bgTiles_.push_back(bg);
 
         Object border(pos, collider, res.texBigBorder);
-        gd.settingsBorder = border;
-        gd.settingsBorder.pos.y =  500;
+        gd.md.settingsBorder = border;
+        gd.md.settingsBorder.pos.y =  500;
 
         //brackets
         pos = glm::vec2(175,152);
         BackgroundObject leftBracket(pos, collider, res.texGameplaySettingsLeftBracket);
         leftBracket.collider.w = res.texGameplaySettingsLeftBracket->w;
         leftBracket.collider.h = res.texGameplaySettingsLeftBracket->h;
-        gd.gameplaySettingsBrackets1_.push_back(leftBracket);
+        gd.md.gameplaySettingsBrackets1_.push_back(leftBracket);
     
 
         pos = glm::vec2(370,152);
         BackgroundObject rightBracket(pos, collider, res.texGameplaySettingsRightBracket);
         rightBracket.collider.w = res.texGameplaySettingsRightBracket->w;
         rightBracket.collider.h = res.texGameplaySettingsRightBracket->h;
-        gd.gameplaySettingsBrackets1_.push_back(rightBracket);
+        gd.md.gameplaySettingsBrackets1_.push_back(rightBracket);
 
         pos = glm::vec2(400,152);
         BackgroundObject leftBracket2(pos, collider, res.texGameplaySettingsLeftBracket);
         leftBracket2.collider.w = res.texGameplaySettingsLeftBracket->w;
         leftBracket2.collider.h = res.texGameplaySettingsLeftBracket->h;
-        gd.gameplaySettingsBrackets2_.push_back(leftBracket2);
+        gd.md.gameplaySettingsBrackets2_.push_back(leftBracket2);
 
         pos = glm::vec2(620,152);
         BackgroundObject rightBracket2(pos, collider, res.texGameplaySettingsRightBracket);
         rightBracket2.collider.w = res.texGameplaySettingsRightBracket->w;
         rightBracket2.collider.h = res.texGameplaySettingsRightBracket->h;
-        gd.gameplaySettingsBrackets2_.push_back(rightBracket2);
+        gd.md.gameplaySettingsBrackets2_.push_back(rightBracket2);
 
         //numLaps
         pos = glm::vec2(517,245);
         Object numLaps(pos, collider, res.texGameplaySettings3);
         numLaps.collider.w = res.texGameplaySettings3->w;
         numLaps.collider.h = res.texGameplaySettings3->h;
-        gd.gameplaySettingsNumLaps_.push_back(numLaps);
+        gd.md.gameplaySettingsNumLaps_.push_back(numLaps);
 
         //arrows
         AnimatedObject arrowL(pos, collider, res.texLeftArrow);
         arrowL.pos = glm::vec2(492,249);
         arrowL.animations = res.arrowAnims;
         arrowL.curAnimation = res.LEFT_ARROW;
-        gd.arrows_.push_back(arrowL);
+        gd.md.arrows_.push_back(arrowL);
 
-        gd.arrows_[res.LEFT_ARROW].visible = false;
+        gd.md.arrows_[res.LEFT_ARROW].visible = false;
 
         AnimatedObject arrowR(pos, collider, res.texRightArrow);
         arrowR.pos = glm::vec2(548,249);
         arrowR.animations = res.arrowAnims;
         arrowR.curAnimation = res.RIGHT_ARROW;
-        gd.arrows_.push_back(arrowR);
+        gd.md.arrows_.push_back(arrowR);
 
-        gd.arrows_[res.RIGHT_ARROW].visible = false;
+        gd.md.arrows_[res.RIGHT_ARROW].visible = false;
 }
 
 void initTitle(const SDLState &state, GameData &gd, const Resources &res) {
@@ -1038,13 +1041,13 @@ void initTitle(const SDLState &state, GameData &gd, const Resources &res) {
         gd.bgTiles_.push_back(bg);
 
         Object border(pos, collider, res.texBigBorder);
-        gd.settingsBorder = border;
-        gd.settingsBorder.pos.y =  500;
+        gd.md.settingsBorder = border;
+        gd.md.settingsBorder.pos.y =  500;
 
         //initialize font
-        if(!gd.font){
-            gd.font = TTF_OpenFont("data/Fonts/retro.ttf", 16); // 16 = point size
-            if (!gd.font) {
+        if(!gd.md.font){
+            gd.md.font = TTF_OpenFont("data/Fonts/retro.ttf", 16); // 16 = point size
+            if (!gd.md.font) {
                 SDL_Log("Failed to load font");
                 return;
             }

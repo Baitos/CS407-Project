@@ -22,6 +22,8 @@ class Player : public AnimatedObject { // player
     public:
         characterType character; // who are you  
         PlayerState* state_;
+
+        std::string username;
         
         Hook hook;
         Item item;

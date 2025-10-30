@@ -46,10 +46,10 @@ class GameState{
         void unloadGameState(GameData &gd){
             gd.mapTiles_.clear();
             gd.bgTiles_.clear();
-            gd.previews_.clear();
+            gd.md.previews_.clear();
             gd.lasers_.clear();
             gd.portals_.clear();
-            gd.arrows_.clear();
+            gd.md.arrows_.clear();
             gd.lava_.clear();
             gd.water_.clear();
             gd.signs_.clear();

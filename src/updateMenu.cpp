@@ -19,7 +19,7 @@ extern GameState * currState;
 
 //Update for Character Select Screen
 void charSelectUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
-        for (AnimatedObject &preview : gd.previews_) {
+        for (AnimatedObject &preview : gd.md.previews_) {
             preview.update(state, gd, res, deltaTime);
         }
 
@@ -178,26 +178,26 @@ void handleMousePointerCharSelect(const SDLState &state, GameData &gd, Resources
     };
     if((gd.mouseCoords.x >= 35 && gd.mouseCoords.x <= 218) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)){ //Big Border on Exit
         //printf("1\n");
-        gd.settingsBorder.pos = glm::vec2(38,366);
-        gd.settingsBorder.texture = res.texBigBorder;
+        gd.md.settingsBorder.pos = glm::vec2(38,366);
+        gd.md.settingsBorder.texture = res.texBigBorder;
     } else if ((gd.mouseCoords.x >= 583 && gd.mouseCoords.x <= 766) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)){ //Big border on Save
         //printf("2\n");
-        gd.settingsBorder.pos = glm::vec2(586,366); 
-        gd.settingsBorder.texture = res.texBigBorder;
+        gd.md.settingsBorder.pos = glm::vec2(586,366); 
+        gd.md.settingsBorder.texture = res.texBigBorder;
     } else {
         //printf("3\n");
-        gd.settingsBorder.pos = glm::vec2(500,500);
+        gd.md.settingsBorder.pos = glm::vec2(500,500);
     }
 
     //hover for arrows
     if(!gd.isGrandPrix) {
         if((gd.mouseCoords.x >= 107 && gd.mouseCoords.x <= 125) && (gd.mouseCoords.y >= 286 && gd.mouseCoords.y <= 310)){
-            gd.arrows_[0].visible = true;
+            gd.md.arrows_[0].visible = true;
         } else if ((gd.mouseCoords.x >= 274 && gd.mouseCoords.x <= 292) && (gd.mouseCoords.y >= 286 && gd.mouseCoords.y <= 310)) {
-            gd.arrows_[1].visible = true;
+            gd.md.arrows_[1].visible = true;
         } else {
-            gd.arrows_[0].visible = false;
-            gd.arrows_[1].visible = false;
+            gd.md.arrows_[0].visible = false;
+            gd.md.arrows_[1].visible = false;
         }
     }
 
@@ -231,36 +231,36 @@ void handleMousePointerSettings(const SDLState &state, GameData &gd, Resources &
     } else {
         if((gd.mouseCoords.x >= 35 && gd.mouseCoords.x <= 218) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)){ //Big Border on Exit
             //printf("1\n");
-            gd.settingsBorder.pos = glm::vec2(38,366);
-            gd.settingsBorder.texture = res.texBigBorder;
+            gd.md.settingsBorder.pos = glm::vec2(38,366);
+            gd.md.settingsBorder.texture = res.texBigBorder;
         } else if ((gd.mouseCoords.x >= 583 && gd.mouseCoords.x <= 766) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)){ //Big border on Save
             //printf("2\n");
-            gd.settingsBorder.pos = glm::vec2(585,366);
-            gd.settingsBorder.texture = res.texBigBorder;
+            gd.md.settingsBorder.pos = glm::vec2(585,366);
+            gd.md.settingsBorder.texture = res.texBigBorder;
         } else if((gd.mouseCoords.x >= 578 && gd.mouseCoords.x <= 690) && (gd.mouseCoords.y >= 106 && gd.mouseCoords.y <= 126)){ //Sprint
-            gd.settingsBorder.pos = glm::vec2(576,104);
-            gd.settingsBorder.texture = res.texSmallBorder;
+            gd.md.settingsBorder.pos = glm::vec2(576,104);
+            gd.md.settingsBorder.texture = res.texSmallBorder;
         } else if((gd.mouseCoords.x >= 578 && gd.mouseCoords.x <= 690) && (gd.mouseCoords.y >= 130 && gd.mouseCoords.y <= 150)){ //Grapple
-            gd.settingsBorder.pos = glm::vec2(576,130);
-            gd.settingsBorder.texture = res.texSmallBorder;
+            gd.md.settingsBorder.pos = glm::vec2(576,130);
+            gd.md.settingsBorder.texture = res.texSmallBorder;
         } else if((gd.mouseCoords.x >= 578 && gd.mouseCoords.x <= 690) && (gd.mouseCoords.y >= 156 && gd.mouseCoords.y <= 174)){ //Ability
-            gd.settingsBorder.pos = glm::vec2(576,156);
-            gd.settingsBorder.texture = res.texSmallBorder;
+            gd.md.settingsBorder.pos = glm::vec2(576,156);
+            gd.md.settingsBorder.texture = res.texSmallBorder;
         } else if((gd.mouseCoords.x >= 578 && gd.mouseCoords.x <= 690) && (gd.mouseCoords.y >= 182 && gd.mouseCoords.y <= 202)){ //Jump
-            gd.settingsBorder.pos = glm::vec2(576,182);
-            gd.settingsBorder.texture = res.texSmallBorder;
+            gd.md.settingsBorder.pos = glm::vec2(576,182);
+            gd.md.settingsBorder.texture = res.texSmallBorder;
         } else if((gd.mouseCoords.x >= 578 && gd.mouseCoords.x <= 690) && (gd.mouseCoords.y >= 208 && gd.mouseCoords.y <= 228)){ //Use Item
-            gd.settingsBorder.pos = glm::vec2(576,208);
-            gd.settingsBorder.texture = res.texSmallBorder;
+            gd.md.settingsBorder.pos = glm::vec2(576,208);
+            gd.md.settingsBorder.texture = res.texSmallBorder;
         } else if((gd.mouseCoords.x >= 578 && gd.mouseCoords.x <= 690) && (gd.mouseCoords.y >= 234 && gd.mouseCoords.y <= 254)){ //Pause
-            gd.settingsBorder.pos = glm::vec2(576,234);
-            gd.settingsBorder.texture = res.texSmallBorder;
+            gd.md.settingsBorder.pos = glm::vec2(576,234);
+            gd.md.settingsBorder.texture = res.texSmallBorder;
         } else if((gd.mouseCoords.x >= 578 && gd.mouseCoords.x <= 690) && (gd.mouseCoords.y >= 260 && gd.mouseCoords.y <= 280)){ //Fast-Fall
-            gd.settingsBorder.pos = glm::vec2(576,260);
-            gd.settingsBorder.texture = res.texSmallBorder;
+            gd.md.settingsBorder.pos = glm::vec2(576,260);
+            gd.md.settingsBorder.texture = res.texSmallBorder;
         } else {
             //printf("3\n");
-            gd.settingsBorder.pos = glm::vec2(500,500);
+            gd.md.settingsBorder.pos = glm::vec2(500,500);
         }
     }
     
@@ -286,20 +286,20 @@ void handleMousePointerGameplaySettings (const SDLState &state, GameData &gd, Re
     
     //hover over back button
     if((gd.mouseCoords.x >= 35 && gd.mouseCoords.x <= 218) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)){ //Big Border on Exit
-        gd.settingsBorder.pos = glm::vec2(38,366);
-        gd.settingsBorder.texture = res.texBigBorder;
+        gd.md.settingsBorder.pos = glm::vec2(38,366);
+        gd.md.settingsBorder.texture = res.texBigBorder;
     } else {
-        gd.settingsBorder.pos = glm::vec2(500,500);
+        gd.md.settingsBorder.pos = glm::vec2(500,500);
     }
 
     //hover for arrows
     if((gd.mouseCoords.x >= 494 && gd.mouseCoords.x <= 512) && (gd.mouseCoords.y >= 254 && gd.mouseCoords.y <= 272)){
-        gd.arrows_[0].visible = true;
+        gd.md.arrows_[0].visible = true;
     } else if ((gd.mouseCoords.x >= 548 && gd.mouseCoords.x <= 566) && (gd.mouseCoords.y >= 254 && gd.mouseCoords.y <= 272)) {
-        gd.arrows_[1].visible = true;
+        gd.md.arrows_[1].visible = true;
     } else {
-        gd.arrows_[0].visible = false;
-        gd.arrows_[1].visible = false;
+        gd.md.arrows_[0].visible = false;
+        gd.md.arrows_[1].visible = false;
     }
 
 
@@ -325,53 +325,53 @@ void handleCharSelectKeyInput(const SDLState &state, GameData &gd, Resources &re
 void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
     if ((gd.mouseCoords.x >= 658 && gd.mouseCoords.x <= 658+34) && (gd.mouseCoords.y >= 156 && gd.mouseCoords.y <= 156+36)){
         //Set Icons and Player to Sword
-        gd.previews_[0].texture = res.texSword;
-        gd.previews_[0].pos = glm::vec2(530,200);
-        gd.previews_[0].draw(state, gd, 96,96);
+        gd.md.previews_[0].texture = res.texSword;
+        gd.md.previews_[0].pos = glm::vec2(530,200);
+        gd.md.previews_[0].draw(state, gd, 96,96);
         gd.bgTiles_[0].draw(state, gd, 800,450);
         ((CharSelectState*) currState)->character = SWORD;
-        for (charIconObject &ci : gd.charIcons_){
+        for (charIconObject &ci : gd.md.charIcons_){
             ci.spriteFrame = ci.spriteFrame % 4;
             if (ci.spriteFrame == 3){
                 ci.spriteFrame +=4;
-                gd.charIcons_[0].spriteFrame = ci.spriteFrame;
+                gd.md.charIcons_[0].spriteFrame = ci.spriteFrame;
             }
         }
     } else if ((gd.mouseCoords.x >= 658 && gd.mouseCoords.x <= 658+34) && (gd.mouseCoords.y >= 220 && gd.mouseCoords.y <= 220+36)){
         //Set Icons and Player to Jetpack
-        gd.previews_[0].texture = res.texJetpack;
-        gd.previews_[0].pos = glm::vec2(510,200);
-        gd.previews_[0].draw(state, gd, 96,96);
+        gd.md.previews_[0].texture = res.texJetpack;
+        gd.md.previews_[0].pos = glm::vec2(510,200);
+        gd.md.previews_[0].draw(state, gd, 96,96);
         gd.bgTiles_[0].draw(state, gd, 800,450);
         ((CharSelectState*) currState)->character = JETPACK;
-        for (charIconObject &ci : gd.charIcons_){
+        for (charIconObject &ci : gd.md.charIcons_){
             ci.spriteFrame = ci.spriteFrame % 4;
             if (ci.spriteFrame == 2){
                 ci.spriteFrame +=4;
-                gd.charIcons_[0].spriteFrame = ci.spriteFrame;
+                gd.md.charIcons_[0].spriteFrame = ci.spriteFrame;
             }
         }
     } else if ((gd.mouseCoords.x >= 658 && gd.mouseCoords.x <= 658+34) && (gd.mouseCoords.y >= 284 && gd.mouseCoords.y <= 284+36)){
         //Set Icons and Player to Shotgun
-        gd.previews_[0].texture = res.texShotgun;
-        gd.previews_[0].pos = glm::vec2(520,200);
-        gd.previews_[0].draw(state, gd, 96,96);
+        gd.md.previews_[0].texture = res.texShotgun;
+        gd.md.previews_[0].pos = glm::vec2(520,200);
+        gd.md.previews_[0].draw(state, gd, 96,96);
         gd.bgTiles_[0].draw(state, gd, 800,450);
         ((CharSelectState*) currState)->character = SHOTGUN;
-        for (charIconObject &ci : gd.charIcons_){
+        for (charIconObject &ci : gd.md.charIcons_){
             ci.spriteFrame = ci.spriteFrame % 4;
             if (ci.spriteFrame == 1){
                 ci.spriteFrame +=4;
-                gd.charIcons_[0].spriteFrame = ci.spriteFrame;
+                gd.md.charIcons_[0].spriteFrame = ci.spriteFrame;
             }
         }
     } else if ((gd.mouseCoords.x >= 583 && gd.mouseCoords.x <= 766) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)) {
         //Enter Stage
         //TO DO - ONLY DO WHEN PLAYERS AGREE TO READY UP
         characterType character = ((CharSelectState*) currState)->character;
-        if(gd.map_previews_[0].curAnimation == res.MAP_SPACESHIP) {
+        if(gd.md.map_previews_[0].curAnimation == res.MAP_SPACESHIP) {
             currState->nextStateVal = SPACESHIP;
-        } else if(gd.map_previews_[0].curAnimation == res.MAP_GRASSLAND)  {
+        } else if(gd.md.map_previews_[0].curAnimation == res.MAP_GRASSLAND)  {
             currState->nextStateVal = GRASSLANDS;
         } else {
             printf("INVALID MAP\n");
@@ -387,7 +387,7 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
     } else if ((gd.mouseCoords.x >= 107 && gd.mouseCoords.x <= 125) && (gd.mouseCoords.y >= 286 && gd.mouseCoords.y <= 310)){
         if(!gd.isGrandPrix) {
             //move map sprite - one frame
-            for (AnimatedObject &map_preview : gd.map_previews_) {
+            for (AnimatedObject &map_preview : gd.md.map_previews_) {
                 int index = map_preview.curAnimation;
                 index--;
                 if(index<0) {
@@ -398,7 +398,7 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
                 map_preview.animations[map_preview.curAnimation].reset();
             }
             //move map text sprite - one frame
-            for (AnimatedObject &map_preview_text : gd.map_previews_text_) {
+            for (AnimatedObject &map_preview_text : gd.md.map_previews_text_) {
                 int index = map_preview_text.curAnimation;
                 index--;
                 if(index<0) {
@@ -412,7 +412,7 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
     } else if ((gd.mouseCoords.x >= 274 && gd.mouseCoords.x <= 292) && (gd.mouseCoords.y >= 286 && gd.mouseCoords.y <= 310)) {
         if(!gd.isGrandPrix) {
             //move map sprite + one 
-            for (AnimatedObject &map_preview : gd.map_previews_) {
+            for (AnimatedObject &map_preview : gd.md.map_previews_) {
                 int index = map_preview.curAnimation;
                 index++;
                 if(index>4) {
@@ -423,7 +423,7 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
                 map_preview.animations[map_preview.curAnimation].reset();
             }
             //move map text sprite + one frame
-            for (AnimatedObject &map_preview_text : gd.map_previews_text_) {
+            for (AnimatedObject &map_preview_text : gd.md.map_previews_text_) {
                 int index = map_preview_text.curAnimation;
                 index++;
                 if(index>4) {
@@ -460,7 +460,7 @@ void handleSettingsClick(const SDLState &state, GameData &gd, Resources &res, fl
     } else if((gd.mouseCoords.x >= 578 && gd.mouseCoords.x <= 690) && (gd.mouseCoords.y >= 260 && gd.mouseCoords.y <= 280)){ //Fast-Fall
         printf("Fast-fall\n");
     }   
-    for(Object &o : gd.settingsDials_){
+    for(Object &o : gd.md.settingsDials_){
         
         if((gd.mouseCoords.x >= o.pos.x && gd.mouseCoords.x <= o.pos.x + (static_cast<float>(o.texture->w) * 2)) && (gd.mouseCoords.y >= o.pos.y && gd.mouseCoords.y <= o.pos.y + (static_cast<float>(o.texture->h) * 2))){
            gd.updatedDial = &o; 
@@ -472,7 +472,7 @@ void handleGameplaySettingsClick(const SDLState &state, GameData &gd, Resources 
     //click back
     if ((gd.mouseCoords.x >= 35 && gd.mouseCoords.x <= 218) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)) {
         //set the num of laps
-        for(Object &ob: gd.gameplaySettingsNumLaps_) {
+        for(Object &ob: gd.md.gameplaySettingsNumLaps_) {
             if(ob.texture == res.texGameplaySettings1) {
                 gd.laps_per_race = 1;
             } else if(ob.texture == res.texGameplaySettings2) {
@@ -486,6 +486,7 @@ void handleGameplaySettingsClick(const SDLState &state, GameData &gd, Resources 
             }
         }
 
+        //change this to go back to host settings whenever implemented
         currState->nextStateVal = CHAR_SELECT;
         currState = changeState(currState, gd);
         currState->init(state, gd, res);
@@ -494,7 +495,7 @@ void handleGameplaySettingsClick(const SDLState &state, GameData &gd, Resources 
     //click for arrows
     if((gd.mouseCoords.x >= 494 && gd.mouseCoords.x <= 512) && (gd.mouseCoords.y >= 254 && gd.mouseCoords.y <= 272)){
         //move left
-        for(Object &ob: gd.gameplaySettingsNumLaps_) {
+        for(Object &ob: gd.md.gameplaySettingsNumLaps_) {
             if(ob.texture == res.texGameplaySettings1) {
                 ob.texture = res.texGameplaySettings5;
             } else if(ob.texture == res.texGameplaySettings2) {
@@ -509,7 +510,7 @@ void handleGameplaySettingsClick(const SDLState &state, GameData &gd, Resources 
         }
     } else if ((gd.mouseCoords.x >= 548 && gd.mouseCoords.x <= 566) && (gd.mouseCoords.y >= 254 && gd.mouseCoords.y <= 272)) {
         //move right
-        for(Object &ob: gd.gameplaySettingsNumLaps_) {
+        for(Object &ob: gd.md.gameplaySettingsNumLaps_) {
             if(ob.texture == res.texGameplaySettings1) {
                 ob.texture = res.texGameplaySettings2;
             } else if(ob.texture == res.texGameplaySettings2) {
@@ -535,9 +536,9 @@ void handleGameplaySettingsClick(const SDLState &state, GameData &gd, Resources 
 void titleUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime){
     Uint64 now = SDL_GetTicks();
 
-    if (now - gd.lastCursorToggle > 500) { // blink rate
-        gd.showCursor = !gd.showCursor;
-        gd.lastCursorToggle = now;
+    if (now - gd.md.lastCursorToggle > 500) { // blink rate
+        gd.md.showCursor = !gd.md.showCursor;
+        gd.md.lastCursorToggle = now;
     }
 }
 void handleMousePointerTitle(const SDLState &state, GameData &gd, Resources &res, float deltaTime){
@@ -555,10 +556,10 @@ void handleMousePointerTitle(const SDLState &state, GameData &gd, Resources &res
         .h = (float)TILE_SIZE
     };
 
-    if(gd.usernameEditing){
-        gd.displayName = gd.tempUsername;
-        if (gd.usernameEditing && gd.showCursor) {
-            gd.displayName += '|';
+    if(gd.md.usernameEditing){
+        gd.md.displayName = gd.md.tempUsername;
+        if (gd.md.usernameEditing && gd.md.showCursor) {
+            gd.md.displayName += '|';
         }
     } else if((gd.mouseCoords.x >= 363 && gd.mouseCoords.x <= 595) && (gd.mouseCoords.y >= 165 && gd.mouseCoords.y <= 200)) {
         SDL_RenderTexture(state.renderer, res.texTextCursor, nullptr, &dst);
@@ -567,16 +568,16 @@ void handleMousePointerTitle(const SDLState &state, GameData &gd, Resources &res
     }
 
     if ((gd.mouseCoords.x >= 40 && gd.mouseCoords.x <= 219) && (gd.mouseCoords.y >= 368 && gd.mouseCoords.y <= 436)) {
-        gd.settingsBorder.pos = glm::vec2(38,366);
-        gd.settingsBorder.texture = res.texBigBorder;
+        gd.md.settingsBorder.pos = glm::vec2(38,366);
+        gd.md.settingsBorder.texture = res.texBigBorder;
     } else if((gd.mouseCoords.x >= 315 && gd.mouseCoords.x <= 485) && (gd.mouseCoords.y >= 368 && gd.mouseCoords.y <= 436)){        //Join
-        gd.settingsBorder.pos = glm::vec2(312,366);
-        gd.settingsBorder.texture = res.texBigBorder;
+        gd.md.settingsBorder.pos = glm::vec2(312,366);
+        gd.md.settingsBorder.texture = res.texBigBorder;
     }else if((gd.mouseCoords.x >= 589 && gd.mouseCoords.x <= 767) && (gd.mouseCoords.y >= 368 && gd.mouseCoords.y <= 436)){         //Settings
-        gd.settingsBorder.pos = glm::vec2(586,366);
-        gd.settingsBorder.texture = res.texBigBorder;
+        gd.md.settingsBorder.pos = glm::vec2(586,366);
+        gd.md.settingsBorder.texture = res.texBigBorder;
     } else {
-        gd.settingsBorder.pos = glm::vec2(500,500);
+        gd.md.settingsBorder.pos = glm::vec2(500,500);
     }
 }
 
@@ -598,15 +599,16 @@ void titleInput(SDLState &state, GameData &gd, Resources &res, float deltaTime){
                 }
                 case SDL_EVENT_KEY_DOWN:
                 {
-                    if (!event.key.repeat && gd.usernameEditing) {
+                    if (!event.key.repeat && gd.md.usernameEditing) {
                         SDL_Scancode sc = event.key.scancode;
                         if (sc == SDL_SCANCODE_BACKSPACE) {
-                            if(!gd.tempUsername.empty()) {
-                                gd.tempUsername.pop_back();
+                            if(!gd.md.tempUsername.empty()) {
+                                gd.md.tempUsername.pop_back();
                             }
                         } else if (sc == SDL_SCANCODE_RETURN) {
-                            gd.usernameEditing = false;
-                            username = gd.tempUsername;
+                            gd.md.displayName = gd.md.tempUsername;
+                            gd.md.usernameEditing = false;
+                            username = gd.md.tempUsername;
                         } else {
                             bool shift = (SDL_GetModState() & SDL_KMOD_SHIFT);
                             char c = 0;
@@ -625,8 +627,8 @@ void titleInput(SDLState &state, GameData &gd, Resources &res, float deltaTime){
                                 c = ' ';
                             }
 
-                            if (c && gd.tempUsername.length() < 12) { // limit length
-                                gd.tempUsername += c;
+                            if (c && gd.md.tempUsername.length() < 12) { // limit length
+                                gd.md.tempUsername += c;
                             }
                         }
                     }
@@ -642,13 +644,14 @@ void titleInput(SDLState &state, GameData &gd, Resources &res, float deltaTime){
                 {
                     if (gd.mouseCoords.x >= 363 && gd.mouseCoords.x <= 595 &&
                         gd.mouseCoords.y >= 165 && gd.mouseCoords.y <= 200 &&
-                        gd.usernameEditing == false) {
-                        gd.usernameEditing = true;
-                        gd.tempUsername = username;
+                        gd.md.usernameEditing == false) {
+                        gd.md.usernameEditing = true;
+                        gd.md.tempUsername = username;
                     } else {
-                        if (gd.usernameEditing) {
-                            gd.usernameEditing = false; // Clicked away
-                            username = gd.tempUsername;
+                        if (gd.md.usernameEditing) {
+                            gd.md.displayName = gd.md.tempUsername;
+                            gd.md.usernameEditing = false; // Clicked away
+                            username = gd.md.tempUsername;
                         }
                     }
                     handleTitleClick(state,gd,res,deltaTime);
@@ -668,13 +671,17 @@ void handleTitleClick(const SDLState &state, GameData &gd, Resources &res, float
         //Text box   
 
     } else if ((gd.mouseCoords.x >= 40 && gd.mouseCoords.x <= 219) && (gd.mouseCoords.y >= 368 && gd.mouseCoords.y <= 436)){       //Host
-        currState->nextStateVal = CHAR_SELECT;
-        currState = changeState(currState, gd);
-        currState->init(state, gd, res);
+        if(gd.md.tempUsername!="") {
+            currState->nextStateVal = GAMEPLAY_SETTINGS;
+            currState = changeState(currState, gd);
+            currState->init(state, gd, res);
+        }
     } else if((gd.mouseCoords.x >= 315 && gd.mouseCoords.x <= 485) && (gd.mouseCoords.y >= 368 && gd.mouseCoords.y <= 436)){        //Join
-        currState->nextStateVal = CHAR_SELECT;
-        currState = changeState(currState, gd);
-        currState->init(state, gd, res);
+        if(gd.md.tempUsername!="") {
+            currState->nextStateVal = CHAR_SELECT;
+            currState = changeState(currState, gd);
+            currState->init(state, gd, res);
+        }
     }else if((gd.mouseCoords.x >= 589 && gd.mouseCoords.x <= 767) && (gd.mouseCoords.y >= 368 && gd.mouseCoords.y <= 436)){         //Settings
         currState->nextStateVal = SETTINGS;
         currState = changeState(currState, gd);

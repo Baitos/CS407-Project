@@ -8,6 +8,7 @@
 #include "player.h"
 #include "menu.h"
 #include "createCheckpoints.h"
+#include "menuData.h"
 struct GameData {
     std::vector<Player> players_;
     int numPlayers; 
@@ -24,11 +25,13 @@ struct GameData {
 
     std::vector<Checkpoint> checkpoints_;
 
-    std::vector<charIconObject> charIcons_;
-    std::vector<AnimatedObject> previews_;
-    std::vector<AnimatedObject> map_previews_;
-    std::vector<AnimatedObject> map_previews_text_;
-    std::vector<AnimatedObject> arrows_;
+    MenuData md;
+
+    // std::vector<charIconObject> charIcons_;
+    // std::vector<AnimatedObject> previews_;
+    // std::vector<AnimatedObject> map_previews_;
+    // std::vector<AnimatedObject> map_previews_text_;
+    // std::vector<AnimatedObject> arrows_;
 
     glm::vec2 ExitPortal, 
               EntrancePortal, 
@@ -36,20 +39,20 @@ struct GameData {
               clickCoords;
     ItemStorage itemStorage_;
 
-    Object settingsBorder;
-    std::vector<Object> settingsDials_;
-    std::vector<Object> gameplaySettingsBrackets1_;
-    std::vector<Object> gameplaySettingsBrackets2_;
-    std::vector<Object> gameplaySettingsNumLaps_;
-    std::vector<Object> gameplaySettingsModeHighlights_;
+    // Object settingsBorder;
+    // std::vector<Object> settingsDials_;
+    // std::vector<Object> gameplaySettingsBrackets1_;
+    // std::vector<Object> gameplaySettingsBrackets2_;
+    // std::vector<Object> gameplaySettingsNumLaps_;
+    // std::vector<Object> gameplaySettingsModeHighlights_;
 
-    bool usernameEditing = false;
-    std::string tempUsername = " ";
-    std::string displayName;
-    int lastCursorToggle = 0;
-    bool showCursor = true;
-    //font for drawing on screen
-    TTF_Font* font;
+    // bool usernameEditing = false;
+    // std::string tempUsername = " ";
+    // std::string displayName;
+    // int lastCursorToggle = 0;
+    // bool showCursor = true;
+    // //font for drawing on screen
+    // TTF_Font* font;
 
     //Note that volume ratio is dial.pos.x / (290-84)
     Object * updatedDial;
@@ -61,7 +64,7 @@ struct GameData {
     int laps_per_race = 1;
     bool round_is_over = false;
     
-    GameData(const SDLState &state) {
+    GameData(const SDLState &state): md(state) {
         playerIndex = -1; // will change when map is loaded
         numPlayers = 8;
         mapViewport = SDL_FRect {
