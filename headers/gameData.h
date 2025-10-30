@@ -6,6 +6,7 @@
 #include "initState.h"
 #include "player.h"
 #include "menu.h"
+#include "minimap.h"
 
 struct GameData {
     std::vector<Player> players_;
@@ -17,6 +18,8 @@ struct GameData {
     std::vector<ItemBox> itemBoxes_;
     std::vector<Item> items_;
     std::vector<Portal> portals_;
+
+    Minimap minimap; // the minimap for the current map
 
     std::vector<charIconObject> charIcons_;
     std::vector<AnimatedObject> previews_;

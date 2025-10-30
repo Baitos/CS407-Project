@@ -24,7 +24,7 @@ void Object::draw(const SDLState &state, GameData &gd, float width, float height
 }
 
 void Object::drawDebug(const SDLState &state, GameData &gd, float width, float height) {
-    if (gd.debugMode) {
+    if (gd.debugMode && this->debug) {
         SDL_FRect rectA {
             .x = this->pos.x + this->collider.x - gd.mapViewport.x, 
             .y = this->pos.y + this->collider.y - gd.mapViewport.y,
@@ -88,19 +88,6 @@ void AnimatedObject::update(const SDLState &state, GameData &gd, Resources &res,
     if (this->curAnimation != -1) {
         this->animations[this->curAnimation].step(deltaTime);
     }
-}
-
-void BackgroundObject::draw(const SDLState &state, GameData &gd, float width, float height) { // same as Object.draw, just no debug option (maybe we can optimize this?)
-    if (!isOnscreen(state, gd, (*this))) {
-        return;
-    }
-    SDL_FRect dst {
-        .x = this->pos.x - gd.mapViewport.x,
-        .y = this->pos.y - gd.mapViewport.y,
-        .w = width,
-        .h = height
-    };
-    SDL_RenderTexture(state.renderer, this->texture, nullptr, &dst);
 }
 
 void Laser::update(const SDLState &state, GameData &gd, Resources &res, float deltaTime) { // update laser timer every frame

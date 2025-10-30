@@ -29,6 +29,7 @@ class Object { // generic obj type
         SDL_Texture *texture;
         SDL_FRect collider; // rectangle for collision
         float width, height; // size for drawing
+        bool debug; // should draw debug?
         int type;
         Object() {           
             pos = vel = acc = glm::vec2(0);
@@ -39,6 +40,7 @@ class Object { // generic obj type
                 .h = (float)TILE_SIZE
             };
             width = height = TILE_SIZE;
+            debug = true;
         }
         Object(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) {
             pos = pos_;       
@@ -75,6 +77,7 @@ class AnimatedObject : public Object { // obj with anims
             flip = 1.0f;
             type = ANIMATED;
             visible = true;
+            debug = true;
         }
 
         void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
@@ -89,8 +92,8 @@ class BackgroundObject : public Object { // bg tiles
         BackgroundObject(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : // generic obj constructor
         Object(pos_, colliderRect, tex) {
             type = BACKGROUND;
+            debug = false;
         }
-        void draw(const SDLState &state, GameData &gd, float width, float height);
 };
 
 class Level : public Object { // the level type!
@@ -101,6 +104,7 @@ class Level : public Object { // the level type!
         Level(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : // generic obj constructor
         Object(pos_, colliderRect, tex) {
             type = LEVEL;
+            debug = true;
         }
 };
 
@@ -136,6 +140,7 @@ class Laser : public Object { // obstacle
         Object(pos_, colliderRect, tex), laserTimer(2.1f) {
             laserActive = true;
             type = LASER;
+            debug = true;
         }
         void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
 };
@@ -169,6 +174,7 @@ class Hook : public AnimatedObject { // grappling hook projectile
         AnimatedObject(pos_, colliderRect, tex) { // generic obj constructor
             collided = false;
             visible = false;
+            debug = true;
         }
         void draw(const SDLState &state, GameData &gd, Player &p, float width, float height);
         void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);

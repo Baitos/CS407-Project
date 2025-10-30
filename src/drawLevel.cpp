@@ -47,6 +47,8 @@ void drawLevel(const SDLState &state, GameData &gd, Resources res, float deltaTi
     }
     gd.itemStorage_.draw(state, gd, 68, 68);
 
+    gd.minimap.draw(state, gd, gd.minimap.texture->w, gd.minimap.texture->h);
+
     handleCrosshair(state, gd, res, deltaTime);
     
 }

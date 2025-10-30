@@ -40,6 +40,10 @@ struct Resources {
     const int ERROR = 0;
     std::vector<Animation> errorAnims;
 
+    const int MAP = 0;
+    const int DOTS = 1;
+    std::vector<Animation> minimapAnims;
+
     //FOR NOW.. change to 0 for shotgun, 1 for sword, 2 for jetpack
     int character;
 
@@ -73,7 +77,9 @@ struct Resources {
                 *texIceStorage, *texMissileStorage, *texSugarStorage, *texPieStorage,
                 *texBomb, *texExplosion, *texBoombox, *texSoundwaves, *texSugar,
                 *texSugarEffectL, *texSugarEffectR,
-                *texSettingsBackground, *texBigBorder, *texSmallBorder, *texSlider;
+                *texSettingsBackground, *texBigBorder, *texSmallBorder, *texSlider,
+                *texMinimap;
+    SDL_Texture *texPlayerDots[3];          
     SDL_Texture *loadTexture(SDL_Renderer *renderer, const std::string &filepath);
     void load(SDLState &state);
     void unload();

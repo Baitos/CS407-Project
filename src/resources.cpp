@@ -54,6 +54,10 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     shotgunAnims.resize(1);
     shotgunAnims[SHOTGUN_BLAST] = Animation(3, 0.3f);
 
+    minimapAnims.resize(2);
+    minimapAnims[MAP] = Animation(1, 1.0f);
+    minimapAnims[DOTS] = Animation(3, 0.0f);
+
     errorAnims.resize(1); // default to prevent crashes
     errorAnims[ERROR] = Animation(1, 1.0f);
 
@@ -180,6 +184,12 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
 
     itemTextures = {texBombStorage, texBoomboxStorage, texBouncyBallStorage, texFogStorage,
         texIceStorage, texMissileStorage, texSugarStorage, texPieStorage};
+
+    // minimap, spaceship for now
+    texMinimap = loadTexture(state.renderer, "data/Spaceship/minimapSpaceship.png");
+    texPlayerDots[SHOTGUN] = loadTexture(state.renderer, "data/CharacterSprites/playerDotShotgun.png");
+    texPlayerDots[SWORD] = loadTexture(state.renderer, "data/CharacterSprites/playerDotSword.png");
+    texPlayerDots[JETPACK] = loadTexture(state.renderer, "data/CharacterSprites/playerDotJetpack.png");
 }
 
 void Resources::unload() {
