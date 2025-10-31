@@ -12,6 +12,8 @@ struct GameData {
     std::vector<Player> players_;
     int numPlayers; 
 
+    glm::vec2 mapSize; // gets x and y size of box used to create map;
+
     std::vector<BackgroundObject> bgTiles_;
     std::vector<Level> mapTiles_;
     std::vector<Laser> lasers_;

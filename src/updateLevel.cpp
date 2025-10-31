@@ -178,10 +178,8 @@ void handleCrosshair(const SDLState &state, GameData &gd, Resources &res, float 
     SDL_GetMouseState(&gd.mouseCoords.x, &gd.mouseCoords.y);
     float CROSSHAIR_SIZE = 15;
     float OFFSET = 7;
-    float yRatio = (float)state.logH / state.height;
-    float xRatio = (float)state.logW / state.width;
-    gd.mouseCoords.x = gd.mouseCoords.x * xRatio;
-    gd.mouseCoords.y = gd.mouseCoords.y * yRatio;
+    gd.mouseCoords.x = gd.mouseCoords.x * state.xRatio;
+    gd.mouseCoords.y = gd.mouseCoords.y * state.yRatio;
     SDL_FRect dst { 
         .x = gd.mouseCoords.x - OFFSET,
         .y = gd.mouseCoords.y - OFFSET,
@@ -219,8 +217,8 @@ void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
     }
     if (key.scancode == SDL_SCANCODE_F3) {
         
-        gd.players_[0].pos.x = 950;
-        gd.players_[0].pos.y = -654;
+        gd.players_[0].pos.x = 0;
+        gd.players_[0].pos.y = 0;
     }
     for (Player &p : gd.players_) {
         p.handleInput(state, gd, res, key, deltaTime); 

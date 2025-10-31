@@ -11,8 +11,9 @@ void Minimap::update(const SDLState &state, GameData &gd, Resources &res, float 
     int count = 0;
     for (Object &d : this->playerDots) { // find pos of dots
         d.pos = this->pos - glm::vec2(OFFSET, OFFSET); // this->pos is like (0, 0) for the player, subtract offset so center of dot is at point
-        d.pos += gd.players_[count].pos / glm::vec2(TILE_SIZE, TILE_SIZE);
-        d.pos.y += 46; //
+        d.pos.x += gd.players_[count].pos.x / TILE_SIZE;
+        d.pos.y += gd.players_[count].pos.y / TILE_SIZE;
+        
         ++count;
     }
 }

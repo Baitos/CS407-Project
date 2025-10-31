@@ -122,10 +122,8 @@ void handleMousePointerCharSelect(const SDLState &state, GameData &gd, Resources
     SDL_GetMouseState(&gd.mouseCoords.x, &gd.mouseCoords.y);
     float CROSSHAIR_SIZE = 15;
     float OFFSET = 7;
-    float yRatio = (float)state.logH / state.height;
-    float xRatio = (float)state.logW / state.width;
-    gd.mouseCoords.x = gd.mouseCoords.x * xRatio;
-    gd.mouseCoords.y = gd.mouseCoords.y * yRatio;
+    gd.mouseCoords.x = gd.mouseCoords.x * state.xRatio;
+    gd.mouseCoords.y = gd.mouseCoords.y * state.yRatio;
     SDL_FRect dst { 
         .x = gd.mouseCoords.x - OFFSET,
         .y = gd.mouseCoords.y - OFFSET,
@@ -153,10 +151,8 @@ void handleMousePointerSettings(const SDLState &state, GameData &gd, Resources &
     SDL_GetMouseState(&gd.mouseCoords.x, &gd.mouseCoords.y);
     float CROSSHAIR_SIZE = 15;
     float OFFSET = 7;
-    float yRatio = (float)state.logH / state.height;
-    float xRatio = (float)state.logW / state.width;
-    gd.mouseCoords.x = gd.mouseCoords.x * xRatio;
-    gd.mouseCoords.y = gd.mouseCoords.y * yRatio;
+    gd.mouseCoords.x = gd.mouseCoords.x * state.xRatio;
+    gd.mouseCoords.y = gd.mouseCoords.y * state.yRatio;
     SDL_FRect dst { 
         .x = gd.mouseCoords.x - OFFSET,
         .y = gd.mouseCoords.y - OFFSET,
