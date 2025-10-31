@@ -3,6 +3,7 @@
 #include "../headers/gameData.h"
 #include "../headers/resources.h"
 #include "../headers/player.h"
+#include "../headers/playerState.h"
 #include "../headers/globals.h"
 #include "../headers/object.h"
 
@@ -54,4 +55,12 @@ void removeHook(Player &p) {
     p.hook.collided = false;
     p.hook.pos += glm::vec2(-10000.0f, -10000.0f); // maybe unnecessary
     p.hook.vel = glm::vec2(0);
+}
+
+void handleOutOfMap(GameData &gd, Resources &res, Player &p) {
+    float maxY = 3000;
+    if (std::abs(p.pos.y) > maxY && p.state_->stateVal != DEAD) {
+        PlayerState* dState = new DeadState();
+        p.handleState(dState, gd, res);
+    }
 }

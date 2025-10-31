@@ -13,6 +13,26 @@
 
 extern GameState *currState;
 
+void createMinimap(const SDLState &state, GameData &gd, const Resources &res, int map, int scale) {
+    Minimap mini; // create minimap based on map loaded
+    mini.texture = res.texMinimap[map];
+    mini.animations = res.minimapAnims;
+    mini.curAnimation = res.MAP;
+    SDL_FRect dotCollider = {
+        .x = 0,
+        .y = 0,
+        .w = (float)MINIMAP_DOT_SIZE,
+        .h = (float)MINIMAP_DOT_SIZE
+    };
+    for (Player &p : gd.players_) {
+        Object d(p.pos, dotCollider, res.texPlayerDots[p.character]); // pos is placeholder
+        d.debug = false;
+        mini.playerDots.push_back(d);
+    }
+    gd.minimap = mini;
+    //gd.mapSize = glm::vec2(MAP_COLS * TILE_SIZE, MAP_ROWS * TILE_SIZE);
+}
+
 //Init function for level spaceship
 void createTilesSpaceship(const SDLState &state, GameData &gd, const Resources &res) { // 280 x 60
     const int MAP_ROWS = 60;
@@ -396,23 +416,7 @@ void createTilesSpaceship(const SDLState &state, GameData &gd, const Resources &
     loadMap(map);
     loadMap(background);
 
-    Minimap mini; // create minimap based on map loaded
-    mini.texture = res.texMinimap;
-    mini.animations = res.minimapAnims;
-    mini.curAnimation = res.MAP;
-    SDL_FRect dotCollider = {
-        .x = 0,
-        .y = 0,
-        .w = (float)MINIMAP_DOT_SIZE,
-        .h = (float)MINIMAP_DOT_SIZE
-    };
-    for (Player &p : gd.players_) {
-        Object d(p.pos, dotCollider, res.texPlayerDots[p.character]); // pos is placeholder
-        d.debug = false;
-        mini.playerDots.push_back(d);
-    }
-    gd.minimap = mini;
-    gd.mapSize = glm::vec2(MAP_COLS * TILE_SIZE, MAP_ROWS * TILE_SIZE);
+    createMinimap(state, gd, res, res.MAP_SPACESHIP, 1);
     createCheckpointsSpaceship(state, gd, res);
     //loadMap(foreground);
     //assert(gd.playerIndex != -1);
@@ -662,7 +666,7 @@ void createTilesGrassland(const SDLState &state, GameData &gd, const Resources &
         };
         for (int r = 0; r < MAP_ROWS; r++) {
             for (int c = 0; c < MAP_COLS; c++) {
-                glm::vec2 pos = glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r) * TILE_SIZE);
+                glm::vec2 pos = glm::vec2(c * TILE_SIZE, r * TILE_SIZE);
                 switch (layer[r][c]) {
                     case 0: //Cloud
                     {   
@@ -830,6 +834,7 @@ void createTilesGrassland(const SDLState &state, GameData &gd, const Resources &
     loadMap(map);
     loadMap(background);
 
+    createMinimap(state, gd, res, res.MAP_GRASSLAND, 1);
     //load in checkpoints
     createCheckpointsGrassland(state, gd, res);
     

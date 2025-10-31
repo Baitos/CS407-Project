@@ -7,7 +7,7 @@ void Minimap::update(const SDLState &state, GameData &gd, Resources &res, float 
     gd.minimap.pos.x = (gd.players_[0].pos.x + TILE_SIZE / 2) + (gd.mapViewport.w / 2) - gd.minimap.texture->w; 
     gd.minimap.pos.y = (gd.players_[0].pos.y + TILE_SIZE / 2) - (gd.mapViewport.h / 2);
     
-    float OFFSET = 1;
+    float OFFSET = (this->playerDots[0].texture->w - 1) / 2; // calculate center of the square
     int count = 0;
     for (Object &d : this->playerDots) { // find pos of dots
         d.pos = this->pos - glm::vec2(OFFSET, OFFSET); // this->pos is like (0, 0) for the player, subtract offset so center of dot is at point
@@ -19,13 +19,7 @@ void Minimap::update(const SDLState &state, GameData &gd, Resources &res, float 
 }
 
 void Minimap::draw(const SDLState &state, GameData &gd, float width, float height) {
-    SDL_FRect dst {
-        .x = this->pos.x - gd.mapViewport.x,
-        .y = this->pos.y - gd.mapViewport.y,
-        .w = width,
-        .h = height
-    };
-    SDL_RenderTexture(state.renderer, this->texture, nullptr, &dst); 
+    Object::draw(state, gd, width, height); // do generic object draw
     for (Object &d : this->playerDots) { // draw dots
         d.draw(state, gd, MINIMAP_DOT_SIZE, MINIMAP_DOT_SIZE);
     }

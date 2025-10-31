@@ -4,6 +4,7 @@ struct SDLState;
 struct GameData;
 struct Resources;
 
+void createMinimap(const SDLState &state, GameData &gd, const Resources &res, int map, int scale);
 void createTilesSpaceship(const SDLState &state, GameData &gd, const Resources &res);
 void createTilesGrassland(const SDLState &state, GameData &gd, const Resources &res);
 void initCharSelect(const SDLState &state, GameData &gd, const Resources &res);

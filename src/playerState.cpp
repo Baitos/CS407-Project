@@ -364,6 +364,9 @@ void DeadState::enter(GameData &gd, Resources &res, Player &p) {
     p.texture = res.texDie[p.character];
     p.curAnimation = res.ANIM_PLAYER_DIE; 
     p.animations[p.curAnimation].reset();
+    p.respawnTimer.reset();
+    p.isDead = true;        
+    p.vel = glm::vec2(0);
 }
 
 PlayerState* DeadState::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {

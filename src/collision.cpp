@@ -137,16 +137,11 @@ void collisionCheckAndResponse(const SDLState &state, GameData &gd, Resources &r
 		};
 		glm::vec2 resolution{ 0 };
 		if (intersectAABB(rectA, rectB, resolution)){
-			if(player.state_->stateVal!=DEAD) {
+			if(player.state_->stateVal != DEAD) {
 				/*set player to dead and start the respawn counter*/
-				PlayerState* stState = new DeadState();
-				player.respawnTimer.reset();
-				player.isDead = true;
-				player.handleState(stState, gd, res);
+				PlayerState* dState = new DeadState();
+				player.handleState(dState, gd, res);
 			}
-			
-			player.vel.x = 0;
-			player.vel.y = 0;
 		}
 	}
 	for (ItemBox &box : gd.itemBoxes_) {

@@ -97,7 +97,6 @@ class BackgroundObject : public Object { // bg tiles
             type = BACKGROUND;
             debug = false;
         }
-        void draw(const SDLState &state, GameData &gd, float width, float height);
 };
 
 class Level : public Object { // the level type!
@@ -153,36 +152,39 @@ class Sign:  public Object {
     public:
         Sign() : Object() { // default 
             type = SIGN;
+            debug = false;
         }
         Sign(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : // generic obj constructor
         Object(pos_, colliderRect, tex) {
             type = SIGN;
+            debug = false;
         }
-        void draw(const SDLState &state, GameData &gd, float width, float height);
 };
 
 class Water: public Object {
     public:
         Water() : Object() { // default 
             type = WATER;
+            debug = false;
         }
         Water(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : // generic obj constructor
         Object(pos_, colliderRect, tex) {
             type = WATER;
+            debug = false;
         }
-        void draw(const SDLState &state, GameData &gd, float width, float height);
 };
 
 class Lava: public Object {
     public:
         Lava() : Object() { // default 
             type = LAVA;
+            debug = false;
         }
         Lava(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : // generic obj constructor
         Object(pos_, colliderRect, tex) {
             type = LAVA;
+            debug = false;
         }
-        void draw(const SDLState &state, GameData &gd, float width, float height);
 };
 
 class ItemBox : public Object {
