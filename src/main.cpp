@@ -9,7 +9,7 @@
 #include <iostream>
 #include <functional>
 
-//#include <format>
+#include <format>
 
 #include "../headers/initState.h"
 #include "../headers/gameData.h"
@@ -88,7 +88,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     //Create your ENET Client
     //ONLY NEEDS TO BE DONE WHEN JOINING/CREATING
     ENetAddress clientAddress;
-    enet_address_set_host(&clientAddress, "100.74.129.69");
+    enet_address_set_host(&clientAddress, "100.91.68.8");
     clientAddress.port = 0; // OS chooses port
     ENetHost* client = enet_host_create(&clientAddress, 1, 2, 0, 0);
     if (!client) {
@@ -99,7 +99,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     //Set your host values, including IP address and port
     ENetAddress address;
     //IP Address changes per person
-    enet_address_set_host(&address, "100.76.236.38");
+    enet_address_set_host(&address, "100.89.84.24");
     address.port = 1233;
 
     //Attempt connection to the server
@@ -162,19 +162,19 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         }
 
         //Calls functions related to the current GameState
-        //printf("Input");
+        printf("Input\n");
         currState->input(state, gd, res, deltaTime);
-        //printf("Update");
+        printf("Update\n");
         currState->update(state, gd, res, deltaTime);
-        //printf("Draw");
+        printf("Draw\n");
         currState->render(state, gd, res, deltaTime);
 
         if (gd.debugMode) {
         // debug info
             SDL_SetRenderDrawColor(state.renderer, 255, 255, 255, 255);
-        //     SDL_RenderDebugText(state.renderer, 5, 5,
-        //                     std::format("FPS: {}, State: {}, Grounded: {}, X: {}, Y: {}", 
-        //                     static_cast<int>(FPS), getStateFromEnum(gd.players_[0].state_->stateVal), gd.players_[0].grounded, gd.mapViewport.x, gd.mapViewport.y).c_str());
+             SDL_RenderDebugText(state.renderer, 5, 5,
+                             std::format("FPS: {}, State: {}, Grounded: {}, X: {}, Y: {}", 
+                             static_cast<int>(FPS), getStateFromEnum(gd.players_[0].state_->stateVal), gd.players_[0].grounded, gd.mapViewport.x, gd.mapViewport.y).c_str());
         }
 
         //swap buffers and present
