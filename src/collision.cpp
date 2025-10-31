@@ -4,6 +4,7 @@
 #include "../headers/playerState.h"
 #include "../headers/state.h"
 #include "../headers/helper.h"
+#include "../headers/createCheckpoints.h"
 
 void collisionCheckAndResponse(const SDLState &state, GameData &gd, Resources &res,
  	Player &player, float deltaTime)
@@ -102,6 +103,52 @@ void collisionCheckAndResponse(const SDLState &state, GameData &gd, Resources &r
 			}
 		}
 	}
+	for(Water &water : gd.water_) {
+		SDL_FRect rectB{
+			.x = water.pos.x + water.collider.x,
+			.y = water.pos.y + water.collider.y,
+			.w = water.collider.w,
+			.h = water.collider.h
+		};
+		glm::vec2 resolution{ 0 };
+		if (intersectAABB(rectA, rectB, resolution)){
+			if(abs(player.vel.x) >= 50) {
+				if(player.vel.x > 0) {
+					player.vel.x-=.5;
+				} else {
+					player.vel.x+=.5;
+				}
+			}
+			if(abs(player.vel.y) >= 50) {
+				if(player.vel.y > 0) {
+					player.vel.y-=.5;
+				} else {
+					player.vel.y+=.5;
+				}
+			}
+		}
+	}
+	for(Lava &lava : gd.lava_) {
+		SDL_FRect rectB{
+			.x = lava.pos.x + lava.collider.x,
+			.y = lava.pos.y + lava.collider.y,
+			.w = lava.collider.w,
+			.h = lava.collider.h
+		};
+		glm::vec2 resolution{ 0 };
+		if (intersectAABB(rectA, rectB, resolution)){
+			if(player.state_->stateVal!=DEAD) {
+				/*set player to dead and start the respawn counter*/
+				PlayerState* stState = new DeadState();
+				player.respawnTimer.reset();
+				player.isDead = true;
+				player.handleState(stState, gd, res);
+			}
+			
+			player.vel.x = 0;
+			player.vel.y = 0;
+		}
+	}
 	for (ItemBox &box : gd.itemBoxes_) {
 
 		SDL_FRect rectB{
@@ -121,6 +168,95 @@ void collisionCheckAndResponse(const SDLState &state, GameData &gd, Resources &r
 					gd.itemStorage_.animations[gd.itemStorage_.curAnimation].reset();
     			}
 				box.itemBoxActive = false;
+			}
+		}
+	}
+	//check for weapon deployment
+	for (Player &p : gd.players_) {
+		if(p.index!=player.index) {
+			//check if in shotgun player blast state
+			if(ShotgunDeployState *s = dynamic_cast<ShotgunDeployState*>(p.state_)) {
+				//check if currently blocking/deploying sword
+				if(!dynamic_cast<SwordDeployState*> (player.state_)) {
+					SDL_FRect rectB{
+						.x = s->blast->pos.x + s->blast->collider.x,
+						.y = s->blast->pos.y + s->blast->collider.y,
+						.w = s->blast->collider.w,
+						.h = s->blast->collider.h
+					};
+					glm::vec2 resolution{ 0 };
+					if (intersectAABB(rectA, rectB, resolution)){
+						printf("Player %d shot by player %d\n", player.index, p.index);
+						PlayerState* stState = new StunnedState();
+						player.isDead = true;
+						player.handleState(stState, gd, res);
+						
+						player.vel.x = 0;
+						player.vel.y = 0;
+					}
+				} else {
+					//sword blocks
+					printf("Player %d BLOCKED shot by player %d\n", player.index, p.index);
+				}
+			} else if (SwordDeployState *s = dynamic_cast<SwordDeployState*>(p.state_)) {
+				//check if in sword player swing state
+				SDL_FRect rectB{
+					.x = p.pos.x + p.collider.x - 5,
+					.y = p.pos.y + p.collider.y - 5,
+					.w = p.collider.w + 10,
+					.h = p.collider.h + 10
+				};
+				glm::vec2 resolution{ 0 };
+				if (intersectAABB(rectA, rectB, resolution)){
+					printf("Player %d hit by player %d's sword\n", player.index, p.index);
+					PlayerState* stState = new StunnedState();
+					player.isDead = true;
+					player.handleState(stState, gd, res);
+					
+					player.vel.x = 0;
+					player.vel.y = 0;
+				}
+			}
+		}
+	}
+	//check for checkpoint system
+	for (Checkpoint cp: gd.checkpoints_) {
+		if (cp.index == (player.lastCheckpoint+1)%(gd.checkpoints_.size())){
+			SDL_FRect rectB = cp.collider;
+			//printf("checking %d\n", cp.index);
+			glm::vec2 resolution{ 0 };
+			if (intersectAABB(rectA, rectB, resolution)){
+				printf("INTERSECT!!!");
+				if(player.lastCheckpoint == gd.checkpoints_.size() - 1) {
+					player.lapsCompleted++;
+					printf("Completed the %dth lap!\n", player.lapsCompleted);
+				}
+				player.lastCheckpoint = (player.lastCheckpoint+1)%(gd.checkpoints_.size());
+				printf("passed checkpoint %d\n%f, %f\n%f, %f", player.lastCheckpoint, cp.collider.x, cp.collider.y, player.pos.x, player.pos.y);
+			}
+		}
+	}
+	//check for game end
+	if(!gd.round_is_over) {
+		if(gd.players_.size() == 1) {
+			if(player.lapsCompleted >= gd.laps_per_race) {
+				printf("\n\nGAME OVER\n\n");
+				gd.round_is_over = true;
+			}
+		} else {
+			int numDone = 0;
+			for(Player p: gd.players_) {
+				if(p.lapsCompleted >= gd.laps_per_race) {
+					numDone++;
+				}
+			}
+			if(numDone >= gd.players_.size()-1) {
+				printf("\n\nGAME OVER\n\n");
+				gd.round_is_over = true;
+			}else if(numDone==1) {
+				//start timer after first player ends
+
+				//if timer out, game over
 			}
 		}
 	}

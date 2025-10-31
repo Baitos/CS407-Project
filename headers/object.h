@@ -20,7 +20,10 @@ enum ObjectType{
     BACKGROUND,
     PORTAL,
     LASER,
-    ITEMBOX
+    ITEMBOX,
+    SIGN,
+    WATER,
+    LAVA
 };
 
 class Object { // generic obj type    
@@ -94,6 +97,7 @@ class BackgroundObject : public Object { // bg tiles
             type = BACKGROUND;
             debug = false;
         }
+        void draw(const SDLState &state, GameData &gd, float width, float height);
 };
 
 class Level : public Object { // the level type!
@@ -143,6 +147,42 @@ class Laser : public Object { // obstacle
             debug = true;
         }
         void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+};
+
+class Sign:  public Object {
+    public:
+        Sign() : Object() { // default 
+            type = SIGN;
+        }
+        Sign(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : // generic obj constructor
+        Object(pos_, colliderRect, tex) {
+            type = SIGN;
+        }
+        void draw(const SDLState &state, GameData &gd, float width, float height);
+};
+
+class Water: public Object {
+    public:
+        Water() : Object() { // default 
+            type = WATER;
+        }
+        Water(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : // generic obj constructor
+        Object(pos_, colliderRect, tex) {
+            type = WATER;
+        }
+        void draw(const SDLState &state, GameData &gd, float width, float height);
+};
+
+class Lava: public Object {
+    public:
+        Lava() : Object() { // default 
+            type = LAVA;
+        }
+        Lava(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : // generic obj constructor
+        Object(pos_, colliderRect, tex) {
+            type = LAVA;
+        }
+        void draw(const SDLState &state, GameData &gd, float width, float height);
 };
 
 class ItemBox : public Object {

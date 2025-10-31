@@ -19,19 +19,37 @@ GameState * changeState(GameState * tempState, GameData &gd){
     switch (tempState->nextStateVal){
         case TITLE:
         {
-            printf("TITLE");
+            newState = new TitleState();
+            newState->init = initTitle;
+            newState->update = titleUpdate;
+            newState->render = drawTitle;
+            newState->input = titleInput;
             break;
         }
         case SETTINGS:
         {
+            newState = new SettingsState();
+            newState->init = initSettings;
+            newState->update = settingsUpdate;
+            newState->render = drawSettings;
+            newState->input = settingsInputs;
             break;
         }
         case HOST:
         {
+            //newState = new HostState();
+            printf("HOST\n");
+            
             break;
         }
         case JOIN:
         {
+            printf("JOIN\n");
+            // newState = new JoinState();
+            // newState->init = initSettings;
+            // newState->update = settingsUpdate;
+            // newState->render = drawSettings;
+            // newState->input = settingsInputs;
             break;
         }
         case CHAR_SELECT:
@@ -50,7 +68,27 @@ GameState * changeState(GameState * tempState, GameData &gd){
             newState->input = levelInputs;
             newState->update = levelUpdate;
             newState->render = drawLevel;
-            newState->init = createTiles;    
+            newState->init = createTilesSpaceship;    
+            break;
+        }
+        case GRASSLANDS:
+        {
+            //Creating LevelState with init of Spaceship
+            newState = new LevelState();
+            newState->input = levelInputs;
+            newState->update = levelUpdate;
+            newState->render = drawLevel;
+            newState->init = createTilesGrassland;    
+            break;
+        }
+        case GAMEPLAY_SETTINGS:
+        {
+             //Creating LevelState with init of Spaceship
+            newState = new GameplaySettingsState();
+            newState->input = gameplaySettingsInput;
+            newState->update = gameplaySettingsUpdate;
+            newState->render = drawGameplaySettings;
+            newState->init = initGameplaySettings;    
             break;
         }
 

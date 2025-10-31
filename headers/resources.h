@@ -43,6 +43,24 @@ struct Resources {
     const int MAP = 0;
     const int DOTS = 1;
     std::vector<Animation> minimapAnims;
+    
+    //anim for map select
+    const int MAP_GRASSLAND = 0;
+    const int MAP_SPACESHIP = 1;
+    const int MAP_3 = 2;
+    const int MAP_4 = 3;
+    const int MAP_5 = 4;
+    std::vector<Animation> mapAnims;
+    const int MAP_GRASSLAND_TEXT = 0;
+    const int MAP_SPACESHIP_TEXT = 1;
+    const int MAP_3_TEXT = 2;
+    const int MAP_4_TEXT = 3;
+    const int MAP_5_TEXT = 4;
+    const int MAP_GRAND_PRIX = 5;
+    std::vector<Animation> mapTextAnims;
+    const int LEFT_ARROW = 0;
+    const int RIGHT_ARROW = 1;
+    std::vector<Animation> arrowAnims;
 
     //FOR NOW.. change to 0 for shotgun, 1 for sword, 2 for jetpack
     int character;
@@ -57,6 +75,8 @@ struct Resources {
     SDL_Texture *texShootJump[3];
     SDL_Texture *texRoll[3];
     SDL_Texture *texDeploy[3];
+    SDL_Texture *texMapPreviews[6];
+    SDL_Texture *texMapTextPreviews[5];
     std::vector<SDL_Texture *> textures;
     SDL_Texture *texCrosshair, 
                 // *texIdleS, *texRunS, *texJumpS, *texLaunchS, *texSlideS, *texShootS, *texDieS, *texShootJumpS, *texRollS,
@@ -65,21 +85,27 @@ struct Resources {
                 // *texJDeploy, *texGDeploy, *texSDeploy,
                 *texShotgunBlast,
                 *texGrapple, *texGrappleAngle,
-                *texGrass, *texStone, *texBrick, *texFence, *texBush, 
                 *texBullet, *texBulletHit,
                 *texBg1, *texBg2, *texBg3, *texBg4, *texOnStage, *texOffStage, *texBg5, 
                 *texLPortal, *texRPortal, *texLaser, 
                 *texFloor, *texTRCorner, *texRWall, *texBRCorner, *texLWall, *texBLCorner, *texTLCorner, *texCeiling, *texITLCorner, *texITRCorner, *texIBRCorner, *texIBLCorner, *texPlatform, 
-                *texFan, *texPanelOne, *texPanelTwo, *texPanelThree, *texVentOne, *texVentTwo, *texBackWall, 
+                *texFan, *texPanelOne, *texPanelTwo, *texPanelThree, *texVentOne, *texVentTwo, *texBackWall,
+                *texCloud, *texWood, *texLeaves, *texStone, *texWater, *texLava, *texGrass, *texDirt,
+                *texBgWood, *texBgSky, *texBgStone,
+                *texSignUp, *texSignDown, *texSignRight, *texSignLeft,
                 *texCharSelectBackground, *texCursor, *texCharIcons, *texSword, *texShotgun, *texJetpack, 
+                *texLeftArrow, *texRightArrow,
                 *texItemBox, *texItemStorage, *texItemRandomizer, 
                 *texBombStorage, *texBoomboxStorage, *texBouncyBallStorage, *texFogStorage,
                 *texIceStorage, *texMissileStorage, *texSugarStorage, *texPieStorage,
                 *texBomb, *texExplosion, *texBoombox, *texSoundwaves, *texSugar,
                 *texSugarEffectL, *texSugarEffectR,
-                *texSettingsBackground, *texBigBorder, *texSmallBorder, *texSlider,
+                *texSettingsBackground, *texBigBorder, *texSmallBorder, *texSlider,       
+                *texTitle, *texTextCursor,
+                *texGameplaySettingsBackground, *texGameplaySettingsLeftBracket, *texGameplaySettingsRightBracket,
+                *texGameplaySettings1,*texGameplaySettings2,*texGameplaySettings3,*texGameplaySettings4,*texGameplaySettings5,
                 *texMinimap;
-    SDL_Texture *texPlayerDots[3];          
+                SDL_Texture *texPlayerDots[3];  
     SDL_Texture *loadTexture(SDL_Renderer *renderer, const std::string &filepath);
     void load(SDLState &state);
     void unload();
