@@ -15,41 +15,49 @@ void collisionCheckAndResponse(const SDLState &state, GameData &gd, Resources &r
 		.h = player.collider.h
 	};
 	glm::vec2 resolution{ 0 };
-	for (Level &l : gd.mapTiles_){
-		SDL_FRect rectB{
-			.x = l.pos.x + l.collider.x,
-			.y = l.pos.y + l.collider.y,
-			.w = l.collider.w,
-			.h = l.collider.h
-		};
-		if (intersectAABB(rectA, rectB, resolution)){
-			// found intersection, respond accordingly
-			if (resolution.x < resolution.y) {
-				if (player.pos.x < l.pos.x) {
-					player.pos.x -= resolution.x;
+	for (Level &l : gd.mapTiles_) {
+		if (isOnscreen(state, gd, l)) {
+			SDL_FRect rectB{
+				.x = l.pos.x + l.collider.x,
+				.y = l.pos.y + l.collider.y,
+				.w = l.collider.w,
+				.h = l.collider.h
+			};
+			if (intersectAABB(rectA, rectB, resolution)) {
+				// found intersection, respond accordingly
+				if (resolution.x < resolution.y) {
+					
+					if (player.pos.x < l.pos.x) {
+						player.pos.x -= resolution.x;
+					} else {
+						player.pos.x += resolution.x;
+					}	
+					player.vel.x = 0;
 				} else {
-					player.pos.x += resolution.x;
-				}	
-				player.vel.x = 0;
-			} else {
-				if (player.pos.y < l.pos.y) {
-					player.pos.y -= resolution.y;
-                	if (player.flip == 1) {
-						player.grounded = true;
-						player.canDoubleJump = true;
-						player.gravityScale = 1.0f; // reset gravity
-                	}
-				} else {
-					player.pos.y += resolution.y;
-					if (player.flip == -1) {
-						player.grounded = true;
-						player.canDoubleJump = true;
-						player.gravityScale = 1.0f; // reset gravity
+					if (player.pos.y < l.pos.y) {
+						player.pos.y -= resolution.y;
+					} else {
+						player.pos.y += resolution.y;
 					}
+					player.vel.y = 0;
 				}
-				player.vel.y = 0;
+			}
+			// grounded sensor
+			const float inset = 2.0;
+			SDL_FRect sensor {
+				.x = player.pos.x + player.collider.x + 1,
+				.y = player.pos.y + player.collider.y + player.collider.h,
+				.w = player.collider.w - inset,
+				.h = 1
+			};
+			SDL_FRect rectC { 0 };
+			if (SDL_GetRectIntersectionFloat(&sensor, &rectB, &rectC)) {
+				player.grounded = true;
+				player.canDoubleJump = true;
+				player.gravityScale = 1.0f;
 			}
 		}
+		
 	}
 	//glm::vec2 resolution = resolution;
 	for (Laser &l : gd.lasers_){
@@ -174,7 +182,7 @@ bool intersectAABB(const SDL_FRect &a, const SDL_FRect &b, glm::vec2 &overlap)
 	const float maxYB = b.y + b.h;
 
 	if ((minXA < maxXB && maxXA > minXB) &&
-		(minYA <= maxYB && maxYA >= minYB))
+		(minYA < maxYB && maxYA > minYB))
 	{
 		overlap.x = std::min(maxXA - minXB, maxXB - minXA);
 		overlap.y = std::min(maxYA - minYB, maxYB - minYA);

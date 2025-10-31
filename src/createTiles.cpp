@@ -177,7 +177,7 @@ void createTiles(const SDLState &state, GameData &gd, const Resources &res) { //
         };
         for (int r = 0; r < MAP_ROWS; r++) {
             for (int c = 0; c < MAP_COLS; c++) {
-                glm::vec2 pos = glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r) * TILE_SIZE);
+                glm::vec2 pos = glm::vec2(c * TILE_SIZE, r * TILE_SIZE);
                 switch (layer[r][c]) {
                     case 1: //Base Ground
                     {
