@@ -9,7 +9,11 @@
 
 void Player::draw(const SDLState &state, GameData &gd, float width, float height) {
     (*this).hook.draw(state, gd, (*this), HOOK_SIZE, HOOK_SIZE); // draw hook under player
-    
+    for (Item &i : this->items_) { // draw active items
+        if (i.visible) {
+            i.draw(state, gd, i.texture->w, i.texture->h); // placeholder for now
+        }
+    }
     AnimatedObject::draw(state, gd, width, height); // do generic object draw for player
 }
 
@@ -38,6 +42,11 @@ void Player::update(const SDLState &state, GameData &gd, Resources &res, float d
     (*this).hook.update(state, gd, res, deltaTime); // update this player's hook and handle its collision
     (*this).hook.checkCollision(state, gd, res, (*this), deltaTime);
     
+    for (Item &i : this->items_) { // update active items
+        i.update(state, gd, res, deltaTime); 
+        i.checkCollision(state, gd, res, (*this), deltaTime);
+    }
+
     //printf("currentDirection: %d\n", (*this).currentDirection);
     (*this).vel += static_cast<float>((*this).currentDirection) * (*this).acc * deltaTime; // update player velocity based on acceleration and direction
     (*this).pos += updatePos((*this), deltaTime); // update pos

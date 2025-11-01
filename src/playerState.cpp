@@ -345,7 +345,14 @@ void FastfallState::exit(GameData &gd, Resources &res, Player &p) {
 // STUNNED
 
 PlayerState* StunnedState::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
-    sharedUpdate(state, p, deltaTime);
+    if (!this->hardStun) {
+        sharedUpdate(state, p, deltaTime);
+    } else { // if hardStunned, disable control
+        p.cooldownTimer.step(deltaTime);
+        if (!p.grounded) { 
+            sharedGravity(p, deltaTime);
+        }
+    }
     if (p.grounded) { // if moving change to running
         return new RollState();  
     }
@@ -416,7 +423,6 @@ void ShotgunDeployState::draw(const SDLState &state, GameData &gd) {
 }
 
 PlayerState* ShotgunDeployState::handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key) {
-    if (auto retState = handleJumping(gd, res, p, key)) return retState;
     return nullptr;
 }
 

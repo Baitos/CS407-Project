@@ -17,7 +17,7 @@ void collisionCheckAndResponse(const SDLState &state, GameData &gd, Resources &r
 	};
 	glm::vec2 resolution{ 0 };
 	for (Level &l : gd.mapTiles_) {
-		if (isOnscreen(state, gd, l)) {
+		if (true) {
 			SDL_FRect rectB{
 				.x = l.pos.x + l.collider.x,
 				.y = l.pos.y + l.collider.y,

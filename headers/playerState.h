@@ -137,6 +137,7 @@ class RollState : public PlayerState {
 
 class StunnedState : public PlayerState {
     public:
+        bool hardStun;
         void draw(const SDLState &state, GameData &gd) {} // do nothing
         PlayerState* handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key) { return nullptr; } // do nothing
         PlayerState* update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime);
@@ -144,6 +145,11 @@ class StunnedState : public PlayerState {
         void exit(GameData &gd, Resources &res, Player &p) {} // do nothing
         StunnedState() {
             stateVal = STUNNED;
+            hardStun = false;
+        }
+        StunnedState(bool hardStun_) {
+            stateVal = STUNNED;
+            hardStun = hardStun_;
         }
 };
 

@@ -26,10 +26,12 @@ class Player : public AnimatedObject { // player
         std::string username;
         
         Hook hook;
-        Item item;
+        Item item; // item currently active
         Item nextItem;
         bool hasItem = false;
         bool pickingItem = false;
+
+        std::vector<Item> items_; // store all of this player's active item objs here
 
         bool grounded; 
         bool isDead = false;

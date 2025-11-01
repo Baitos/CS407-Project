@@ -195,7 +195,6 @@ void Hook::checkCollision(const SDLState &state, GameData &gd, Resources &res, P
             }
         } 
     }
-    
 }
 
 void ItemBox::update(const SDLState &state, GameData &gd, Resources &res, float deltaTime) { // update item box timer every frame (when on cooldown)
@@ -245,6 +244,9 @@ void ItemBox::generateItem(Player &player, GameData &gd, Resources &res) {
             break;
         case itemType::SUGAR:
             newItem = Sugar(player.pos, defaultCollider, res.texSugar);
+            break;
+        case itemType::PIE:
+            newItem = Pie(player.pos, defaultCollider, res.texPie);
             break;
         default:
             printf("Your item is in another castle\n");

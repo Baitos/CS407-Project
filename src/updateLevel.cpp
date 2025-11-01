@@ -214,11 +214,11 @@ void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
     if (key.scancode == SDL_SCANCODE_F1) {
         running = false;
     }
-    if (key.scancode == SDL_SCANCODE_F2) {
+    if (key.scancode == SDL_SCANCODE_F2 && key.down) {
         currState = changeState(currState, gd);
         currState->init(state, gd, res);
     }
-    if (key.scancode == SDL_SCANCODE_F3) {
+    if (key.scancode == SDL_SCANCODE_F3 && key.down) {
         
         gd.players_[0].pos.x = 0;
         gd.players_[0].pos.y = 0;

@@ -31,6 +31,7 @@ struct Resources {
     const int ANIM_ITEM_EMPTY = 0;
     const int ANIM_ITEM_CYCLE = 1;
     const int ANIM_ITEM_PICKED = 2;
+    const int ANIM_ITEM_PIE = 3;
     std::vector<Animation> itemAnims;
     std::vector<SDL_Texture *> itemTextures;
     const int PORTAL_IDLE = 0;
@@ -79,10 +80,6 @@ struct Resources {
     SDL_Texture *texMapTextPreviews[5];
     std::vector<SDL_Texture *> textures;
     SDL_Texture *texCrosshair, 
-                // *texIdleS, *texRunS, *texJumpS, *texLaunchS, *texSlideS, *texShootS, *texDieS, *texShootJumpS, *texRollS,
-                // *texIdleG, *texRunG, *texJumpG, *texLaunchG, *texSlideG, *texShootG, *texDieG, *texShootJumpG, *texRollG,
-                // *texIdleJ, *texRunJ, *texJumpJ, *texLaunchJ, *texSlideJ, *texShootJ, *texDieJ, *texShootJumpJ, *texRollJ,
-                // *texJDeploy, *texGDeploy, *texSDeploy,
                 *texShotgunBlast,
                 *texGrapple, *texGrappleAngle,
                 *texBullet, *texBulletHit,
@@ -96,9 +93,9 @@ struct Resources {
                 *texCharSelectBackground, *texCursor, *texCharIcons, *texSword, *texShotgun, *texJetpack, 
                 *texLeftArrow, *texRightArrow,
                 *texItemBox, *texItemStorage, *texItemRandomizer, 
-                *texBombStorage, *texBoomboxStorage, *texBouncyBallStorage, *texFogStorage,
+                *texBombStorage, *texBoomboxStorage, *texBouncyBallStorage, *texFogStorage, 
                 *texIceStorage, *texMissileStorage, *texSugarStorage, *texPieStorage,
-                *texBomb, *texExplosion, *texBoombox, *texSoundwaves, *texSugar,
+                *texBomb, *texExplosion, *texBoombox, *texSoundwaves, *texSugar, *texPie,
                 *texSugarEffectL, *texSugarEffectR,
                 *texSettingsBackground, *texBigBorder, *texSmallBorder, *texSlider,       
                 *texTitle, *texTextCursor,

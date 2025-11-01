@@ -32,8 +32,8 @@ class Item : public AnimatedObject {
     Item(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) :
     AnimatedObject(pos_, colliderRect, tex), sugarTimer(4.0f) {}
     void (*useItem)(const SDLState &state, GameData &gd, Resources &res, Player &p);
-    //virtual void onCollision();
-    
+    void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+    void checkCollision(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime);
 };
 
 class Bomb : public Item {
@@ -63,6 +63,17 @@ class Sugar : public Item {
         this->useItem = useSugar;
     }
 };
+
+class Pie : public Item {
+    public:   
+        Pie(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) :
+        Item(pos_, colliderRect, tex) {
+            index = 7;
+            this->useItem = usePie;
+        }
+};
+
+
 class ItemStorage : public AnimatedObject {
     public:
     Item item;
