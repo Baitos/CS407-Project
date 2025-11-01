@@ -349,6 +349,7 @@ PlayerState* StunnedState::update(const SDLState &state, GameData &gd, Resources
         sharedUpdate(state, p, deltaTime);
     } else { // if hardStunned, disable control
         p.cooldownTimer.step(deltaTime);
+        p.currentDirection = 0;
         if (!p.grounded) { 
             sharedGravity(p, deltaTime);
         }
@@ -496,7 +497,7 @@ PlayerState* JetpackDeployState::handleInput(const SDLState &state, GameData &gd
 
 PlayerState* JetpackDeployState::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) { // TODO:
     sharedUpdate(state, p, deltaTime);
-    p.vel.y -= 3.f;
+    p.vel.y -= 600.f * deltaTime;
     int vertDir = 0;
     //calculate direction
      if (state.keys[SDL_SCANCODE_W]) {
@@ -505,26 +506,26 @@ PlayerState* JetpackDeployState::update(const SDLState &state, GameData &gd, Res
     if (state.keys[SDL_SCANCODE_S]) {
         vertDir += 1.f;
     }
-    if(p.currentDirection == 1 && vertDir == 0) {
-        p.vel.x += 5.f;
-    } else if (p.currentDirection == -1 && vertDir == 0) {
-        p.vel.x -= 5.f;
-    } else if (p.currentDirection == 0 && vertDir == 1) {
-        p.vel.y += 5.f;
-    } else if (p.currentDirection == 0 && vertDir == -1) {
-        p.vel.y -= 5.f;
-    } else if (p.currentDirection == 1 && vertDir == 1) {
-        p.vel.x += (5/sqrt(2));
-        p.vel.y += (5/sqrt(2));
-    } else if (p.currentDirection == 1 && vertDir == -1) {
-        p.vel.x += (5/sqrt(2));
-        p.vel.y -= (5/sqrt(2));
-    } else if (p.currentDirection == -1 && vertDir == 1) {
-        p.vel.x -= (5/sqrt(2));
-        p.vel.y += (5/sqrt(2));
-    } else if (p.currentDirection == -1 && vertDir == -1) {
-        p.vel.x -= (5/sqrt(2));
-        p.vel.y -= (5/sqrt(2));
+    if(p.currentDirection == 1 && vertDir == 0) { // right
+        p.vel.x += 1000.f * deltaTime;
+    } else if (p.currentDirection == -1 && vertDir == 0) { // left
+        p.vel.x -= 1000.f * deltaTime;
+    } else if (p.currentDirection == 0 && vertDir == 1) { // down
+        p.vel.y += 1000.f * deltaTime;
+    } else if (p.currentDirection == 0 && vertDir == -1) { // up
+        p.vel.y -= 1000.f * deltaTime;
+    } else if (p.currentDirection == 1 && vertDir == 1) { // right-down
+        p.vel.x += (1000/sqrt(2)) * deltaTime;
+        p.vel.y += (1000/sqrt(2)) * deltaTime;
+    } else if (p.currentDirection == 1 && vertDir == -1) { // right-up
+        p.vel.x += (1000/sqrt(2)) * deltaTime;
+        p.vel.y -= (1000/sqrt(2)) * deltaTime;
+    } else if (p.currentDirection == -1 && vertDir == 1) { // left-down
+        p.vel.x -= (1000/sqrt(2)) * deltaTime;
+        p.vel.y += (1000/sqrt(2)) * deltaTime;
+    } else if (p.currentDirection == -1 && vertDir == -1) { // left-up
+        p.vel.x -= (1000/sqrt(2)) * deltaTime;
+        p.vel.y -= (1000/sqrt(2)) * deltaTime;
     }
 
     //Check timer for state change
