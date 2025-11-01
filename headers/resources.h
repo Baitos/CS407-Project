@@ -13,18 +13,20 @@ struct Resources {
     const int ANIM_PLAYER_WALK = 1;
     const int ANIM_PLAYER_RUN = 2;
     const int ANIM_PLAYER_SHOOT = 3;
-    const int ANIM_PLAYER_JUMP = 4;
-    const int ANIM_PLAYER_DIE = 5;
-    const int ANIM_PLAYER_SLIDE = 6;
-    const int ANIM_PLAYER_LAUNCH = 7;
-    const int ANIM_PLAYER_SHOOT_JUMP = 8;
-    const int ANIM_PLAYER_ROLL = 9;
-    const int ANIM_PLAYER_JETPACK_DEPLOY = 10;
-    const int ANIM_PLAYER_SWORD_DEPLOY = 11;
+    const int ANIM_PLAYER_JETPACK = 4;
+    const int ANIM_PLAYER_JUMP = 5;
+    const int ANIM_PLAYER_DIE = 6;
+    const int ANIM_PLAYER_SLIDE = 7;
+    const int ANIM_PLAYER_LAUNCH = 8;
+    const int ANIM_PLAYER_SHOOT_JUMP = 9;
+    const int ANIM_PLAYER_ROLL = 10;
+    const int ANIM_PLAYER_JETPACK_DEPLOY = 11;
+    const int ANIM_PLAYER_SWORD_DEPLOY = 12;
     std::vector<Animation> playerAnims;
-    std::vector<Animation> playerAnimsJ;
     const int SHOTGUN_BLAST = 0;
     std::vector<Animation> shotgunAnims;
+
+    
 
     const int ANIM_ITEM_EMPTY = 0;
     const int ANIM_ITEM_CYCLE = 1;
@@ -42,14 +44,23 @@ struct Resources {
 
     //FOR NOW.. change to 0 for shotgun, 1 for sword, 2 for jetpack
     int character;
-    
 
+    SDL_Texture *texIdle[3];
+    SDL_Texture *texRun[3];
+    SDL_Texture *texJump[3];
+    SDL_Texture *texLaunch[3];
+    SDL_Texture *texSlide[3];
+    SDL_Texture *texShoot[3];
+    SDL_Texture *texDie[3];
+    SDL_Texture *texShootJump[3];
+    SDL_Texture *texRoll[3];
+    SDL_Texture *texDeploy[3];
     std::vector<SDL_Texture *> textures;
     SDL_Texture *texCrosshair, 
-                *texIdleS, *texRunS, *texJumpS, *texLaunchS, *texSlideS, *texShootS, *texDieS, *texShootJumpS, *texRollS,
-                *texIdleG, *texRunG, *texJumpG, *texLaunchG, *texSlideG, *texShootG, *texDieG, *texShootJumpG, *texRollG,
-                *texIdleJ, *texRunJ, *texJumpJ, *texLaunchJ, *texSlideJ, *texShootJ, *texDieJ, *texShootJumpJ, *texRollJ,
-                *texJDeploy, *texGDeploy, *texSDeploy,
+                // *texIdleS, *texRunS, *texJumpS, *texLaunchS, *texSlideS, *texShootS, *texDieS, *texShootJumpS, *texRollS,
+                // *texIdleG, *texRunG, *texJumpG, *texLaunchG, *texSlideG, *texShootG, *texDieG, *texShootJumpG, *texRollG,
+                // *texIdleJ, *texRunJ, *texJumpJ, *texLaunchJ, *texSlideJ, *texShootJ, *texDieJ, *texShootJumpJ, *texRollJ,
+                // *texJDeploy, *texGDeploy, *texSDeploy,
                 *texShotgunBlast,
                 *texGrapple, *texGrappleAngle,
                 *texGrass, *texStone, *texBrick, *texFence, *texBush, 

@@ -25,6 +25,9 @@ public:
     float getLength() const {
         return length;
     }
+    /*float setLength(float length) {
+        this->length = length;
+    }*/
     void reset() {
         time = 0;
         timeout = false;

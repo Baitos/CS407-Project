@@ -355,7 +355,7 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
     } else if ((gd.mouseCoords.x >= 583 && gd.mouseCoords.x <= 766) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)) {
         //Enter Stage
         //TO DO - ONLY DO WHEN PLAYERS AGREE TO READY UP
-        int character = ((CharSelectState*) currState)->character;
+        characterType character = ((CharSelectState*) currState)->character;
         currState = changeState(currState, gd);
         ((LevelState*) currState)->character = character;
         currState->init(state, gd, res);

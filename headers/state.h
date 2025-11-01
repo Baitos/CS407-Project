@@ -13,6 +13,7 @@
 #include "../headers/helper.h"
 #include "../headers/globals.h"
 #include "../headers/resources.h"
+#include "../headers/playerState.h"
 
 
 
@@ -25,11 +26,6 @@ enum gameStates {
     SPACESHIP,
     RESULTS,
     CREDITS
-};
-enum characterType {
-    SHOTGUN,
-    SWORD,
-    JETPACK
 };
 
 class GameState{
@@ -78,12 +74,12 @@ class JoinState : public GameState {
 
 class CharSelectState : public GameState{
     public:
-        int character = SWORD;
+        characterType character = SWORD;
 };
 
 class LevelState : public GameState{
     public:
-        int character = SHOTGUN;
+        characterType character = SWORD;
 };
 
 /*class SpaceshipState : public LevelState {

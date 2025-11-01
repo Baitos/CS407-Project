@@ -88,5 +88,5 @@ class ItemStorage : public AnimatedObject {
     ItemStorage() : AnimatedObject(), cycleTimer(2.0f){}
     ItemStorage(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) :
     AnimatedObject(pos_, colliderRect, tex), cycleTimer(2.0f) {}
-    void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+    void update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime);
 };

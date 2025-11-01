@@ -23,7 +23,7 @@ float changeVel(float vel, Player &p) { // this is for ease of accounting for ob
 }
 
 bool isSliding(Player &p) { // checks if a player is sliding
-    if (p.vel.x * p.dir < 0) {
+    if (p.vel.x * p.dir < 0 && p.grounded) {
        return true;     
     }
     return false;
@@ -34,9 +34,9 @@ glm::vec2 findCenterOfSprite(Object &obj) { // finds center of sprite by collide
 }
 
 std::vector<float> distanceForm(GameData &gd, Object &a, Object &b) {
-    glm::vec2 pOffset = findCenterOfSprite(gd.player);
-    float xDist = gd.mouseCoords.x - (gd.player.pos.x - gd.mapViewport.x + pOffset.x); // A
-    float yDist = gd.mouseCoords.y - (gd.player.pos.y - gd.mapViewport.y + pOffset.y); // O
+    glm::vec2 pOffset = findCenterOfSprite(a);
+    float xDist = gd.mouseCoords.x - (a.pos.x - gd.mapViewport.x + pOffset.x); // A
+    float yDist = gd.mouseCoords.y - (a.pos.y - gd.mapViewport.y + pOffset.y); // O
     float dist = std::sqrt(xDist * xDist + yDist * yDist); // distance formula, H
     float aH = xDist / dist; // cos
     float oH = yDist / dist; // sin
@@ -47,4 +47,11 @@ std::vector<float> distanceForm(GameData &gd, Object &a, Object &b) {
 
 glm::vec2 updatePos(Object &o, float deltaTime) {
     return o.vel * deltaTime;
+}
+
+void removeHook(Player &p) {
+    p.hook.visible = false;
+    p.hook.collided = false;
+    p.hook.pos += glm::vec2(-10000.0f, -10000.0f); // maybe unnecessary
+    p.hook.vel = glm::vec2(0);
 }

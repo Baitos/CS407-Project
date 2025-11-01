@@ -18,109 +18,80 @@ extern GameState * currState;
 //Update Function for level Spaceship
 void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
     // update portals
-        //gd.player.currentDirection = 0;
-        for (Portal &portal : gd.portals_) {
-            portal.update(state, gd, res, deltaTime);
+    for (Portal &portal : gd.portals_) {
+        portal.update(state, gd, res, deltaTime);
+    }
+
+    // update lasers
+    for (Laser &laser : gd.lasers_) {
+        laser.update(state, gd, res, deltaTime);
+    }
+
+    for (ItemBox &box : gd.itemBoxes_) {
+        if (!box.itemBoxActive) {
+            box.update(state, gd, res, deltaTime);
+        }
+    }
+    for (int i = 0; i < gd.items_.size(); i++) {
+        // TODO This shit sucks ass please fix lol - Rei
+        Item item = gd.items_[i];
+        item.update(state, gd, res, deltaTime);
+        if (item.type == itemType::BOOMBOX) {
+            item.pos.x = gd.player.pos.x - (item.width / 2) + 16;
+            item.pos.y = gd.player.pos.y - (item.height/2) + 16;
+        }
+        gd.items_[i] = item;
+        if (item.animations[item.curAnimation].isDone()) {
+            gd.items_.erase(gd.items_.begin() + i);
+            i--;
+        }
+    }
+    for (int i = 0; i < gd.effects_.size(); i++) {
+        Effect *effect = gd.effects_[i];
+        effect->update(state, gd, res, deltaTime);
+        if (effect->animations[effect->curAnimation].isDone()) {
+            printf("erase it\n");
+            delete effect;
+            gd.effects_.erase(gd.effects_.begin() + i);
+            i--;
+            printf("erased\n");
         }
 
-        if (gd.player.blast != nullptr) {
-            gd.player.blast->update(state, gd, res, deltaTime);
-        }
+    }
+    for (Player &p : gd.players_) {
+        p.update(state, gd, res, deltaTime);
 
-        // update lasers
-        for (Laser &laser : gd.lasers_) {
-            laser.update(state, gd, res, deltaTime);
-        }
-
-        for (ItemBox &box : gd.itemBoxes_) {
-            if (!box.itemBoxActive) {
-                box.update(state, gd, res, deltaTime);
+        if (p.usingSugar) { // TODO: this currently draws below the screen, and this should probably be in draw
+            //Draw sugar effect
+            if(p.dir == 1) {
+                glm::vec2 pos = glm::vec2(p.pos.x - 30.f, p.pos.y);
+                SDL_FRect collider = {
+                    .x = 28 * (p.dir),
+                    .y = 0,
+                    .w = 0.f,
+                    .h = 0.f
+                    };
+                Object sugarEffectObject(pos, collider, res.texSugarEffectL);
+                sugarEffectObject.draw(state,gd,32,32);
+            } else {
+                glm::vec2 pos = glm::vec2(p.pos.x + 30.f, p.pos.y);
+                SDL_FRect collider = {
+                    .x = 28 * (p.dir),
+                    .y = 0,
+                    .w = 0.f,
+                    .h = 0.f
+                    };
+                Object sugarEffectObject(pos, collider, res.texSugarEffectR);
+                sugarEffectObject.draw(state,gd,32,32);
             }
         }
-        for (int i = 0; i < gd.items_.size(); i++) {
-            // TODO This shit sucks ass please fix lol - Rei
-            Item item = gd.items_[i];
-            item.update(state, gd, res, deltaTime);
-            if (item.type == itemType::BOOMBOX) {
-                item.pos.x = gd.player.pos.x - (item.width / 2) + 16;
-                item.pos.y = gd.player.pos.y - (item.height/2) + 16;
-            }
-            gd.items_[i] = item;
-            if (item.animations[item.curAnimation].isDone()) {
-                gd.items_.erase(gd.items_.begin() + i);
-                i--;
-            }
-        }
-        for (int i = 0; i < gd.effects_.size(); i++) {
-            Effect *effect = gd.effects_[i];
-            effect->update(state, gd, res, deltaTime);
-            if (effect->animations[effect->curAnimation].isDone()) {
-                printf("erase it\n");
-                delete effect;
-                gd.effects_.erase(gd.effects_.begin() + i);
-                i--;
-                printf("erased\n");
-            }
+    }
 
-        }
-        if (gd.player.pickingItem) {
-            gd.itemStorage_.update(state, gd, res, deltaTime);
-        }
-        //gd.player.currentDirection = 0;
-        gd.player.state_->update(state, gd, res, deltaTime);
-        if(gd.player.currentDirection){
-            gd.player.dir = gd.player.currentDirection;
-        }
-        gd.player2.state_->update(state, gd, res, deltaTime);
-        if(gd.player2.currentDirection){
-            gd.player2.dir = gd.player2.currentDirection;
-        }
+    //printf("%d\n", gd.player.state_->currStateVal);
 
-        gd.hook.update(state, gd, res, deltaTime);
-        gd.hook.checkCollision(state, gd, res, deltaTime);
-        
-        gd.player.vel += static_cast<float>(gd.player.currentDirection) * gd.player.acc * deltaTime;
-        gd.player2.vel += static_cast<float>(gd.player2.currentDirection) * gd.player2.acc * deltaTime;
+    gd.itemStorage_.pos.x = gd.players_[0].pos.x - 368;
+    gd.itemStorage_.pos.y = gd.players_[0].pos.y - 200;
 
-        if (std::abs(gd.player.vel.x) > gd.player.maxSpeedX) {
-            if (!isSliding(gd.player)) { // if not sliding slow down
-                gd.player.vel.x -= 1.5 * gd.player.acc.x * deltaTime * gd.player.currentDirection;
-            }
-            
-        }
-
-        if (std::abs(gd.player2.vel.x) > gd.player2.maxSpeedX) {
-            if (!isSliding(gd.player2)) { // if not sliding slow down
-                gd.player2.vel.x -= 1.5 * gd.player2.acc.x * deltaTime * gd.player2.currentDirection;
-            }
-            
-        }
-
-        if(gd.player.usingSugar){
-            ((Sugar *) &gd.player.item)->sugarTimer.step(deltaTime);
-            gd.player.vel.x += 1.0f * gd.player.currentDirection;
-            if(((Sugar *) &gd.player.item)->sugarTimer.isTimeOut()){
-                //printf("Stopped sugar\n");
-                gd.player.usingSugar = false;
-            }
-        }
-
-        // add vel to pos 
-        gd.player.pos += updatePos(gd.player, deltaTime);
-
-        gd.player2.pos += updatePos(gd.player2, deltaTime);
-
-        // collision
-        gd.player.grounded = false;
-        gd.player2.grounded = false;
-        collisionCheckAndResponse(state,gd,res,gd.player,deltaTime);
-
-        collisionCheckAndResponse(state,gd,res,gd.player2,deltaTime);
-
-        //printf("%d\n", gd.player.state_->currStateVal);
-        gd.itemStorage_.pos.x = gd.player.pos.x - 368;
-        gd.itemStorage_.pos.y = gd.player.pos.y - 200;
-        
 }
 
 //
@@ -128,7 +99,7 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
 //
 
 //Input Function for level Spaceship
-void levelInputs(SDLState &state, GameData &gd, Resources &res, float deltaTime){
+void levelInputs(SDLState &state, GameData &gd, Resources &res, float deltaTime) {
     SDL_Event event { 0 };
         while (SDL_PollEvent(&event)) {
             switch (event.type) {
@@ -157,14 +128,16 @@ void levelInputs(SDLState &state, GameData &gd, Resources &res, float deltaTime)
                 }
                 case SDL_EVENT_MOUSE_BUTTON_DOWN:
                 {
-                    //handleClick(state, gd, res, gd.player(), deltaTime);
-                    handleLevelClick(state, gd, res, deltaTime, event, true);
+                    for (Player &p : gd.players_) {
+                        handleLevelClick(state, gd, res, p, deltaTime, event, true);
+                    }
                     break;
                 } 
                 case SDL_EVENT_MOUSE_BUTTON_UP:
                 {
-                    //handleClick(state, gd, res, gd.player(), deltaTime);
-                    handleLevelClick(state, gd, res, deltaTime, event, false);
+                    for (Player &p : gd.players_) {
+                        handleLevelClick(state, gd, res, p, deltaTime, event, false);
+                    }
                     break;
                 } 
             }
@@ -172,38 +145,46 @@ void levelInputs(SDLState &state, GameData &gd, Resources &res, float deltaTime)
 }
 
 //handler for clicking in the level
-void handleLevelClick(SDLState &state, GameData &gd, Resources &res, float deltaTime, SDL_Event event, bool buttonDown) {
+void handleLevelClick(SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime, SDL_Event event, bool buttonDown) {
     //LEFT CLICK FOR CHARACTER WEAPON DEPLOY
     if(gd.controls->actionPerformed(ACTION_ABILITY, event) && buttonDown){
         //JETPACK DEPLOY
         if(((LevelState *)currState)->character == JETPACK) {
-            if(gd.player.cooldownTimer.isTimeOut()) {
-                    gd.player.state_ = changePlayerState(gd, res, gd.player.state_, JETPACK_DEPLOY);
+            if (p.cooldownTimer.isTimeOut() && p.state_->stateVal != JETPACK_DEPLOY) {
+                PlayerState* jpState = new JetpackDeployState();
+                p.handleState(jpState, gd, res);
             }
         } else if (((LevelState *)currState)->character == SHOTGUN) {
             //SHOTGUN DEPLOY
-            if(gd.player.cooldownTimer.isTimeOut()) {
-                gd.player.state_ = changePlayerState(gd, res, gd.player.state_, SHOTGUN_DEPLOY);
+            if(p.cooldownTimer.isTimeOut() && p.state_->stateVal != SHOTGUN_DEPLOY) {
+                PlayerState* sgState = new ShotgunDeployState();
+                p.handleState(sgState, gd, res);
             }
         } else if (((LevelState *)currState)->character == SWORD) {
             //SWORD DEPLOY
-            if(gd.player.cooldownTimer.isTimeOut()) {
-                gd.player.state_ = changePlayerState(gd, res, gd.player.state_, SWORD_DEPLOY);
+            if(p.cooldownTimer.isTimeOut() && p.state_->stateVal != SWORD_DEPLOY) {
+                PlayerState* swState = new SwordDeployState();
+                p.handleState(swState, gd, res);
             }
         }
-    } else if (gd.controls->actionPerformed(ACTION_GRAPPLE, event) ) { // grapple
-        glm::vec2 hOffset = findCenterOfSprite(gd.hook);
-        gd.hook.pos = gd.player.pos + hOffset;
-        gd.hook.visible = true;
-        std::vector dist = distanceForm(gd, gd.player, gd.hook);
-        gd.hook.vel = 500.0f * glm::vec2(dist.at(3), dist.at(4));
-    } else if (!buttonDown && gd.controls->actionPerformed(ACTION_GRAPPLE, event) ) { // grapple release 
-        gd.hook.pos = glm::vec2(-1000.0f, -1000.0f); // maybe unnecessary
-        gd.hook.visible = false;
-        if (gd.hook.collided) { // get out
-            gd.player.state_ = changePlayerState(gd, res, gd.player.state_, JUMP);
+    } else if (gd.controls->actionPerformed(ACTION_GRAPPLE, event)) { // grapple
+        glm::vec2 pOffset = findCenterOfSprite(p);
+        glm::vec2 hOffset = findCenterOfSprite(p.hook);
+        float xDist = gd.mouseCoords.x - (p.pos.x - gd.mapViewport.x + pOffset.x); // A
+        float yDist = gd.mouseCoords.y - (p.pos.y - gd.mapViewport.y + pOffset.y); // O
+        float dist = std::sqrt(xDist * xDist + yDist * yDist); // distance formula, H
+        float aH = xDist / dist; // cos
+        float oH = yDist / dist; // sin
+
+        p.hook.pos = p.pos + hOffset;
+        p.hook.visible = true;
+        p.hook.vel = 500.0f * glm::vec2(aH, oH);
+    } else if (!buttonDown && gd.controls->actionPerformed(ACTION_GRAPPLE, event)) { // grapple release 
+        if (p.hook.collided) { // get out
+            PlayerState* jState = new JumpState();
+            p.handleState(jState, gd, res);
         }
-        gd.hook.collided = false;
+        removeHook(p);
     }
 }
 
@@ -239,11 +220,11 @@ void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
             gd.debugMode = !gd.debugMode;
     }
     if (key.scancode == SDL_SCANCODE_F11 && key.down && !key.repeat) { // tp to entrance portal
-        gd.player.pos = gd.EntrancePortal;
-        gd.player.pos.x -= TILE_SIZE;
+        gd.players_[0].pos = gd.EntrancePortal;
+        gd.players_[0].pos.x -= TILE_SIZE;
     }
     if (key.scancode == SDL_SCANCODE_F10 && key.down && !key.repeat) { // tp to exit portal
-        gd.player.pos = gd.ExitPortal;
+        gd.players_[0].pos = gd.ExitPortal;
     }
     /*if (key.scancode == SDL_SCANCODE_F2 && keyDown && !key.repeat) { // anti gravity
         gd.player().flip = -1 * gd.player().flip;
@@ -262,15 +243,21 @@ void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
         running = false;
     }
     if (key.scancode == SDL_SCANCODE_F2) {
-        printf("currState: %d, nextState: %d", currState->currStateVal, currState->nextStateVal);
         currState = changeState(currState, gd);
         currState->init(state, gd, res);
     }
-    if (gd.controls->actionPerformed(typeAction::ACTION_USEITEM, event) && gd.player.hasItem) {
-        Item item = gd.player.item;
-        item.useItem(state, gd, res);
-        gd.player.hasItem = false;
-        clearItem(state, gd, res);
+    if (key.scancode == SDL_SCANCODE_F3) {
+        
+        gd.players_[0].pos.x = 950;
+        gd.players_[0].pos.y = -654;
     }
-    gd.player.state_->handleInput(gd, res, event);   
+    for (Player &p : gd.players_) {
+        p.handleInput(state, gd, res, event, deltaTime); 
+        if (gd.controls->actionPerformed(typeAction::ACTION_USEITEM, event) && p.hasItem) {
+            Item item = p.item;
+            item.useItem(state, gd, res, p);
+            p.hasItem = false;
+            clearItem(state, gd, res);
+        }
+    }  
 }

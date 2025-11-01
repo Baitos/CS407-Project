@@ -28,6 +28,7 @@ class Object { // generic obj type
         glm::vec2 pos, vel, acc;
         SDL_Texture *texture;
         SDL_FRect collider; // rectangle for collision
+        float width, height; // size for drawing
         int type;
         Object() {           
             pos = vel = acc = glm::vec2(0);
@@ -37,6 +38,7 @@ class Object { // generic obj type
                 .w = (float)TILE_SIZE,
                 .h = (float)TILE_SIZE
             };
+            width = height = TILE_SIZE;
         }
         Object(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) {
             pos = pos_;       
@@ -189,12 +191,14 @@ class Hook : public AnimatedObject { // grappling hook projectile
         bool collided; // has hook hit something
         Hook() : AnimatedObject() { // default 
             collided = false;
+            visible = false;
         }  
         Hook(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : 
         AnimatedObject(pos_, colliderRect, tex) { // generic obj constructor
             collided = false;
+            visible = false;
         }
-        void draw(const SDLState &state, GameData &gd, float width, float height);
+        void draw(const SDLState &state, GameData &gd, Player &p, float width, float height);
         void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
-        void checkCollision(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+        void checkCollision(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime);
 };

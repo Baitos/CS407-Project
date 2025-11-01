@@ -26,7 +26,6 @@ void charIconObject::draw(const SDLState &state, GameData &gd, float width, floa
     SDL_FlipMode flipMode; // = obj.dir == -1 ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
     flipMode = SDL_FLIP_NONE;
     SDL_RenderTextureRotated(state.renderer, (*this).texture, &src, &dst, 0, nullptr, flipMode); // src is for sprite stripping, dest is for where sprite should be drawn
-    (*this).drawDebug(state, gd, width, height);
 }
 
 void charIconObject::update(const SDLState &state, GameData &gd, Resources &res, float deltaTime, int newState) { // just step the anims

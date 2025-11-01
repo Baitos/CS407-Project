@@ -8,11 +8,9 @@
 #include "menu.h"
 #include "controls.h"
 struct GameData {
-    Player player;
-    Player player2;
-    Player currPlayer = player;
+    std::vector<Player> players_;
     int numPlayers; 
-    Hook hook;
+
     std::vector<BackgroundObject> bgTiles_;
     std::vector<Level> mapTiles_;
     std::vector<Laser> lasers_;

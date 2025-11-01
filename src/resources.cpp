@@ -2,6 +2,7 @@
 #include <SDL3_image/SDL_image.h>
 #include "../headers/resources.h"
 #include "../headers/initState.h"
+#include "../headers/player.h"
 
 SDL_Texture* Resources::loadTexture(SDL_Renderer *renderer, const std::string &filepath) { // load texture from filepath
     // load game assets
@@ -12,26 +13,27 @@ SDL_Texture* Resources::loadTexture(SDL_Renderer *renderer, const std::string &f
 }
 
 void Resources::load(SDLState &state) { // First variable controls how many frames there are, second is how long each frame lasts (in seconds)
-    playerAnimsJ.resize(12); // 
-    playerAnimsJ[ANIM_PLAYER_IDLE] = Animation(1, 1.6f);
-    playerAnimsJ[ANIM_PLAYER_WALK] = Animation(8, 1.0f);
-    playerAnimsJ[ANIM_PLAYER_RUN] = Animation(8, 0.5f);
-    playerAnimsJ[ANIM_PLAYER_SLIDE] = Animation(1, 1.0f);
-    playerAnimsJ[ANIM_PLAYER_SHOOT] = Animation(1, 0.8f);
-    playerAnimsJ[ANIM_PLAYER_JUMP] = Animation(1, 0.3f); 
-    playerAnimsJ[ANIM_PLAYER_DIE] = Animation(1, 1.0f);
-    playerAnimsJ[ANIM_PLAYER_LAUNCH] = Animation(3, 0.2f);
-    playerAnimsJ[ANIM_PLAYER_SHOOT_JUMP] = Animation(1, 0.8f);
-    playerAnimsJ[ANIM_PLAYER_ROLL] = Animation(5, 0.2f);
-    playerAnimsJ[ANIM_PLAYER_JETPACK_DEPLOY] = Animation(1, 2.0f);
-    playerAnimsJ[ANIM_PLAYER_SWORD_DEPLOY] = Animation(3, 0.3f);
+    // playerAnimsJ.resize(12); // 
+    // playerAnimsJ[ANIM_PLAYER_IDLE] = Animation(1, 1.6f);
+    // playerAnimsJ[ANIM_PLAYER_WALK] = Animation(8, 1.0f);
+    // playerAnimsJ[ANIM_PLAYER_RUN] = Animation(8, 0.5f);
+    // playerAnimsJ[ANIM_PLAYER_SLIDE] = Animation(1, 1.0f);
+    // playerAnimsJ[ANIM_PLAYER_SHOOT] = Animation(1, 0.8f);
+    // playerAnimsJ[ANIM_PLAYER_JUMP] = Animation(1, 0.3f); 
+    // playerAnimsJ[ANIM_PLAYER_DIE] = Animation(1, 1.0f);
+    // playerAnimsJ[ANIM_PLAYER_LAUNCH] = Animation(3, 0.2f);
+    // playerAnimsJ[ANIM_PLAYER_SHOOT_JUMP] = Animation(1, 0.8f);
+    // playerAnimsJ[ANIM_PLAYER_ROLL] = Animation(5, 0.2f);
+    // playerAnimsJ[ANIM_PLAYER_JETPACK_DEPLOY] = Animation(1, 2.0f);
+    // playerAnimsJ[ANIM_PLAYER_SWORD_DEPLOY] = Animation(3, 0.3f);
 
-    playerAnims.resize(12); // 
+    playerAnims.resize(13); // 
     playerAnims[ANIM_PLAYER_IDLE] = Animation(1, 1.6f);
     playerAnims[ANIM_PLAYER_WALK] = Animation(8, 1.0f);
     playerAnims[ANIM_PLAYER_RUN] = Animation(8, 0.5f);
     playerAnims[ANIM_PLAYER_SLIDE] = Animation(1, 1.0f);
     playerAnims[ANIM_PLAYER_SHOOT] = Animation(1, 2.0f);
+    playerAnims[ANIM_PLAYER_JETPACK] = Animation(1, 0.8f);
     playerAnims[ANIM_PLAYER_JUMP] = Animation(1, 0.3f); 
     playerAnims[ANIM_PLAYER_DIE] = Animation(1, 1.0f);
     playerAnims[ANIM_PLAYER_LAUNCH] = Animation(3, 0.2f);
@@ -58,42 +60,42 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
 
 
     //load shotgun character animations
-    texIdleG = loadTexture(state.renderer, "data/CharacterSprites/Shotgun/idle_shotgun.png");
-    texRunG = loadTexture(state.renderer, "data/CharacterSprites/Shotgun/running_shotgun.png");
-    texJumpG = loadTexture(state.renderer, "data/CharacterSprites/Shotgun/jumped_shotgun.png");
-    texSlideG = loadTexture(state.renderer, "data/CharacterSprites/Shotgun/turning_shotgun.png");
-    texShootG = loadTexture(state.renderer, "data/CharacterSprites/Shotgun/shooting_shotgun.png");
-    texDieG = loadTexture(state.renderer, "data/CharacterSprites/Shotgun/shot_shotgun.png");
-    texShootJumpG = loadTexture(state.renderer, "data/CharacterSprites/Shotgun/shooting_jumped_shotgun.png");
-    texLaunchG = loadTexture(state.renderer, "data/CharacterSprites/Shotgun/jumping_shotgun.png");
-    texRollG = loadTexture(state.renderer, "data/CharacterSprites/Shotgun/rolling_shotgun.png");
+    texIdle[SHOTGUN] = loadTexture(state.renderer, "data/CharacterSprites/Shotgun/idle_shotgun.png");
+    texRun[SHOTGUN] = loadTexture(state.renderer, "data/CharacterSprites/Shotgun/running_shotgun.png");
+    texJump[SHOTGUN] = loadTexture(state.renderer, "data/CharacterSprites/Shotgun/jumped_shotgun.png");
+    texSlide[SHOTGUN] = loadTexture(state.renderer, "data/CharacterSprites/Shotgun/turning_shotgun.png");
+    texShoot[SHOTGUN] = loadTexture(state.renderer, "data/CharacterSprites/Shotgun/shooting_shotgun.png");
+    texDie[SHOTGUN] = loadTexture(state.renderer, "data/CharacterSprites/Shotgun/shot_shotgun.png");
+    texShootJump[SHOTGUN] = loadTexture(state.renderer, "data/CharacterSprites/Shotgun/shooting_jumped_shotgun.png");
+    texLaunch[SHOTGUN] = loadTexture(state.renderer, "data/CharacterSprites/Shotgun/jumping_shotgun.png");
+    texRoll[SHOTGUN] = loadTexture(state.renderer, "data/CharacterSprites/Shotgun/rolling_shotgun.png");
     
     //load sword character animations
-    texIdleS = loadTexture(state.renderer, "data/CharacterSprites/Sword/idle_sword.png");
-    texRunS = loadTexture(state.renderer, "data/CharacterSprites/Sword/running_sword.png");
-    texJumpS = loadTexture(state.renderer, "data/CharacterSprites/Sword/jumped_sword.png");
-    texSlideS = loadTexture(state.renderer, "data/CharacterSprites/Sword/turning_sword.png");
-    texShootS = loadTexture(state.renderer, "data/CharacterSprites/Sword/swing_sword.png");
-    texDieS = loadTexture(state.renderer, "data/CharacterSprites/Sword/shot_sword.png");
-    texShootJumpS = loadTexture(state.renderer, "data/CharacterSprites/Sword/swing_jumped_sword.png");
-    texLaunchS = loadTexture(state.renderer, "data/CharacterSprites/Sword/jumping_sword.png");
-    texRollS = loadTexture(state.renderer, "data/CharacterSprites/Sword/rolling_sword.png");
+    texIdle[SWORD] = loadTexture(state.renderer, "data/CharacterSprites/Sword/idle_sword.png");
+    texRun[SWORD] = loadTexture(state.renderer, "data/CharacterSprites/Sword/running_sword.png");
+    texJump[SWORD] = loadTexture(state.renderer, "data/CharacterSprites/Sword/jumped_sword.png");
+    texSlide[SWORD] = loadTexture(state.renderer, "data/CharacterSprites/Sword/turning_sword.png");
+    texShoot[SWORD] = loadTexture(state.renderer, "data/CharacterSprites/Sword/swing_sword.png");
+    texDie[SWORD] = loadTexture(state.renderer, "data/CharacterSprites/Sword/shot_sword.png");
+    texShootJump[SWORD] = loadTexture(state.renderer, "data/CharacterSprites/Sword/swing_jumped_sword.png");
+    texLaunch[SWORD] = loadTexture(state.renderer, "data/CharacterSprites/Sword/jumping_sword.png");
+    texRoll[SWORD] = loadTexture(state.renderer, "data/CharacterSprites/Sword/rolling_sword.png");
 
     //load jetpack character animations
-    texIdleJ = loadTexture(state.renderer, "data/CharacterSprites/Jetpack/idle_jetpack.png");
-    texRunJ = loadTexture(state.renderer, "data/CharacterSprites/Jetpack/running_jetpack.png");
-    texJumpJ = loadTexture(state.renderer, "data/CharacterSprites/Jetpack/jumped_jetpack.png");
-    texSlideJ = loadTexture(state.renderer, "data/CharacterSprites/Jetpack/turning_jetpack.png");
-    texShootJ = loadTexture(state.renderer, "data/CharacterSprites/Jetpack/on_jetpack.png");
-    texDieJ = loadTexture(state.renderer, "data/CharacterSprites/Jetpack/shot_jetpack.png");
-    texShootJumpJ = loadTexture(state.renderer, "data/CharacterSprites/Jetpack/on_jetpack.png");
-    texLaunchJ = loadTexture(state.renderer, "data/CharacterSprites/Jetpack/jumping_jetpack.png");
-    texRollJ = loadTexture(state.renderer, "data/CharacterSprites/Jetpack/rolling_jetpack.png");
+    texIdle[JETPACK] = loadTexture(state.renderer, "data/CharacterSprites/Jetpack/idle_jetpack.png");
+    texRun[JETPACK] = loadTexture(state.renderer, "data/CharacterSprites/Jetpack/running_jetpack.png");
+    texJump[JETPACK] = loadTexture(state.renderer, "data/CharacterSprites/Jetpack/jumped_jetpack.png");
+    texSlide[JETPACK] = loadTexture(state.renderer, "data/CharacterSprites/Jetpack/turning_jetpack.png");
+    texShoot[JETPACK] = loadTexture(state.renderer, "data/CharacterSprites/Jetpack/on_jetpack.png");
+    texDie[JETPACK] = loadTexture(state.renderer, "data/CharacterSprites/Jetpack/shot_jetpack.png");
+    texShootJump[JETPACK] = loadTexture(state.renderer, "data/CharacterSprites/Jetpack/on_jetpack.png");
+    texLaunch[JETPACK] = loadTexture(state.renderer, "data/CharacterSprites/Jetpack/jumping_jetpack.png");
+    texRoll[JETPACK] = loadTexture(state.renderer, "data/CharacterSprites/Jetpack/rolling_jetpack.png");
 
     //load special deploy animations
-    texJDeploy = loadTexture(state.renderer, "data/CharacterSprites/Jetpack/on_jetpack.png");
-    texGDeploy = loadTexture(state.renderer, "data/CharacterSprites/Shotgun/shooting_shotgun.png");
-    texSDeploy = loadTexture(state.renderer, "data/CharacterSprites/Sword/swing_sword.png");
+    texDeploy[SHOTGUN] = loadTexture(state.renderer, "data/CharacterSprites/Shotgun/shooting_shotgun.png");
+    texDeploy[SWORD] = loadTexture(state.renderer, "data/CharacterSprites/Sword/swing_sword.png");
+    texDeploy[JETPACK] = loadTexture(state.renderer, "data/CharacterSprites/Jetpack/on_jetpack.png");
 
     texShotgunBlast = loadTexture(state.renderer, "data/CharacterSprites/Shotgun/fire_shotgun.png");
 
