@@ -214,7 +214,7 @@ void ItemBox::generateItem(Player &player, GameData &gd, Resources &res) {
         .w = float(TILE_SIZE),
         .h = float(TILE_SIZE)
     };
-    Item newItem;
+    Item* newItem;
     std::vector<itemType> itemOptions;
     int selected;
     // Limit items for top 25% of players
@@ -237,21 +237,24 @@ void ItemBox::generateItem(Player &player, GameData &gd, Resources &res) {
     
     switch (itemOptions[selected]) {
         case itemType::BOMB:
-            newItem = Bomb(player.pos, defaultCollider, res.texBomb);
+            newItem = new Bomb(player.pos, defaultCollider, res.texBomb);
             break;
         case itemType::BOOMBOX:
-            newItem = Boombox(player.pos, defaultCollider, res.texBoombox);
+            newItem = new Boombox(player.pos, defaultCollider, res.texBoombox);
             break;
         case itemType::SUGAR:
-            newItem = Sugar(player.pos, defaultCollider, res.texSugar);
+            newItem = new Sugar(player.pos, defaultCollider, res.texSugar);
             break;
         case itemType::PIE:
-            newItem = Pie(player.pos, defaultCollider, res.texPie);
+            newItem = new Pie(player.pos, defaultCollider, res.texPie);
             break;
         default:
             printf("Your item is in another castle\n");
-            newItem = Bomb(player.pos, defaultCollider, res.texBomb);
+            newItem = new Bomb(player.pos, defaultCollider, res.texBomb);
     }
-    player.nextItem = newItem;
+    if (player.heldItem != nullptr) {
+        delete player.heldItem;
+    }
+    player.heldItem = newItem;
     player.pickingItem = true;
 }

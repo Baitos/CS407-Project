@@ -96,7 +96,7 @@ struct Resources {
                 *texBombStorage, *texBoomboxStorage, *texBouncyBallStorage, *texFogStorage, 
                 *texIceStorage, *texMissileStorage, *texSugarStorage, *texPieStorage,
                 *texBomb, *texExplosion, *texBoombox, *texSoundwaves, *texSugar, *texPie,
-                *texSugarEffectL, *texSugarEffectR,
+                *texSugarEffect,
                 *texSettingsBackground, *texBigBorder, *texSmallBorder, *texSlider,       
                 *texTitle, *texTextCursor,
                 *texGameplaySettingsBackground, *texGameplaySettingsLeftBracket, *texGameplaySettingsRightBracket,

@@ -168,7 +168,7 @@ void collisionCheckAndResponse(const SDLState &state, GameData &gd, Resources &r
 	}
 	//check for weapon deployment
 	for (Player &p : gd.players_) {
-		if(p.index!=player.index) {
+		if(p.index != player.index) {
 			//check if in shotgun player blast state
 			if(ShotgunDeployState *s = dynamic_cast<ShotgunDeployState*>(p.state_)) {
 				//check if currently blocking/deploying sword
@@ -240,7 +240,7 @@ void collisionCheckAndResponse(const SDLState &state, GameData &gd, Resources &r
 			}
 		} else {
 			int numDone = 0;
-			for(Player p: gd.players_) {
+			for(Player &p: gd.players_) {
 				if(p.lapsCompleted >= gd.laps_per_race) {
 					numDone++;
 				}

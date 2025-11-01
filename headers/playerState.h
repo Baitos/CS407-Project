@@ -4,7 +4,7 @@ class Timer;
 class Player;
 
 enum PlayerStateValue {
-    NONE,
+    NOSTATE,
     IDLE, 
     WALK, 
     RUN, 
@@ -27,13 +27,13 @@ class PlayerState {
         PlayerStateValue stateVal; // enum for state value
         virtual ~PlayerState() = default;
         virtual void draw(const SDLState &state, GameData &gd) {} // do nothing
-        // Generic handlers (The player's state will call these by default if they don't have a new version defined, mostly for enter/exit)
+        // Generic handlers (error handling?)
         virtual PlayerState* handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key) { return nullptr; }
         virtual PlayerState* update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) { return nullptr; }
         virtual void enter(GameData &gd, Resources &res, Player &p) {}
         virtual void exit(GameData &gd, Resources &res, Player &p) {}
         PlayerState() {
-            stateVal = NONE; // if it's ever this we have a problem
+            stateVal = NOSTATE; // if it's ever this we have a problem
         }
 };
 

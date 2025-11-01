@@ -13,7 +13,7 @@ const float JUMP_FORCE = -450.f;
 
 std::string getStateFromEnum(PlayerStateValue ps) {
     switch (ps) {
-        case NONE: return "NONE";
+        case NOSTATE: return "NOSTATE";
         case IDLE: return "IDLE";
         case WALK: return "WALK";
         case RUN: return "RUN";
@@ -93,15 +93,6 @@ void sharedUpdate(const SDLState &state, Player &p, float deltaTime) { // basic 
 
     if (p.currentDirection) { // update direction based on currentDirection
         p.dir = p.currentDirection;
-    }
-
-    if(p.usingSugar) {
-        ((Sugar *) &p.item)->sugarTimer.step(deltaTime);
-        p.vel.x += .5f * p.currentDirection;
-        if(((Sugar *) &p.item)->sugarTimer.isTimeOut()){
-            //printf("Stopped sugar\n");
-            p.usingSugar = false;
-        }
     }
     if (!p.grounded) { 
         sharedGravity(p, deltaTime);

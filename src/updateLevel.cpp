@@ -39,31 +39,6 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
 
     for (Player &p : gd.players_) {
         p.update(state, gd, res, deltaTime);
-
-        if (p.usingSugar) { // TODO: this currently draws below the screen, and this should probably be in draw
-            //Draw sugar effect
-            if(p.dir == 1) {
-                glm::vec2 pos = glm::vec2(p.pos.x - 30.f, p.pos.y);
-                SDL_FRect collider = {
-                    .x = 28 * (p.dir),
-                    .y = 0,
-                    .w = 0.f,
-                    .h = 0.f
-                    };
-                Object sugarEffectObject(pos, collider, res.texSugarEffectL);
-                sugarEffectObject.draw(state,gd,32,32);
-            } else {
-                glm::vec2 pos = glm::vec2(p.pos.x + 30.f, p.pos.y);
-                SDL_FRect collider = {
-                    .x = 28 * (p.dir),
-                    .y = 0,
-                    .w = 0.f,
-                    .h = 0.f
-                    };
-                Object sugarEffectObject(pos, collider, res.texSugarEffectR);
-                sugarEffectObject.draw(state,gd,32,32);
-            }
-        }
     }
 
     //printf("%d\n", gd.player.state_->currStateVal);
@@ -226,8 +201,8 @@ void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
     for (Player &p : gd.players_) {
         p.handleInput(state, gd, res, key, deltaTime); 
         if (key.scancode == SDL_SCANCODE_Q && p.hasItem) {
-            Item item = p.item;
-            item.useItem(state, gd, res, p);
+            Item* item = p.heldItem;
+            item->useItem(state, gd, res, p);
             p.hasItem = false;
             clearItem(state, gd, res);
         }

@@ -12,6 +12,8 @@
 #include "menuData.h"
 
 struct GameData {
+    MenuData md;
+
     std::vector<Player> players_;
     int numPlayers; 
 
@@ -29,13 +31,7 @@ struct GameData {
 
     std::vector<Checkpoint> checkpoints_;
 
-    MenuData md;
-
-    // std::vector<charIconObject> charIcons_;
-    // std::vector<AnimatedObject> previews_;
-    // std::vector<AnimatedObject> map_previews_;
-    // std::vector<AnimatedObject> map_previews_text_;
-    // std::vector<AnimatedObject> arrows_;
+    
 
     Minimap minimap; // the minimap for the current map
     glm::vec2 ExitPortal, 
@@ -43,21 +39,6 @@ struct GameData {
               mouseCoords, 
               clickCoords;
     ItemStorage itemStorage_;
-
-    // Object settingsBorder;
-    // std::vector<Object> settingsDials_;
-    // std::vector<Object> gameplaySettingsBrackets1_;
-    // std::vector<Object> gameplaySettingsBrackets2_;
-    // std::vector<Object> gameplaySettingsNumLaps_;
-    // std::vector<Object> gameplaySettingsModeHighlights_;
-
-    // bool usernameEditing = false;
-    // std::string tempUsername = " ";
-    // std::string displayName;
-    // int lastCursorToggle = 0;
-    // bool showCursor = true;
-    // //font for drawing on screen
-    // TTF_Font* font;
 
     //Note that volume ratio is dial.pos.x / (290-84)
     Object * updatedDial;

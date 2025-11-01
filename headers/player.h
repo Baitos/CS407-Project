@@ -2,10 +2,12 @@
 
 #include "../ext/glm/glm.hpp"
 #include "animation.h"
-#include <vector>
 #include "object.h"
 #include "timer.h"
 #include "item.h"
+
+#include <vector>
+#include <memory>
 
 struct SDLState;
 struct GameData;
@@ -26,12 +28,11 @@ class Player : public AnimatedObject { // player
         std::string username;
         
         Hook hook;
-        Item item; // item currently active
-        Item nextItem;
+        Item* heldItem; // item currently active
         bool hasItem = false;
         bool pickingItem = false;
 
-        std::vector<Item> items_; // store all of this player's active item objs here
+        std::vector<Item*> items_; // store all of this player's active item objs here
 
         bool grounded; 
         bool isDead = false;
@@ -74,7 +75,8 @@ class Player : public AnimatedObject { // player
             sprinting = false;
             maxSpeedX = maxSpeedX_; // should be walk speed
             gravityScale = 1.0f;
-            character = SHOTGUN;            
+            character = SHOTGUN;   
+            heldItem = nullptr;         
         }
         Player(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : // generic obj constructor
         AnimatedObject(pos_, colliderRect, tex), jetpackTimer(1.0f), cooldownTimer(5.0f), respawnTimer(2.0f) {
@@ -82,15 +84,17 @@ class Player : public AnimatedObject { // player
             sprinting = false;
             currentDirection = 0;
             gravityScale = 1.0f;
-            maxSpeedX = 250; // walk speed default
+            maxSpeedX = 300; // walk speed default
             character = SHOTGUN; 
+            heldItem = nullptr; 
         }
 
         Player() : AnimatedObject(), jetpackTimer(1.0f), cooldownTimer(5.0f), respawnTimer(2.0f) {
             grounded = false;
             gravityScale = 1.0f;
             currentDirection = 0;
-            maxSpeedX = 250; // walk speed default
+            maxSpeedX = 300; // walk speed default
             character = SHOTGUN; 
+            heldItem = nullptr; 
         } 
 };

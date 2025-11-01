@@ -210,8 +210,7 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
 
     texPie = loadTexture(state.renderer, "data/ItemSprites/pie.png");
 
-    texSugarEffectL = loadTexture(state.renderer, "data/ItemSprites/SugarEffectL.png");
-    texSugarEffectR = loadTexture(state.renderer, "data/ItemSprites/SugarEffectR.png");
+    texSugarEffect = loadTexture(state.renderer, "data/ItemSprites/SugarEffect.png");
 
     //Settings
     texSettingsBackground = loadTexture(state.renderer, "data/SettingsSprites/background.png");
