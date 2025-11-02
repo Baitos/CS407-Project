@@ -82,7 +82,7 @@ void createLobbyServer(int port){
     
     bool ready = false;
     int readyPlayers[8] = {0};
-    int mapVote[5] = {0};                       //Spaceship, Plains, Stage 3, stage 4, stage 5
+    int mapVote[5] = {0};                       //Spaceship, Grasslands, Stage 3, stage 4, stage 5
     int playerClasses[8] ={0};
 
     while(!ready){
@@ -228,7 +228,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     //Create your ENET Server
     ENetAddress address = {};
     //Address of the Raspberry Pi
-    enet_address_set_host(&address, "100.76.236.38");
+    enet_address_set_host(&address, "100.89.84.24");
     address.port = 1233;
 
     ENetHost * matchmakerServer = enet_host_create(&address, 32, 2, 0, 0);
