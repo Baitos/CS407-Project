@@ -25,7 +25,6 @@ void createGrid(const SDLState &state, GameData &gd, int rows, int cols) {
     for (auto& row : gd.grid_) {
         row.resize(cols, nullptr); // MAP_ROWS x MAP_COLS array 
     }
-
     // mapTiles, lasers, portals, water, lava, signs, itemBoxes
     placeInGrid(gd.mapTiles_, gd);
     placeInGrid(gd.lasers_, gd);

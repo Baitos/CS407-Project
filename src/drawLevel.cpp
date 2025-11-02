@@ -16,39 +16,55 @@ void drawLevel(const SDLState &state, GameData &gd, Resources res, float deltaTi
         bg.draw(state, gd, static_cast<float>(bg.texture->w), static_cast<float>(bg.texture->h)); 
     }
 
-    // draw level tiles
-    for (Level &level : gd.mapTiles_) {
-        level.draw(state, gd, TILE_SIZE, TILE_SIZE);
-    }
-
-    // draw portal tiles
-    for (Portal &portal : gd.portals_) {
-        portal.draw(state, gd, TILE_SIZE, TILE_SIZE * 2);
-    }
-
-    // draw lasers
-    for (Laser &laser : gd.lasers_) {
-        if (laser.laserActive) {
-            laser.draw(state, gd, TILE_SIZE, TILE_SIZE);
-        }
-    }
-
-    //draw signs
-    for (Sign &sign : gd.signs_) {
-        sign.draw(state, gd, TILE_SIZE, TILE_SIZE);
-    }
-    //draw lava
-    for (Lava &lava : gd.lava_) {
-        lava.draw(state, gd, TILE_SIZE, TILE_SIZE);
-    }
-    //draw water
-    for (Water &water : gd.water_) {
-        water.draw(state, gd, TILE_SIZE, TILE_SIZE);
-    }
-    // draw item boxes
-    for (ItemBox &box : gd.itemBoxes_) {
-        if (box.itemBoxActive) {
-            box.draw(state, gd, TILE_SIZE, TILE_SIZE);
+    std::vector<Object *> onscreenTiles_ = getOnscreenTiles(state, gd);
+    for (Object* o : onscreenTiles_) {
+        switch (o->type) {
+            case LEVEL: 
+            {
+                Level& l = dynamic_cast<Level&>((*o));
+                l.draw(state, gd, TILE_SIZE, TILE_SIZE);
+                break;
+            }
+            case PORTAL:
+            {
+                Portal& po = dynamic_cast<Portal&>((*o));
+                po.draw(state, gd, TILE_SIZE, TILE_SIZE * 2);
+                break;
+            }
+            case LASER:
+            {
+                Laser& la = dynamic_cast<Laser&>((*o));
+                if (la.laserActive) {
+                    la.draw(state, gd, TILE_SIZE, TILE_SIZE);
+                }
+                break;
+            }
+            case SIGN:
+            {
+                Sign& s = dynamic_cast<Sign&>((*o));
+                s.draw(state, gd, TILE_SIZE, TILE_SIZE);
+                break;
+            }
+            case LAVA:
+            {
+                Lava& l = dynamic_cast<Lava&>((*o));
+                l.draw(state, gd, TILE_SIZE, TILE_SIZE);
+                break;
+            }
+            case WATER:
+            {
+                Water& w = dynamic_cast<Water&>((*o));
+                w.draw(state, gd, TILE_SIZE, TILE_SIZE);
+                break;
+            }
+            case ITEMBOX:
+            {
+                ItemBox& box = dynamic_cast<ItemBox&>((*o));
+                if (box.itemBoxActive) {
+                    box.draw(state, gd, TILE_SIZE, TILE_SIZE);
+                }
+                break;
+            }
         }
     }
 

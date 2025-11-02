@@ -72,13 +72,6 @@ bool isInBounds(GameData &gd, int x, int y) {
     return true;
 }
 
-bool isNotBackgroundOrNull(GameData &gd, int x, int y) {
-    if (gd.grid_[y][x] == nullptr || gd.grid_[y][x]->type == BACKGROUND) {
-        return false;
-    } 
-    return true;
-}
-
 std::vector<Object*> getCloseTiles(const SDLState &state, GameData &gd, glm::vec2 pos) {
     std::vector<Object*> res;
     int BOUND = 3;
@@ -89,7 +82,28 @@ std::vector<Object*> getCloseTiles(const SDLState &state, GameData &gd, glm::vec
             int x = (int)tilePos.x + c - OFFSET;
             int y = (int)tilePos.y + r - OFFSET;
             //printf("posX = %f, posY = %f, tilePosX = %d, tilePosY = %d\n", pos.x, pos.y, x, y);
-            if (isInBounds(gd, x, y) && isNotBackgroundOrNull(gd, x, y)) {
+            if (isInBounds(gd, x, y) && gd.grid_[y][x] != nullptr) {
+                res.push_back(gd.grid_[y][x]); // get 3x3 grid of tiles around object, with obj at center
+            }
+        }
+    }
+    return res;
+}
+
+std::vector<Object*> getOnscreenTiles(const SDLState &state, GameData &gd) {
+    std::vector<Object*> res;   
+    int leeway = 2; // leeway for slightly offscreen things
+    int width = state.logW / TILE_SIZE + leeway;
+    int offsetW = (width - 1) / 2;
+    int height = state.logH / TILE_SIZE + leeway;
+    int offsetH = (height - 1) / 2;
+    glm::vec2 tilePos(std::round(gd.players_[0].pos.x / TILE_SIZE), std::round(gd.players_[0].pos.y / TILE_SIZE)); // get player pos
+    for (int h = 0; h < height; h++) {
+        for (int w = 0; w < width; w++) {
+            int x = (int)tilePos.x + w - offsetW;
+            int y = (int)tilePos.y + h - offsetH;
+            //printf("posX = %f, posY = %f, tilePosX = %d, tilePosY = %d\n", pos.x, pos.y, x, y);
+            if (isInBounds(gd, x, y) && gd.grid_[y][x] != nullptr) {
                 res.push_back(gd.grid_[y][x]); // get 3x3 grid of tiles around object, with obj at center
             }
         }

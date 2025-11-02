@@ -524,7 +524,10 @@ PlayerState* JetpackDeployState::update(const SDLState &state, GameData &gd, Res
         p.jetpackTimer.step(deltaTime);
     } else {
         p.cooldownTimer.reset();
-        if(p.vel.x != 0) {
+        if (!p.grounded) {
+            return new JumpState();
+        }
+        else if (p.vel.x != 0) {
             return new WalkState();
         } else {
             return new IdleState();

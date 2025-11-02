@@ -19,3 +19,4 @@ void handleOutOfMap(GameData &gd, Resources &res, Player &p); // checks if playe
 void removeHook(Player &p); // removes player hook (click released, state changed, etc)
 
 std::vector<Object*> getCloseTiles(const SDLState &state, GameData &gd, glm::vec2 pos); // gets tiles that are in close proximity to given obj position
+std::vector<Object*> getOnscreenTiles(const SDLState &state, GameData &gd); // gets tiles that are onscreen

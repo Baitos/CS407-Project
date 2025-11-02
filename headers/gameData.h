@@ -25,8 +25,8 @@ struct GameData {
     std::vector<Sign> signs_;
     std::vector<Water> water_;
     std::vector<Lava> lava_;
-
-     std::vector<std::vector<Object*>> grid_; // all level tiles as pointers
+    
+    std::vector<std::vector<Object*>> grid_; // all level tiles as pointers
 
     std::vector<Checkpoint> checkpoints_;
 
@@ -49,7 +49,7 @@ struct GameData {
     int laps_per_race = 1;
     bool round_is_over = false;
     
-    GameData(const SDLState &state): md(state) {
+    GameData(const SDLState &state) : md(state) {
         playerIndex = -1; // will change when map is loaded
         numPlayers = 8;
         mapViewport = SDL_FRect {
