@@ -66,7 +66,7 @@ void Player::update(const SDLState &state, GameData &gd, Resources &res, float d
 
     // collision
     (*this).grounded = false;
-    collisionCheckAndResponse(state,gd,res,(*this),deltaTime);
+    collisionCheckAndResponse(state, gd, res, (*this), deltaTime);
 
     // check if player has fallen off of map
     handleOutOfMap(gd, res, (*this));

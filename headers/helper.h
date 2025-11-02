@@ -16,4 +16,7 @@ std::vector<float> distanceForm(GameData &gd, Object &a, Object &b); // returns 
 glm::vec2 updatePos(Object &o, float deltaTime);
 
 void handleOutOfMap(GameData &gd, Resources &res, Player &p); // checks if player is out of map and puts them in dead state if so
+std::vector<Object*> getCloseTiles(const SDLState &state, GameData &gd, glm::vec2 pos); // gets tiles that are in close proximity to given obj position
+std::vector<Level> getOnscreenTiles(const SDLState &state, GameData &gd); // gets tiles that are onscreen
+
 void removeHook(Player &p); // removes player hook (click released, state changed, etc)

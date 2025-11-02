@@ -39,7 +39,7 @@ void Object::drawDebug(const SDLState &state, GameData &gd, float width, float h
             .x = this->pos.x + this->collider.x - gd.mapViewport.x,
             .y = this->pos.y + this->collider.y + this->collider.h - gd.mapViewport.y,
             .w = this->collider.w, 
-            .h = 1
+            .h = EPSILON
         };
         SDL_SetRenderDrawColor(state.renderer, 0, 0, 255, 150);
         SDL_RenderFillRect(state.renderer, &sensor);
@@ -101,7 +101,7 @@ void Laser::update(const SDLState &state, GameData &gd, Resources &res, float de
 }
 
 void Hook::draw(const SDLState &state, GameData &gd, Player &p, float width, float height) {
-    if (!(*this).visible) {
+    if (!(*this).visible || !isOnscreen(state, gd, (*this))) {
         return;
     }
     SDL_SetRenderDrawColor(state.renderer, 30, 30, 30, 255); // draw line to hook
@@ -141,6 +141,9 @@ void Hook::update(const SDLState &state, GameData &gd, Resources &res, float del
 }
 
 void Hook::checkCollision(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
+    if (!(this->visible)) {
+        return;
+    }
     SDL_FRect rectA{
 		.x = (*this).pos.x + (*this).collider.x,
 		.y = (*this).pos.y + (*this).collider.y,
@@ -149,12 +152,12 @@ void Hook::checkCollision(const SDLState &state, GameData &gd, Resources &res, P
 	};
     SDL_FRect rectB;
     glm::vec2 resolution{ 0 };
-    for (Level &l : gd.mapTiles_){
+    for (Level* l : gd.mapTiles_){
 		rectB = {
-            .x = l.pos.x + l.collider.x,
-            .y = l.pos.y + l.collider.y,
-            .w = l.collider.w,
-            .h = l.collider.h
+            .x = l->pos.x + l->collider.x,
+            .y = l->pos.y + l->collider.y,
+            .w = l->collider.w,
+            .h = l->collider.h
 	    };
         if (intersectAABB(rectA, rectB, resolution))
 	    {
@@ -166,6 +169,35 @@ void Hook::checkCollision(const SDLState &state, GameData &gd, Resources &res, P
             }
         }
     }
+    // SDL_FRect rectA{
+	// 	.x = (*this).pos.x + (*this).collider.x,
+	// 	.y = (*this).pos.y + (*this).collider.y,
+	// 	.w = (*this).collider.w,
+	// 	.h = (*this).collider.h
+	// };
+    // SDL_FRect rectB;
+    // glm::vec2 resolution{ 0 };
+    // std::vector<Object *> closeTiles_ = getCloseTiles(state, gd, (*this).pos);
+	// for (auto &o : closeTiles_) {
+    //     if (o->type == LEVEL) {
+    //         Level& l = dynamic_cast<Level&>(*o);
+    //         rectB = {
+    //             .x = l.pos.x + l.collider.x,
+    //             .y = l.pos.y + l.collider.y,
+    //             .w = l.collider.w,
+    //             .h = l.collider.h
+    //         };
+    //         if (intersectAABB(rectA, rectB, resolution))
+    //         {
+    //             (*this).vel = glm::vec2(0);
+    //             if (!(*this).collided) {
+    //                 PlayerState* grappleState = new GrappleState();
+    //                 p.handleState(grappleState, gd, res);
+    //                 (*this).collided = true;
+    //             }
+    //         }
+    //     }
+    // }
     for (Player &p2 : gd.players_) {
         if (&p != &p2) { // do not check on self
             rectB = {

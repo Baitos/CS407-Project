@@ -22,18 +22,18 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
     placement(state, gd, res, deltaTime);
 
     // update portals
-    for (Portal &portal : gd.portals_) {
-        portal.update(state, gd, res, deltaTime);
+    for (Portal* portal : gd.portals_) {
+        portal->update(state, gd, res, deltaTime);
     }
 
     // update lasers
-    for (Laser &laser : gd.lasers_) {
-        laser.update(state, gd, res, deltaTime);
+    for (Laser* laser : gd.lasers_) {
+        laser->update(state, gd, res, deltaTime);
     }
 
-    for (ItemBox &box : gd.itemBoxes_) {
-        if (!box.itemBoxActive) {
-            box.update(state, gd, res, deltaTime);
+    for (ItemBox* box : gd.itemBoxes_) {
+        if (!box->itemBoxActive) {
+            box->update(state, gd, res, deltaTime);
         }
     }
 

@@ -12,51 +12,52 @@ void drawLevel(const SDLState &state, GameData &gd, Resources res, float deltaTi
     SDL_RenderClear(state.renderer);
 
     // draw bg tiles
-    for (BackgroundObject &bg : gd.bgTiles_) {
-        bg.draw(state, gd, static_cast<float>(bg.texture->w), static_cast<float>(bg.texture->h)); 
+    for (BackgroundObject* bg : gd.bgTiles_) {
+        bg->draw(state, gd, static_cast<float>(bg->texture->w), static_cast<float>(bg->texture->h)); 
     }
 
     // draw level tiles
-    for(Level &level : gd.mapTiles_) {
-        level.draw(state, gd, TILE_SIZE, TILE_SIZE);
+    for(Level* level : gd.mapTiles_) {
+        level->draw(state, gd, TILE_SIZE, TILE_SIZE);
     }
 
     // draw portal tiles
-    for(Portal &portal : gd.portals_) {
-        portal.draw(state, gd, TILE_SIZE, TILE_SIZE * 2);
+    for(Portal* portal : gd.portals_) {
+        portal->draw(state, gd, TILE_SIZE, TILE_SIZE * 2);
     }
 
     // draw lasers
-    for(Laser &laser : gd.lasers_) {
-        if (laser.laserActive) {
-            laser.draw(state, gd, TILE_SIZE, TILE_SIZE);
+    for (Laser* laser : gd.lasers_) {
+        if (laser->laserActive) {
+            laser->draw(state, gd, TILE_SIZE, TILE_SIZE);
         }
     }
 
     //draw signs
-    for(Sign &sign : gd.signs_) {
-        sign.draw(state, gd, TILE_SIZE, TILE_SIZE);
+    for(Sign* sign : gd.signs_) {
+        sign->draw(state, gd, TILE_SIZE, TILE_SIZE);
     }
     //draw lava
-    for(Lava &lava : gd.lava_) {
-        lava.draw(state, gd, TILE_SIZE, TILE_SIZE);
+    for(Lava* lava : gd.lava_) {
+        lava->draw(state, gd, TILE_SIZE, TILE_SIZE);
     }
     //draw water
-    for(Water &water : gd.water_) {
-        water.draw(state, gd, TILE_SIZE, TILE_SIZE);
+    for(Water* water : gd.water_) {
+        water->draw(state, gd, TILE_SIZE, TILE_SIZE);
     }
+
     // draw players
-    for(Player &p : gd.players_) {
+    for (Player &p : gd.players_) {
         p.draw(state, gd, TILE_SIZE, TILE_SIZE);
         p.state_->draw(state, gd); // currently only for shotgun but could be used in future for state based particles/power up effects
     }
 
 
-    for(ItemBox &box : gd.itemBoxes_) {
-        if (box.itemBoxActive) {
-            box.draw(state, gd, TILE_SIZE, TILE_SIZE);
-        }
-    }
+    // for (ItemBox &box : gd.itemBoxes_) {
+    //     if (box.itemBoxActive) {
+    //         box.draw(state, gd, TILE_SIZE, TILE_SIZE);
+    //     }
+    // }
     gd.itemStorage_.draw(state, gd, 68, 68);
 
     gd.minimap.draw(state, gd, gd.minimap.texture->w, gd.minimap.texture->h);

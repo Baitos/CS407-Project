@@ -72,12 +72,12 @@ void Pie::checkCollision(const SDLState &state, GameData &gd, Resources &res, Pl
 	};
     SDL_FRect rectB;
     glm::vec2 resolution{ 0 };
-    for (Level &l : gd.mapTiles_){
+    for (Level* l : gd.mapTiles_){
 		rectB = {
-            .x = l.pos.x + l.collider.x,
-            .y = l.pos.y + l.collider.y,
-            .w = l.collider.w,
-            .h = l.collider.h
+            .x = l->pos.x + l->collider.x,
+            .y = l->pos.y + l->collider.y,
+            .w = l->collider.w,
+            .h = l->collider.h
 	    };
         if (intersectAABB(rectA, rectB, resolution))
 	    {
@@ -105,6 +105,47 @@ void Pie::checkCollision(const SDLState &state, GameData &gd, Resources &res, Pl
             }
         } 
     }
+    // SDL_FRect rectA{
+	// 	.x = (*this).pos.x + (*this).collider.x,
+	// 	.y = (*this).pos.y + (*this).collider.y,
+	// 	.w = (*this).collider.w,
+	// 	.h = (*this).collider.h
+	// };
+    // SDL_FRect rectB;
+    // glm::vec2 resolution{ 0 };
+    // std::vector<Object *> closeTiles_ = getCloseTiles(state, gd, (*this).pos);
+	// for (auto &o : closeTiles_) { 
+	// 	rectB = {
+	// 		.x = o->pos.x + o->collider.x,
+	// 		.y = o->pos.y + o->collider.y,
+	// 		.w = o->collider.w,
+	// 		.h = o->collider.h
+	// 	};
+	// 	if (o->type == LEVEL && intersectAABB(rectA, rectB, resolution)) {
+	// 		this->active = false;
+	// 	}
+	// }
+    // for (Player &p2 : gd.players_) {
+    //     if (&p != &p2) { // do not check on self
+    //         rectB = {
+    //             .x = p2.pos.x + p2.collider.x,
+    //             .y = p2.pos.y + p2.collider.y,
+    //             .w = p2.collider.w,
+    //             .h = p2.collider.h
+    //         };
+    //         if (intersectAABB(rectA, rectB, resolution) && (*this).visible) {
+    //             p2.vel.y = -200.0f; 
+    //             p2.vel.x = this->vel.x * 0.5;  
+    //             p2.pos.y -= 1;              
+    //             p2.grounded = false;
+
+    //             PlayerState* stunState = new StunnedState(true); // hard stun
+    //             p2.handleState(stunState, gd, res); // stun player you hit
+
+    //             this->active = false;
+    //         }
+    //     } 
+    // }
 }
 
 // SUGAR

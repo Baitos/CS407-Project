@@ -50,6 +50,45 @@ glm::vec2 updatePos(Object &o, float deltaTime) {
     return o.vel * deltaTime;
 }
 
+bool isInBounds(GameData &gd, int x, int y) {
+    if (x < 0 || y < 0 || x >= gd.grid_[0].size() || y >= gd.grid_.size()) {
+            return false;
+    }
+    return true;
+}
+
+std::vector<Object*> getCloseTiles(const SDLState &state, GameData &gd, glm::vec2 pos) {
+    std::vector<Object*> res;
+    int BOUND = 51;
+    int OFFSET = (BOUND - 1) / 2;
+    glm::vec2 tilePos(std::floor(pos.x / TILE_SIZE), std::floor(pos.y / TILE_SIZE));
+    //printf("posX = %f, posY = %f, tilePosX = %f, tilePosY = %f\n", pos.x, pos.y, tilePos.x, tilePos.y);
+    for (int r = 0; r < BOUND; r++) {
+        for (int c = 0; c < BOUND; c++) {
+            int x = (int)tilePos.x + c - OFFSET;
+            int y = (int)tilePos.x + r - OFFSET;
+            if (isInBounds(gd, x, y) && gd.grid_.at(y).at(x) != nullptr) {
+                res.push_back(gd.grid_.at(y).at(x)); // get 3x3 grid of tiles around object, with obj at center
+            }
+        }
+    }
+    return res;
+}
+
+/*std::vector<Level> getOnscreenTiles(const SDLState &state, GameData &gd) {
+    glm::vec2 tilePos(0);
+    tilePos.x = std::round(obj.pos.x / TILE_SIZE);
+    tilePos.y = std::round(obj.pos.y / TILE_SIZE);
+    std::vector<Level> res;
+    for (int r = 0; r < 3; r++) {
+        for (int c = 0; c < 3; c++) {
+            res.push_back(gd.mapTiles_.at(tilePos.x + r - 1).at(tilePos.y + c - 1)); // get 3x3 grid of tiles around object, with obj at center
+        }
+    }
+    return res;
+}*/
+
+
 void removeHook(Player &p) {
     p.hook.visible = false;
     p.hook.collided = false;

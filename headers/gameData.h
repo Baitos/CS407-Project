@@ -19,19 +19,19 @@ struct GameData {
 
     glm::vec2 mapSize; // gets x and y size of box used to create map;
 
-
-    std::vector<std::vector<Object*>> mapTiles_;
     std::vector<Checkpoint> checkpoints_;
-    /*std::vector<Level> mapTiles_;
-    std::vector<Laser> lasers_;
-    std::vector<ItemBox> itemBoxes_;
-    std::vector<Portal> portals_;
-    std::vector<Water> water_;
-    std::vector<Lava> lava_;
-    std::vector<std::vector<Object*>> bgTiles_;
-    std::vector<BackgroundObject> bgTiles_;
-    std::vector<Sign> signs_;*/
     
+    std::vector<Level*> mapTiles_;
+    std::vector<Laser*> lasers_;
+    std::vector<ItemBox*> itemBoxes_;
+    std::vector<Portal*> portals_;
+    std::vector<Water*> water_;
+    std::vector<Lava*> lava_;
+    std::vector<BackgroundObject*> bgTiles_;
+    std::vector<Sign*> signs_;
+    
+
+    std::vector<std::vector<Object*>> grid_; // all tiles as pointers
 
     
     

@@ -106,3 +106,41 @@ GameState * changeState(GameState * tempState, GameData &gd){
     newState->nextStateVal = SPACESHIP;
     return newState;
 }
+
+template<typename T>
+void freeInVector(std::vector<T*>& vec) { // i love manual memory management.
+    for (size_t i = 0; i < vec.size(); ++i) {
+        delete vec[i]; 
+        vec[i] = nullptr; 
+    }
+}
+
+void GameState::unloadGameState(GameData &gd) {
+    freeInVector(gd.mapTiles_);
+    gd.mapTiles_.clear();
+
+    freeInVector(gd.bgTiles_);
+    gd.bgTiles_.clear();
+
+    freeInVector(gd.lasers_);
+    gd.lasers_.clear();
+
+    freeInVector(gd.portals_);
+    gd.portals_.clear();
+
+    freeInVector(gd.lava_);
+    gd.lava_.clear();
+
+    freeInVector(gd.water_);
+    gd.water_.clear();
+
+    freeInVector(gd.signs_);
+    gd.signs_.clear();
+
+    gd.checkpoints_.clear();
+    gd.md.previews_.clear();
+    gd.md.arrows_.clear();
+    //TTF_CloseFont(gd.font);
+    //TO-DO Add clearing players
+    // ^ eventually we will but to be honest, being able to add multiple players is very useful lol
+}

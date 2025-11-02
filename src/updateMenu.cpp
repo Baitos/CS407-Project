@@ -324,7 +324,7 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
         gd.md.previews_[0].texture = res.texSword;
         gd.md.previews_[0].pos = glm::vec2(530,200);
         gd.md.previews_[0].draw(state, gd, 96,96);
-        gd.bgTiles_[0].draw(state, gd, 800,450);
+        gd.bgTiles_[0]->draw(state, gd, 800,450);
         ((CharSelectState*) currState)->character = SWORD;
         for (charIconObject &ci : gd.md.charIcons_){
             ci.spriteFrame = ci.spriteFrame % 4;
@@ -338,7 +338,7 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
         gd.md.previews_[0].texture = res.texJetpack;
         gd.md.previews_[0].pos = glm::vec2(510,200);
         gd.md.previews_[0].draw(state, gd, 96,96);
-        gd.bgTiles_[0].draw(state, gd, 800,450);
+        gd.bgTiles_[0]->draw(state, gd, 800,450);
         ((CharSelectState*) currState)->character = JETPACK;
         for (charIconObject &ci : gd.md.charIcons_){
             ci.spriteFrame = ci.spriteFrame % 4;
@@ -352,7 +352,7 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
         gd.md.previews_[0].texture = res.texShotgun;
         gd.md.previews_[0].pos = glm::vec2(520,200);
         gd.md.previews_[0].draw(state, gd, 96,96);
-        gd.bgTiles_[0].draw(state, gd, 800,450);
+        gd.bgTiles_[0]->draw(state, gd, 800,450);
         ((CharSelectState*) currState)->character = SHOTGUN;
         for (charIconObject &ci : gd.md.charIcons_){
             ci.spriteFrame = ci.spriteFrame % 4;

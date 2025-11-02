@@ -196,7 +196,7 @@ class JetpackDeployState : public PlayerState {
         PlayerState* handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key);
         PlayerState* update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime);
         void enter(GameData &gd, Resources &res, Player &p);
-        void exit(GameData &gd, Resources &res, Player &p) {} // do nothing
+        void exit(GameData &gd, Resources &res, Player &p);
         JetpackDeployState() {
             stateVal = JETPACK_DEPLOY;
         }

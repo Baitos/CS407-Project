@@ -11,8 +11,8 @@ void drawCharSelect(const SDLState &state, GameData &gd, Resources res, float de
     SDL_RenderClear(state.renderer);
 
     // draw bg tiles
-    for (BackgroundObject &bg : gd.bgTiles_) {
-        bg.draw(state, gd, static_cast<float>(bg.texture->w), static_cast<float>(bg.texture->h)); 
+    for (BackgroundObject* bg : gd.bgTiles_) {
+        bg->draw(state, gd, static_cast<float>(bg->texture->w), static_cast<float>(bg->texture->h)); 
     }
 
     for (AnimatedObject &p : gd.md.previews_){
@@ -58,9 +58,10 @@ void drawSettings(const SDLState &state, GameData &gd, Resources res, float delt
     SDL_RenderClear(state.renderer);
 
     // draw bg tiles
-    for (BackgroundObject &bg : gd.bgTiles_) {
-        bg.draw(state, gd, static_cast<float>(bg.texture->w), static_cast<float>(bg.texture->h)); 
+    for (BackgroundObject* bg : gd.bgTiles_) {
+        bg->draw(state, gd, static_cast<float>(bg->texture->w), static_cast<float>(bg->texture->h)); 
     }
+
     for (Object &o : gd.md.settingsDials_) {
         o.draw(state, gd, static_cast<float>(o.texture->w) * 2, static_cast<float>(o.texture->h) * 2); 
     }
@@ -84,9 +85,10 @@ void drawGameplaySettings(const SDLState &state, GameData &gd, Resources res, fl
     SDL_RenderClear(state.renderer);
 
     // draw bg tiles
-    for (BackgroundObject &bg : gd.bgTiles_) {
-        bg.draw(state, gd, static_cast<float>(bg.texture->w), static_cast<float>(bg.texture->h)); 
+    for (BackgroundObject* bg : gd.bgTiles_) {
+        bg->draw(state, gd, static_cast<float>(bg->texture->w), static_cast<float>(bg->texture->h)); 
     }
+
     //braw brackets around grand prix or other
     if(!gd.isGrandPrix) {
         for (Object &bg : gd.md.gameplaySettingsBrackets2_) {
@@ -126,9 +128,10 @@ void drawTitle(const SDLState &state, GameData &gd, Resources res, float deltaTi
     SDL_RenderClear(state.renderer);
 
     // draw bg tiles
-    for (BackgroundObject &bg : gd.bgTiles_) {
-        bg.draw(state, gd, static_cast<float>(bg.texture->w), static_cast<float>(bg.texture->h)); 
+    for (BackgroundObject* bg : gd.bgTiles_) {
+        bg->draw(state, gd, static_cast<float>(bg->texture->w), static_cast<float>(bg->texture->h)); 
     }
+
     if(gd.md.settingsBorder.pos.y != 500.f){
         //printf("drawing, %f", gd.settingsBorder->pos.y);
         gd.md.settingsBorder.draw(state, gd,static_cast<float>(gd.md.settingsBorder.texture->w) * 2, static_cast<float>(gd.md.settingsBorder.texture->h)*2);
