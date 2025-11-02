@@ -54,6 +54,7 @@ class Object { // generic obj type
         virtual ~Object() {}
         virtual void draw(const SDLState &state, GameData &gd, float width, float height);
         void drawDebug(const SDLState &state, GameData &gd, float width, float height);
+        void drawDebugNearby(const SDLState &state, GameData &gd, float width, float height);  
 };
 
 class AnimatedObject : public Object { // obj with anims

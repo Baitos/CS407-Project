@@ -48,6 +48,23 @@ void Object::drawDebug(const SDLState &state, GameData &gd, float width, float h
     }
 }
 
+void Object::drawDebugNearby(const SDLState &state, GameData &gd, float width, float height) {
+    if (gd.debugMode) {
+        SDL_FRect rectA {
+            .x = this->pos.x + this->collider.x - gd.mapViewport.x, 
+            .y = this->pos.y + this->collider.y - gd.mapViewport.y,
+            .w = this->collider.w, 
+            .h = this->collider.h
+        };
+        SDL_SetRenderDrawBlendMode(state.renderer, SDL_BLENDMODE_BLEND);
+
+        SDL_SetRenderDrawColor(state.renderer, 0, 255, 0, 150);
+        SDL_RenderFillRect(state.renderer, &rectA);
+
+        SDL_SetRenderDrawBlendMode(state.renderer, SDL_BLENDMODE_NONE);
+    }
+}
+
 void AnimatedObject::draw(const SDLState &state, GameData &gd, float width, float height) {
     if (!isOnscreen(state, gd, (*this))) {
         return;
@@ -138,63 +155,6 @@ void Hook::draw(const SDLState &state, GameData &gd, Player &p, float width, flo
 
 void Hook::update(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
     (*this).pos += updatePos((*this), deltaTime);
-}
-
-void Hook::checkCollision(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
-    SDL_FRect rectA{
-		.x = (*this).pos.x + (*this).collider.x,
-		.y = (*this).pos.y + (*this).collider.y,
-		.w = (*this).collider.w,
-		.h = (*this).collider.h
-	};
-    SDL_FRect rectB;
-    glm::vec2 resolution{ 0 };
-    for (Level &l : gd.mapTiles_){
-		rectB = {
-            .x = l.pos.x + l.collider.x,
-            .y = l.pos.y + l.collider.y,
-            .w = l.collider.w,
-            .h = l.collider.h
-	    };
-        if (intersectAABB(rectA, rectB, resolution))
-	    {
-            (*this).vel = glm::vec2(0);
-            if (!(*this).collided) {
-                PlayerState* grappleState = new GrappleState();
-                p.handleState(grappleState, gd, res);
-                (*this).collided = true;
-            }
-        }
-    }
-    for (Player &p2 : gd.players_) {
-        if (&p != &p2) { // do not check on self
-            rectB = {
-                .x = p2.pos.x + p2.collider.x,
-                .y = p2.pos.y + p2.collider.y,
-                .w = p2.collider.w,
-                .h = p2.collider.h
-            };
-            if (intersectAABB(rectA, rectB, resolution) && !(*this).collided) {
-                p.vel = 0.7f * (*this).vel;
-                p2.vel = -0.3f * (*this).vel;
-                removeHook(p);
-                removeHook(p2);
-                PlayerState* stunState = new StunnedState();
-                p2.handleState(stunState, gd, res); // stun player you hit and disable their hook
-            }
-            Hook h2 = p2.hook;
-            rectB = {
-                .x = h2.pos.x + h2.collider.x,
-                .y = h2.pos.y + h2.collider.y,
-                .w = h2.collider.w,
-                .h = h2.collider.h
-            };
-            if (intersectAABB(rectA, rectB, resolution) && !(*this).collided && h2.visible) { // Touching other hook
-                removeHook(p);
-                removeHook(p2);
-            }
-        } 
-    }
 }
 
 void ItemBox::update(const SDLState &state, GameData &gd, Resources &res, float deltaTime) { // update item box timer every frame (when on cooldown)
