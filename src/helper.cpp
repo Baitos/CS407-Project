@@ -3,6 +3,7 @@
 #include "../headers/gameData.h"
 #include "../headers/resources.h"
 #include "../headers/player.h"
+#include "../headers/playerState.h"
 #include "../headers/globals.h"
 #include "../headers/object.h"
 
@@ -54,4 +55,58 @@ void removeHook(Player &p) {
     p.hook.collided = false;
     p.hook.pos += glm::vec2(-10000.0f, -10000.0f); // maybe unnecessary
     p.hook.vel = glm::vec2(0);
+}
+
+void handleOutOfMap(GameData &gd, Resources &res, Player &p) {
+    float maxY = 3000;
+    if (std::abs(p.pos.y) > maxY && p.state_->stateVal != DEAD) {
+        PlayerState* dState = new DeadState();
+        p.handleState(dState, gd, res);
+    }
+}
+
+bool isInBounds(GameData &gd, int x, int y) {
+    if (x < 0 || y < 0 || x >= gd.grid_[0].size() || y >= gd.grid_.size()) {
+            return false;
+    }
+    return true;
+}
+
+std::vector<Object*> getCloseTiles(const SDLState &state, GameData &gd, glm::vec2 pos) {
+    std::vector<Object*> res;
+    int BOUND = 3;
+    int OFFSET = (BOUND - 1) / 2;
+    glm::vec2 tilePos(std::round(pos.x / TILE_SIZE), std::round(pos.y / TILE_SIZE));
+    for (int r = 0; r < BOUND; r++) {
+        for (int c = 0; c < BOUND; c++) {
+            int x = (int)tilePos.x + c - OFFSET;
+            int y = (int)tilePos.y + r - OFFSET;
+            //printf("posX = %f, posY = %f, tilePosX = %d, tilePosY = %d\n", pos.x, pos.y, x, y);
+            if (isInBounds(gd, x, y) && gd.grid_[y][x] != nullptr) {
+                res.push_back(gd.grid_[y][x]); // get 3x3 grid of tiles around object, with obj at center
+            }
+        }
+    }
+    return res;
+}
+
+std::vector<Object*> getOnscreenTiles(const SDLState &state, GameData &gd) {
+    std::vector<Object*> res;   
+    int leeway = 2; // leeway for slightly offscreen things
+    int width = state.logW / TILE_SIZE + leeway;
+    int offsetW = (width - 1) / 2;
+    int height = state.logH / TILE_SIZE + leeway;
+    int offsetH = (height - 1) / 2;
+    glm::vec2 tilePos(std::round(gd.players_[0].pos.x / TILE_SIZE), std::round(gd.players_[0].pos.y / TILE_SIZE)); // get player pos
+    for (int h = 0; h < height; h++) {
+        for (int w = 0; w < width; w++) {
+            int x = (int)tilePos.x + w - offsetW;
+            int y = (int)tilePos.y + h - offsetH;
+            //printf("posX = %f, posY = %f, tilePosX = %d, tilePosY = %d\n", pos.x, pos.y, x, y);
+            if (isInBounds(gd, x, y) && gd.grid_[y][x] != nullptr) {
+                res.push_back(gd.grid_[y][x]); // get 3x3 grid of tiles around object, with obj at center
+            }
+        }
+    }
+    return res;
 }

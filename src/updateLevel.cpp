@@ -37,46 +37,21 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
             box.update(state, gd, res, deltaTime);
         }
     }
-    
-    //for (int i = 0; i < 8; i++) {
-        //if(gd.playerTypes[i] != -1){
-            
-            Player * p = &gd.players_[gd.playerIndex];
-            
-            p->update(state, gd, res, deltaTime);
-           
-            if (p->usingSugar) { // TODO: this currently draws below the screen, and this should probably be in draw
-                //Draw sugar effect
-                if(p->dir == 1) {
-                    glm::vec2 pos = glm::vec2(p->pos.x - 30.f, p->pos.y);
-                    SDL_FRect collider = {
-                        .x = 28 * (p->dir),
-                        .y = 0,
-                        .w = 0.f,
-                        .h = 0.f
-                        };
-                    Object sugarEffectObject(pos, collider, res.texSugarEffectL);
-                    sugarEffectObject.draw(state,gd,32,32);
-                } else {
-                    glm::vec2 pos = glm::vec2(p->pos.x + 30.f, p->pos.y);
-                    SDL_FRect collider = {
-                        .x = 28 * (p->dir),
-                        .y = 0,
-                        .w = 0.f,
-                        .h = 0.f
-                        };
-                    Object sugarEffectObject(pos, collider, res.texSugarEffectR);
-                    sugarEffectObject.draw(state,gd,32,32);
-                }
-            //}
-        //}
+
+    for (Player &p : gd.players_) {
+        p.update(state, gd, res, deltaTime);
     }
     
     //printf("%d\n", gd.player.state_->currStateVal);
 
-    gd.itemStorage_.pos.x = gd.players_[gd.playerIndex].pos.x - 368;
-    gd.itemStorage_.pos.y = gd.players_[gd.playerIndex].pos.y - 200;
-    
+    gd.itemStorage_.pos.x = gd.players_[0].pos.x - 368;
+    gd.itemStorage_.pos.y = gd.players_[0].pos.y - 190;
+
+    gd.minimap.update(state, gd, res, deltaTime);
+
+
+    // gd.mapViewport.x = (gd.players_[0].pos.x + TILE_SIZE / 2) - (gd.mapViewport.w / 2); 
+    // gd.mapViewport.y = (gd.players_[0].pos.y + TILE_SIZE / 2) - (gd.mapViewport.h / 2); 
 
 }
 
@@ -183,10 +158,8 @@ void handleCrosshair(const SDLState &state, GameData &gd, Resources &res, float 
     SDL_GetMouseState(&gd.mouseCoords.x, &gd.mouseCoords.y);
     float CROSSHAIR_SIZE = 15;
     float OFFSET = 7;
-    float yRatio = (float)state.logH / state.height;
-    float xRatio = (float)state.logW / state.width;
-    gd.mouseCoords.x = gd.mouseCoords.x * xRatio;
-    gd.mouseCoords.y = gd.mouseCoords.y * yRatio;
+    gd.mouseCoords.x = gd.mouseCoords.x * state.xRatio;
+    gd.mouseCoords.y = gd.mouseCoords.y * state.yRatio;
     SDL_FRect dst { 
         .x = gd.mouseCoords.x - OFFSET,
         .y = gd.mouseCoords.y - OFFSET,
@@ -218,25 +191,25 @@ void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
     if (key.scancode == SDL_SCANCODE_F1) {
         running = false;
     }
-    if (key.scancode == SDL_SCANCODE_F2) {
+    if (key.scancode == SDL_SCANCODE_F2 && key.down) {
         currState = changeState(currState, gd);
         currState->init(state, gd, res);
     }
-    if (key.scancode == SDL_SCANCODE_F3) {
+    if (key.scancode == SDL_SCANCODE_F3 && key.down) {
         
-        gd.players_[gd.playerIndex].pos.x = 950;
-        gd.players_[gd.playerIndex].pos.y = -654;
+        gd.players_[gd.playerIndex].pos.x = 0;
+        gd.players_[gd.playerIndex].pos.y = 0;
     }
-    //for (Player &p : gd.players_) {
-    gd.players_[gd.playerIndex].handleInput(state, gd, res, key, deltaTime); 
-    if (key.scancode == SDL_SCANCODE_Q && gd.players_[gd.playerIndex].hasItem) {
-        Item item = gd.players_[gd.playerIndex].item;
-        item.useItem(state, gd, res, gd.players_[gd.playerIndex]);
-        gd.players_[gd.playerIndex].hasItem = false;
-        clearItem(state, gd, res);
-    }
-}  
-
+    for (Player &p : gd.players_) {
+        p.handleInput(state, gd, res, key, deltaTime); 
+        if (key.scancode == SDL_SCANCODE_Q && p.hasItem) {
+            Item* item = p.heldItem;
+            item->useItem(state, gd, res, p);
+            p.hasItem = false;
+            clearItem(state, gd, res);
+        }
+    }  
+}
 
 void placement(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
     //calculate the placement of each player based on their checkpoints and position

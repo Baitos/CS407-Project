@@ -6,11 +6,54 @@
 #include "../headers/globals.h"
 #include "../headers/state.h"
 #include "../headers/playerState.h"
+#include "../headers/minimap.h"
 #include "../headers/createCheckpoints.h"
 #include <SDL3_ttf/SDL_ttf.h>
 
 
 extern GameState *currState;
+
+template <typename T>
+void placeInGrid(std::vector<T> &o, GameData &gd) { // not in .h file
+    for (T &obj : o) {
+       gd.grid_[obj.pos.y / TILE_SIZE][obj.pos.x / TILE_SIZE] = &obj; 
+    }
+}
+
+void createGrid(const SDLState &state, GameData &gd, int rows, int cols) {
+    gd.grid_.resize(rows);
+    for (auto& row : gd.grid_) {
+        row.resize(cols, nullptr); // MAP_ROWS x MAP_COLS array 
+    }
+    // mapTiles, lasers, portals, water, lava, signs, itemBoxes
+    placeInGrid(gd.mapTiles_, gd);
+    placeInGrid(gd.lasers_, gd);
+    placeInGrid(gd.portals_, gd);
+    placeInGrid(gd.water_, gd);
+    placeInGrid(gd.lava_, gd);
+    placeInGrid(gd.signs_, gd);
+    placeInGrid(gd.itemBoxes_, gd);
+}
+
+void createMinimap(const SDLState &state, GameData &gd, const Resources &res, int map, int scale) {
+    Minimap mini; // create minimap based on map loaded
+    mini.texture = res.texMinimap[map];
+    mini.animations = res.minimapAnims;
+    mini.curAnimation = res.MAP;
+    SDL_FRect dotCollider = {
+        .x = 0,
+        .y = 0,
+        .w = (float)MINIMAP_DOT_SIZE,
+        .h = (float)MINIMAP_DOT_SIZE
+    };
+    for (Player &p : gd.players_) {
+        Object d(p.pos, dotCollider, res.texPlayerDots[p.character]); // pos is placeholder
+        d.debug = false;
+        mini.playerDots.push_back(d);
+    }
+    gd.minimap = mini;
+    //gd.mapSize = glm::vec2(MAP_COLS * TILE_SIZE, MAP_ROWS * TILE_SIZE);
+}
 
 //Init function for level spaceship
 void createTilesSpaceship(const SDLState &state, GameData &gd, const Resources &res) { // 280 x 60
@@ -79,13 +122,13 @@ void createTilesSpaceship(const SDLState &state, GameData &gd, const Resources &
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 
     };
-    short foreground[MAP_ROWS][MAP_COLS] = {
+    /*short foreground[MAP_ROWS][MAP_COLS] = {
         0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6,0,0,0,0,0,0,0,0,6,6,0,6,6,0,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-    };
+    };*/
     short background[MAP_ROWS][MAP_COLS] = {
         15,14,18,16,17,17,16,14,16,10,16,17,10,18,15,14,17,10,17,16,16,16,14,15,17,15,18,18,16,15,18,14,16,14,14,18,14,16,10,16,14,16,15,10,15,14,18,14,16,17,10,17,15,18,18,18,17,15,14,17,15,16,14,10,15,15,15,10,15,18,17,18,14,16,18,16,14,10,16,16,17,16,15,10,16,14,18,16,10,18,10,18,16,17,17,18,18,10,14,10,17,17,15,17,15,14,15,16,17,18,10,10,16,14,16,18,17,14,16,17,18,14,17,15,15,15,17,10,16,18,14,15,18,10,17,10,10,14,15,15,15,16,10,17,18,10,10,17,14,17,17,16,17,15,18,18,14,15,15,15,16,17,16,14,15,17,16,14,15,10,10,16,17,15,15,15,15,17,18,10,18,15,14,10,15,18,15,15,15,14,15,14,18,15,14,17,17,17,15,17,18,17,14,10,15,18,10,14,18,14,16,10,10,14,18,18,10,10,14,14,16,15,16,18,18,15,10,17,18,15,14,14,18,16,18,14,14,15,10,18,18,18,10,17,15,10,15,15,18,16,17,15,14,18,10,17,14,18,14,17,10,18,14,16,18,17,18,10,18,10,16,10,17,14,17,16,15,18,18,16,
 16,10,17,16,18,15,14,10,10,16,15,18,15,17,10,16,10,10,16,16,16,16,10,17,18,16,16,16,16,17,14,14,17,16,17,15,18,15,17,14,16,17,15,16,15,15,10,14,17,18,16,16,18,16,14,18,14,15,14,16,16,17,18,14,16,14,15,14,18,16,16,10,17,10,14,10,14,15,14,16,14,14,14,10,17,16,15,18,17,18,10,17,17,16,18,15,18,14,17,10,17,10,17,16,14,14,10,16,15,18,18,16,18,15,16,17,15,10,16,16,14,10,18,17,18,10,17,16,18,15,16,14,16,18,15,14,17,10,10,14,17,16,16,15,15,18,17,14,17,14,15,18,16,18,14,15,16,15,14,15,17,15,10,17,14,17,16,10,18,16,14,18,15,16,14,14,10,18,16,10,15,15,15,16,10,16,14,17,15,10,18,17,14,16,10,10,14,16,16,16,16,18,17,17,16,14,17,15,14,14,14,16,18,17,17,17,15,18,10,15,14,14,10,15,16,16,10,10,17,15,17,14,10,15,14,17,15,14,15,17,10,15,14,16,14,16,10,16,14,16,15,14,16,10,18,18,14,17,17,10,15,10,10,16,14,10,14,14,10,17,15,17,14,10,18,14,18,15,18,17,
@@ -177,7 +220,7 @@ void createTilesSpaceship(const SDLState &state, GameData &gd, const Resources &
         };
         for (int r = 0; r < MAP_ROWS; r++) {
             for (int c = 0; c < MAP_COLS; c++) {
-                glm::vec2 pos = glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r) * TILE_SIZE);
+                glm::vec2 pos = glm::vec2(c * TILE_SIZE, r * TILE_SIZE);
                 switch (layer[r][c]) {
                     case 1: //Base Ground
                     {
@@ -410,6 +453,8 @@ void createTilesSpaceship(const SDLState &state, GameData &gd, const Resources &
     loadMap(background);
     printf("Loaded map\n");
 
+    createMinimap(state, gd, res, res.MAP_SPACESHIP, 1);
+    createGrid(state, gd, MAP_ROWS, MAP_COLS);
     createCheckpointsSpaceship(state, gd, res);
     //loadMap(foreground);
     //assert(gd.playerIndex != -1);
@@ -659,7 +704,7 @@ void createTilesGrassland(const SDLState &state, GameData &gd, const Resources &
         };
         for (int r = 0; r < MAP_ROWS; r++) {
             for (int c = 0; c < MAP_COLS; c++) {
-                glm::vec2 pos = glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r) * TILE_SIZE);
+                glm::vec2 pos = glm::vec2(c * TILE_SIZE, r * TILE_SIZE);
                 switch (layer[r][c]) {
                     case 0: //Cloud
                     {   
@@ -827,11 +872,12 @@ void createTilesGrassland(const SDLState &state, GameData &gd, const Resources &
     loadMap(map);
     loadMap(background);
 
+    createMinimap(state, gd, res, res.MAP_GRASSLAND, 1);
+    createGrid(state, gd, MAP_ROWS, MAP_COLS);
     //load in checkpoints
     createCheckpointsGrassland(state, gd, res);
     
     //loadMap(foreground);
-    //assert(gd.playerIndex != -1);
 }
 
 void initCharSelect(const SDLState &state, GameData &gd, const Resources &res) { // 280 x 60

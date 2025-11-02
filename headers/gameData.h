@@ -7,52 +7,37 @@
 #include "initState.h"
 #include "player.h"
 #include "menu.h"
+#include "minimap.h"
 #include "createCheckpoints.h"
 #include "menuData.h"
+
 struct GameData {
     std::vector<Player> players_;
     int numPlayers; 
+
+    glm::vec2 mapSize; // gets x and y size of box used to create map;
 
     std::vector<BackgroundObject> bgTiles_;
     std::vector<Level> mapTiles_;
     std::vector<Laser> lasers_;
     std::vector<ItemBox> itemBoxes_;
-    std::vector<Item> items_;
     std::vector<Portal> portals_;
     std::vector<Sign> signs_;
     std::vector<Water> water_;
     std::vector<Lava> lava_;
+    
+    std::vector<std::vector<Object*>> grid_; // all level tiles as pointers
 
     std::vector<Checkpoint> checkpoints_;
 
     MenuData md;
 
-    // std::vector<charIconObject> charIcons_;
-    // std::vector<AnimatedObject> previews_;
-    // std::vector<AnimatedObject> map_previews_;
-    // std::vector<AnimatedObject> map_previews_text_;
-    // std::vector<AnimatedObject> arrows_;
-
+    Minimap minimap; // the minimap for the current map
     glm::vec2 ExitPortal, 
               EntrancePortal, 
               mouseCoords, 
               clickCoords;
     ItemStorage itemStorage_;
-
-    // Object settingsBorder;
-    // std::vector<Object> settingsDials_;
-    // std::vector<Object> gameplaySettingsBrackets1_;
-    // std::vector<Object> gameplaySettingsBrackets2_;
-    // std::vector<Object> gameplaySettingsNumLaps_;
-    // std::vector<Object> gameplaySettingsModeHighlights_;
-
-    // bool usernameEditing = false;
-    // std::string tempUsername = " ";
-    // std::string displayName;
-    // int lastCursorToggle = 0;
-    // bool showCursor = true;
-    // //font for drawing on screen
-    // TTF_Font* font;
 
     //Note that volume ratio is dial.pos.x / (290-84)
     Object * updatedDial;

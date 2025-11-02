@@ -60,6 +60,9 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     state.logW = 800;
     state.logH = 450;
 
+    state.xRatio = (float)state.logW / state.width; 
+    state.yRatio = (float)state.logH / state.height;
+
     if (!initialize(state)) {
         return 1;
     }
@@ -193,9 +196,9 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         if (gd.debugMode) {
         // debug info
             SDL_SetRenderDrawColor(state.renderer, 255, 255, 255, 255);
-             SDL_RenderDebugText(state.renderer, 5, 5,
-                             std::format("FPS: {}, State: {}, Grounded: {}, X: {}, Y: {}", 
-                             static_cast<int>(FPS), getStateFromEnum(gd.players_[0].state_->stateVal), gd.players_[0].grounded, gd.mapViewport.x, gd.mapViewport.y).c_str());
+            SDL_RenderDebugText(state.renderer, 5, 5,
+                            std::format("FPS: {}, State: {}, Grounded: {}, X: {}, Y: {}", 
+                            static_cast<int>(FPS), getStateFromEnum(gd.players_[0].state_->stateVal), gd.players_[0].grounded, gd.players_[0].pos.x, gd.players_[0].pos.y).c_str());
         }
 
         //swap buffers and present

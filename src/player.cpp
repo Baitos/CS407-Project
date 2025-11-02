@@ -7,9 +7,12 @@
 #include "../headers/globals.h"
 #include "../headers/helper.h"
 
+
 void Player::draw(const SDLState &state, GameData &gd, float width, float height) {
     (*this).hook.draw(state, gd, (*this), HOOK_SIZE, HOOK_SIZE); // draw hook under player
-    
+    for (auto &i : this->items_) { // draw active items
+        i->draw(state, gd, i->texture->w, i->texture->h);
+    }
     AnimatedObject::draw(state, gd, width, height); // do generic object draw for player
 }
 
@@ -40,6 +43,19 @@ void Player::update(const SDLState &state, GameData &gd, Resources &res, float d
     (*this).hook.update(state, gd, res, deltaTime); // update this player's hook and handle its collision
     (*this).hook.checkCollision(state, gd, res, (*this), deltaTime);
     
+    for (auto i = this->items_.begin(); i != this->items_.end(); ) { // update active items
+        Item* item = *i;
+        item->update(state, gd, res, (*this), deltaTime); 
+        item->checkCollision(state, gd, res, (*this), deltaTime);
+        if (!item->active) {
+            delete item;
+            i = this->items_.erase(i);
+        } else {
+            i++;
+        }
+        //printf("vector size: %d\n", this->items_.size());
+    }
+
     //printf("currentDirection: %d\n", (*this).currentDirection);
     (*this).vel += static_cast<float>((*this).currentDirection) * (*this).acc * deltaTime; // update player velocity based on acceleration and direction
     (*this).pos += updatePos((*this), deltaTime); // update pos
@@ -53,6 +69,10 @@ void Player::update(const SDLState &state, GameData &gd, Resources &res, float d
 
     // collision
     (*this).grounded = false;
-    
-    collisionCheckAndResponse(state,gd,res,(*this),deltaTime);
+    //collisionCheckAndResponse(state,gd,res,(*this),deltaTime);
+    (*this).checkCollision(state, gd, res, deltaTime);
+
+    // check if player has fallen off of map
+    handleOutOfMap(gd, res, (*this));
+
 }

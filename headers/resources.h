@@ -31,6 +31,7 @@ struct Resources {
     const int ANIM_ITEM_EMPTY = 0;
     const int ANIM_ITEM_CYCLE = 1;
     const int ANIM_ITEM_PICKED = 2;
+    const int ANIM_ITEM_PIE = 3;
     std::vector<Animation> itemAnims;
     std::vector<SDL_Texture *> itemTextures;
     const int PORTAL_IDLE = 0;
@@ -40,6 +41,10 @@ struct Resources {
     const int ERROR = 0;
     std::vector<Animation> errorAnims;
 
+    const int MAP = 0;
+    const int DOTS = 1;
+    std::vector<Animation> minimapAnims;
+    
     //anim for map select
     const int MAP_GRASSLAND = 0;
     const int MAP_SPACESHIP = 1;
@@ -75,10 +80,6 @@ struct Resources {
     SDL_Texture *texMapTextPreviews[5];
     std::vector<SDL_Texture *> textures;
     SDL_Texture *texCrosshair, 
-                // *texIdleS, *texRunS, *texJumpS, *texLaunchS, *texSlideS, *texShootS, *texDieS, *texShootJumpS, *texRollS,
-                // *texIdleG, *texRunG, *texJumpG, *texLaunchG, *texSlideG, *texShootG, *texDieG, *texShootJumpG, *texRollG,
-                // *texIdleJ, *texRunJ, *texJumpJ, *texLaunchJ, *texSlideJ, *texShootJ, *texDieJ, *texShootJumpJ, *texRollJ,
-                // *texJDeploy, *texGDeploy, *texSDeploy,
                 *texShotgunBlast,
                 *texGrapple, *texGrappleAngle,
                 *texBullet, *texBulletHit,
@@ -92,14 +93,16 @@ struct Resources {
                 *texCharSelectBackground, *texCursor, *texCharIcons, *texSword, *texShotgun, *texJetpack, 
                 *texLeftArrow, *texRightArrow,
                 *texItemBox, *texItemStorage, *texItemRandomizer, 
-                *texBombStorage, *texBoomboxStorage, *texBouncyBallStorage, *texFogStorage,
+                *texBombStorage, *texBoomboxStorage, *texBouncyBallStorage, *texFogStorage, 
                 *texIceStorage, *texMissileStorage, *texSugarStorage, *texPieStorage,
-                *texBomb, *texExplosion, *texBoombox, *texSoundwaves, *texSugar,
-                *texSugarEffectL, *texSugarEffectR,
-                *texSettingsBackground, *texBigBorder, *texSmallBorder, *texSlider,
+                *texBomb, *texExplosion, *texBoombox, *texSoundwaves, *texSugar, *texPie,
+                *texSugarEffect,
+                *texSettingsBackground, *texBigBorder, *texSmallBorder, *texSlider,       
                 *texTitle, *texTextCursor,
                 *texGameplaySettingsBackground, *texGameplaySettingsLeftBracket, *texGameplaySettingsRightBracket,
                 *texGameplaySettings1,*texGameplaySettings2,*texGameplaySettings3,*texGameplaySettings4,*texGameplaySettings5;
+    SDL_Texture *texMinimap[5];
+    SDL_Texture *texPlayerDots[3];  
     SDL_Texture *loadTexture(SDL_Renderer *renderer, const std::string &filepath);
     void load(SDLState &state);
     void unload();

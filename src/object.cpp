@@ -24,7 +24,7 @@ void Object::draw(const SDLState &state, GameData &gd, float width, float height
 }
 
 void Object::drawDebug(const SDLState &state, GameData &gd, float width, float height) {
-    if (gd.debugMode) {
+    if (gd.debugMode && this->debug) {
         SDL_FRect rectA {
             .x = this->pos.x + this->collider.x - gd.mapViewport.x, 
             .y = this->pos.y + this->collider.y - gd.mapViewport.y,
@@ -43,6 +43,23 @@ void Object::drawDebug(const SDLState &state, GameData &gd, float width, float h
         };
         SDL_SetRenderDrawColor(state.renderer, 0, 0, 255, 150);
         SDL_RenderFillRect(state.renderer, &sensor);
+
+        SDL_SetRenderDrawBlendMode(state.renderer, SDL_BLENDMODE_NONE);
+    }
+}
+
+void Object::drawDebugNearby(const SDLState &state, GameData &gd, float width, float height) {
+    if (gd.debugMode) {
+        SDL_FRect rectA {
+            .x = this->pos.x + this->collider.x - gd.mapViewport.x, 
+            .y = this->pos.y + this->collider.y - gd.mapViewport.y,
+            .w = this->collider.w, 
+            .h = this->collider.h
+        };
+        SDL_SetRenderDrawBlendMode(state.renderer, SDL_BLENDMODE_BLEND);
+
+        SDL_SetRenderDrawColor(state.renderer, 0, 255, 0, 150);
+        SDL_RenderFillRect(state.renderer, &rectA);
 
         SDL_SetRenderDrawBlendMode(state.renderer, SDL_BLENDMODE_NONE);
     }
@@ -88,64 +105,6 @@ void AnimatedObject::update(const SDLState &state, GameData &gd, Resources &res,
     if (this->curAnimation != -1) {
         this->animations[this->curAnimation].step(deltaTime);
     }
-}
-
-void BackgroundObject::draw(const SDLState &state, GameData &gd, float width, float height) { // same as Object.draw, just no debug option (maybe we can optimize this?)
-    if (!isOnscreen(state, gd, (*this))) {
-        return;
-    }
-    SDL_FRect dst {
-        .x = this->pos.x - gd.mapViewport.x,
-        .y = this->pos.y - gd.mapViewport.y,
-        .w = width,
-        .h = height
-    };
-    SDL_RenderTexture(state.renderer, this->texture, nullptr, &dst);
-}
-
-void Sign::draw(const SDLState &state, GameData &gd, float width, float height) { // same as Object.draw, just no debug option (maybe we can optimize this?)
-    if (!isOnscreen(state, gd, (*this))) {
-        return;
-    }
-    SDL_FRect dst {
-        .x = this->pos.x - gd.mapViewport.x,
-        .y = this->pos.y - gd.mapViewport.y,
-        .w = width,
-        .h = height
-    };
-    SDL_RenderTexture(state.renderer, this->texture, nullptr, &dst);
-}
-
-void Water::draw(const SDLState &state, GameData &gd, float width, float height) { // same as Object.draw, just no debug option (maybe we can optimize this?)
-    if (!isOnscreen(state, gd, (*this))) {
-        return;
-    }
-    SDL_FRect dst {
-        .x = this->pos.x - gd.mapViewport.x,
-        .y = this->pos.y - gd.mapViewport.y,
-        .w = width,
-        .h = height
-    };
-    SDL_RenderTexture(state.renderer, this->texture, nullptr, &dst);
-}
-
-void Lava::draw(const SDLState &state, GameData &gd, float width, float height) { // same as Object.draw, just no debug option (maybe we can optimize this?)
-    if (!isOnscreen(state, gd, (*this))) {
-        return;
-    }
-    SDL_FRect dst {
-        .x = this->pos.x - gd.mapViewport.x,
-        .y = this->pos.y - gd.mapViewport.y,
-        .w = width,
-        .h = height
-    };
-    SDL_FRect defaultCollider = {
-        .x = 0,
-        .y = 0,
-        .w = float(TILE_SIZE),
-        .h = float(TILE_SIZE)
-    };
-    SDL_RenderTexture(state.renderer, this->texture, &defaultCollider, &dst);
 }
 
 void Laser::update(const SDLState &state, GameData &gd, Resources &res, float deltaTime) { // update laser timer every frame
@@ -198,64 +157,6 @@ void Hook::update(const SDLState &state, GameData &gd, Resources &res, float del
     (*this).pos += updatePos((*this), deltaTime);
 }
 
-void Hook::checkCollision(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
-    SDL_FRect rectA{
-		.x = (*this).pos.x + (*this).collider.x,
-		.y = (*this).pos.y + (*this).collider.y,
-		.w = (*this).collider.w,
-		.h = (*this).collider.h
-	};
-    SDL_FRect rectB;
-    glm::vec2 resolution{ 0 };
-    for (Level &l : gd.mapTiles_){
-		rectB = {
-            .x = l.pos.x + l.collider.x,
-            .y = l.pos.y + l.collider.y,
-            .w = l.collider.w,
-            .h = l.collider.h
-	    };
-        if (intersectAABB(rectA, rectB, resolution))
-	    {
-            (*this).vel = glm::vec2(0);
-            if (!(*this).collided) {
-                PlayerState* grappleState = new GrappleState();
-                p.handleState(grappleState, gd, res);
-                (*this).collided = true;
-            }
-        }
-    }
-    for (Player &p2 : gd.players_) {
-        if (&p != &p2) { // do not check on self
-            rectB = {
-                .x = p2.pos.x + p2.collider.x,
-                .y = p2.pos.y + p2.collider.y,
-                .w = p2.collider.w,
-                .h = p2.collider.h
-            };
-            if (intersectAABB(rectA, rectB, resolution) && !(*this).collided) {
-                p.vel = 0.7f * (*this).vel;
-                p2.vel = -0.3f * (*this).vel;
-                removeHook(p);
-                removeHook(p2);
-                PlayerState* stunState = new StunnedState();
-                p2.handleState(stunState, gd, res); // stun player you hit and disable their hook
-            }
-            Hook h2 = p2.hook;
-            rectB = {
-                .x = h2.pos.x + h2.collider.x,
-                .y = h2.pos.y + h2.collider.y,
-                .w = h2.collider.w,
-                .h = h2.collider.h
-            };
-            if (intersectAABB(rectA, rectB, resolution) && !(*this).collided && h2.visible) { // Touching other hook
-                removeHook(p);
-                removeHook(p2);
-            }
-        } 
-    }
-    
-}
-
 void ItemBox::update(const SDLState &state, GameData &gd, Resources &res, float deltaTime) { // update item box timer every frame (when on cooldown)
     Timer &itemBoxTimer = this->itemBoxTimer;
     itemBoxTimer.step(deltaTime);
@@ -273,7 +174,7 @@ void ItemBox::generateItem(Player &player, GameData &gd, Resources &res) {
         .w = float(TILE_SIZE),
         .h = float(TILE_SIZE)
     };
-    Item newItem;
+    Item* newItem;
     std::vector<itemType> itemOptions;
     int selected;
     // Limit items for top 25% of players
@@ -296,18 +197,24 @@ void ItemBox::generateItem(Player &player, GameData &gd, Resources &res) {
     
     switch (itemOptions[selected]) {
         case itemType::BOMB:
-            newItem = Bomb(player.pos, defaultCollider, res.texBomb);
+            newItem = new Bomb(player.pos, defaultCollider, res.texBomb);
             break;
         case itemType::BOOMBOX:
-            newItem = Boombox(player.pos, defaultCollider, res.texBoombox);
+            newItem = new Boombox(player.pos, defaultCollider, res.texBoombox);
             break;
         case itemType::SUGAR:
-            newItem = Sugar(player.pos, defaultCollider, res.texSugar);
+            newItem = new Sugar(player.pos, defaultCollider, res.texSugar);
+            break;
+        case itemType::PIE:
+            newItem = new Pie(player.pos, defaultCollider, res.texPie);
             break;
         default:
             printf("Your item is in another castle\n");
-            newItem = Bomb(player.pos, defaultCollider, res.texBomb);
+            newItem = new Bomb(player.pos, defaultCollider, res.texBomb);
     }
-    player.nextItem = newItem;
+    if (player.heldItem != nullptr) {
+        delete player.heldItem;
+    }
+    player.heldItem = newItem;
     player.pickingItem = true;
 }

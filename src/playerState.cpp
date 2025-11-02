@@ -13,7 +13,7 @@ const float JUMP_FORCE = -450.f;
 
 std::string getStateFromEnum(PlayerStateValue ps) {
     switch (ps) {
-        case NONE: return "NONE";
+        case NOSTATE: return "NOSTATE";
         case IDLE: return "IDLE";
         case WALK: return "WALK";
         case RUN: return "RUN";
@@ -93,15 +93,6 @@ void sharedUpdate(const SDLState &state, Player &p, float deltaTime) { // basic 
 
     if (p.currentDirection) { // update direction based on currentDirection
         p.dir = p.currentDirection;
-    }
-
-    if(p.usingSugar) {
-        ((Sugar *) &p.item)->sugarTimer.step(deltaTime);
-        p.vel.x += .5f * p.currentDirection;
-        if(((Sugar *) &p.item)->sugarTimer.isTimeOut()){
-            //printf("Stopped sugar\n");
-            p.usingSugar = false;
-        }
     }
     if (!p.grounded) { 
         sharedGravity(p, deltaTime);
@@ -345,7 +336,15 @@ void FastfallState::exit(GameData &gd, Resources &res, Player &p) {
 // STUNNED
 
 PlayerState* StunnedState::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
-    sharedUpdate(state, p, deltaTime);
+    if (!this->hardStun) {
+        sharedUpdate(state, p, deltaTime);
+    } else { // if hardStunned, disable control
+        p.cooldownTimer.step(deltaTime);
+        p.currentDirection = 0;
+        if (!p.grounded) { 
+            sharedGravity(p, deltaTime);
+        }
+    }
     if (p.grounded) { // if moving change to running
         return new RollState();  
     }
@@ -364,6 +363,9 @@ void DeadState::enter(GameData &gd, Resources &res, Player &p) {
     p.texture = res.texDie[p.character];
     p.curAnimation = res.ANIM_PLAYER_DIE; 
     p.animations[p.curAnimation].reset();
+    p.respawnTimer.reset();
+    p.isDead = true;        
+    p.vel = glm::vec2(0);
 }
 
 PlayerState* DeadState::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
@@ -413,7 +415,6 @@ void ShotgunDeployState::draw(const SDLState &state, GameData &gd) {
 }
 
 PlayerState* ShotgunDeployState::handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key) {
-    if (auto retState = handleJumping(gd, res, p, key)) return retState;
     return nullptr;
 }
 
@@ -487,7 +488,7 @@ PlayerState* JetpackDeployState::handleInput(const SDLState &state, GameData &gd
 
 PlayerState* JetpackDeployState::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) { // TODO:
     sharedUpdate(state, p, deltaTime);
-    p.vel.y -= 3.f;
+    p.vel.y -= 600.f * deltaTime;
     int vertDir = 0;
     //calculate direction
      if (state.keys[SDL_SCANCODE_W]) {
@@ -496,26 +497,26 @@ PlayerState* JetpackDeployState::update(const SDLState &state, GameData &gd, Res
     if (state.keys[SDL_SCANCODE_S]) {
         vertDir += 1.f;
     }
-    if(p.currentDirection == 1 && vertDir == 0) {
-        p.vel.x += 5.f;
-    } else if (p.currentDirection == -1 && vertDir == 0) {
-        p.vel.x -= 5.f;
-    } else if (p.currentDirection == 0 && vertDir == 1) {
-        p.vel.y += 5.f;
-    } else if (p.currentDirection == 0 && vertDir == -1) {
-        p.vel.y -= 5.f;
-    } else if (p.currentDirection == 1 && vertDir == 1) {
-        p.vel.x += (5/sqrt(2));
-        p.vel.y += (5/sqrt(2));
-    } else if (p.currentDirection == 1 && vertDir == -1) {
-        p.vel.x += (5/sqrt(2));
-        p.vel.y -= (5/sqrt(2));
-    } else if (p.currentDirection == -1 && vertDir == 1) {
-        p.vel.x -= (5/sqrt(2));
-        p.vel.y += (5/sqrt(2));
-    } else if (p.currentDirection == -1 && vertDir == -1) {
-        p.vel.x -= (5/sqrt(2));
-        p.vel.y -= (5/sqrt(2));
+    if(p.currentDirection == 1 && vertDir == 0) { // right
+        p.vel.x += 1000.f * deltaTime;
+    } else if (p.currentDirection == -1 && vertDir == 0) { // left
+        p.vel.x -= 1000.f * deltaTime;
+    } else if (p.currentDirection == 0 && vertDir == 1) { // down
+        p.vel.y += 1000.f * deltaTime;
+    } else if (p.currentDirection == 0 && vertDir == -1) { // up
+        p.vel.y -= 1000.f * deltaTime;
+    } else if (p.currentDirection == 1 && vertDir == 1) { // right-down
+        p.vel.x += (1000/sqrt(2)) * deltaTime;
+        p.vel.y += (1000/sqrt(2)) * deltaTime;
+    } else if (p.currentDirection == 1 && vertDir == -1) { // right-up
+        p.vel.x += (1000/sqrt(2)) * deltaTime;
+        p.vel.y -= (1000/sqrt(2)) * deltaTime;
+    } else if (p.currentDirection == -1 && vertDir == 1) { // left-down
+        p.vel.x -= (1000/sqrt(2)) * deltaTime;
+        p.vel.y += (1000/sqrt(2)) * deltaTime;
+    } else if (p.currentDirection == -1 && vertDir == -1) { // left-up
+        p.vel.x -= (1000/sqrt(2)) * deltaTime;
+        p.vel.y -= (1000/sqrt(2)) * deltaTime;
     }
 
     //Check timer for state change
@@ -523,7 +524,10 @@ PlayerState* JetpackDeployState::update(const SDLState &state, GameData &gd, Res
         p.jetpackTimer.step(deltaTime);
     } else {
         p.cooldownTimer.reset();
-        if(p.vel.x != 0) {
+        if (!p.grounded) {
+            return new JumpState();
+        }
+        else if (p.vel.x != 0) {
             return new WalkState();
         } else {
             return new IdleState();
@@ -537,6 +541,10 @@ void JetpackDeployState::enter(GameData &gd, Resources &res, Player &p) {
     p.curAnimation = res.ANIM_PLAYER_JETPACK_DEPLOY;
     p.animations[p.curAnimation].reset();
     p.jetpackTimer.reset();
+}
+
+void JetpackDeployState::exit(GameData &gd, Resources &res, Player &p) {
+    p.cooldownTimer.step(5.0f); // temp, testing
 }
 
 // GRAPPLE
