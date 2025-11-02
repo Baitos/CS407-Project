@@ -7,11 +7,13 @@
 #include "../headers/resources.h"
 #include "../headers/state.h"
 #include "../headers/playerState.h"
+#include "../headers/enet.h"
 
 
 using namespace std;
 
 extern GameState * currState;
+extern ENetPeer* serverPeer;
 
 //
 //UPDATE FUNCTIONS
@@ -233,54 +235,78 @@ void handleCharSelectKeyInput(const SDLState &state, GameData &gd, Resources &re
 //Handles Clicking for Character Select Screen
 void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
     if ((gd.mouseCoords.x >= 658 && gd.mouseCoords.x <= 658+34) && (gd.mouseCoords.y >= 156 && gd.mouseCoords.y <= 156+36)){
+        //Send message saying swapped to sword
+        std::string pendingMessage = "CLASS " + std::to_string(gd.playerIndex) + " " + std::to_string(SWORD);
+        ENetPacket * packet = enet_packet_create(pendingMessage.c_str(), pendingMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
+        enet_peer_send(serverPeer, 0, packet);
+        
         //Set Icons and Player to Sword
         gd.previews_[0].texture = res.texSword;
         gd.previews_[0].pos = glm::vec2(530,200);
         gd.previews_[0].draw(state, gd, 96,96);
         gd.bgTiles_[0].draw(state, gd, 800,450);
         ((CharSelectState*) currState)->character = SWORD;
-        for (charIconObject &ci : gd.charIcons_){
-            ci.spriteFrame = ci.spriteFrame % 4;
-            if (ci.spriteFrame == 3){
-                ci.spriteFrame +=4;
-                gd.charIcons_[0].spriteFrame = ci.spriteFrame;
+        for (int i = 8; i<11; i++){
+            gd.charIcons_[i].spriteFrame = gd.charIcons_[i].spriteFrame % 4;
+            if (gd.charIcons_[i].spriteFrame == 3){
+                gd.charIcons_[i].spriteFrame +=4;
+                gd.charIcons_[gd.playerIndex].spriteFrame = gd.charIcons_[i].spriteFrame;
             }
         }
     } else if ((gd.mouseCoords.x >= 658 && gd.mouseCoords.x <= 658+34) && (gd.mouseCoords.y >= 220 && gd.mouseCoords.y <= 220+36)){
+        //Send message saying swapped to jetpack
+        std::string pendingMessage = "CLASS " + std::to_string(gd.playerIndex) + " " + std::to_string(JETPACK);
+        ENetPacket * packet = enet_packet_create(pendingMessage.c_str(), pendingMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
+        enet_peer_send(serverPeer, 0, packet);
+        
         //Set Icons and Player to Jetpack
         gd.previews_[0].texture = res.texJetpack;
         gd.previews_[0].pos = glm::vec2(510,200);
         gd.previews_[0].draw(state, gd, 96,96);
         gd.bgTiles_[0].draw(state, gd, 800,450);
         ((CharSelectState*) currState)->character = JETPACK;
-        for (charIconObject &ci : gd.charIcons_){
-            ci.spriteFrame = ci.spriteFrame % 4;
-            if (ci.spriteFrame == 2){
-                ci.spriteFrame +=4;
-                gd.charIcons_[0].spriteFrame = ci.spriteFrame;
+        for (int i = 8; i<11; i++){
+            gd.charIcons_[i].spriteFrame = gd.charIcons_[i].spriteFrame % 4;
+            if (gd.charIcons_[i].spriteFrame == 2){
+                gd.charIcons_[i].spriteFrame +=4;
+                gd.charIcons_[gd.playerIndex].spriteFrame = gd.charIcons_[i].spriteFrame;
             }
         }
+        
     } else if ((gd.mouseCoords.x >= 658 && gd.mouseCoords.x <= 658+34) && (gd.mouseCoords.y >= 284 && gd.mouseCoords.y <= 284+36)){
+        //Send message saying swapped to sword
+        std::string pendingMessage = "CLASS " + std::to_string(gd.playerIndex) + " " + std::to_string(SHOTGUN);
+        ENetPacket * packet = enet_packet_create(pendingMessage.c_str(), pendingMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
+        enet_peer_send(serverPeer, 0, packet);
+
         //Set Icons and Player to Shotgun
         gd.previews_[0].texture = res.texShotgun;
         gd.previews_[0].pos = glm::vec2(520,200);
         gd.previews_[0].draw(state, gd, 96,96);
         gd.bgTiles_[0].draw(state, gd, 800,450);
         ((CharSelectState*) currState)->character = SHOTGUN;
-        for (charIconObject &ci : gd.charIcons_){
-            ci.spriteFrame = ci.spriteFrame % 4;
-            if (ci.spriteFrame == 1){
-                ci.spriteFrame +=4;
-                gd.charIcons_[0].spriteFrame = ci.spriteFrame;
+        for (int i = 8; i<11; i++){
+            gd.charIcons_[i].spriteFrame = gd.charIcons_[i].spriteFrame % 4;
+            if (gd.charIcons_[i].spriteFrame == 1){
+                gd.charIcons_[i].spriteFrame +=4;
+                gd.charIcons_[gd.playerIndex].spriteFrame = gd.charIcons_[i].spriteFrame;
             }
         }
     } else if ((gd.mouseCoords.x >= 583 && gd.mouseCoords.x <= 766) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)) {
+        //Ready up message to server
+        
+        //Change to value Danny made
+        int selectedStage = SPACESHIP;
+        std::string pendingMessage = "READY " + std::to_string(gd.playerIndex) + " " + std::to_string(selectedStage);
+        ENetPacket * packet = enet_packet_create(pendingMessage.c_str(), pendingMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
+        enet_peer_send(serverPeer, 0, packet);
+        
         //Enter Stage
         //TO DO - ONLY DO WHEN PLAYERS AGREE TO READY UP
-        characterType character = ((CharSelectState*) currState)->character;
-        currState = changeState(currState, gd);
-        ((LevelState*) currState)->character = character;
-        currState->init(state, gd, res);
+        // characterType character = ((CharSelectState*) currState)->character;
+        // currState = changeState(currState, gd);
+        // ((LevelState*) currState)->character = character;
+        // currState->init(state, gd, res);
     } else if ((gd.mouseCoords.x >= 35 && gd.mouseCoords.x <= 218) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)) {
         currState->nextStateVal = TITLE;
         currState = changeState(currState, gd);

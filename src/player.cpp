@@ -28,9 +28,11 @@ void Player::handleInput(const SDLState &state, GameData &gd, Resources &res, SD
 }
 
 void Player::update(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
+    
     PlayerState* pState = state_->update(state, gd, res, (*this), deltaTime);
+   
     (*this).handleState(pState, gd, res);
-
+    
     if ((*this).pickingItem) { // update item roulette
         gd.itemStorage_.update(state, gd, res, (*this), deltaTime);
     }
@@ -47,8 +49,10 @@ void Player::update(const SDLState &state, GameData &gd, Resources &res, float d
             (*this).vel.x -= 1.5 * (*this).acc.x * deltaTime * (*this).currentDirection;
         }
     }
+    
 
     // collision
     (*this).grounded = false;
+    
     collisionCheckAndResponse(state,gd,res,(*this),deltaTime);
 }

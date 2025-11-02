@@ -7,7 +7,9 @@
 #include <string>
 #include <array>
 #include <iostream>
-//#include <format>
+#include <functional>
+
+#include <format>
 
 #include "../headers/initState.h"
 #include "../headers/gameData.h"
@@ -25,16 +27,8 @@
 #include "../headers/menu.h"
 
 #include "../headers/enet.h"
+#include "../headers/clientHelpers.h"
 
-//Add as needed
-struct PlayerUpdate{
-    int playerID;
-    float x;
-    float y;
-    float velX;
-    float velY;
-    PlayerState state;
-};
 
 //Globals for Game
 GameState * currState;
@@ -45,6 +39,7 @@ uint64_t lastNetUpdate = 0;
 const float netTick = 1.0f / 20.0f; //20 Updates per second
 ENetPeer* serverPeer = nullptr;
 int pendingLobby = -1;
+bool inLobby = false;
 
 int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; include argv/argc
     
@@ -73,12 +68,12 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     res.load(state);
 
     //Initial Game State
-    currState = new LevelState();
-    currState->nextStateVal = SPACESHIP;
-    currState->init = createTiles;
-    currState->update = levelUpdate;
-    currState->render = drawLevel;
-    currState->input = levelInputs;
+    currState = new CharSelectState();
+    currState->currStateVal = CHAR_SELECT;
+    currState->init = initCharSelect;
+    currState->update = charSelectUpdate;
+    currState->render = drawCharSelect;
+    currState->input = charSelectInputs;
 
     // setup game data
     GameData gd(state);
@@ -93,7 +88,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     //Create your ENET Client
     //ONLY NEEDS TO BE DONE WHEN JOINING/CREATING
     ENetAddress clientAddress;
-    enet_address_set_host(&clientAddress, "100.74.129.69");
+    enet_address_set_host(&clientAddress, "100.91.68.8");
     clientAddress.port = 0; // OS chooses port
     ENetHost* client = enet_host_create(&clientAddress, 1, 2, 0, 0);
     if (!client) {
@@ -104,7 +99,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     //Set your host values, including IP address and port
     ENetAddress address;
     //IP Address changes per person
-    enet_address_set_host(&address, "100.76.236.38");
+    enet_address_set_host(&address, "100.89.84.24");
     address.port = 1233;
 
     //Attempt connection to the server
@@ -116,18 +111,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     
     ENetEvent event;
 
-    while (enet_host_service(client, &event, 100) > 0) {
-            std::string message;
-            switch (event.type) {
-                case ENET_EVENT_TYPE_CONNECT: {   //Do the things you do when you connect
-                    printf("CONNECTED\n");
-                    break;
-                }
-            }
-        }
-
     // start game loop
-    
     while (running) {
         uint64_t nowTime = SDL_GetTicks(); // take time from previous frame to calculate delta
         frames++;
@@ -137,54 +121,65 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
             frames = 0;
         }
         float deltaTime = (nowTime - prevTime) / 1000.0f; // convert to seconds from ms
-
+        
         while (enet_host_service(client, &event, 0) > 0) {
-            std::string message;
-            switch (event.type) {
-                case ENET_EVENT_TYPE_RECEIVE: {   //Add conditionals to do what server says
-                    //Draw appropriate info of packets given
-                    std::string message((char *) event.packet->data, event.packet->dataLength);
-                    enet_packet_destroy(event.packet);
-                    //gd.players_[]
-                    break;
+            //std::string message;
+            printf("Handling message\n");
+            if(!inLobby){                             //Message handling for Matchmaker Server Conection
+                switch(event.type){
+                    case ENET_EVENT_TYPE_RECEIVE: {
+                        std::string message((char *) event.packet->data, event.packet->dataLength);
+                        enet_packet_destroy(event.packet);
+                        if(message.find("LOBBY_PORT ") != std::string::npos){
+                            pendingLobby = std::stoi(message.substr(11,5));
+                            
+                            if (pendingLobby != -1){
+                                enet_peer_disconnect(serverPeer, 0);
+                            }
+                        } 
+                        break;
+                    }
+                    case ENET_EVENT_TYPE_DISCONNECT: {
+                        printf("Changing to Lobby\n");
+                        if(pendingLobby != -1){
+                            address.port = pendingLobby;
+                            serverPeer = enet_host_connect(client, &address,2,0);
+                            pendingLobby = -1;
+                            inLobby = true;
+                        }
+                        break;
+                    }
+                
                 }
-                case ENET_EVENT_TYPE_DISCONNECT: {  //Do the things to do when disconnecting
-                  
-                    break;
-                }
+            } else {                                            //Message handling for lobby
+                if(currState->currStateVal == CHAR_SELECT){
+                    charSelectMessageHandler(&event, &gd, res, state);
+                } else if (currState->currStateVal == SPACESHIP){
+                    levelMessageHandler(&event, &gd, res, state);
+                } 
+                
             }
         }
 
         //Calls functions related to the current GameState
+        printf("Input\n");
         currState->input(state, gd, res, deltaTime);
+        printf("Update\n");
         currState->update(state, gd, res, deltaTime);
+        printf("Draw\n");
         currState->render(state, gd, res, deltaTime);
 
         if (gd.debugMode) {
         // debug info
             SDL_SetRenderDrawColor(state.renderer, 255, 255, 255, 255);
-        //     SDL_RenderDebugText(state.renderer, 5, 5,
-        //                     std::format("FPS: {}, State: {}, Grounded: {}, X: {}, Y: {}", 
-        //                     static_cast<int>(FPS), getStateFromEnum(gd.players_[0].state_->stateVal), gd.players_[0].grounded, gd.mapViewport.x, gd.mapViewport.y).c_str());
+             SDL_RenderDebugText(state.renderer, 5, 5,
+                             std::format("FPS: {}, State: {}, Grounded: {}, X: {}, Y: {}", 
+                             static_cast<int>(FPS), getStateFromEnum(gd.players_[0].state_->stateVal), gd.players_[0].grounded, gd.mapViewport.x, gd.mapViewport.y).c_str());
         }
+
         //swap buffers and present
         SDL_RenderPresent(state.renderer);
         prevTime = nowTime;
-
-        if ((nowTime - lastNetUpdate) / 1000.0f >= netTick) {
-            lastNetUpdate = nowTime;
-            PlayerUpdate playerInfo = {gd.playerIndex, gd.players_[gd.playerIndex].pos.x, gd.players_[gd.playerIndex].pos.y, gd.players_[gd.playerIndex].vel.x, gd.players_[gd.playerIndex].vel.y};
-
-            //SEND PACKET HERE
-            //std::string updateMsg = std::format(playerInfo);
-
-            ENetPacket* packet = enet_packet_create(&playerInfo,
-                                                    sizeof(playerInfo),
-                                                    ENET_PACKET_FLAG_UNSEQUENCED);
-
-            enet_peer_send(serverPeer, 0, packet);
-            enet_host_flush(client); // make sure packet is sent
-        }
         
     }
 
