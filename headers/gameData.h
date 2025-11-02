@@ -7,7 +7,8 @@
 #include "initState.h"
 #include "player.h"
 #include "menu.h"
-#include "controls.h"#include "createCheckpoints.h"
+#include "controls.h"
+#include "createCheckpoints.h"
 #include "menuData.h"
 struct GameData {
     std::vector<Player> players_;
@@ -41,7 +42,7 @@ struct GameData {
     ItemStorage itemStorage_;
     Controls *controls;
     // Object settingsBorder;
-    // std::vector<Object> settingsDials_;
+    std::vector<Object> settingsDials_;
     // std::vector<Object> gameplaySettingsBrackets1_;
     // std::vector<Object> gameplaySettingsBrackets2_;
     // std::vector<Object> gameplaySettingsNumLaps_;

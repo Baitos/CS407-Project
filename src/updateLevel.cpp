@@ -269,8 +269,3 @@ void placement(const SDLState &state, GameData &gd, Resources &res, float deltaT
     //calculate the placement of each player based on their checkpoints and position
     
 }
-
-void placement(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
-    //calculate the placement of each player based on their checkpoints and position
-    
-}
