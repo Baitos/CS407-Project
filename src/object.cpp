@@ -101,7 +101,7 @@ void Laser::update(const SDLState &state, GameData &gd, Resources &res, float de
 }
 
 void Hook::draw(const SDLState &state, GameData &gd, Player &p, float width, float height) {
-    if (!(*this).visible || !isOnscreen(state, gd, (*this))) {
+    if (!(*this).visible) {
         return;
     }
     SDL_SetRenderDrawColor(state.renderer, 30, 30, 30, 255); // draw line to hook
