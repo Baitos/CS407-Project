@@ -394,9 +394,9 @@ void SwordDeployState::enter(GameData &gd, Resources &res, Player &p) {
 // SHOTGUN DEPLOY
 void ShotgunDeployState::draw(const SDLState &state, GameData &gd) {
     //draw blast if needed for shotgun
-    if((*this).blast != nullptr) {
-        (*this).blast->draw(state, gd, 80, 48);
-    }  
+    // if((*this).blast != nullptr) {
+    //     (*this).blast->draw(state, gd, 80, 48);
+    // }  
 }
 
 PlayerState* ShotgunDeployState::handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key) {
@@ -428,9 +428,9 @@ PlayerState* ShotgunDeployState::update(const SDLState &state, GameData &gd, Res
     }
 
     //draw blast if needed for shotgun, could be put into its own draw function absolutely
-    if((*this).blast != nullptr) {
-        (*this).blast->draw(state, gd, 80, 48);
-    }
+    // if((*this).blast != nullptr) {
+    //     (*this).blast->draw(state, gd, 80, 48);
+    // }
 
     return nullptr;
 }
@@ -537,8 +537,10 @@ PlayerState* GrappleState::update(const SDLState &state, GameData &gd, Resources
     glm::vec2 pOffset = findCenterOfSprite(p); 
     glm::vec2 hOffset = findCenterOfSprite(p.hook);
     // this will go in helper function later
-    float xDist = (p.hook.pos.x - gd.mapViewport.x + hOffset.x) - (p.pos.x - gd.mapViewport.x + pOffset.x); // A
-    float yDist = (p.hook.pos.y - gd.mapViewport.y + hOffset.y) - (p.pos.y - gd.mapViewport.y + pOffset.y); // O
+    //float xDist = (p.hook.pos.x - gd.mapViewport.x + hOffset.x) - (p.pos.x - gd.mapViewport.x + pOffset.x); // A
+    //float yDist = (p.hook.pos.y - gd.mapViewport.y + hOffset.y) - (p.pos.y - gd.mapViewport.y + pOffset.y); // O
+    float xDist = 0;
+    float yDist = 0;
     float dist = std::sqrt(xDist * xDist + yDist * yDist); // distance formula, H
     float aH = xDist / dist; // cos
     float oH = yDist / dist; // sin
