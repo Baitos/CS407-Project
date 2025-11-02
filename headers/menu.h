@@ -6,22 +6,14 @@
 #include "globals.h"
 #include "object.h"
 
-class charIconObject : public Object { // obj with anims
+class charIconObject : public AnimatedObject { // obj with anims
     public:
-        int spriteFrame;
-        std::vector<Animation> animations;
-        int curAnimation;    
-        float dir;
-        charIconObject() : Object() { // default
-            spriteFrame = 1;
-            curAnimation = -1;
-            dir = 1;
+        charIconObject() : AnimatedObject() { // default
+
         }
         charIconObject(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : // generic obj constructor
-        Object(pos_, colliderRect, tex) {
-            spriteFrame = 1;
-            curAnimation = -1;
-            dir = 1;
+        AnimatedObject(pos_, colliderRect, tex) {
+
         }
 
         void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime, int newState);

@@ -37,6 +37,11 @@ void createMinimap(const SDLState &state, GameData &gd, const Resources &res, in
 void createTilesSpaceship(const SDLState &state, GameData &gd, const Resources &res) { // 280 x 60
     const int MAP_ROWS = 60;
     const int MAP_COLS = 280;
+    gd.mapTiles_.resize(MAP_ROWS);
+    for (auto& row : gd.mapTiles_) {
+        row.resize(MAP_COLS, nullptr); // MAP_ROWS x MAP_COLS array 
+    }
+
     short map[MAP_ROWS][MAP_COLS] = {
         0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -202,32 +207,32 @@ void createTilesSpaceship(const SDLState &state, GameData &gd, const Resources &
                 switch (layer[r][c]) {
                     case 1: //Base Ground
                     {
-                        Level l;
+                        Level* l;
                         //GameObject o; //= createObject(r, c, res.texStone, ObjectType::level);
                         if((layer[r][c-1] == 1 || layer[r][c-1] == 8) && (layer[r][c+1] == 1 || layer[r][c+1] == 8)){ //Floor
-                            l = Level(pos, collider, res.texFloor);
+                            l = new Level(pos, collider, res.texFloor);
                         } else if((layer[r-1][c] == 1 || layer[r-1][c] == 8) && (layer[r+1][c] == 1 || layer[r+1][c] == 8)){ //Left Wall
-                            l = Level(pos, collider, res.texLWall);
+                            l = new Level(pos, collider, res.texLWall);
                         } else if((layer[r+1][c] == 1 || layer[r+1][c] == 8) && (layer[r][c+1] == 1 || layer[r][c+1] == 8)){ // Top Left Corner
-                            l = Level(pos, collider, res.texTLCorner);
+                            l = new Level(pos, collider, res.texTLCorner);
                         } else if((layer[r-1][c] == 1 || layer[r-1][c] == 8) && (layer[r][c+1] == 1 || layer[r][c+1] == 8)){ //Bottom Left Corner
-                            l = Level(pos, collider, res.texBLCorner);
+                            l = new Level(pos, collider, res.texBLCorner);
                         } else if((layer[r][c-1] == 1 || layer[r][c-1] == 8) && (layer[r+1][c] == 1 || layer[r+1][c] == 8)){ //Top Right Corner
-                            l = Level(pos, collider, res.texTRCorner);;
+                            l = new Level(pos, collider, res.texTRCorner);;
                         } else if((layer[r-1][c] == 1 || layer[r-1][c] == 8) && (layer[r][c-1] == 1 || layer[r][c-1] == 8)){ //Bottom Right Corner
-                            l = Level(pos, collider, res.texBRCorner);
+                            l = new Level(pos, collider, res.texBRCorner);
                         } else {
-                            l = Level(pos, collider, res.texStone);
+                            l = new Level(pos, collider, res.texStone);
                         }
                         //gd.layers[LAYER_IDX_LEVEL].push_back(o);
-                        gd.mapTiles_.push_back(l);
+                        gd.mapTiles_[r][c] = l;
                         break; 
                     }
                     case 2: //Platform
                     {
-                        Level l(pos, collider, res.texPlatform);
+                        Level* l = new Level(pos, collider, res.texPlatform);
                         //gd.layers[LAYER_IDX_LEVEL].push_back(o);
-                        gd.mapTiles_.push_back(l);
+                        gd.mapTiles_[r][c] = l;
                         break; 
                     }
                     case 3: //Laser
@@ -238,30 +243,30 @@ void createTilesSpaceship(const SDLState &state, GameData &gd, const Resources &
                             .w = (float)TILE_SIZE,
                             .h = 4
                         };
-                        Laser la(pos, laserCollider, res.texLaser);
-                        gd.lasers_.push_back(la);
+                        Laser* la = new Laser(pos, laserCollider, res.texLaser);
+                        gd.mapTiles_[r][c] = la;
                         break; 
                     }
                     case 4: //Entrance Portal
                     {
-                        Portal p(pos, collider, res.texRPortal);
-                        p.animations = res.portalAnims; // could get added to constructor
-                        p.curAnimation = res.PORTAL_IDLE; // could get added to constructor
-                        p.collider.h = 64;
-                        p.isEntrance = true;
+                        Portal* p = new Portal(pos, collider, res.texRPortal);
+                        p->animations = res.portalAnims; // could get added to constructor
+                        p->curAnimation = res.PORTAL_IDLE; // could get added to constructor
+                        p->collider.h = 2 * TILE_SIZE;
+                        p->isEntrance = true;
                         gd.EntrancePortal = pos;
-                        gd.portals_.push_back(p);
+                        gd.mapTiles_[r][c] = p;
                         break;
                     }
                     case 5: //Exit Portal
                     {
-                        Portal p(pos, collider, res.texRPortal);
-                        p.animations = res.portalAnims; // could get added to constructor
-                        p.curAnimation = res.PORTAL_IDLE; // could get added to constructor
-                        p.dir = -1;
-                        p.collider.h = 64;
+                        Portal* p = new Portal(pos, collider, res.texRPortal);
+                        p->animations = res.portalAnims; // could get added to constructor
+                        p->curAnimation = res.PORTAL_IDLE; // could get added to constructor
+                        p->dir = -1;
+                        p->collider.h = 2 * TILE_SIZE;
                         gd.ExitPortal = pos;
-                        gd.portals_.push_back(p);
+                        gd.mapTiles_[r][c] = p;
                         break;
                     }
                     case 6: //Player
@@ -312,8 +317,8 @@ void createTilesSpaceship(const SDLState &state, GameData &gd, const Resources &
                     }
                     case 7: //Background
                     {
-                        BackgroundObject b(pos, collider, res.texBg5);
-                        gd.bgTiles_.push_back(b);
+                        BackgroundObject* b = new BackgroundObject(pos, collider, res.texBg5);
+                        gd.mapTiles_[r][c] = b;
                         break;
                     }
                     case 8: //Alternative Base Grond (Inside Corners, Ceiling, Right Wall)
@@ -328,86 +333,73 @@ void createTilesSpaceship(const SDLState &state, GameData &gd, const Resources &
                         break; 
 
                         */
-                        Level l; //= createObject(r, c, res.texStone, ObjectType::level);
+                        Level* l; //= createObject(r, c, res.texStone, ObjectType::level);
                         if((layer[r][c-1] == 1 || layer[r][c-1] == 8) && (layer[r][c+1] == 1 || layer[r][c+1] == 8)){ //Ceiling
-                            l = Level(pos, collider, res.texCeiling);
+                            l = new Level(pos, collider, res.texCeiling);
                         } else if((layer[r-1][c] == 1 || layer[r-1][c] == 8) && (layer[r+1][c] == 1 || layer[r+1][c] == 8)){ //Right Wall
-                            l = Level(pos, collider, res.texRWall);
+                            l = new Level(pos, collider, res.texRWall);
                         } else if((layer[r+1][c] == 1 || layer[r+1][c] == 8) && (layer[r][c+1] == 1 || layer[r][c+1] == 8)){ // Inner Top Left Corner
-                            l = Level(pos, collider, res.texITLCorner);
+                            l = new Level(pos, collider, res.texITLCorner);
                         } else if((layer[r-1][c] == 1 || layer[r-1][c] == 8) && (layer[r][c+1] == 1 || layer[r][c+1] == 8)){ //Inner Bottom Left Corner
-                            l = Level(pos, collider, res.texIBLCorner);
+                            l = new Level(pos, collider, res.texIBLCorner);
                         } else if((layer[r][c-1] == 1 || layer[r][c-1] == 8) && (layer[r+1][c] == 1 || layer[r+1][c] == 8)){ //Inner Top Right Corner
-                            l = Level(pos, collider, res.texITRCorner);;
+                            l = new Level(pos, collider, res.texITRCorner);;
                         } else if((layer[r-1][c] == 1 || layer[r-1][c] == 8) && (layer[r][c-1] == 1 || layer[r][c-1] == 8)){ //Inner Bottom Right Corner
-                            l = Level(pos, collider, res.texIBRCorner);
+                            l = new Level(pos, collider, res.texIBRCorner);
                         } else {
-                            l = Level(pos, collider, res.texStone);
+                            l = new Level(pos, collider, res.texStone);
                         }
                         //gd.layers[LAYER_IDX_LEVEL].push_back(o);
-                        gd.mapTiles_.push_back(l);
+                        gd.mapTiles_[r][c] = l;
                         break; 
                     }
                     case 10:
                     {
-                        BackgroundObject b(pos, collider, res.texPanelOne);
-                        gd.bgTiles_.push_back(b);
+                        BackgroundObject* b = new BackgroundObject(pos, collider, res.texPanelOne);
+                        gd.mapTiles_[r][c] = b;
                         break;
                     }
                     case 12:
                     {
-                        BackgroundObject b(pos, collider, res.texBackWall);
-                        gd.bgTiles_.push_back(b);
+                        BackgroundObject* b = new BackgroundObject(pos, collider, res.texBackWall);
+                        gd.mapTiles_[r][c] = b;
                         break;
                     }
                     case 14:
                     {
-                        BackgroundObject b(pos, collider, res.texPanelTwo);
-                        gd.bgTiles_.push_back(b);
+                        BackgroundObject* b = new BackgroundObject(pos, collider, res.texPanelTwo);
+                        gd.mapTiles_[r][c] = b;
                         break;
                     }
                     case 15:
                     {
-                        BackgroundObject b(pos, collider, res.texPanelThree);
-                        gd.bgTiles_.push_back(b);
+                        BackgroundObject* b = new BackgroundObject(pos, collider, res.texPanelThree);
+                        gd.mapTiles_[r][c] = b;
                         break;
                     }
                     case 16:
                     {
-                        BackgroundObject b(pos, collider, res.texFan);
-                        gd.bgTiles_.push_back(b);
+                        BackgroundObject* b = new BackgroundObject(pos, collider, res.texFan);
+                        gd.mapTiles_[r][c] = b;
                         break;
                     }
                     case 17:
                     {
-                        BackgroundObject b(pos, collider, res.texVentOne);
-                        gd.bgTiles_.push_back(b);
+                        BackgroundObject* b = new BackgroundObject(pos, collider, res.texVentOne);
+                        gd.mapTiles_[r][c] = b;
                         break;
                     }
                     case 18:
                     {
-                        BackgroundObject b(pos, collider, res.texVentTwo);
-                        gd.bgTiles_.push_back(b);
+                        BackgroundObject* b = new BackgroundObject(pos, collider, res.texVentTwo);
+                        gd.mapTiles_[r][c] = b;
                         break;
                     }
                     case 19: // Item Box
                     {
-                        ItemBox box(pos, collider, res.texItemBox);
-                        gd.itemBoxes_.push_back(box);
+                        ItemBox* box = new ItemBox(pos, collider, res.texItemBox);
+                        gd.mapTiles_[r][c] = box;
                         break; 
-                    }
-                    case 20:{
-
-                        /*PlayerState * newState = new PlayerState();
-                        newState->currStateVal = IDLE;
-                        
-
-                        Player * temp =  new Player(pos, collider, res.texIdleS, res.playerAnims, res.ANIM_PLAYER_IDLE, 250);
-                        gd.player2 = *temp;
-                        gd.player2.state_ = newState;
-                        gd.player2.state_->update = emptyUpdate;
-                        gd.player2.state_->handleInput = dummyInput;
-                        gd.player2.state_->enter = dummyEnter;*/
                     }
                 }
             }
@@ -425,6 +417,10 @@ void createTilesSpaceship(const SDLState &state, GameData &gd, const Resources &
 void createTilesGrassland(const SDLState &state, GameData &gd, const Resources &res) { // 600 x 80
     const int MAP_ROWS = 100;
     const int MAP_COLS = 520;
+    gd.mapTiles_.resize(MAP_ROWS);
+    for (auto& row : gd.mapTiles_) {
+        row.resize(MAP_COLS, nullptr); // MAP_ROWS x MAP_COLS array 
+    }
     short map[MAP_ROWS][MAP_COLS] = {
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -670,14 +666,14 @@ void createTilesGrassland(const SDLState &state, GameData &gd, const Resources &
                 switch (layer[r][c]) {
                     case 0: //Cloud
                     {   
-                        Level l(pos, collider, res.texCloud);
-                        gd.mapTiles_.push_back(l);
+                        Level* l = new Level(pos, collider, res.texCloud);
+                        gd.mapTiles_[r][c] = l;
                         break; 
                     }
                     case 1: //wood
                     {
-                        Level l(pos, collider, res.texWood);
-                        gd.mapTiles_.push_back(l);
+                        Level* l = new Level(pos, collider, res.texWood);
+                        gd.mapTiles_[r][c] = l;
                         break; 
                     }
                     case 2: //nothing
@@ -686,25 +682,25 @@ void createTilesGrassland(const SDLState &state, GameData &gd, const Resources &
                     }
                     case 3: //leaves
                     {
-                        Level l(pos, collider, res.texLeaves);
-                        gd.mapTiles_.push_back(l);
+                        Level* l = new Level(pos, collider, res.texLeaves);
+                        gd.mapTiles_[r][c] = l;
                         break; 
                     }
                     case 4: //grass/dirt
                     {
-                        Level l;
-                        if(layer[r-1][c] != 4 && layer[r-1][c] != 7){ //not dirt water or tree
-                            l = Level(pos, collider, res.texGrass);
+                        Level* l;
+                        if (layer[r-1][c] != 4 && layer[r-1][c] != 7) { //not dirt water or tree
+                            l = new Level(pos, collider, res.texGrass);
                         } else {
-                            l = Level(pos, collider, res.texDirt);
+                            l = new Level(pos, collider, res.texDirt);
                         }
-                        gd.mapTiles_.push_back(l);
+                        gd.mapTiles_[r][c] = l;
                         break; 
                     }
                     case 5: //stone
                     {
-                        Level l(pos, collider, res.texStone);
-                        gd.mapTiles_.push_back(l);
+                        Level* l = new Level(pos, collider, res.texStone);
+                        gd.mapTiles_[r][c] = l;
                         break; 
                     }
                     case 6: //Player
@@ -721,10 +717,10 @@ void createTilesGrassland(const SDLState &state, GameData &gd, const Resources &
                         //Player player2(pos, collider, res.texIdleS, res.playerAnims, res.ANIM_PLAYER_IDLE, 250);
                         //gd.player2 = player2;
                         Player player;
-                        if(((LevelState*) currState)->character == SWORD){
+                        if (((LevelState*) currState)->character == SWORD){
                             player = Player(pos, collider, res.texIdle[SWORD], res.playerAnims, res.ANIM_PLAYER_IDLE, 250);         
                             player.cooldownTimer = Timer(3.0f);
-                        } else if(((LevelState*) currState)->character == SHOTGUN){
+                        } else if (((LevelState*) currState)->character == SHOTGUN){
                             player = Player(pos, collider, res.texIdle[SHOTGUN], res.playerAnims, res.ANIM_PLAYER_IDLE, 250);
                             player.cooldownTimer = Timer(5.0f);
                         } else {
@@ -757,74 +753,69 @@ void createTilesGrassland(const SDLState &state, GameData &gd, const Resources &
                     {
                         /*Level l(pos, collider, res.texWater);
                         gd.mapTiles_.push_back(l);*/
-                        Water w(pos, collider, res.texWater);
-                        gd.water_.push_back(w);
+                        Water* w = new Water(pos, collider, res.texWater);
+                        gd.mapTiles_[r][c] = w;
                         break; 
                     }
                     case 8: //lava
                     {
                         /*Level l(pos, collider, res.texLava);
                         gd.mapTiles_.push_back(l);*/
-                        if(layer[r-1][c]!=2) {
-                            Lava l(pos, collider, res.texLava);
-                            gd.lava_.push_back(l);
-                            break; 
+                        if (layer[r-1][c] != 2) {
+                            Lava* l = new Lava(pos, collider, res.texLava);
+                            gd.mapTiles_[r][c] = l;
                         } else {
-                            BackgroundObject b(pos, collider, res.texLava);
-                            gd.bgTiles_.push_back(b);
-                            break;
+                            BackgroundObject* b = new BackgroundObject(pos, collider, res.texLava);
+                            gd.mapTiles_[r][c] = b;  
                         }
+                        break;
                     }
                     case 10: // Item Box
                     {
-                        ItemBox box(pos, collider, res.texItemBox);
-                        gd.itemBoxes_.push_back(box);
+                        ItemBox* box = new ItemBox(pos, collider, res.texItemBox);
+                        gd.mapTiles_[r][c] = box;
                         break; 
-                    }
-                    case 11:
-                    {
-                        break;
                     }
                     case 12: //Background
                     {
-                        BackgroundObject b(pos, collider, res.texBgSky);
-                        gd.bgTiles_.push_back(b);
+                        BackgroundObject* b = new BackgroundObject(pos, collider, res.texBgSky);
+                        gd.mapTiles_[r][c] = b;
                         break;
                     }
                     case 13: //Background
                     {
-                        BackgroundObject b(pos, collider, res.texBgWood);
-                        gd.bgTiles_.push_back(b);
+                        BackgroundObject* b = new BackgroundObject(pos, collider, res.texBgWood);
+                        gd.mapTiles_[r][c] = b;
                         break;
                     }
                     case 14: //Background
                     {
-                        BackgroundObject b(pos, collider, res.texBgStone);
-                        gd.bgTiles_.push_back(b);
+                        BackgroundObject* b = new BackgroundObject(pos, collider, res.texBgStone);
+                        gd.mapTiles_[r][c] = b;
                         break;
                     }
                     case 15: //up sign
                     {
-                        Sign s(pos, collider, res.texSignUp);
-                        gd.signs_.push_back(s);
+                        Sign* s = new Sign(pos, collider, res.texSignUp);
+                        gd.mapTiles_[r][c] = s;
                         break;
                     }
                     case 16: //down sign
                     {
-                        Sign s(pos, collider, res.texSignDown);
-                        gd.signs_.push_back(s);
+                        Sign* s = new Sign(pos, collider, res.texSignDown);
+                        gd.mapTiles_[r][c] = s;
                         break;
                     }
                     case 17: //left sign
                     {
-                        Sign s(pos, collider, res.texSignLeft);
-                        gd.signs_.push_back(s);
+                        Sign* s = new Sign(pos, collider, res.texSignLeft);
+                        gd.mapTiles_[r][c] = s;
                         break;
                     }
                     case 18: //right sign
                     {
-                        Sign s(pos, collider, res.texSignRight);
-                        gd.signs_.push_back(s);
+                        Sign* s = new Sign(pos, collider, res.texSignRight);
+                        gd.mapTiles_[r][c] = s;
                         break;
                     }
                 }

@@ -51,9 +51,10 @@ class Object { // generic obj type
             collider = colliderRect;
             vel = acc = glm::vec2(0);
         }
-        void draw(const SDLState &state, GameData &gd, float width, float height);
-        void drawDebug(const SDLState &state, GameData &gd, float width, float height);
-        virtual ~Object() {}
+        virtual ~Object() = default;
+        virtual void draw(const SDLState &state, GameData &gd, float width, float height);
+        virtual void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {} // do nothing
+        void drawDebug(const SDLState &state, GameData &gd, float width, float height); 
 };
 
 class AnimatedObject : public Object { // obj with anims
@@ -82,9 +83,8 @@ class AnimatedObject : public Object { // obj with anims
             visible = true;
             debug = true;
         }
-
-        void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
-        void draw(const SDLState &state, GameData &gd, float width, float height);
+        void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime) override;
+        void draw(const SDLState &state, GameData &gd, float width, float height) override;
 };
 
 class BackgroundObject : public Object { // bg tiles
@@ -145,10 +145,10 @@ class Laser : public Object { // obstacle
             type = LASER;
             debug = true;
         }
-        void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+        void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime) override;
 };
 
-class Sign:  public Object {
+class Sign: public Object {
     public:
         Sign() : Object() { // default 
             type = SIGN;
@@ -200,7 +200,7 @@ class ItemBox : public Object {
                 itemBoxActive = true;
                 type = ITEMBOX;
             }
-        void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+        void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime) override;
         void generateItem(Player &player, GameData &gd, Resources &res);
 };
 
@@ -219,6 +219,6 @@ class Hook : public AnimatedObject { // grappling hook projectile
             debug = true;
         }
         void draw(const SDLState &state, GameData &gd, Player &p, float width, float height);
-        void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+        void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime) override;
         void checkCollision(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime);
 };
