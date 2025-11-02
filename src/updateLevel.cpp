@@ -18,6 +18,9 @@ extern GameState * currState;
 
 //Update Function for level Spaceship
 void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
+    //calculate placement
+    placement(state, gd, res, deltaTime);
+
     // update portals
     
     for (Portal &portal : gd.portals_) {
@@ -225,12 +228,17 @@ void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
         gd.players_[gd.playerIndex].pos.y = -654;
     }
     //for (Player &p : gd.players_) {
-        gd.players_[gd.playerIndex].handleInput(state, gd, res, key, deltaTime); 
-        if (key.scancode == SDL_SCANCODE_Q && gd.players_[gd.playerIndex].hasItem) {
-            Item item = gd.players_[gd.playerIndex].item;
-            item.useItem(state, gd, res, gd.players_[gd.playerIndex]);
-            gd.players_[gd.playerIndex].hasItem = false;
-            clearItem(state, gd, res);
-        }
-    //}  
+    gd.players_[gd.playerIndex].handleInput(state, gd, res, key, deltaTime); 
+    if (key.scancode == SDL_SCANCODE_Q && gd.players_[gd.playerIndex].hasItem) {
+        Item item = gd.players_[gd.playerIndex].item;
+        item.useItem(state, gd, res, gd.players_[gd.playerIndex]);
+        gd.players_[gd.playerIndex].hasItem = false;
+        clearItem(state, gd, res);
+    }
+}  
+
+
+void placement(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
+    //calculate the placement of each player based on their checkpoints and position
+    
 }

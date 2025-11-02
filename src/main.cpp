@@ -3,6 +3,7 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 #include <SDL3_image/SDL_image.h>
+#include <SDL3_ttf/SDL_ttf.h>
 #include <vector>
 #include <string>
 #include <array>
@@ -67,13 +68,47 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     Resources res;
     res.load(state);
 
+    //initialize SDL text
+    if (TTF_Init() < 0) {
+        SDL_Log("SDL_ttf init failed");
+        return 1;
+    }
+    
+
     //Initial Game State
-    currState = new CharSelectState();
-    currState->currStateVal = CHAR_SELECT;
-    currState->init = initCharSelect;
-    currState->update = charSelectUpdate;
-    currState->render = drawCharSelect;
-    currState->input = charSelectInputs;
+    //CHANGE if testing a different screen and you want it up on start
+
+    currState = new TitleState();
+    currState->currStateVal =  TITLE;
+    //currState->nextStateVal = CHAR_SELECT;
+    currState->init = initTitle;
+    currState->update = titleUpdate;
+    currState->render = drawTitle;
+    currState->input = titleInput;
+    
+    // currState = new SettingsState();
+    // currState->currStateVal =  SETTINGS;
+    // currState->nextStateVal = SPACESHIP;
+    // currState->init = initSettings;
+    // currState->update = settingsUpdate;
+    // currState->render = drawSettings;
+    // currState->input = settingsInputs;
+    
+        // currState = new LevelState();
+        // currState->currStateVal = GRASSLANDS;
+        // currState->nextStateVal = SPACESHIP;
+        // currState->init = createTilesGrassland;
+        // currState->update = levelUpdate;
+        // currState->render = drawLevel;
+        // currState->input = levelInputs;
+
+        // currState = new LevelState();
+        // currState->currStateVal = SPACESHIP;
+        // currState->nextStateVal = SPACESHIP;
+        // currState->init = createTilesSpaceship;
+        // currState->update = levelUpdate;
+        // currState->render = drawLevel;
+        // currState->input = levelInputs;
 
     // setup game data
     GameData gd(state);

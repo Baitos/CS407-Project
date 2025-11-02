@@ -57,6 +57,25 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     errorAnims.resize(1); // default to prevent crashes
     errorAnims[ERROR] = Animation(1, 1.0f);
 
+    mapAnims.resize(6);
+    mapAnims[MAP_GRASSLAND] = Animation(1, 1.0f);
+    mapAnims[MAP_SPACESHIP] = Animation(1, 1.0f);
+    mapAnims[MAP_3] = Animation(1, 1.0f);
+    mapAnims[MAP_4] = Animation(1, 1.0f);
+    mapAnims[MAP_5] = Animation(1, 1.0f);
+    mapAnims[MAP_GRAND_PRIX] = Animation(1, 1.0f);
+
+    mapTextAnims.resize(5);
+    mapTextAnims[MAP_GRASSLAND_TEXT] = Animation(1, 1.0f);
+    mapTextAnims[MAP_SPACESHIP_TEXT] = Animation(1, 1.0f);
+    mapTextAnims[MAP_3_TEXT] = Animation(1, 1.0f);
+    mapTextAnims[MAP_4_TEXT] = Animation(1, 1.0f);
+    mapTextAnims[MAP_5_TEXT] = Animation(1, 1.0f);
+
+    arrowAnims.resize(2);
+    arrowAnims[RIGHT_ARROW] = Animation(1, 1.0f);
+    arrowAnims[LEFT_ARROW] = Animation(1, 1.0f);
+
 
     //load shotgun character animations
     texIdle[SHOTGUN] = loadTexture(state.renderer, "data/CharacterSprites/Shotgun/idle_shotgun.png");
@@ -102,11 +121,6 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     texGrappleAngle = loadTexture(state.renderer, "data/CharacterSprites/grappleAngle.png");
 
     texCrosshair = loadTexture(state.renderer, "data/crosshair.png");
-    texGrass = loadTexture(state.renderer, "data/grass.png");
-    texBrick = loadTexture(state.renderer, "data/brick.png");
-    texStone = loadTexture(state.renderer, "data/stone.png");
-    texBush = loadTexture(state.renderer, "data/bush.png");
-    texFence = loadTexture(state.renderer, "data/fence.png");
     texBg1 = loadTexture(state.renderer, "data/Spaceship/Background.png");
 
     //Spaceship
@@ -139,6 +153,24 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     texVentTwo = loadTexture(state.renderer, "data/spaceship/BackgroundTiles/VentTwo.png");
     texBackWall = loadTexture(state.renderer, "data/spaceship/BackgroundTiles/BackWall.png");
 
+
+    //Grasslands
+    texCloud= loadTexture(state.renderer, "data/Grasslands/cloud.png");
+    texWood= loadTexture(state.renderer, "data/Grasslands/wood.png");
+    texLeaves= loadTexture(state.renderer, "data/Grasslands/leaves.png");
+    texStone= loadTexture(state.renderer, "data/Grasslands/stone.png");
+    texWater= loadTexture(state.renderer, "data/Grasslands/water.png");
+    texLava= loadTexture(state.renderer, "data/Grasslands/lava.png");
+    texGrass= loadTexture(state.renderer, "data/Grasslands/grass.png");
+    texDirt= loadTexture(state.renderer, "data/Grasslands/dirt.png");
+    texBgStone = loadTexture(state.renderer, "data/Grasslands/bg_stone.png");
+    texBgWood = loadTexture(state.renderer, "data/Grasslands/bg_wood.png");
+    texBgSky = loadTexture(state.renderer, "data/Grasslands/bg_sky.png");
+    texSignUp = loadTexture(state.renderer, "data/Grasslands/sign_up.png");
+    texSignDown = loadTexture(state.renderer, "data/Grasslands/sign_down.png");
+    texSignRight = loadTexture(state.renderer, "data/Grasslands/sign_right.png");
+    texSignLeft = loadTexture(state.renderer, "data/Grasslands/sign_left.png");
+
     //Char Select Background
     
     texCharSelectBackground = loadTexture(state.renderer, "data/CharSelect/background.png");
@@ -147,6 +179,22 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     texSword = loadTexture(state.renderer, "data/CharSelect/running_sword_large.png");
     texShotgun = loadTexture(state.renderer, "data/CharSelect/running_shotgun_large.png");
     texJetpack = loadTexture(state.renderer, "data/CharSelect/running_jetpack_large.png");
+
+    texMapPreviews[MAP_GRASSLAND] = loadTexture(state.renderer, "data/CharSelect/grasslands_preview.png");
+    texMapPreviews[MAP_SPACESHIP] = loadTexture(state.renderer, "data/CharSelect/spaceship_preview.png");
+    texMapPreviews[MAP_3] = loadTexture(state.renderer, "data/CharSelect/stage_3_preview.png");
+    texMapPreviews[MAP_4] = loadTexture(state.renderer, "data/CharSelect/stage_4_preview.png");
+    texMapPreviews[MAP_5] = loadTexture(state.renderer, "data/CharSelect/stage_5_preview.png");
+    texMapPreviews[MAP_GRAND_PRIX] = loadTexture(state.renderer, "data/CharSelect/grand_prix_preview.png");
+
+    texMapTextPreviews[MAP_GRASSLAND_TEXT] = loadTexture(state.renderer, "data/CharSelect/grasslands_preview_text.png");
+    texMapTextPreviews[MAP_SPACESHIP_TEXT] = loadTexture(state.renderer, "data/CharSelect/spaceship_preview_text.png");
+    texMapTextPreviews[MAP_3_TEXT] = loadTexture(state.renderer, "data/CharSelect/stage_3_preview_text.png");
+    texMapTextPreviews[MAP_4_TEXT] = loadTexture(state.renderer, "data/CharSelect/stage_4_preview_text.png");
+    texMapTextPreviews[MAP_5_TEXT] = loadTexture(state.renderer, "data/CharSelect/stage_5_preview_text.png");
+
+    texLeftArrow = loadTexture(state.renderer, "data/CharSelect/left_arrow.png");
+    texRightArrow = loadTexture(state.renderer, "data/CharSelect/right_arrow.png");
 
     //Items
     texItemBox = loadTexture(state.renderer, "data/ItemSprites/item_box.png");
@@ -177,6 +225,19 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     texBigBorder = loadTexture(state.renderer, "data/SettingsSprites/lButtonOutline.png");
     texSmallBorder = loadTexture(state.renderer, "data/SettingsSprites/sButtonOutline.png");
     texSlider = loadTexture(state.renderer, "data/SettingsSprites/Slider.png");
+
+    //Gameplay Settings
+    texGameplaySettingsBackground = loadTexture(state.renderer, "data/GameplaySettings/gameplay_settings.png");
+    texGameplaySettingsLeftBracket = loadTexture(state.renderer, "data/GameplaySettings/left_bracket.png");
+    texGameplaySettingsRightBracket = loadTexture(state.renderer, "data/GameplaySettings/right_bracket.png");
+    texGameplaySettings1 = loadTexture(state.renderer, "data/GameplaySettings/1.png");
+    texGameplaySettings2 = loadTexture(state.renderer, "data/GameplaySettings/2.png");
+    texGameplaySettings3 = loadTexture(state.renderer, "data/GameplaySettings/3.png");
+    texGameplaySettings4 = loadTexture(state.renderer, "data/GameplaySettings/4.png");
+    texGameplaySettings5 = loadTexture(state.renderer, "data/GameplaySettings/5.png");
+
+    texTitle = loadTexture(state.renderer, "data/TitleScreen/title.png");
+    texTextCursor = loadTexture(state.renderer, "data/TitleScreen/text_cursor.png");
 
     itemTextures = {texBombStorage, texBoomboxStorage, texBouncyBallStorage, texFogStorage,
         texIceStorage, texMissileStorage, texSugarStorage, texPieStorage};
