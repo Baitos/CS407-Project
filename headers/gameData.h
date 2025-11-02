@@ -12,8 +12,6 @@
 #include "menuData.h"
 
 struct GameData {
-    MenuData md;
-
     std::vector<Player> players_;
     int numPlayers; 
 
@@ -31,7 +29,7 @@ struct GameData {
 
     std::vector<Checkpoint> checkpoints_;
 
-    
+    MenuData md;
 
     Minimap minimap; // the minimap for the current map
     glm::vec2 ExitPortal, 
