@@ -51,9 +51,9 @@ class Object { // generic obj type
             collider = colliderRect;
             vel = acc = glm::vec2(0);
         }
-        void draw(const SDLState &state, GameData &gd, float width, float height);
-        void drawDebug(const SDLState &state, GameData &gd, float width, float height);
         virtual ~Object() {}
+        virtual void draw(const SDLState &state, GameData &gd, float width, float height);
+        void drawDebug(const SDLState &state, GameData &gd, float width, float height);
 };
 
 class AnimatedObject : public Object { // obj with anims
@@ -82,9 +82,9 @@ class AnimatedObject : public Object { // obj with anims
             visible = true;
             debug = true;
         }
-
-        void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+        //virtual ~AnimatedObject() {}
         void draw(const SDLState &state, GameData &gd, float width, float height);
+        void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
 };
 
 class BackgroundObject : public Object { // bg tiles

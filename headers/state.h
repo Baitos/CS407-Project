@@ -43,22 +43,7 @@ class GameState{
         void (*render)(const SDLState &state, GameData &gd, Resources res, float deltaTime);
         void (*init)(const SDLState &state, GameData &gd, const Resources &res);
        
-        void unloadGameState(GameData &gd){
-            gd.mapTiles_.clear();
-            gd.bgTiles_.clear();
-            gd.md.previews_.clear();
-            gd.lasers_.clear();
-            gd.portals_.clear();
-            gd.md.arrows_.clear();
-            gd.lava_.clear();
-            gd.water_.clear();
-            gd.signs_.clear();
-            gd.checkpoints_.clear();
-            //TTF_CloseFont(gd.font);
-            //TO-DO Add clearing players
-        }
-
-
+        void unloadGameState(GameData &gd);
 };
 
 class TitleState : public GameState{

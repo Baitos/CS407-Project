@@ -540,6 +540,10 @@ void JetpackDeployState::enter(GameData &gd, Resources &res, Player &p) {
     p.jetpackTimer.reset();
 }
 
+void JetpackDeployState::exit(GameData &gd, Resources &res, Player &p) {
+    p.cooldownTimer.step(5.0f); // temp, testing
+}
+
 // GRAPPLE
 
 PlayerState* GrappleState::handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_KeyboardEvent key) {

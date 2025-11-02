@@ -106,3 +106,21 @@ GameState * changeState(GameState * tempState, GameData &gd){
     newState->nextStateVal = SPACESHIP;
     return newState;
 }
+
+void GameState::unloadGameState(GameData &gd) {
+    gd.mapTiles_.clear();
+    gd.bgTiles_.clear();
+    gd.lasers_.clear();
+    gd.portals_.clear();
+    gd.lava_.clear();
+    gd.water_.clear();
+    gd.signs_.clear();
+    gd.checkpoints_.clear();
+    gd.grid_.clear();
+
+    gd.md.previews_.clear();
+    gd.md.arrows_.clear();
+
+    //TTF_CloseFont(gd.font);
+    //TO-DO Add clearing players
+}

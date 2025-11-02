@@ -13,6 +13,29 @@
 
 extern GameState *currState;
 
+template <typename T>
+void placeInGrid(std::vector<T> &o, GameData &gd) {
+    for (T &obj : o) {
+       gd.grid_[obj.pos.y / TILE_SIZE][obj.pos.x / TILE_SIZE] = &obj; 
+    }
+}
+
+void createGrid(const SDLState &state, GameData &gd, int rows, int cols) {
+    gd.grid_.resize(rows);
+    for (auto& row : gd.grid_) {
+        row.resize(cols, nullptr); // MAP_ROWS x MAP_COLS array 
+    }
+
+    // mapTiles, lasers, portals, water, lava, signs, itemBoxes
+    placeInGrid(gd.mapTiles_, gd);
+    placeInGrid(gd.lasers_, gd);
+    placeInGrid(gd.portals_, gd);
+    placeInGrid(gd.water_, gd);
+    placeInGrid(gd.lava_, gd);
+    placeInGrid(gd.signs_, gd);
+    placeInGrid(gd.itemBoxes_, gd);
+}
+
 void createMinimap(const SDLState &state, GameData &gd, const Resources &res, int map, int scale) {
     Minimap mini; // create minimap based on map loaded
     mini.texture = res.texMinimap[map];
@@ -417,6 +440,7 @@ void createTilesSpaceship(const SDLState &state, GameData &gd, const Resources &
     loadMap(background);
 
     createMinimap(state, gd, res, res.MAP_SPACESHIP, 1);
+    createGrid(state, gd, MAP_ROWS, MAP_COLS);
     createCheckpointsSpaceship(state, gd, res);
     //loadMap(foreground);
     //assert(gd.playerIndex != -1);
@@ -835,6 +859,7 @@ void createTilesGrassland(const SDLState &state, GameData &gd, const Resources &
     loadMap(background);
 
     createMinimap(state, gd, res, res.MAP_GRASSLAND, 1);
+    createGrid(state, gd, MAP_ROWS, MAP_COLS);
     //load in checkpoints
     createCheckpointsGrassland(state, gd, res);
     

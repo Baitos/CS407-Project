@@ -21,11 +21,12 @@ struct GameData {
     std::vector<Level> mapTiles_;
     std::vector<Laser> lasers_;
     std::vector<ItemBox> itemBoxes_;
-    std::vector<Item> items_;
     std::vector<Portal> portals_;
     std::vector<Sign> signs_;
     std::vector<Water> water_;
     std::vector<Lava> lava_;
+
+     std::vector<std::vector<Object*>> grid_; // all level tiles as pointers
 
     std::vector<Checkpoint> checkpoints_;
 
