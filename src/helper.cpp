@@ -57,18 +57,25 @@ bool isInBounds(GameData &gd, int x, int y) {
     return true;
 }
 
+bool isNotBackgroundOrNull(GameData &gd, int x, int y) {
+    if (gd.grid_[y][x] == nullptr || gd.grid_[y][x]->type == BACKGROUND) {
+        return false;
+    } 
+    return true;
+}
+
 std::vector<Object*> getCloseTiles(const SDLState &state, GameData &gd, glm::vec2 pos) {
     std::vector<Object*> res;
-    int BOUND = 51;
+    int BOUND = 3;
     int OFFSET = (BOUND - 1) / 2;
-    glm::vec2 tilePos(std::floor(pos.x / TILE_SIZE), std::floor(pos.y / TILE_SIZE));
-    //printf("posX = %f, posY = %f, tilePosX = %f, tilePosY = %f\n", pos.x, pos.y, tilePos.x, tilePos.y);
+    glm::vec2 tilePos(std::round(pos.x / TILE_SIZE), std::round(pos.y / TILE_SIZE));
     for (int r = 0; r < BOUND; r++) {
         for (int c = 0; c < BOUND; c++) {
             int x = (int)tilePos.x + c - OFFSET;
-            int y = (int)tilePos.x + r - OFFSET;
-            if (isInBounds(gd, x, y) && gd.grid_.at(y).at(x) != nullptr) {
-                res.push_back(gd.grid_.at(y).at(x)); // get 3x3 grid of tiles around object, with obj at center
+            int y = (int)tilePos.y + r - OFFSET;
+            //printf("posX = %f, posY = %f, tilePosX = %d, tilePosY = %d\n", pos.x, pos.y, x, y);
+            if (isInBounds(gd, x, y) && isNotBackgroundOrNull(gd, x, y)) {
+                res.push_back(gd.grid_[y][x]); // get 3x3 grid of tiles around object, with obj at center
             }
         }
     }

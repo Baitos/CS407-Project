@@ -137,6 +137,8 @@ void GameState::unloadGameState(GameData &gd) {
     freeInVector(gd.signs_);
     gd.signs_.clear();
 
+    gd.grid_.clear();
+
     gd.checkpoints_.clear();
     gd.md.previews_.clear();
     gd.md.arrows_.clear();

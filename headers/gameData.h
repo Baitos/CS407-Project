@@ -12,8 +12,6 @@
 #include "menuData.h"
 
 struct GameData {
-    MenuData md;
-
     std::vector<Player> players_;
     int numPlayers; 
 
@@ -29,12 +27,8 @@ struct GameData {
     std::vector<Lava*> lava_;
     std::vector<BackgroundObject*> bgTiles_;
     std::vector<Sign*> signs_;
-    
 
     std::vector<std::vector<Object*>> grid_; // all tiles as pointers
-
-    
-    
 
     Minimap minimap; // the minimap for the current map
     glm::vec2 ExitPortal, 
@@ -42,6 +36,8 @@ struct GameData {
               mouseCoords, 
               clickCoords;
     ItemStorage itemStorage_;
+  
+    MenuData md;
 
     //Note that volume ratio is dial.pos.x / (290-84)
     Object * updatedDial;

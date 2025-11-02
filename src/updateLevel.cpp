@@ -44,7 +44,7 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
     //printf("%d\n", gd.player.state_->currStateVal);
 
     gd.itemStorage_.pos.x = gd.players_[0].pos.x - 368;
-    gd.itemStorage_.pos.y = gd.players_[0].pos.y - 200;
+    gd.itemStorage_.pos.y = gd.players_[0].pos.y - 190;
 
     gd.minimap.update(state, gd, res, deltaTime);
 

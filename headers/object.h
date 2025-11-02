@@ -50,11 +50,13 @@ class Object { // generic obj type
             texture = tex;
             collider = colliderRect;
             vel = acc = glm::vec2(0);
+            debug = true;
         }
         virtual ~Object() = default;
         virtual void draw(const SDLState &state, GameData &gd, float width, float height);
         virtual void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {} // do nothing
-        void drawDebug(const SDLState &state, GameData &gd, float width, float height); 
+        void drawDebug(const SDLState &state, GameData &gd, float width, float height);
+        void drawDebugGreen(const SDLState &state, GameData &gd, float width, float height);  
 };
 
 class AnimatedObject : public Object { // obj with anims
@@ -81,10 +83,10 @@ class AnimatedObject : public Object { // obj with anims
             flip = 1.0f;
             type = ANIMATED;
             visible = true;
-            debug = true;
         }
-        void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime) override;
-        void draw(const SDLState &state, GameData &gd, float width, float height) override;
+        virtual ~AnimatedObject() = default;
+        virtual void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+        virtual void draw(const SDLState &state, GameData &gd, float width, float height);
 };
 
 class BackgroundObject : public Object { // bg tiles
@@ -107,7 +109,6 @@ class Level : public Object { // the level type!
         Level(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : // generic obj constructor
         Object(pos_, colliderRect, tex) {
             type = LEVEL;
-            debug = true;
         }
 };
 
@@ -143,7 +144,6 @@ class Laser : public Object { // obstacle
         Object(pos_, colliderRect, tex), laserTimer(2.1f) {
             laserActive = true;
             type = LASER;
-            debug = true;
         }
         void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime) override;
 };

@@ -48,6 +48,31 @@ void Object::drawDebug(const SDLState &state, GameData &gd, float width, float h
     }
 }
 
+void Object::drawDebugGreen(const SDLState &state, GameData &gd, float width, float height) {
+    if (gd.debugMode) {
+        SDL_FRect rectA {
+            .x = this->pos.x + this->collider.x - gd.mapViewport.x, 
+            .y = this->pos.y + this->collider.y - gd.mapViewport.y,
+            .w = this->collider.w, 
+            .h = this->collider.h
+        };
+        SDL_SetRenderDrawBlendMode(state.renderer, SDL_BLENDMODE_BLEND);
+
+        SDL_SetRenderDrawColor(state.renderer, 0, 255, 0, 150);
+        SDL_RenderFillRect(state.renderer, &rectA);
+        SDL_FRect sensor{  
+            .x = this->pos.x + this->collider.x - gd.mapViewport.x,
+            .y = this->pos.y + this->collider.y + this->collider.h - gd.mapViewport.y,
+            .w = this->collider.w, 
+            .h = EPSILON
+        };
+        SDL_SetRenderDrawColor(state.renderer, 0, 0, 255, 150);
+        SDL_RenderFillRect(state.renderer, &sensor);
+
+        SDL_SetRenderDrawBlendMode(state.renderer, SDL_BLENDMODE_NONE);
+    }
+}
+
 void AnimatedObject::draw(const SDLState &state, GameData &gd, float width, float height) {
     if (!isOnscreen(state, gd, (*this))) {
         return;

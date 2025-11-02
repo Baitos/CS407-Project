@@ -11,9 +11,9 @@ struct Player;
 struct Object;
 
 bool intersectAABB(const SDL_FRect &a, const SDL_FRect &b, glm::vec2 &overlap);
-//void playerCheckCollision(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime);
-//void playerCollisionResponse(const SDLState &state, GameData &gd, Resources &res,
-// 	Player &p, Object &o, SDL_FRect &rectA, SDL_FRect &rectB, glm::vec2 &resolution, float deltaTime);
+void playerCheckCollision(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime);
+void playerCollisionResponse(const SDLState &state, GameData &gd, Resources &res,
+	Player &p, Object &o, SDL_FRect &rectA, SDL_FRect &rectB, glm::vec2 &resolution, float deltaTime);
 
 void collisionCheckAndResponse(const SDLState &state, GameData &gd, Resources &res,
- 	Player &player, float deltaTime);
+  	Player &player, float deltaTime);

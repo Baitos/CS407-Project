@@ -232,7 +232,6 @@ void createTilesSpaceship(const SDLState &state, GameData &gd, const Resources &
                     case 2: //Platform
                     {
                         Level* l = new Level(pos, collider, res.texPlatform);
-                        //gd.layers[LAYER_IDX_LEVEL].push_back(o);
                         gd.mapTiles_.push_back(l);
                         gd.grid_[r][c] = l;
                         break; 
@@ -324,7 +323,6 @@ void createTilesSpaceship(const SDLState &state, GameData &gd, const Resources &
                     {
                         BackgroundObject* b = new BackgroundObject(pos, collider, res.texBg5);
                         gd.bgTiles_.push_back(b);
-                        gd.grid_[r][c] = b;
                         break;
                     }
                     case 8: //Alternative Base Grond (Inside Corners, Ceiling, Right Wall)
@@ -353,49 +351,46 @@ void createTilesSpaceship(const SDLState &state, GameData &gd, const Resources &
                     {
                         BackgroundObject* b = new BackgroundObject(pos, collider, res.texPanelOne);
                         gd.bgTiles_.push_back(b);
-                        gd.grid_[r][c] = b;
                         break;
                     }
                     case 12:
                     {
                         BackgroundObject* b = new BackgroundObject(pos, collider, res.texBackWall);
                         gd.bgTiles_.push_back(b);
-                        gd.grid_[r][c] = b;
                         break;
                     }
                     case 14:
                     {
                         BackgroundObject* b = new BackgroundObject(pos, collider, res.texPanelTwo);
                         gd.bgTiles_.push_back(b);
-                        gd.grid_[r][c] = b;
                         break;
                     }
                     case 15:
                     {
                         BackgroundObject* b = new BackgroundObject(pos, collider, res.texPanelThree);
                         gd.bgTiles_.push_back(b);
-                        gd.grid_[r][c] = b;
+
                         break;
                     }
                     case 16:
                     {
                         BackgroundObject* b = new BackgroundObject(pos, collider, res.texFan);
                         gd.bgTiles_.push_back(b);
-                        gd.grid_[r][c] = b;
+                        
                         break;
                     }
                     case 17:
                     {
                         BackgroundObject* b = new BackgroundObject(pos, collider, res.texVentOne);
                         gd.bgTiles_.push_back(b);
-                        gd.grid_[r][c] = b;
+                        
                         break;
                     }
                     case 18:
                     {
                         BackgroundObject* b = new BackgroundObject(pos, collider, res.texVentTwo);
                         gd.bgTiles_.push_back(b);
-                        gd.grid_[r][c] = b;
+                        
                         break;
                     }
                     case 19: // Item Box
@@ -774,7 +769,7 @@ void createTilesGrassland(const SDLState &state, GameData &gd, const Resources &
                         } else {
                             BackgroundObject* b = new BackgroundObject(pos, collider, res.texLava);
                             gd.bgTiles_.push_back(b);
-                            gd.grid_[r][c] = b;  
+                              
                         }
                         break;
                     }
@@ -789,21 +784,21 @@ void createTilesGrassland(const SDLState &state, GameData &gd, const Resources &
                     {
                         BackgroundObject* b = new BackgroundObject(pos, collider, res.texBgSky);
                         gd.bgTiles_.push_back(b);
-                        gd.grid_[r][c] = b;
+                        
                         break;
                     }
                     case 13: //Background
                     {
                         BackgroundObject* b = new BackgroundObject(pos, collider, res.texBgWood);
                         gd.bgTiles_.push_back(b);
-                        gd.grid_[r][c] = b;
+                        
                         break;
                     }
                     case 14: //Background
                     {
                         BackgroundObject* b = new BackgroundObject(pos, collider, res.texBgStone);
                         gd.bgTiles_.push_back(b);
-                        gd.grid_[r][c] = b;
+                        
                         break;
                     }
                     case 15: //up sign
@@ -1062,7 +1057,7 @@ void initTitle(const SDLState &state, GameData &gd, const Resources &res) {
             .h = 32
         };
         
-        glm::vec2  pos = glm::vec2(0,0);
+        glm::vec2 pos = glm::vec2(0,0);
         // Background
         BackgroundObject* bg = new BackgroundObject(pos, collider, res.texTitle);
         bg->collider.w = res.texTitle->w;

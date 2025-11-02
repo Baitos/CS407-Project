@@ -34,30 +34,36 @@ void drawLevel(const SDLState &state, GameData &gd, Resources res, float deltaTi
     }
 
     //draw signs
-    for(Sign* sign : gd.signs_) {
+    for (Sign* sign : gd.signs_) {
         sign->draw(state, gd, TILE_SIZE, TILE_SIZE);
     }
     //draw lava
-    for(Lava* lava : gd.lava_) {
+    for (Lava* lava : gd.lava_) {
         lava->draw(state, gd, TILE_SIZE, TILE_SIZE);
     }
     //draw water
-    for(Water* water : gd.water_) {
+    for (Water* water : gd.water_) {
         water->draw(state, gd, TILE_SIZE, TILE_SIZE);
+    }
+
+    // draw item boxes
+    for (ItemBox* box : gd.itemBoxes_) {
+        if (box->itemBoxActive) {
+            box->draw(state, gd, TILE_SIZE, TILE_SIZE);
+        }
     }
 
     // draw players
     for (Player &p : gd.players_) {
         p.draw(state, gd, TILE_SIZE, TILE_SIZE);
         p.state_->draw(state, gd); // currently only for shotgun but could be used in future for state based particles/power up effects
+        // std::vector<Object *> closeTiles_ = getCloseTiles(state, gd, p.pos);
+        // for (Object* o : closeTiles_) {
+        //     o->drawDebugGreen(state, gd, o->texture->w, o->texture->h);
+        // }
     }
 
 
-    // for (ItemBox &box : gd.itemBoxes_) {
-    //     if (box.itemBoxActive) {
-    //         box.draw(state, gd, TILE_SIZE, TILE_SIZE);
-    //     }
-    // }
     gd.itemStorage_.draw(state, gd, 68, 68);
 
     gd.minimap.draw(state, gd, gd.minimap.texture->w, gd.minimap.texture->h);

@@ -8,213 +8,212 @@
 
 
 
-// void playerCollisionResponse(const SDLState &state, GameData &gd, Resources &res,
-//  	Player &p, Object &o, SDL_FRect &rectA, SDL_FRect &rectB, glm::vec2 &resolution, float deltaTime)
-// {
-// 	switch (o.type) {
-// 		case LEVEL:
-// 		{
-// 			printf("player collided with level\n");
-// 			Level& l = dynamic_cast<Level&>(o);
-// 			if (resolution.x < resolution.y) {
+void playerCollisionResponse(const SDLState &state, GameData &gd, Resources &res,
+ 	Player &p, Object &o, SDL_FRect &rectA, SDL_FRect &rectB, glm::vec2 &resolution, float deltaTime)
+{
+	switch (o.type) {
+		case LEVEL:
+		{
+			//printf("player collided with level\n");
+			Level& l = dynamic_cast<Level&>(o);
+			if (resolution.x < resolution.y) {
 				
-// 				if (p.pos.x < l.pos.x) {
-// 					p.pos.x -= resolution.x;
-// 				} else {
-// 					p.pos.x += resolution.x;
-// 				}	
-// 				p.vel.x = 0;
-// 			} else {
-// 				if (p.pos.y < l.pos.y) {
-// 					p.pos.y -= resolution.y;
-// 				} else {
-// 					p.pos.y += resolution.y;
-// 				}
-// 				p.vel.y = 0;
-// 			}
-// 			// grounded sensor
-// 			const float inset = 2.0;
-// 			SDL_FRect sensor {
-// 				.x = p.pos.x + p.collider.x + 1,
-// 				.y = p.pos.y + p.collider.y + p.collider.h,
-// 				.w = p.collider.w - inset,
-// 				.h = EPSILON
-// 			};
-// 			SDL_FRect rectC { 0 };
-// 			if (SDL_GetRectIntersectionFloat(&sensor, &rectB, &rectC)) {
-// 				p.grounded = true;
-// 				p.canDoubleJump = true;
-// 				p.gravityScale = 1.0f;
-// 			}
-// 			break;
-// 		}	
-// 		case LASER: 
-// 		{
-// 			printf("player collided with laser\n");
-// 			Laser& la = dynamic_cast<Laser&>(o);
-// 			if (la.laserActive){
-// 				//printf("FALLING");
-// 				PlayerState* stState = new StunnedState();
-//                 p.handleState(stState, gd, res);
+				if (p.pos.x < l.pos.x) {
+					p.pos.x -= resolution.x;
+				} else {
+					p.pos.x += resolution.x;
+				}	
+				p.vel.x = 0;
+			} else {
+				if (p.pos.y < l.pos.y) {
+					p.pos.y -= resolution.y;
+				} else {
+					p.pos.y += resolution.y;
+				}
+				p.vel.y = 0;
+			}
+			// grounded sensor
+			const float inset = 2.0;
+			SDL_FRect sensor {
+				.x = p.pos.x + p.collider.x + 1,
+				.y = p.pos.y + p.collider.y + p.collider.h,
+				.w = p.collider.w - inset,
+				.h = EPSILON
+			};
+			SDL_FRect rectC { 0 };
+			if (SDL_GetRectIntersectionFloat(&sensor, &rectB, &rectC)) {
+				p.grounded = true;
+				p.canDoubleJump = true;
+				p.gravityScale = 1.0f;
+			}
+			break;
+		}	
+		case LASER: 
+		{
+			//printf("player collided with laser\n");
+			Laser& la = dynamic_cast<Laser&>(o);
+			if (la.laserActive){
+				//printf("FALLING");
+				PlayerState* stState = new StunnedState();
+                p.handleState(stState, gd, res);
 			
-// 				p.vel.x = changeVel(-p.vel.x, p);
-// 				float shouldFlip = p.flip; // there might be a more modular way to do this. idk if we will actually use the gravity flip but having it is nice and cool
-// 				if(shouldFlip * o.pos.y < shouldFlip * p.pos.y){
-// 					p.vel.y = changeVel(200.f, p);
-// 				} else {
-// 					p.vel.y = changeVel(-400.f, p);
-// 				}
+				p.vel.x = changeVel(-p.vel.x, p);
+				float shouldFlip = p.flip; // there might be a more modular way to do this. idk if we will actually use the gravity flip but having it is nice and cool
+				if(shouldFlip * o.pos.y < shouldFlip * p.pos.y){
+					p.vel.y = changeVel(200.f, p);
+				} else {
+					p.vel.y = changeVel(-400.f, p);
+				}
 
-// 				p.gravityScale = 1.0f;
-// 			} 
-// 			break;
-// 		}
-// 		case PORTAL:
-// 		{
-// 			printf("player collided with portal\n");
-// 			Portal& po = dynamic_cast<Portal&>(o);
-// 			if (po.isEntrance == true){
-// 				p.pos = gd.ExitPortal;
-// 			}
-// 			break;
-// 		}
-// 		case WATER:
-// 		{
-// 			//Water& w = dynamic_cast<Water&>(o);
-// 			if(abs(p.vel.x) >= 50) {
-// 				if(p.vel.x > 0) {
-// 					p.vel.x-=.5;
-// 				} else {
-// 					p.vel.x+=.5;
-// 				}
-// 			}
-// 			if(abs(p.vel.y) >= 50) {
-// 				if(p.vel.y > 0) {
-// 					p.vel.y-=.5;
-// 				} else {
-// 					p.vel.y+=.5;
-// 				}
-// 			}
-// 			break;
-// 		}
-// 		case LAVA:
-// 		{
-// 			//Lava& l = dynamic_cast<Lava&>(o);
-// 			if(p.state_->stateVal != DEAD) {
-// 				/*set player to dead and start the respawn counter*/
-// 				PlayerState* dState = new DeadState();
-// 				p.handleState(dState, gd, res);
-// 			}
-// 			break;
-// 		}
-// 		case ITEMBOX:
-// 		{
-// 			ItemBox& box = dynamic_cast<ItemBox&>(o);
-// 			if (box.itemBoxActive) {
-// 				if (!p.pickingItem && !p.hasItem) {
-//         			box.generateItem(p, gd, res);
-// 					gd.itemStorage_.texture = res.texItemRandomizer;
-// 					gd.itemStorage_.curAnimation = res.ANIM_ITEM_CYCLE;
-// 					gd.itemStorage_.animations[gd.itemStorage_.curAnimation].reset();
-//     			}
-// 				box.itemBoxActive = false;
-// 			}
-// 			break;
-// 		}
-// 	}
+				p.gravityScale = 1.0f;
+			} 
+			break;
+		}
+		case PORTAL:
+		{
+			//printf("player collided with portal\n");
+			Portal& po = dynamic_cast<Portal&>(o);
+			if (po.isEntrance == true){
+				p.pos = gd.ExitPortal;
+			}
+			break;
+		}
+		case WATER:
+		{
+			//Water& w = dynamic_cast<Water&>(o);
+			if(abs(p.vel.x) >= 50) {
+				if(p.vel.x > 0) {
+					p.vel.x-=.5;
+				} else {
+					p.vel.x+=.5;
+				}
+			}
+			if(abs(p.vel.y) >= 50) {
+				if(p.vel.y > 0) {
+					p.vel.y-=.5;
+				} else {
+					p.vel.y+=.5;
+				}
+			}
+			break;
+		}
+		case LAVA:
+		{
+			//Lava& l = dynamic_cast<Lava&>(o);
+			if(p.state_->stateVal != DEAD) {
+				/*set player to dead and start the respawn counter*/
+				PlayerState* dState = new DeadState();
+				p.handleState(dState, gd, res);
+			}
+			break;
+		}
+		case ITEMBOX:
+		{
+			ItemBox& box = dynamic_cast<ItemBox&>(o);
+			if (box.itemBoxActive) {
+				if (!p.pickingItem && !p.hasItem) {
+        			box.generateItem(p, gd, res);
+					gd.itemStorage_.texture = res.texItemRandomizer;
+					gd.itemStorage_.curAnimation = res.ANIM_ITEM_CYCLE;
+					gd.itemStorage_.animations[gd.itemStorage_.curAnimation].reset();
+    			}
+				box.itemBoxActive = false;
+			}
+			break;
+		}
+	}
 
 	
-// 	//check for weapon deployment
-// 	for (Player &p2 : gd.players_) {
-// 		if(p2.index != p.index) {
-// 			//check if in shotgun player blast state
-// 			if(ShotgunDeployState *s = dynamic_cast<ShotgunDeployState*>(p2.state_)) {
-// 				//check if currently blocking/deploying sword
-// 				if(!dynamic_cast<SwordDeployState*> (p.state_)) {
-// 					SDL_FRect rectB{
-// 						.x = s->blast->pos.x + s->blast->collider.x,
-// 						.y = s->blast->pos.y + s->blast->collider.y,
-// 						.w = s->blast->collider.w,
-// 						.h = s->blast->collider.h
-// 					};
-// 					glm::vec2 resolution{ 0 };
-// 					if (intersectAABB(rectA, rectB, resolution)){
-// 						printf("Player %d shot by player %d\n", p.index, p2.index);
-// 						PlayerState* stState = new StunnedState();
-// 						p.isDead = true;
-// 						p.handleState(stState, gd, res);
+	//check for weapon deployment
+	for (Player &p2 : gd.players_) {
+		if(p2.index != p.index) {
+			//check if in shotgun player blast state
+			if(ShotgunDeployState *s = dynamic_cast<ShotgunDeployState*>(p2.state_)) {
+				//check if currently blocking/deploying sword
+				if(!dynamic_cast<SwordDeployState*> (p.state_)) {
+					SDL_FRect rectB{
+						.x = s->blast->pos.x + s->blast->collider.x,
+						.y = s->blast->pos.y + s->blast->collider.y,
+						.w = s->blast->collider.w,
+						.h = s->blast->collider.h
+					};
+					glm::vec2 resolution{ 0 };
+					if (intersectAABB(rectA, rectB, resolution)){
+						//printf("Player %d shot by player %d\n", p.index, p2.index);
+						PlayerState* stState = new StunnedState();
+						p.isDead = true;
+						p.handleState(stState, gd, res);
 						
-// 						p.vel.x = 0;
-// 						p.vel.y = 0;
-// 					}
-// 				} else {
-// 					//sword blocks
-// 					printf("Player %d BLOCKED shot by player %d\n", p.index, p2.index);
-// 				}
-// 			} else if (SwordDeployState *s = dynamic_cast<SwordDeployState*>(p2.state_)) {
-// 				//check if in sword player swing state
-// 				SDL_FRect rectB{
-// 					.x = p2.pos.x + p.collider.x - 5,
-// 					.y = p2.pos.y + p.collider.y - 5,
-// 					.w = p2.collider.w + 10,
-// 					.h = p2.collider.h + 10
-// 				};
-// 				glm::vec2 resolution{ 0 };
-// 				if (intersectAABB(rectA, rectB, resolution)){
-// 					printf("Player %d hit by player %d's sword\n", p.index, p2.index);
-// 					PlayerState* stState = new StunnedState();
-// 					p.isDead = true;
-// 					p.handleState(stState, gd, res);
+						p.vel.x = 0;
+						p.vel.y = 0;
+					}
+				} else {
+					//sword blocks
+					//printf("Player %d BLOCKED shot by player %d\n", p.index, p2.index);
+				}
+			} else if (SwordDeployState *s = dynamic_cast<SwordDeployState*>(p2.state_)) {
+				//check if in sword player swing state
+				SDL_FRect rectB{
+					.x = p2.pos.x + p.collider.x - 5,
+					.y = p2.pos.y + p.collider.y - 5,
+					.w = p2.collider.w + 10,
+					.h = p2.collider.h + 10
+				};
+				glm::vec2 resolution{ 0 };
+				if (intersectAABB(rectA, rectB, resolution)){
+					//printf("Player %d hit by player %d's sword\n", p.index, p2.index);
+					PlayerState* stState = new StunnedState();
+					p.isDead = true;
+					p.handleState(stState, gd, res);
 					
-// 					p.vel.x = 0;
-// 					p.vel.y = 0;
-// 				}
-// 			}
-// 		}
-// 	}
-// 	//check for checkpoint system
-// 	for (Checkpoint cp: gd.checkpoints_) {
-// 		if (cp.index == (p.lastCheckpoint+1)%(gd.checkpoints_.size())){
-// 			SDL_FRect rectB = cp.collider;
-// 			//printf("checking %d\n", cp.index);
-// 			glm::vec2 resolution{ 0 };
-// 			if (intersectAABB(rectA, rectB, resolution)){
-// 				printf("INTERSECT!!!");
-// 				if(p.lastCheckpoint == gd.checkpoints_.size() - 1) {
-// 					p.lapsCompleted++;
-// 					printf("Completed the %dth lap!\n", p.lapsCompleted);
-// 				}
-// 				p.lastCheckpoint = (p.lastCheckpoint+1)%(gd.checkpoints_.size());
-// 				printf("passed checkpoint %d\n%f, %f\n%f, %f", p.lastCheckpoint, cp.collider.x, cp.collider.y, p.pos.x, p.pos.y);
-// 			}
-// 		}
-// 	}
-// 	//check for game end
-// 	if(!gd.round_is_over) {
-// 		if(gd.players_.size() == 1) {
-// 			if(p.lapsCompleted >= gd.laps_per_race) {
-// 				printf("\n\nGAME OVER\n\n");
-// 				gd.round_is_over = true;
-// 			}
-// 		} else {
-// 			int numDone = 0;
-// 			for(Player &p: gd.players_) {
-// 				if(p.lapsCompleted >= gd.laps_per_race) {
-// 					numDone++;
-// 				}
-// 			}
-// 			if(numDone >= gd.players_.size()-1) {
-// 				printf("\n\nGAME OVER\n\n");
-// 				gd.round_is_over = true;
-// 			}else if(numDone==1) {
-// 				//start timer after first player ends
+					p.vel.x = 0;
+					p.vel.y = 0;
+				}
+			}
+		}
+	}
+	//check for checkpoint system
+	for (Checkpoint cp: gd.checkpoints_) {
+		if (cp.index == (p.lastCheckpoint+1)%(gd.checkpoints_.size())){
+			SDL_FRect rectB = cp.collider;
+			//printf("checking %d\n", cp.index);
+			glm::vec2 resolution{ 0 };
+			if (intersectAABB(rectA, rectB, resolution)){
+				printf("INTERSECT!!!");
+				if(p.lastCheckpoint == gd.checkpoints_.size() - 1) {
+					p.lapsCompleted++;
+					printf("Completed the %dth lap!\n", p.lapsCompleted);
+				}
+				p.lastCheckpoint = (p.lastCheckpoint+1)%(gd.checkpoints_.size());
+				printf("passed checkpoint %d\n%f, %f\n%f, %f", p.lastCheckpoint, cp.collider.x, cp.collider.y, p.pos.x, p.pos.y);
+			}
+		}
+	}
+	//check for game end
+	if(!gd.round_is_over) {
+		if(gd.players_.size() == 1) {
+			if(p.lapsCompleted >= gd.laps_per_race) {
+				printf("\n\nGAME OVER\n\n");
+				gd.round_is_over = true;
+			}
+		} else {
+			int numDone = 0;
+			for(Player &p: gd.players_) {
+				if(p.lapsCompleted >= gd.laps_per_race) {
+					numDone++;
+				}
+			}
+			if(numDone >= gd.players_.size()-1) {
+				printf("\n\nGAME OVER\n\n");
+				gd.round_is_over = true;
+			}else if(numDone==1) {
+				//start timer after first player ends
 
-// 				//if timer out, game over
-// 			}
-// 		}
-// 	}
-
-// }
+				//if timer out, game over
+			}
+		}
+	}
+}
 
 bool deltaIntersectAABB(SDLState &state, Object &a, Object &b, glm::vec2 &overlap, float deltaTime) {
 	glm::vec2 delta = updatePos(a, deltaTime); // attempt to move forward
@@ -531,40 +530,40 @@ void collisionCheckAndResponse(const SDLState &state, GameData &gd, Resources &r
 	}
 }
 
-// void playerCheckCollision(const SDLState &state, GameData &gd, Resources &res,
-//  	Player &p, float deltaTime)
-// {
-// 	SDL_FRect rectA {
-// 		.x = p.pos.x + p.collider.x,
-// 		.y = p.pos.y + p.collider.y,
-// 		.w = p.collider.w,
-// 		.h = p.collider.h
-// 	};
-// 	glm::vec2 resolution{ 0 };
-// 	//std::vector<Object *> closeTiles_ = gd.grid_; //getCloseTiles(state, gd, p.pos);
-// 	// for (auto &o : closeTiles_) { 
-// 	// 	SDL_FRect rectB {
-// 	// 		.x = o->pos.x + o->collider.x,
-// 	// 		.y = o->pos.y + o->collider.y,
-// 	// 		.w = o->collider.w,
-// 	// 		.h = o->collider.h
-// 	// 	};
-// 	// 	if (intersectAABB(rectA, rectB, resolution)) {
-// 	// 		playerCollisionResponse(state, gd, res, p, (*o), rectA, rectB, resolution, deltaTime);
-// 	// 	}
-// 	// }
-// 	for (size_t row = 0; row < gd.grid_.size(); ++row) {
-// 		for (size_t col = 0; col < gd.grid_[row].size(); ++col) {
-// 			Object* o = gd.grid_[row][col];
-// 			SDL_FRect rectB {
-// 				.x = o->pos.x + o->collider.x,
-// 				.y = o->pos.y + o->collider.y,
-// 				.w = o->collider.w,
-// 				.h = o->collider.h
-// 			};
-// 			if (intersectAABB(rectA, rectB, resolution)) {
-// 				playerCollisionResponse(state, gd, res, p, (*o), rectA, rectB, resolution, deltaTime);
-// 			}
-//     	}
-// 	}
-// }
+void playerCheckCollision(const SDLState &state, GameData &gd, Resources &res,
+ 	Player &p, float deltaTime)
+{
+	SDL_FRect rectA {
+		.x = p.pos.x + p.collider.x,
+		.y = p.pos.y + p.collider.y,
+		.w = p.collider.w,
+		.h = p.collider.h
+	};
+	glm::vec2 resolution{ 0 };
+	std::vector<Object *> closeTiles_ = getCloseTiles(state, gd, p.pos);
+	for (auto &o : closeTiles_) { 
+		SDL_FRect rectB {
+			.x = o->pos.x + o->collider.x,
+			.y = o->pos.y + o->collider.y,
+			.w = o->collider.w,
+			.h = o->collider.h
+		};
+		if (intersectAABB(rectA, rectB, resolution)) {
+			playerCollisionResponse(state, gd, res, p, (*o), rectA, rectB, resolution, deltaTime);
+		}
+	}
+	// for (size_t row = 0; row < gd.grid_.size(); ++row) {
+	// 	for (size_t col = 0; col < gd.grid_[row].size(); ++col) {
+	// 		Object* o = gd.grid_[row][col];
+	// 		SDL_FRect rectB {
+	// 			.x = o->pos.x + o->collider.x,
+	// 			.y = o->pos.y + o->collider.y,
+	// 			.w = o->collider.w,
+	// 			.h = o->collider.h
+	// 		};
+	// 		if (intersectAABB(rectA, rectB, resolution)) {
+	// 			playerCollisionResponse(state, gd, res, p, (*o), rectA, rectB, resolution, deltaTime);
+	// 		}
+    // 	}
+	// }
+}

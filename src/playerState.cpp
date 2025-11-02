@@ -541,7 +541,7 @@ void JetpackDeployState::enter(GameData &gd, Resources &res, Player &p) {
 }
 
 void JetpackDeployState::exit(GameData &gd, Resources &res, Player &p) {
-    p.cooldownTimer.step(5.0f);
+    p.cooldownTimer.step(5.0f); // debug for now, makes the jetpack cooldown instant. very fun and good for testing
 }
 
 // GRAPPLE
