@@ -50,8 +50,8 @@ class Bomb : public Item {
         deleteOnCollision = true;
         type = itemType::BOMB;
         index = 0;
-        this->useItem = useBomb;
-        this->onCollision = angledStun;
+        //this->useItem = useBomb;
+        //this->onCollision = angledStun;
         this->knockbackMultiplier = 5.0f;
         this->setEffect = effectExplosion;
     }
@@ -65,8 +65,8 @@ class Boombox : public Item {
         height = 196;
         index = 1;
         type = itemType::BOOMBOX;
-        this->useItem = useBoombox;
-        this->onCollision = angledStun;
+        //this->useItem = useBoombox;
+        //this->onCollision = angledStun;
         this->knockbackMultiplier = 3.0f;
     }
     void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
@@ -78,7 +78,7 @@ class Sugar : public Item {
     Sugar(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) :
     Item(pos_, colliderRect, tex) {
         index = 6;
-        this->useItem = useSugar;
+        //this->useItem = useSugar;
     }
 };
 class ItemStorage : public AnimatedObject {

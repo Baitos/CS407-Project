@@ -39,7 +39,7 @@ class Player : public AnimatedObject { // player
         bool usingSugar = false;
 
         int currentDirection;
-        int position = 8;
+        int position = 4;
         // TODO maybe keep consistent across clients
         int index; // Currently for keeping track of item's owner 
         float gravityScale; 
@@ -47,12 +47,9 @@ class Player : public AnimatedObject { // player
         float maxWalkX = 300; // walking
         float maxRunX = 700; // running 
         float maxSprintX = 900; // sprinting
-        int currentDirection;
         
         Timer jetpackTimer;
         Timer cooldownTimer;
-
-        int position = 8;
 
         void draw(const SDLState &state, GameData &gd, float width, float height);
         virtual void handleInput(const SDLState &state, GameData &gd, Resources &res, SDL_Event &event, float deltaTime);

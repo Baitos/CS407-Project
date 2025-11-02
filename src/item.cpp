@@ -4,38 +4,38 @@
 #include "../headers/helper.h"
 void setNoEffect(GameData &gd, Resources &res, AnimatedObject obj){}
 
-void useBomb(const SDLState &state, GameData &gd, Resources &res) {
-    Item item = gd.player.item;
-    int xdiff;
-    // Set item 1 tile behind player, but we want it to be drawn at the beginning of tile
-    if (gd.player.dir >= 0) { // moving right, place to left
-        xdiff = 32 + (int)gd.player.pos.x % 32;
-        item.pos.x = gd.player.pos.x - xdiff;
-    }
-    else {
-        xdiff = 32 + (32- (int)gd.player.pos.x % 32);
-        item.pos.x = gd.player.pos.x + xdiff;
-    }
-    item.pos.y = gd.player.pos.y;
-    gd.items_.push_back(item);
-}
+// void useBomb(const SDLState &state, GameData &gd, Resources &res) {
+//     Item item = gd.player.item;
+//     int xdiff;
+//     // Set item 1 tile behind player, but we want it to be drawn at the beginning of tile
+//     if (gd.player.dir >= 0) { // moving right, place to left
+//         xdiff = 32 + (int)gd.player.pos.x % 32;
+//         item.pos.x = gd.player.pos.x - xdiff;
+//     }
+//     else {
+//         xdiff = 32 + (32- (int)gd.player.pos.x % 32);
+//         item.pos.x = gd.player.pos.x + xdiff;
+//     }
+//     item.pos.y = gd.player.pos.y;
+//     gd.items_.push_back(item);
+// }
 
-void useBoombox(const SDLState &state, GameData &gd, Resources &res) {
-    SDL_FRect soundCollider = {
-        .x = 0,
-        .y = 0,
-        .w = 156,
-        .h = 156
-    };
-    Item item = gd.player.item;
-    item.pos = gd.player.pos;
-    item.collider = soundCollider;
-    item.texture = res.texSoundwaves;
-    item.animations = res.itemAnims;
-    item.curAnimation = res.ANIM_ITEM_SOUNDWAVE;
-    item.animations[item.curAnimation].reset();
-    gd.items_.push_back(item);
-}
+// void useBoombox(const SDLState &state, GameData &gd, Resources &res) {
+//     SDL_FRect soundCollider = {
+//         .x = 0,
+//         .y = 0,
+//         .w = 156,
+//         .h = 156
+//     };
+//     Item item = gd.player.item;
+//     item.pos = gd.player.pos;
+//     item.collider = soundCollider;
+//     item.texture = res.texSoundwaves;
+//     item.animations = res.itemAnims;
+//     item.curAnimation = res.ANIM_ITEM_SOUNDWAVE;
+//     item.animations[item.curAnimation].reset();
+//     gd.items_.push_back(item);
+// }
 
 void useBouncyBall(const SDLState &state, GameData &gd, Resources &res) {}
 void useFog(const SDLState &state, GameData &gd, Resources &res) {}

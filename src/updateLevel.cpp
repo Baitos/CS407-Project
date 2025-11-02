@@ -32,20 +32,20 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
             box.update(state, gd, res, deltaTime);
         }
     }
-    for (int i = 0; i < gd.items_.size(); i++) {
-        // TODO This shit sucks ass please fix lol - Rei
-        Item item = gd.items_[i];
-        item.update(state, gd, res, deltaTime);
-        if (item.type == itemType::BOOMBOX) {
-            item.pos.x = gd.player.pos.x - (item.width / 2) + 16;
-            item.pos.y = gd.player.pos.y - (item.height/2) + 16;
-        }
-        gd.items_[i] = item;
-        if (item.animations[item.curAnimation].isDone()) {
-            gd.items_.erase(gd.items_.begin() + i);
-            i--;
-        }
-    }
+    // for (int i = 0; i < gd.items_.size(); i++) {
+    //     // TODO This shit sucks ass please fix lol - Rei
+    //     Item item = gd.items_[i];
+    //     item.update(state, gd, res, deltaTime);
+    //     if (item.type == itemType::BOOMBOX) {
+    //         item.pos.x = gd.player.pos.x - (item.width / 2) + 16;
+    //         item.pos.y = gd.player.pos.y - (item.height/2) + 16;
+    //     }
+    //     gd.items_[i] = item;
+    //     if (item.animations[item.curAnimation].isDone()) {
+    //         gd.items_.erase(gd.items_.begin() + i);
+    //         i--;
+    //     }
+    // }
     for (int i = 0; i < gd.effects_.size(); i++) {
         Effect *effect = gd.effects_[i];
         effect->update(state, gd, res, deltaTime);
@@ -179,7 +179,7 @@ void handleLevelClick(SDLState &state, GameData &gd, Resources &res, Player &p, 
         p.hook.pos = p.pos + hOffset;
         p.hook.visible = true;
         p.hook.vel = 500.0f * glm::vec2(aH, oH);
-    } else if (!buttonDown && gd.controls->actionPerformed(ACTION_GRAPPLE, event)) { // grapple release 
+    } else if (!event.key.down && gd.controls->actionPerformed(ACTION_GRAPPLE, event)) { // grapple release 
         if (p.hook.collided) { // get out
             PlayerState* jState = new JumpState();
             p.handleState(jState, gd, res);
@@ -251,13 +251,13 @@ void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
         gd.players_[0].pos.x = 950;
         gd.players_[0].pos.y = -654;
     }
-    for (Player &p : gd.players_) {
-        p.handleInput(state, gd, res, event, deltaTime); 
-        if (gd.controls->actionPerformed(typeAction::ACTION_USEITEM, event) && p.hasItem) {
-            Item item = p.item;
-            item.useItem(state, gd, res, p);
-            p.hasItem = false;
-            clearItem(state, gd, res);
-        }
-    }  
+    // for (Player &p : gd.players_) {
+    //     p.handleInput(state, gd, res, event, deltaTime); 
+    //     if (gd.controls->actionPerformed(typeAction::ACTION_USEITEM, event) && p.hasItem) {
+    //         Item item = p.item;
+    //         item.useItem(state, gd, res, p);
+    //         p.hasItem = false;
+    //         clearItem(state, gd, res);
+    //     }
+    // }  
 }
