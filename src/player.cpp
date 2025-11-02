@@ -59,7 +59,7 @@ void Player::update(const SDLState &state, GameData &gd, Resources &res, float d
     (*this).pos += updatePos((*this), deltaTime); // update pos
     
     if (std::abs((*this).vel.x) > (*this).maxSpeedX) {
-        if (!isSliding((*this))) { // if not sliding slow down
+        if (!((*this).vel.x * (*this).dir < 0)) { // if not sliding slow down
             (*this).vel.x -= 1.5 * (*this).acc.x * deltaTime * (*this).currentDirection;
         }
     }
