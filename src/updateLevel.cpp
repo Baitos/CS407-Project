@@ -170,7 +170,7 @@ void handleLevelClick(SDLState &state, GameData &gd, Resources &res, Player &p, 
                 p.handleState(swState, gd, res);
             }
         }
-    } else if (gd.controls->actionPerformed(ACTION_GRAPPLE, event)) { // grapple
+    } else if (buttonDown && gd.controls->actionPerformed(ACTION_GRAPPLE, event)) { // grapple
         glm::vec2 pOffset = findCenterOfSprite(p);
         glm::vec2 hOffset = findCenterOfSprite(p.hook);
         float xDist = gd.mouseCoords.x - (p.pos.x - gd.mapViewport.x + pOffset.x); // A
@@ -182,7 +182,7 @@ void handleLevelClick(SDLState &state, GameData &gd, Resources &res, Player &p, 
         p.hook.pos = p.pos + hOffset;
         p.hook.visible = true;
         p.hook.vel = 500.0f * glm::vec2(aH, oH);
-    } else if (!event.key.down && gd.controls->actionPerformed(ACTION_GRAPPLE, event)) { // grapple release 
+    } else if (!buttonDown && gd.controls->actionPerformed(ACTION_GRAPPLE, event)) { // grapple release 
         if (p.hook.collided) { // get out
             PlayerState* jState = new JumpState();
             p.handleState(jState, gd, res);
@@ -254,15 +254,15 @@ void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
         gd.players_[0].pos.x = 950;
         gd.players_[0].pos.y = -654;
     }
-    // for (Player &p : gd.players_) {
-    //     p.handleInput(state, gd, res, event, deltaTime); 
-    //     if (gd.controls->actionPerformed(typeAction::ACTION_USEITEM, event) && p.hasItem) {
-    //         Item item = p.item;
-    //         item.useItem(state, gd, res, p);
-    //         p.hasItem = false;
-    //         clearItem(state, gd, res);
-    //     }
-    // }  
+    for (Player &p : gd.players_) {
+        p.handleInput(state, gd, res, event, deltaTime); 
+        // if (gd.controls->actionPerformed(typeAction::ACTION_USEITEM, event) && p.hasItem) {
+        //     Item item = p.item;
+        //     item.useItem(state, gd, res, p);
+        //     p.hasItem = false;
+        //     clearItem(state, gd, res);
+        // }
+    }  
 }
 
 void placement(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {

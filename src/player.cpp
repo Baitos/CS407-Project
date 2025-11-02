@@ -23,6 +23,7 @@ void Player::handleState(PlayerState* &pState, GameData &gd, Resources &res) {
 }
 
 void Player::handleInput(const SDLState &state, GameData &gd, Resources &res, SDL_Event &event, float deltaTime) {
+    printf("handle input!\n");
     PlayerState* pState = state_->handleInput(state, gd, res, (*this), event);
     (*this).handleState(pState, gd, res);
 }

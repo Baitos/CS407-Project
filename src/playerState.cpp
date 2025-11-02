@@ -35,9 +35,11 @@ std::string getStateFromEnum(PlayerStateValue ps) {
 
 //HandlersACTION_JUMP
 PlayerState* handleJumping(GameData &gd, Resources &res, Player &p, SDL_Event event) {
+    printf("Handle jumping\n");
     SDL_KeyboardEvent key = event.key;
     if (gd.controls->actionPerformed(ACTION_JUMP, event) && key.down && !key.repeat) {
         if (p.grounded) { // single jump
+            printf("Jumped!\n");
             return new LaunchState();
         } else if (p.canDoubleJump) { // double jump
             p.canDoubleJump = false;
@@ -267,6 +269,7 @@ PlayerState* LaunchState::update(const SDLState &state, GameData &gd, Resources 
 }
 
 void LaunchState::enter(GameData &gd, Resources &res, Player &p) {
+    printf("Launch!\n");
     p.texture = res.texLaunch[p.character];
     p.curAnimation = res.ANIM_PLAYER_LAUNCH; 
     p.animations[p.curAnimation].reset();
