@@ -1,4 +1,6 @@
 #pragma once
+#include <string>
+
 extern int TILE_SIZE;
 extern int HOOK_SIZE;
 extern bool running;
@@ -10,3 +12,5 @@ extern bool hasNewKey;
 extern float masterVolume;
 extern float musicVolume;
 extern float sfxVolume;
+
+extern std::string username;

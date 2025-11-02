@@ -24,8 +24,10 @@ enum gameStates {
     JOIN,
     CHAR_SELECT,
     SPACESHIP,
+    GRASSLANDS,
     RESULTS,
-    CREDITS
+    CREDITS,
+    GAMEPLAY_SETTINGS
 };
 
 class GameState{
@@ -43,9 +45,15 @@ class GameState{
         void unloadGameState(GameData &gd){
             gd.mapTiles_.clear();
             gd.bgTiles_.clear();
-            gd.previews_.clear();
+            gd.md.previews_.clear();
             gd.lasers_.clear();
             gd.portals_.clear();
+            gd.md.arrows_.clear();
+            gd.lava_.clear();
+            gd.water_.clear();
+            gd.signs_.clear();
+            gd.checkpoints_.clear();
+            //TTF_CloseFont(gd.font);
             //TO-DO Add clearing players
         }
 
@@ -79,7 +87,7 @@ class CharSelectState : public GameState{
 
 class LevelState : public GameState{
     public:
-        characterType character = SWORD;
+        characterType character = SHOTGUN;
 };
 
 /*class SpaceshipState : public LevelState {
@@ -97,6 +105,10 @@ class ResultsState : public GameState {
 };
 
 class CreditsState : public GameState {
+
+};
+
+class GameplaySettingsState : public GameState{
 
 };
 

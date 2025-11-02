@@ -151,7 +151,7 @@ class DeadState : public PlayerState {
     public:
         void draw(const SDLState &state, GameData &gd) {} // do nothing
         PlayerState* handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_Event event) { return nullptr; } // do nothing
-        PlayerState* update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) { return nullptr; } // do nothing
+        PlayerState* update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime);
         void enter(GameData &gd, Resources &res, Player &p);
         void exit(GameData &gd, Resources &res, Player &p) {} // do nothing
         DeadState() {

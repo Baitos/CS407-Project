@@ -367,6 +367,19 @@ void DeadState::enter(GameData &gd, Resources &res, Player &p) {
     p.animations[p.curAnimation].reset();
 }
 
+PlayerState* DeadState::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
+    //step forward timer if player currently dead
+    p.respawnTimer.step(deltaTime);
+    //check if player can respawn
+    if (p.respawnTimer.isTimeOut()) {
+        p.pos.x = gd.checkpoints_[p.lastCheckpoint].collider.x;
+        p.pos.y = gd.checkpoints_[p.lastCheckpoint].collider.y + gd.checkpoints_[p.lastCheckpoint].collider.h - TILE_SIZE*2;
+        //set state to idle
+        return new IdleState();
+    }
+    return nullptr;
+}
+
 // SWORD DEPLOY
 PlayerState* SwordDeployState::handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_Event event) {
     if (auto retState = handleJumping(gd, res, p, event)) return retState;

@@ -112,6 +112,51 @@ void BackgroundObject::draw(const SDLState &state, GameData &gd, float width, fl
     SDL_RenderTexture(state.renderer, this->texture, nullptr, &dst);
 }
 
+void Sign::draw(const SDLState &state, GameData &gd, float width, float height) { // same as Object.draw, just no debug option (maybe we can optimize this?)
+    if (!isOnscreen(state, gd, (*this))) {
+        return;
+    }
+    SDL_FRect dst {
+        .x = this->pos.x - gd.mapViewport.x,
+        .y = this->pos.y - gd.mapViewport.y,
+        .w = width,
+        .h = height
+    };
+    SDL_RenderTexture(state.renderer, this->texture, nullptr, &dst);
+}
+
+void Water::draw(const SDLState &state, GameData &gd, float width, float height) { // same as Object.draw, just no debug option (maybe we can optimize this?)
+    if (!isOnscreen(state, gd, (*this))) {
+        return;
+    }
+    SDL_FRect dst {
+        .x = this->pos.x - gd.mapViewport.x,
+        .y = this->pos.y - gd.mapViewport.y,
+        .w = width,
+        .h = height
+    };
+    SDL_RenderTexture(state.renderer, this->texture, nullptr, &dst);
+}
+
+void Lava::draw(const SDLState &state, GameData &gd, float width, float height) { // same as Object.draw, just no debug option (maybe we can optimize this?)
+    if (!isOnscreen(state, gd, (*this))) {
+        return;
+    }
+    SDL_FRect dst {
+        .x = this->pos.x - gd.mapViewport.x,
+        .y = this->pos.y - gd.mapViewport.y,
+        .w = width,
+        .h = height
+    };
+    SDL_FRect defaultCollider = {
+        .x = 0,
+        .y = 0,
+        .w = float(TILE_SIZE),
+        .h = float(TILE_SIZE)
+    };
+    SDL_RenderTexture(state.renderer, this->texture, &defaultCollider, &dst);
+}
+
 void Laser::update(const SDLState &state, GameData &gd, Resources &res, float deltaTime) { // update laser timer every frame
     Timer &laserTimer = this->laserTimer;
     laserTimer.step(deltaTime);

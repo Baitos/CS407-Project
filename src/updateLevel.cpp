@@ -17,6 +17,9 @@ extern GameState * currState;
 
 //Update Function for level Spaceship
 void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
+    //calculate placement
+    placement(state, gd, res, deltaTime);
+
     // update portals
     for (Portal &portal : gd.portals_) {
         portal.update(state, gd, res, deltaTime);
@@ -260,4 +263,14 @@ void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
     //         clearItem(state, gd, res);
     //     }
     // }  
+}
+
+void placement(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
+    //calculate the placement of each player based on their checkpoints and position
+    
+}
+
+void placement(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
+    //calculate the placement of each player based on their checkpoints and position
+    
 }

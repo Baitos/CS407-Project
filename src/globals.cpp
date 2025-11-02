@@ -11,3 +11,4 @@ float masterVolume = 100.0f;
 float musicVolume = 100.0f;
 float sfxVolume = 100.0f;
 const float EPSILON = 0.01;
+std::string username = "";

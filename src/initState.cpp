@@ -40,6 +40,7 @@ bool initialize(SDLState &state) {
 void cleanup(SDLState &state) {
     SDL_DestroyRenderer(state.renderer);
     SDL_DestroyWindow(state.window);
+    TTF_Quit();
     SDL_Quit();
 }
 
