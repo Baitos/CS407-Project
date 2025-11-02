@@ -78,37 +78,23 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     //Initial Game State
     //CHANGE if testing a different screen and you want it up on start
 
-    currState = new TitleState();
-    currState->currStateVal =  TITLE;
-    //currState->nextStateVal = CHAR_SELECT;
-    currState->init = initTitle;
-    currState->update = titleUpdate;
-    currState->render = drawTitle;
-    currState->input = titleInput;
-    
-    // currState = new SettingsState();
-    // currState->currStateVal =  SETTINGS;
-    // currState->nextStateVal = SPACESHIP;
-    // currState->init = initSettings;
-    // currState->update = settingsUpdate;
-    // currState->render = drawSettings;
-    // currState->input = settingsInputs;
-    
-        // currState = new LevelState();
-        // currState->currStateVal = GRASSLANDS;
-        // currState->nextStateVal = SPACESHIP;
-        // currState->init = createTilesGrassland;
-        // currState->update = levelUpdate;
-        // currState->render = drawLevel;
-        // currState->input = levelInputs;
+    // currState = new TitleState();
+    // currState->currStateVal =  TITLE;
+    // //currState->nextStateVal = CHAR_SELECT;
+    // currState->init = initTitle;
+    // currState->update = titleUpdate;
+    // currState->render = drawTitle;
+    // currState->input = titleInput;
 
-        // currState = new LevelState();
-        // currState->currStateVal = SPACESHIP;
-        // currState->nextStateVal = SPACESHIP;
-        // currState->init = createTilesSpaceship;
-        // currState->update = levelUpdate;
-        // currState->render = drawLevel;
-        // currState->input = levelInputs;
+    currState = new CharSelectState();
+    currState->currStateVal =  CHAR_SELECT;
+    //currState->nextStateVal = CHAR_SELECT;
+    currState->init = initCharSelect;
+    currState->update = charSelectUpdate;
+    currState->render = drawCharSelect;
+    currState->input = charSelectInputs;
+
+
 
     // setup game data
     GameData gd(state);
@@ -197,11 +183,11 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         }
 
         //Calls functions related to the current GameState
-        printf("Input\n");
+        //printf("Input\n");
         currState->input(state, gd, res, deltaTime);
-        printf("Update\n");
+        //printf("Update\n");
         currState->update(state, gd, res, deltaTime);
-        printf("Draw\n");
+        //printf("Draw\n");
         currState->render(state, gd, res, deltaTime);
 
         if (gd.debugMode) {

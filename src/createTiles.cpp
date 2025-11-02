@@ -851,8 +851,8 @@ void initCharSelect(const SDLState &state, GameData &gd, const Resources &res) {
         c.animations = res.charIconAnims;
         c.curAnimation = 0;
         printf("%d\n", gd.playerIndex);
-        if(gd.charIcons_.size() != 0 ){
-            gd.charIcons_.clear();
+        if(gd.md.charIcons_.size() != 0 ){
+            gd.md.charIcons_.clear();
         }
         for (int i = 0; i < 8; i++){
             
@@ -883,7 +883,7 @@ void initCharSelect(const SDLState &state, GameData &gd, const Resources &res) {
         c.spriteFrame = 1;
         gd.md.charIcons_.push_back(c);
 
-        printf("CharIcons: %d\n",gd.charIcons_.size());
+        printf("CharIcons: %d\n",gd.md.charIcons_.size());
         // Background
         BackgroundObject bg(pos, collider, res.texCharSelectBackground);
         bg.pos = glm::vec2(0,0);

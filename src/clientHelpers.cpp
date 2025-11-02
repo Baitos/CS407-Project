@@ -28,17 +28,17 @@ void charSelectMessageHandler(ENetEvent * event, GameData * gd, Resources &res, 
                 
                 gd->playerTypes[std::stoi(message.substr(6,1))] = std::stoi(message.substr(8,1));
                 
-                if(std::stoi(message.substr(6,1)) != gd->playerIndex || gd->charIcons_[gd->playerIndex].spriteFrame == 4){
+                if(std::stoi(message.substr(6,1)) != gd->playerIndex || gd->md.charIcons_[gd->playerIndex].spriteFrame == 4){
                     if (std::stoi(message.substr(8,1)) == SHOTGUN){
-                        gd->charIcons_[std::stoi(message.substr(6,1))].spriteFrame = 1;
+                        gd->md.charIcons_[std::stoi(message.substr(6,1))].spriteFrame = 1;
                     } else if(std::stoi(message.substr(8,1)) == SWORD){
-                        gd->charIcons_[std::stoi(message.substr(6,1))].spriteFrame = 3;
+                        gd->md.charIcons_[std::stoi(message.substr(6,1))].spriteFrame = 3;
                     } else {
                         //printf("MESSAGE  NUMBER: %s\n",message.substr(8,1) );
-                        gd->charIcons_[std::stoi(message.substr(6,1))].spriteFrame = 2;
+                        gd->md.charIcons_[std::stoi(message.substr(6,1))].spriteFrame = 2;
                     }
                     if (std::stoi(message.substr(6,1)) == gd->playerIndex){
-                        gd->charIcons_[std::stoi(message.substr(6,1))].spriteFrame+=4;
+                        gd->md.charIcons_[std::stoi(message.substr(6,1))].spriteFrame+=4;
                     }
                 }   
             } else if(message.find("PLAYER_ID ") != std::string::npos){
