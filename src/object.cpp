@@ -101,7 +101,7 @@ void Laser::update(const SDLState &state, GameData &gd, Resources &res, float de
 }
 
 void Hook::draw(const SDLState &state, GameData &gd, Player &p, float width, float height) {
-    if (!(*this).visible) {
+    if (!this->visible) {
         return;
     }
     SDL_SetRenderDrawColor(state.renderer, 30, 30, 30, 255); // draw line to hook
@@ -110,42 +110,42 @@ void Hook::draw(const SDLState &state, GameData &gd, Player &p, float width, flo
     //printf("x: %f, y: %f\n", gd.mouseCoords.x, gd.mouseCoords.y);
     SDL_RenderLine(state.renderer, p.pos.x - gd.mapViewport.x + pOffset.x, 
                     p.pos.y - gd.mapViewport.y + pOffset.y, 
-                    (*this).pos.x - gd.mapViewport.x + hOffset.x, 
-                    (*this).pos.y - gd.mapViewport.y + hOffset.y);
+                    this->pos.x - gd.mapViewport.x + hOffset.x, 
+                    this->pos.y - gd.mapViewport.y + hOffset.y);
     SDL_SetRenderDrawColor(state.renderer, 64, 51, 83, 255);
     if (!isOnscreen(state, gd, (*this))) {
         return;
     }
     SDL_FRect dst {
-        .x = (*this).pos.x - gd.mapViewport.x,
-        .y = (*this).pos.y - gd.mapViewport.y,
+        .x = this->pos.x - gd.mapViewport.x,
+        .y = this->pos.y - gd.mapViewport.y,
         .w = width,
         .h = height
     };
     double angle = 0; // default texture faces right, sdl_render rotates clockwise
-    if ((*this).vel.y > 0 && std::abs((*this).vel.y) > std::abs((*this).vel.x)) {
+    if (this->vel.y > 0 && std::abs(this->vel.y) > std::abs(this->vel.x)) {
         angle = 90; // down
     }
-    else if ((*this).vel.x < 0 && std::abs((*this).vel.x) > std::abs((*this).vel.y)) {
+    else if (this->vel.x < 0 && std::abs(this->vel.x) > std::abs(this->vel.y)) {
         angle = 180; // left
     }
-    else if ((*this).vel.y < 0 && std::abs((*this).vel.y) > std::abs((*this).vel.x)) {
+    else if (this->vel.y < 0 && std::abs(this->vel.y) > std::abs(this->vel.x)) {
         angle = 270; // up
     }
-    SDL_RenderTextureRotated(state.renderer, (*this).texture, nullptr, &dst, angle, nullptr, SDL_FLIP_NONE); // this could probably be done using the flip variable but there's no way to rotate the image that way
-    (*this).drawDebug(state, gd, width, height);
+    SDL_RenderTextureRotated(state.renderer, this->texture, nullptr, &dst, angle, nullptr, SDL_FLIP_NONE); // this could probably be done using the flip variable but there's no way to rotate the image that way
+    this->drawDebug(state, gd, width, height);
 }
 
 void Hook::update(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
-    (*this).pos += updatePos((*this), deltaTime);
+    this->pos += updatePos((*this), deltaTime);
 }
 
 void Hook::checkCollision(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
     SDL_FRect rectA{
-		.x = (*this).pos.x + (*this).collider.x,
-		.y = (*this).pos.y + (*this).collider.y,
-		.w = (*this).collider.w,
-		.h = (*this).collider.h
+		.x = this->pos.x + this->collider.x,
+		.y = this->pos.y + this->collider.y,
+		.w = this->collider.w,
+		.h = this->collider.h
 	};
     SDL_FRect rectB;
     glm::vec2 resolution{ 0 };
@@ -158,11 +158,11 @@ void Hook::checkCollision(const SDLState &state, GameData &gd, Resources &res, P
 	    };
         if (intersectAABB(rectA, rectB, resolution))
 	    {
-            (*this).vel = glm::vec2(0);
-            if (!(*this).collided) {
+            this->vel = glm::vec2(0);
+            if (!this->collided) {
                 PlayerState* grappleState = new GrappleState();
                 p.handleState(grappleState, gd, res);
-                (*this).collided = true;
+                this->collided = true;
             }
         }
     }
@@ -174,9 +174,9 @@ void Hook::checkCollision(const SDLState &state, GameData &gd, Resources &res, P
                 .w = p2.collider.w,
                 .h = p2.collider.h
             };
-            if (intersectAABB(rectA, rectB, resolution) && !(*this).collided) {
-                p.vel = 0.7f * (*this).vel;
-                p2.vel = -0.3f * (*this).vel;
+            if (intersectAABB(rectA, rectB, resolution) && !this->collided) {
+                p.vel = 0.7f * this->vel;
+                p2.vel = -0.3f * this->vel;
                 removeHook(p);
                 removeHook(p2);
                 PlayerState* stunState = new StunnedState();
@@ -189,7 +189,7 @@ void Hook::checkCollision(const SDLState &state, GameData &gd, Resources &res, P
                 .w = h2.collider.w,
                 .h = h2.collider.h
             };
-            if (intersectAABB(rectA, rectB, resolution) && !(*this).collided && h2.visible) { // Touching other hook
+            if (intersectAABB(rectA, rectB, resolution) && !this->collided && h2.visible) { // Touching other hook
                 removeHook(p);
                 removeHook(p2);
             }

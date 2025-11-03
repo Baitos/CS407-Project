@@ -172,13 +172,13 @@ PlayerState* RunState::update(const SDLState &state, GameData &gd, Resources &re
     }
     float LEEWAY = 25;
     if (p.grounded && std::abs(p.vel.x) >= (p.maxRunX - LEEWAY)) { // if grounded and moving fast enter sprint (eventually)                
-        if (!(*this).sprintTimer.isTimeOut()) {
-            (*this).sprintTimer.step(deltaTime);
+        if (!this->sprintTimer.isTimeOut()) {
+            this->sprintTimer.step(deltaTime);
         } else {
             return new SprintState();
         }
     } else {
-        (*this).sprintTimer.reset();
+        this->sprintTimer.reset();
     }
     if (isSliding(p)) { // moving in different direction of vel and pressing a direction, sliding
         return new SlideState();
@@ -190,7 +190,7 @@ void RunState::enter(GameData &gd, Resources &res, Player &p) {
     p.texture = res.texRun[p.character];
     p.curAnimation = res.ANIM_PLAYER_RUN; 
     p.maxSpeedX = p.maxRunX;
-    (*this).sprintTimer.reset();
+    this->sprintTimer.reset();
 }
 
 // SPRINT
@@ -409,8 +409,8 @@ void SwordDeployState::enter(GameData &gd, Resources &res, Player &p) {
 // SHOTGUN DEPLOY
 void ShotgunDeployState::draw(const SDLState &state, GameData &gd) {
     //draw blast if needed for shotgun
-    if((*this).blast != nullptr) {
-        (*this).blast->draw(state, gd, 80, 48);
+    if(this->blast != nullptr) {
+        this->blast->draw(state, gd, 80, 48);
     }  
 }
 
@@ -421,11 +421,11 @@ PlayerState* ShotgunDeployState::handleInput(const SDLState &state, GameData &gd
 PlayerState* ShotgunDeployState::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
     sharedUpdate(state, p, deltaTime);
     
-    if ((*this).blast != nullptr) { // update shotgun blast
-        (*this).blast->update(state, gd, res, deltaTime);
+    if (this->blast != nullptr) { // update shotgun blast
+        this->blast->update(state, gd, res, deltaTime);
     }
     
-    if((*this).blast->animations[(*this).blast->curAnimation].isDone()) { 
+    if(this->blast->animations[this->blast->curAnimation].isDone()) { 
         if(p.vel.x != 0) {
             return new WalkState();
         } else {
@@ -433,17 +433,17 @@ PlayerState* ShotgunDeployState::update(const SDLState &state, GameData &gd, Res
         }
     } else {
         if(p.dir == 1) {
-            (*this).blast->pos = glm::vec2(p.pos.x + 32, p.pos.y - 4);
-            (*this).blast->dir = 1;
+            this->blast->pos = glm::vec2(p.pos.x + 32, p.pos.y - 4);
+            this->blast->dir = 1;
         } else if (p.dir == -1) {
-            (*this).blast->pos = glm::vec2(p.pos.x - 80, p.pos.y - 4);
-            (*this).blast->dir = -1;
+            this->blast->pos = glm::vec2(p.pos.x - 80, p.pos.y - 4);
+            this->blast->dir = -1;
         }
     }
 
     //draw blast if needed for shotgun, could be put into its own draw function absolutely
-    if((*this).blast != nullptr) {
-        (*this).blast->draw(state, gd, 80, 48);
+    if(this->blast != nullptr) {
+        this->blast->draw(state, gd, 80, 48);
     }
 
     return nullptr;
@@ -471,12 +471,12 @@ void ShotgunDeployState::enter(GameData &gd, Resources &res, Player &p) {
     }
     blast->animations = res.shotgunAnims;
     blast->curAnimation = res.SHOTGUN_BLAST;
-    (*this).blast = blast;
+    this->blast = blast;
 }
 
 void ShotgunDeployState::exit(GameData &gd, Resources &res, Player &p) {
-    delete (*this).blast;
-    (*this).blast = nullptr;
+    delete this->blast;
+    this->blast = nullptr;
     p.cooldownTimer.reset();
 }
 

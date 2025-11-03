@@ -48,6 +48,7 @@ class Item : public AnimatedObject {
 
 class Bomb : public Item {
     public:
+        bool exploded = false; 
         void useItem(const SDLState &state, GameData &gd, Resources &res, Player &p);
         void draw(const SDLState &state, GameData &gd, float width, float height);
         void update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime);
@@ -55,6 +56,8 @@ class Bomb : public Item {
         Bomb(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) :
         Item(pos_, colliderRect, tex) {
             index = 0;
+            width = 32;
+            height = 32;
         }
         
 };
@@ -68,6 +71,8 @@ class Boombox : public Item {
         Boombox(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) :
         Item(pos_, colliderRect, tex) {
             index = 1;
+            width = 196;
+            height = 196;
         }
 };
 
@@ -94,6 +99,8 @@ class Pie : public Item {
         void checkCollision(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime);
         Pie(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) :
         Item(pos_, colliderRect, tex) {
+            width = 32;
+            height = 32;
             index = 7;
         }
 };
