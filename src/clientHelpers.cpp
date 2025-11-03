@@ -1,7 +1,7 @@
 //#pragma once
 #include <string>
 
-#include "../headers/GameData.h"
+#include "../headers/gameData.h"
 #include "../headers/clientHelpers.h"
 #include "../headers/state.h"
 extern int pendingLobby;
