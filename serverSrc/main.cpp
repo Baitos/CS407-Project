@@ -135,10 +135,10 @@ void createLobbyServer(int port){
                     if(message.find("READY ") != std::string::npos){            //Player indicated Ready - Format "READY player_id"
                         if(!readyPlayers[std::stoi(message.substr(6,1))]){
                             readyPlayers[std::stoi(message.substr(6,1))] = 1;
-                            if(std::stoi(message.substr(8,1)) == SPACESHIP){
-                                mapVote[0] += 1;
-                            } else {
-                                mapVote[1] += 1;
+                            for (int i = 0; i < 5; i++){
+                                if(std::stoi(message.substr(8,1)) == i){
+                                    mapVote[i] += 1;
+                                }
                             }
                             
                             int totalReady = 0;
@@ -151,7 +151,7 @@ void createLobbyServer(int port){
                                 //Send message to go to level
                                 //Update Game Data
                                 int mapWinner = 0;
-                                for (int i = 0; i<5; i++){
+                                for (int i = 1; i<5; i++){
                                     if( mapVote[i] > mapVote[mapWinner]){
                                         mapWinner = i;
                                     }
