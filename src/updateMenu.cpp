@@ -14,6 +14,7 @@ using namespace std;
 
 extern GameState * currState;
 extern ENetPeer* serverPeer;
+extern ENetHost * client;
 
 //
 //UPDATE FUNCTIONS
@@ -509,6 +510,13 @@ void handleGameplaySettingsClick(const SDLState &state, GameData &gd, Resources 
         }
 
         //change this to go back to host settings whenever implemented
+        
+        //TELL SERVER TO MAKE LOBBY
+        std::string createLobbyMessage = "HOST " + gd.md.displayName + " " + std::to_string(gd.isGrandPrix) + " " + std::to_string(gd.laps_per_race);
+        ENetPacket * packet = enet_packet_create(createLobbyMessage.c_str(), createLobbyMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
+        enet_peer_send(serverPeer, 0, packet);
+        enet_host_flush(client);
+
         currState->nextStateVal = CHAR_SELECT;
         currState = changeState(currState, gd);
         currState->init(state, gd, res);
@@ -700,9 +708,15 @@ void handleTitleClick(const SDLState &state, GameData &gd, Resources &res, float
         }
     } else if((gd.mouseCoords.x >= 315 && gd.mouseCoords.x <= 485) && (gd.mouseCoords.y >= 368 && gd.mouseCoords.y <= 436)){        //Join
         if(gd.md.tempUsername!="") {
-            currState->nextStateVal = CHAR_SELECT;
-            currState = changeState(currState, gd);
-            currState->init(state, gd, res);
+            
+            //currState->nextStateVal = CHAR_SELECT;
+            //currState = changeState(currState, gd);
+            //currState->init(state, gd, res);
+            currState->currStateVal = JOIN;
+            std::string lobbyQuery = "LOBBY_QUERY";
+            ENetPacket * packet = enet_packet_create(lobbyQuery.c_str(), lobbyQuery.size()+1, ENET_PACKET_FLAG_RELIABLE);
+            enet_peer_send(serverPeer, 0, packet);
+            enet_host_flush(client);
         }
     }else if((gd.mouseCoords.x >= 589 && gd.mouseCoords.x <= 767) && (gd.mouseCoords.y >= 368 && gd.mouseCoords.y <= 436)){         //Settings
         currState->nextStateVal = SETTINGS;

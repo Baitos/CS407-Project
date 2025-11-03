@@ -62,3 +62,24 @@ void charSelectMessageHandler(ENetEvent * event, GameData * gd, Resources &res, 
 void levelMessageHandler(ENetEvent * event, GameData * gd, Resources &res, SDLState &state){
 
 }
+
+void joinMessageHandler(ENetEvent * event, GameData * gd, Resources &res, SDLState &state){
+switch(event->type){
+        case ENET_EVENT_TYPE_CONNECT:{
+            break;
+        }
+        case ENET_EVENT_TYPE_RECEIVE: {
+            
+            std::string message((char *) event->packet->data, event->packet->dataLength);
+            enet_packet_destroy(event->packet);
+            
+            if(message.find("LOBBIES ") != std::string::npos){
+                printf("%s\n", message.c_str());
+                
+                //PARSE MESSAGE TO DETERMINE DISPLAY INFORMATION HERE
+            
+            }
+            break;
+        }
+    }
+}

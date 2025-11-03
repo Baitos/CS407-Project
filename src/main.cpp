@@ -41,6 +41,7 @@ const float netTick = 1.0f / 20.0f; //20 Updates per second
 ENetPeer* serverPeer = nullptr;
 int pendingLobby = -1;
 bool inLobby = false;
+ENetHost * client;
 
 int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; include argv/argc
     
@@ -81,23 +82,21 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     //Initial Game State
     //CHANGE if testing a different screen and you want it up on start
 
-    // currState = new TitleState();
-    // currState->currStateVal =  TITLE;
-    // //currState->nextStateVal = CHAR_SELECT;
-    // currState->init = initTitle;
-    // currState->update = titleUpdate;
-    // currState->render = drawTitle;
-    // currState->input = titleInput;
-
-    currState = new CharSelectState();
-    currState->currStateVal =  CHAR_SELECT;
+    currState = new TitleState();
+    currState->currStateVal =  TITLE;
     //currState->nextStateVal = CHAR_SELECT;
-    currState->init = initCharSelect;
-    currState->update = charSelectUpdate;
-    currState->render = drawCharSelect;
-    currState->input = charSelectInputs;
+    currState->init = initTitle;
+    currState->update = titleUpdate;
+    currState->render = drawTitle;
+    currState->input = titleInput;
 
-
+    // currState = new CharSelectState();
+    // currState->currStateVal =  CHAR_SELECT;
+    // //currState->nextStateVal = CHAR_SELECT;
+    // currState->init = initCharSelect;
+    // currState->update = charSelectUpdate;
+    // currState->render = drawCharSelect;
+    // currState->input = charSelectInputs;
 
     // setup game data
     GameData gd(state);
@@ -114,7 +113,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     ENetAddress clientAddress;
     enet_address_set_host(&clientAddress, "100.91.68.8");
     clientAddress.port = 0; // OS chooses port
-    ENetHost* client = enet_host_create(&clientAddress, 1, 2, 0, 0);
+    client = enet_host_create(&clientAddress, 1, 2, 0, 0);
     if (!client) {
         printf("Bad client creation\n");
         return -1;
@@ -148,14 +147,16 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         
         while (enet_host_service(client, &event, 0) > 0) {
             //std::string message;
-            printf("Handling message\n");
+            printf("Handling message %d\n", currState->currStateVal);
             if(!inLobby){                             //Message handling for Matchmaker Server Conection
                 switch(event.type){
                     case ENET_EVENT_TYPE_CONNECT:{
                         printf("Connected to matchmaker!\n");
+                        break;
                     }
                     case ENET_EVENT_TYPE_RECEIVE: {
                         std::string message((char *) event.packet->data, event.packet->dataLength);
+                        printf("%s\n", message.c_str());
                         enet_packet_destroy(event.packet);
                         if(message.find("LOBBY_PORT ") != std::string::npos){
                             pendingLobby = std::stoi(message.substr(11,5));
@@ -163,7 +164,9 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                             if (pendingLobby != -1){
                                 enet_peer_disconnect(serverPeer, 0);
                             }
-                        } 
+                        }  else if (message.find("LOBBIES ") != std::string::npos){
+                            printf("%s", message.c_str());
+                        }
                         break;
                     }
                     case ENET_EVENT_TYPE_DISCONNECT: {
@@ -180,10 +183,26 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                 }
             } else {                                            //Message handling for lobby
                 if(currState->currStateVal == CHAR_SELECT){
+                    printf("Message\n");
                     charSelectMessageHandler(&event, &gd, res, state);
                 } else if (currState->currStateVal == SPACESHIP){
                     levelMessageHandler(&event, &gd, res, state);
-                } 
+                } else if (currState->currStateVal == JOIN){
+                    joinMessageHandler(&event, &gd, res, state);
+                } else {
+                    printf("Message fell through %d\n", currState->currStateVal);
+                    switch(event.type){
+                        case ENET_EVENT_TYPE_CONNECT:{
+                            printf("Connected to matchmaker!\n");
+                            break;
+                        }
+                        case ENET_EVENT_TYPE_RECEIVE: {
+                            std::string message((char *) event.packet->data, event.packet->dataLength);
+                            printf("%s\n", message.c_str());
+                            break;
+                        }
+                    }
+                }
                 
             }
         }
