@@ -399,6 +399,7 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
         std::string pendingMessage = "CLASS " + std::to_string(gd.playerIndex) + " " + std::to_string(SWORD);
         ENetPacket * packet = enet_packet_create(pendingMessage.c_str(), pendingMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
         enet_peer_send(serverPeer, 0, packet);
+        enet_host_flush(client);
         
         //Set Icons and Player to Sword
         gd.md.previews_[0].texture = res.texSword;
@@ -418,7 +419,7 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
         std::string pendingMessage = "CLASS " + std::to_string(gd.playerIndex) + " " + std::to_string(JETPACK);
         ENetPacket * packet = enet_packet_create(pendingMessage.c_str(), pendingMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
         enet_peer_send(serverPeer, 0, packet);
-        
+        enet_host_flush(client);
         //Set Icons and Player to Jetpack
         gd.md.previews_[0].texture = res.texJetpack;
         gd.md.previews_[0].pos = glm::vec2(510,200);
@@ -438,7 +439,7 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
         std::string pendingMessage = "CLASS " + std::to_string(gd.playerIndex) + " " + std::to_string(SHOTGUN);
         ENetPacket * packet = enet_packet_create(pendingMessage.c_str(), pendingMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
         enet_peer_send(serverPeer, 0, packet);
-
+        enet_host_flush(client);
         //Set Icons and Player to Shotgun
         gd.md.previews_[0].texture = res.texShotgun;
         gd.md.previews_[0].pos = glm::vec2(520,200);
@@ -460,6 +461,7 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
         std::string pendingMessage = "READY " + std::to_string(gd.playerIndex) + " " + std::to_string(selectedStage);
         ENetPacket * packet = enet_packet_create(pendingMessage.c_str(), pendingMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
         enet_peer_send(serverPeer, 0, packet);
+        enet_host_flush(client);
         
         //Enter Stage
         //TO DO - ONLY DO WHEN PLAYERS AGREE TO READY UP

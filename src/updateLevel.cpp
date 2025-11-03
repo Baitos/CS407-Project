@@ -7,10 +7,13 @@
 #include "../headers/resources.h"
 #include "../headers/state.h"
 #include "../headers/playerState.h"
+#include "../headers/enet.h"
 
 using namespace std;
 
 extern GameState * currState;
+extern ENetPeer* serverPeer;
+extern ENetHost * client;
 //
 //UPDATE FUNCTIONS
 //
@@ -186,6 +189,15 @@ void handleCrosshair(const SDLState &state, GameData &gd, Resources &res, float 
 void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
                     SDL_Event event, bool keyDown, float deltaTime) {
     SDL_KeyboardEvent key = event.key;
+
+    //Send server your input
+    if(!key.repeat){
+        std::string pendingMessage = "INPUT " + std::to_string(gd.playerIndex) + " " + std::to_string(key.scancode) + " " + std::to_string(key.down);
+        ENetPacket * packet = enet_packet_create(pendingMessage.c_str(), pendingMessage.size() + 1, 0);
+        enet_peer_send(serverPeer, 0, packet);
+        enet_host_flush(client);
+    }
+
     if (key.scancode == SDL_SCANCODE_F12 && key.down && !key.repeat) { // debug
             gd.debugMode = !gd.debugMode;
     }
