@@ -11,7 +11,6 @@
 using namespace std;
 
 extern GameState * currState;
-
 //
 //UPDATE FUNCTIONS
 //
@@ -35,6 +34,20 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
             box.update(state, gd, res, deltaTime);
         }
     }
+    // for (int i = 0; i < gd.items_.size(); i++) {
+    //     // TODO This shit sucks ass please fix lol - Rei
+    //     Item item = gd.items_[i];
+    //     item.update(state, gd, res, deltaTime);
+    //     if (item.type == itemType::BOOMBOX) {
+    //         item.pos.x = gd.player.pos.x - (item.width / 2) + 16;
+    //         item.pos.y = gd.player.pos.y - (item.height/2) + 16;
+    //     }
+    //     gd.items_[i] = item;
+    //     if (item.animations[item.curAnimation].isDone()) {
+    //         gd.items_.erase(gd.items_.begin() + i);
+    //         i--;
+    //     }
+    // }
     for (Player &p : gd.players_) {
         p.update(state, gd, res, deltaTime);
     }
@@ -76,12 +89,13 @@ void levelInputs(SDLState &state, GameData &gd, Resources &res, float deltaTime)
                 }
                 case SDL_EVENT_KEY_DOWN:
                 {
-                    handleKeyInput(state, gd, res, event.key, true, deltaTime);
+                    handleKeyInput(state, gd, res, event, true, deltaTime);
+                    
                     break;
                 }
                 case SDL_EVENT_KEY_UP:
-                {
-                    handleKeyInput(state, gd, res, event.key, false, deltaTime);
+                {   
+                    handleKeyInput(state, gd, res, event, false, deltaTime);
                     break;
                 }
                 case SDL_EVENT_MOUSE_BUTTON_DOWN:
@@ -106,7 +120,7 @@ void levelInputs(SDLState &state, GameData &gd, Resources &res, float deltaTime)
 //handler for clicking in the level
 void handleLevelClick(SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime, SDL_Event event, bool buttonDown) {
     //LEFT CLICK FOR CHARACTER WEAPON DEPLOY
-    if(event.button.button == SDL_BUTTON_LEFT && buttonDown){
+    if(gd.controls->actionPerformed(ACTION_ABILITY, event) && buttonDown){
         //JETPACK DEPLOY
         if(((LevelState *)currState)->character == JETPACK) {
             if (p.cooldownTimer.isTimeOut() && p.state_->stateVal != JETPACK_DEPLOY) {
@@ -126,7 +140,7 @@ void handleLevelClick(SDLState &state, GameData &gd, Resources &res, Player &p, 
                 p.handleState(swState, gd, res);
             }
         }
-    } else if (buttonDown && event.button.button == SDL_BUTTON_RIGHT) { // grapple
+    } else if (buttonDown && gd.controls->actionPerformed(ACTION_GRAPPLE, event)) { // grapple
         glm::vec2 pOffset = findCenterOfSprite(p);
         glm::vec2 hOffset = findCenterOfSprite(p.hook);
         float xDist = gd.mouseCoords.x - (p.pos.x - gd.mapViewport.x + pOffset.x); // A
@@ -138,7 +152,7 @@ void handleLevelClick(SDLState &state, GameData &gd, Resources &res, Player &p, 
         p.hook.pos = p.pos + hOffset;
         p.hook.visible = true;
         p.hook.vel = 500.0f * glm::vec2(aH, oH);
-    } else if (!buttonDown && event.button.button == SDL_BUTTON_RIGHT) { // grapple release 
+    } else if (!buttonDown && gd.controls->actionPerformed(ACTION_GRAPPLE, event)) { // grapple release 
         if (p.hook.collided) { // get out
             PlayerState* jState = new JumpState();
             p.handleState(jState, gd, res);
@@ -171,8 +185,8 @@ void handleCrosshair(const SDLState &state, GameData &gd, Resources &res, float 
 
 //Key Input Handler for Level
 void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
-                    SDL_KeyboardEvent key, bool keyDown, float deltaTime) {
-
+                    SDL_Event event, bool keyDown, float deltaTime) {
+    SDL_KeyboardEvent key = event.key;
     if (key.scancode == SDL_SCANCODE_F12 && key.down && !key.repeat) { // debug
             gd.debugMode = !gd.debugMode;
     }
@@ -186,6 +200,16 @@ void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
     /*if (key.scancode == SDL_SCANCODE_F2 && keyDown && !key.repeat) { // anti gravity
         gd.player().flip = -1 * gd.player().flip;
     }*/
+       // Item select, assuming last place for now
+    if (key.scancode == SDL_SCANCODE_0) {
+        selectedItem = 0; // Boombox
+    }
+    if (key.scancode == SDL_SCANCODE_1) {
+        selectedItem = 1; // Bomb
+    }
+    if (key.scancode == SDL_SCANCODE_2) {
+        selectedItem = 5; // Sugar
+    }
     if (key.scancode == SDL_SCANCODE_F1) {
         running = false;
     }
@@ -199,8 +223,8 @@ void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
         gd.players_[gd.playerIndex].pos.y = 0;
     }
     for (Player &p : gd.players_) {
-        p.handleInput(state, gd, res, key, deltaTime); 
-        if (key.scancode == SDL_SCANCODE_Q && p.hasItem) {
+        p.handleInput(state, gd, res, event, deltaTime); 
+        if (gd.controls->actionPerformed(typeAction::ACTION_USEITEM, event) && p.hasItem) {
             Item* item = p.heldItem;
             item->useItem(state, gd, res, p);
             p.hasItem = false;

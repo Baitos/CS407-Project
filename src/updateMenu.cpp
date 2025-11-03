@@ -10,6 +10,8 @@
 #include "../headers/enet.h"
 
 
+#include "../headers/controls.h"
+#include "../headers/sound.h"
 using namespace std;
 
 extern GameState * currState;
@@ -30,7 +32,55 @@ void charSelectUpdate(const SDLState &state, GameData &gd, Resources &res, float
 
 //Update for Settings Screen
 void settingsUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
+    // Update controls
+    Controls * controls  = gd.controls;
+    SettingsState * curSettings = ((SettingsState *)currState);
+    controlStruct construct;
+    std::string keyName;
+    for (int i = 0; i < 7; i++) {
+        construct = controls->keyboardControls[i];
+        if (construct.isMouseButton) {
+            if (construct.key == SDL_BUTTON_LEFT) {
+                keyName = std::string("LMB");
+            }
+            else if (construct.key == SDL_BUTTON_RIGHT) {
+                keyName = std::string("RMB");
+            }
+            else {
+                keyName = std::string("Mouse3"); // middle click
+            }
+        }
+        else {
+            // gets the name of the key for the current action
+            keyName = std::string(SDL_GetKeyName(SDL_GetKeyFromScancode((SDL_Scancode)construct.key, SDL_KMOD_NONE, false)));
+        }
+        curSettings->controlStrings[i] = keyName;
+    }
+    // Update audio
+    //Note that volume ratio is dial.pos.x / (290-84)
+    masterVolume = gd.md.settingsDials_[0].pos.x / (290 - 84) -40.8;
+    if (masterVolume > 1.0f) {
+        masterVolume = 1.0f;
+    }
+    else if (masterVolume < 0.0f) {
+        masterVolume = 0.0f;
+    }
+    musicVolume = gd.md.settingsDials_[1].pos.x / (290 - 84) - 40.8;
+        if (musicVolume > 1.0f) {
+        musicVolume = 1.0f;
+    }
+    else if (masterVolume < 0.0f) {
+        musicVolume = 0.0f;
+    }
+    sfxVolume = gd.md.settingsDials_[2].pos.x / (290 - 84) - 40.8;
+        if (sfxVolume > 1.0f) {
+        sfxVolume = 1.0f;
+    }
+    else if (sfxVolume < 0.0f) {
+        sfxVolume = 0.0f;
+    }
     
+    //printf("Master = %.1f, music = %.1f, sfx = %f\n", masterVolume, musicVolume, sfxVolume);
 }
 
 void gameplaySettingsUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
@@ -97,7 +147,11 @@ void settingsInputs(SDLState &state, GameData &gd, Resources &res, float deltaTi
                 }
                 case SDL_EVENT_KEY_DOWN:
                 {
-                    
+                    if(waitingForKey) {
+                        hasNewKey = true;
+                        gd.controls->setControls(gd.controls->currActionRebind, {event.key.scancode, false});
+                        waitingForKey = false;
+                    }
                     
                     break;
                 }
@@ -108,13 +162,20 @@ void settingsInputs(SDLState &state, GameData &gd, Resources &res, float deltaTi
                 }
                 case SDL_EVENT_MOUSE_BUTTON_DOWN:
                 {
-                    handleSettingsClick(state,gd,res,deltaTime);
+                    if (waitingForKey) {
+                        hasNewKey = true;
+                        gd.controls->setControls(gd.controls->currActionRebind, {event.button.button, true});
+                        waitingForKey = false;
+                    }
+                    else {
+                        handleSettingsClick(state,gd,res,deltaTime);
+                    }
                     break;
                     
                 }  case SDL_EVENT_MOUSE_BUTTON_UP:
 
                 {
-                    gd.updatedDial = NULL;
+                    gd.md.updatedDial = NULL;
                 }
             }
         }
@@ -155,7 +216,7 @@ void gameplaySettingsInput(SDLState &state, GameData &gd, Resources &res, float 
                 }  case SDL_EVENT_MOUSE_BUTTON_UP:
 
                 {
-                    //gd.updatedDial = NULL;
+                    //gd.md.updatedDial = NULL;
                 }
             }
         }
@@ -218,15 +279,14 @@ void handleMousePointerSettings(const SDLState &state, GameData &gd, Resources &
         .w = (float)TILE_SIZE,
         .h = (float)TILE_SIZE
     };
-    if(gd.updatedDial != NULL){
-        gd.updatedDial->pos.x = gd.mouseCoords.x;
-        if (gd.updatedDial->pos.x  > 290.f){ 
-            gd.updatedDial->pos.x  = 290.f;
-        } else if(gd.updatedDial->pos.x < 84.f) {
-            gd.updatedDial->pos.x  = 84.f;
+    if(gd.md.updatedDial != NULL){
+        gd.md.updatedDial->pos.x = gd.mouseCoords.x;
+        if (gd.md.updatedDial->pos.x  > 290.f){ 
+            gd.md.updatedDial->pos.x  = 290.f;
+        } else if(gd.md.updatedDial->pos.x < 84.f) {
+            gd.md.updatedDial->pos.x  = 84.f;
         }
-        gd.updatedDial->draw(state,gd,static_cast<float>( gd.updatedDial->texture->w) * 2, static_cast<float>( gd.updatedDial->texture->h) * 2);
-
+        gd.md.updatedDial->draw(state,gd,static_cast<float>( gd.md.updatedDial->texture->w) * 2, static_cast<float>( gd.md.updatedDial->texture->h) * 2);
     } else {
         if((gd.mouseCoords.x >= 35 && gd.mouseCoords.x <= 218) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)){ //Big Border on Exit
             //printf("1\n");
@@ -262,11 +322,7 @@ void handleMousePointerSettings(const SDLState &state, GameData &gd, Resources &
             gd.md.settingsBorder.pos = glm::vec2(500,500);
         }
     }
-    
-
-
     SDL_RenderTexture(state.renderer, res.texCursor, nullptr, &dst); // src is for sprite stripping, dest is for where sprite should be drawn*/ 
-    
 }
 void handleMousePointerGameplaySettings (const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
     SDL_GetMouseState(&gd.mouseCoords.x, &gd.mouseCoords.y);
@@ -318,6 +374,22 @@ void handleCharSelectKeyInput(const SDLState &state, GameData &gd, Resources &re
         currState = changeState(currState, gd);
         currState->init(state,gd, res);
     }
+    // if (key.scancode == SDL_SCANCODE_M) {
+    //     // play music file
+    //     printf("Master = %.1f, music = %.1f, sfx = %f\n", masterVolume, musicVolume, sfxVolume);
+    //     std::string filepath = "data/Audio/laser.wav";
+    //     Sound * sound = new Sound(filepath, true);
+    //     sound->SetupStream();
+    //     sound->PlaySound();
+    // }   
+    // if (key.scancode == SDL_SCANCODE_N) {
+    //     // play sfx file
+    //     std::string filepath = "data/Audio/laser.wav";
+    //     Sound * sound = new Sound(filepath, false);
+    //     sound->SetupStream();
+    //     sound->PlaySound();
+    //     delete sound;
+    // }
 }
 
 //Handles Clicking for Character Select Screen
@@ -470,6 +542,7 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
 
 //Handles Clicking for Settings
 void handleSettingsClick(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
+    Controls * controls = gd.controls;
     if ((gd.mouseCoords.x >= 583 && gd.mouseCoords.x <= 766) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)) {
         printf("Save\n");
     } else if ((gd.mouseCoords.x >= 35 && gd.mouseCoords.x <= 218) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)) {
@@ -478,23 +551,37 @@ void handleSettingsClick(const SDLState &state, GameData &gd, Resources &res, fl
         currState->init(state, gd, res);
     } else if((gd.mouseCoords.x >= 578 && gd.mouseCoords.x <= 690) && (gd.mouseCoords.y >= 106 && gd.mouseCoords.y <= 126)){ //Sprint
         printf("Sprint\n");
+        waitingForKey = true;
+        controls->currActionRebind = typeAction::ACTION_SPRINT;
     } else if((gd.mouseCoords.x >= 578 && gd.mouseCoords.x <= 690) && (gd.mouseCoords.y >= 130 && gd.mouseCoords.y <= 150)){ //Grapple
         printf("Grapple\n");
+        waitingForKey = true;
+        controls->currActionRebind = typeAction::ACTION_GRAPPLE;
     } else if((gd.mouseCoords.x >= 578 && gd.mouseCoords.x <= 690) && (gd.mouseCoords.y >= 156 && gd.mouseCoords.y <= 174)){ //Ability
         printf("Ability\n");
+        waitingForKey = true;
+        controls->currActionRebind = typeAction::ACTION_ABILITY;
     } else if((gd.mouseCoords.x >= 578 && gd.mouseCoords.x <= 690) && (gd.mouseCoords.y >= 182 && gd.mouseCoords.y <= 202)){ //Jump
         printf("Jump\n");
+        waitingForKey = true;
+        controls->currActionRebind = typeAction::ACTION_JUMP;
     } else if((gd.mouseCoords.x >= 578 && gd.mouseCoords.x <= 690) && (gd.mouseCoords.y >= 208 && gd.mouseCoords.y <= 228)){ //Use Item
         printf("Use Item\n");
+        waitingForKey = true;
+        controls->currActionRebind = typeAction::ACTION_USEITEM;
     } else if((gd.mouseCoords.x >= 578 && gd.mouseCoords.x <= 690) && (gd.mouseCoords.y >= 234 && gd.mouseCoords.y <= 254)){ //Pause
         printf("Pause\n");
+        waitingForKey = true;
+        controls->currActionRebind = typeAction::ACTION_PAUSE;
     } else if((gd.mouseCoords.x >= 578 && gd.mouseCoords.x <= 690) && (gd.mouseCoords.y >= 260 && gd.mouseCoords.y <= 280)){ //Fast-Fall
         printf("Fast-fall\n");
+        waitingForKey = true;
+        controls->currActionRebind = typeAction::ACTION_FASTFALL;
     }   
     for(Object &o : gd.md.settingsDials_){
         
         if((gd.mouseCoords.x >= o.pos.x && gd.mouseCoords.x <= o.pos.x + (static_cast<float>(o.texture->w) * 2)) && (gd.mouseCoords.y >= o.pos.y && gd.mouseCoords.y <= o.pos.y + (static_cast<float>(o.texture->h) * 2))){
-           gd.updatedDial = &o; 
+           gd.md.updatedDial = &o; 
         }
     }
 }
@@ -699,7 +786,7 @@ void titleInput(SDLState &state, GameData &gd, Resources &res, float deltaTime){
 
                 {
                     //handleTitleClick(state,gd, res, deltaTime);
-                    //gd.updatedDial = NULL;
+                    //gd.md.updatedDial = NULL;
                 }
             }
         }

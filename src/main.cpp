@@ -217,7 +217,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         currState->update(state, gd, res, deltaTime);
         //printf("Draw\n");
         currState->render(state, gd, res, deltaTime);
-
+        //printf("draw done\n");
         if (gd.debugMode) {
         // debug info
             SDL_SetRenderDrawColor(state.renderer, 255, 255, 255, 255);
@@ -229,7 +229,6 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         //swap buffers and present
         SDL_RenderPresent(state.renderer);
         prevTime = nowTime;
-        
     }
 
     delete currState;

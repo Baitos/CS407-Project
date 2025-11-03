@@ -59,9 +59,11 @@ class Object { // generic obj type
 
 class AnimatedObject : public Object { // obj with anims
     public:
-        int spriteFrame;
         std::vector<Animation> animations;
-        int curAnimation;    
+        int spriteFrame;
+        int curAnimation;  
+        float width = TILE_SIZE;
+        float height = TILE_SIZE; 
         float dir;
         float flip; // anti gravity
         bool visible; 
@@ -132,6 +134,8 @@ class Portal : public AnimatedObject { // portals
         isEntrance = false;
         portalID += 0.5;
         type = PORTAL;
+        width = TILE_SIZE;
+        height = TILE_SIZE * 2;
     }
 };
 
@@ -209,6 +213,8 @@ class ItemBox : public Object {
         void generateItem(Player &player, GameData &gd, Resources &res);
 };
 
+// Stun for animated objects
+void angledStun(AnimatedObject &obj, GameData &gd, Resources &res, Player &player);
 
 class Hook : public AnimatedObject { // grappling hook projectile
     public:

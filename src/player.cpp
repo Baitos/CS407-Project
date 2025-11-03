@@ -25,8 +25,8 @@ void Player::handleState(PlayerState* &pState, GameData &gd, Resources &res) {
     }
 }
 
-void Player::handleInput(const SDLState &state, GameData &gd, Resources &res, SDL_KeyboardEvent& key, float deltaTime) {
-    PlayerState* pState = state_->handleInput(state, gd, res, (*this), key);
+void Player::handleInput(const SDLState &state, GameData &gd, Resources &res, SDL_Event &event, float deltaTime) {
+    PlayerState* pState = state_->handleInput(state, gd, res, (*this), event);
     this->handleState(pState, gd, res);
 }
 

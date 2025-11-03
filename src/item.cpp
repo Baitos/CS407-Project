@@ -208,3 +208,4 @@ void ItemStorage::update(const SDLState &state, GameData &gd, Resources &res, Pl
         setItemPicked(gd, res, p.heldItem->index);
     }
 }
+

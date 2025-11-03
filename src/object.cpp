@@ -193,8 +193,6 @@ void ItemBox::generateItem(Player &player, GameData &gd, Resources &res) {
             itemType::FOG, itemType::ICE, itemType::MISSILE, itemType::SUGAR, itemType::PIE};
     //}
     selected = rand() % itemOptions.size();
-    //printf("%d %d\n", selected, itemOptions.size());
-    
     switch (itemOptions[selected]) {
         case itemType::BOMB:
             newItem = new Bomb(player.pos, defaultCollider, res.texBomb);
@@ -222,3 +220,38 @@ void ItemBox::generateItem(Player &player, GameData &gd, Resources &res) {
     player.heldItem = newItem;
     player.pickingItem = true;
 }
+
+
+// void angledStun(AnimatedObject &obj, GameData &gd, Resources &res, Player &player) {
+//     // TODO properly implement angles
+//     if (player.index == 1) {
+//         gd.currPlayer = player;
+//     }
+//     float baseKnockback = 100.0f;
+//     player.state_ = changePlayerState(gd, res, player.state_, DEAD);
+//     if (player.vel.x > 0) {
+//         player.vel.x = changeVel(baseKnockback * obj.knockbackMultiplier, player);
+//     }
+//     else if (player.vel.x < 0) {
+//         player.vel.x = changeVel(-baseKnockback* obj.knockbackMultiplier, player);
+//     }
+//     player.vel.x = changeVel(-player.vel.x, player);
+//     float shouldFlip = player.flip; // there might be a more modular way to do this. idk if we will actually use the gravity flip but having it is nice and cool
+//     if(shouldFlip * obj.pos.y < shouldFlip * player.pos.y ){
+//         player.vel.y = changeVel(baseKnockback * obj.knockbackMultiplier, player);
+//     } else {
+//         player.vel.y = changeVel(-baseKnockback* obj.knockbackMultiplier, player);
+//     }
+//     player.gravityScale = 1.0f;
+//     player.isStunned = true;
+//     player.grounded = false;
+//     // TODO rework this so it's generic
+//     if (player.index == 0) {
+//         gd.player = player;
+//     }
+//     else {
+//         gd.player2 = player;
+//     }
+//     gd.currPlayer = gd.player;
+// }
+

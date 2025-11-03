@@ -424,6 +424,7 @@ void createTilesSpaceship(const SDLState &state, GameData &gd, const Resources &
 
                         Player * temp =  new Player(pos, collider, res.texIdleS, res.playerAnims, res.ANIM_PLAYER_IDLE, 250);
                         gd.player2 = *temp;
+                        gd.player2.index = 1;
                         gd.player2.state_ = newState;
                         gd.player2.state_->update = emptyUpdate;
                         gd.player2.state_->handleInput = dummyInput;
