@@ -129,20 +129,7 @@ void Player::collisionResponse(const SDLState &state, GameData &gd, Resources &r
 		case WATER:
 		{
 			//Water& w = dynamic_cast<Water&>(o);
-			if(abs((*this).vel.x) >= 50) {
-				if((*this).vel.x > 0) {
-					(*this).vel.x-=.5;
-				} else {
-					(*this).vel.x+=.5;
-				}
-			}
-			if(abs((*this).vel.y) >= 50) {
-				if((*this).vel.y > 0) {
-					(*this).vel.y-=.5;
-				} else {
-					(*this).vel.y+=.5;
-				}
-			}
+			slowObject((*this).vel, deltaTime);
 			break;
 		}
 		case LAVA:
@@ -270,7 +257,7 @@ void Player::groundedCheck(Object &o, SDL_FRect &rectB) {
 		.x = (*this).pos.x + (*this).collider.x + 1,
 		.y = (*this).pos.y + (*this).collider.y + (*this).collider.h,
 		.w = (*this).collider.w - inset,
-		.h = 1
+		.h = EPSILON
 	};
 	glm::vec2 resolution{ 0 };
 	if (intersectAABB(sensor, rectB, resolution)) {
@@ -403,7 +390,7 @@ void Pie::checkCollision(const SDLState &state, GameData &gd, Resources &res, Pl
                 .w = p2.collider.w,
                 .h = p2.collider.h
             };
-            if (intersectAABB(rectA, rectB, resolution) && (*this).visible) {
+            if (intersectAABB(rectA, rectB, resolution)) {
                 p2.vel.y = -200.0f; 
                 p2.vel.x = this->vel.x * 0.5;  
                 p2.pos.y -= 1;              
@@ -415,5 +402,38 @@ void Pie::checkCollision(const SDLState &state, GameData &gd, Resources &res, Pl
                 this->active = false;
             }
         } 
+    }
+}
+
+void Ice::checkCollision(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
+    SDL_FRect rectA {
+		.x = (*this).pos.x + (*this).collider.x,
+		.y = (*this).pos.y + (*this).collider.y,
+		.w = (*this).collider.w,
+		.h = (*this).collider.h
+	};
+    SDL_FRect rectB;
+    glm::vec2 resolution{ 0 };
+	int AMOUNT = 4;
+	for (Player &p2 : gd.players_) { // does affect player who used it for now
+		rectB = {
+			.x = p2.pos.x + p2.collider.x,
+			.y = p2.pos.y + p2.collider.y,
+			.w = p2.collider.w,
+			.h = p2.collider.h
+		};
+		if (intersectAABB(rectA, rectB, resolution)) {
+			slowObject(p2.vel, deltaTime * AMOUNT); // slow them down a lot
+		}
+		Hook h2 = p2.hook;
+		rectB = {
+			.x = h2.pos.x + h2.collider.x,
+			.y = h2.pos.y + h2.collider.y,
+			.w = h2.collider.w,
+			.h = h2.collider.h
+		};
+		if (intersectAABB(rectA, rectB, resolution) && h2.visible) { 
+			slowObject(p2.hook.vel, deltaTime * AMOUNT); // slow hook down too
+		}
     }
 }

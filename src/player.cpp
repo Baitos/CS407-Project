@@ -11,7 +11,7 @@
 void Player::draw(const SDLState &state, GameData &gd, float width, float height) {
     (*this).hook.draw(state, gd, (*this), HOOK_SIZE, HOOK_SIZE); // draw hook under player
     for (auto &i : this->items_) { // draw active items
-        i->draw(state, gd, i->texture->w, i->texture->h);
+        i->draw(state, gd, TILE_SIZE, TILE_SIZE);
     }
     AnimatedObject::draw(state, gd, width, height); // do generic object draw for player
 }

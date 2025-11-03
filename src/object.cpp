@@ -66,7 +66,7 @@ void Object::drawDebugNearby(const SDLState &state, GameData &gd, float width, f
 }
 
 void AnimatedObject::draw(const SDLState &state, GameData &gd, float width, float height) {
-    if (!isOnscreen(state, gd, (*this))) {
+    if (!isOnscreen(state, gd, (*this)) && !(*this).persistent) {
         return;
     }
     float srcX = this->curAnimation != -1 ? this->animations[this->curAnimation].currentFrame() * width : (this->spriteFrame - 1) * width;
@@ -177,21 +177,21 @@ void ItemBox::generateItem(Player &player, GameData &gd, Resources &res) {
     Item* newItem;
     std::vector<itemType> itemOptions;
     int selected;
-    // Limit items for top 25% of players
-    if ((player.position / (float)gd.numPlayers) <= 0.25) {
-        itemOptions = {itemType::BOMB, itemType::BOOMBOX, itemType::BOUNCYBALL, 
-            itemType::ICE, itemType::SUGAR, itemType::PIE};
-    }
-    // Limit items for bottom 25% of players
-    else if ((player.position / (float)gd.numPlayers) >= 0.75) {
-        itemOptions = {itemType::BOOMBOX, itemType::BOUNCYBALL, 
-            itemType::FOG, itemType::MISSILE, itemType::SUGAR, itemType::PIE};
-    }
-    else {
+    // // Limit items for top 25% of players
+    // if ((player.position / (float)gd.numPlayers) <= 0.25) {
+    //     itemOptions = {itemType::BOMB, itemType::BOOMBOX, itemType::BOUNCYBALL, 
+    //         itemType::ICE, itemType::SUGAR, itemType::PIE};
+    // }
+    // // Limit items for bottom 25% of players
+    // else if ((player.position / (float)gd.numPlayers) >= 0.75) {
+    //     itemOptions = {itemType::BOOMBOX, itemType::BOUNCYBALL, 
+    //         itemType::FOG, itemType::MISSILE, itemType::SUGAR, itemType::PIE};
+    // }
+    // else {
         // All items are available
         itemOptions = {itemType::BOMB, itemType::BOOMBOX, itemType::BOUNCYBALL, 
             itemType::FOG, itemType::ICE, itemType::MISSILE, itemType::SUGAR, itemType::PIE};
-    }
+    //}
     selected = rand() % itemOptions.size();
     //printf("%d %d\n", selected, itemOptions.size());
     
@@ -208,9 +208,13 @@ void ItemBox::generateItem(Player &player, GameData &gd, Resources &res) {
         case itemType::PIE:
             newItem = new Pie(player.pos, defaultCollider, res.texPie);
             break;
+        case itemType::ICE:
+            newItem = new Ice(player.pos, defaultCollider, res.texIce);
+            break;
         default:
             printf("Your item is in another castle\n");
             newItem = new Bomb(player.pos, defaultCollider, res.texBomb);
+            break;
     }
     if (player.heldItem != nullptr) {
         delete player.heldItem;

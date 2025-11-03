@@ -39,6 +39,37 @@ void Boombox::checkCollision(const SDLState &state, GameData &gd, Resources &res
     printf("boombox collide\n");
 }
 
+// ICE
+void Ice::draw(const SDLState &state, GameData &gd, float width, float height) {
+    AnimatedObject::draw(state, gd, this->BOUND * width, this->BOUND * height); // do generic object draw
+} 
+// right now "persistent" is for this ice block; because it is very large it interacts weird with "isOnscreen"
+
+void Ice::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) { // currently for pie
+    this->iceTimer.step(deltaTime);
+    if (this->iceTimer.isTimeOut()) { // kill ice obj
+        this->active = false;
+    }
+    this->flipTimer.step(deltaTime);
+    if (this->flipTimer.isTimeOut()) { // animation
+        this->dir = -1 * this->dir;
+        this->flipTimer.reset();
+    }
+}
+void Ice::useItem(const SDLState &state, GameData &gd, Resources &res, Player &p) {
+    SDL_FRect iceCollider = {
+        .x = 0,
+        .y = 0,
+        .w = (float)TILE_SIZE * this->BOUND,
+        .h = (float)TILE_SIZE * this->BOUND
+    };
+    int OFFSET = (this->BOUND - 1) / 2;
+    glm::vec2 iceEffectPos(p.pos.x - OFFSET * TILE_SIZE, p.pos.y - OFFSET * TILE_SIZE);
+    
+    Ice* ice = new Ice(iceEffectPos, iceCollider, res.texIce);
+    p.items_.push_back(ice);
+}
+
 // PIE
 void Pie::draw(const SDLState &state, GameData &gd, float width, float height) {
     AnimatedObject::draw(state, gd, width, height); // do generic object draw
@@ -106,25 +137,6 @@ void Sugar::useItem(const SDLState &state, GameData &gd, Resources &res, Player 
     sugar->sugarEffectObject.debug = false;
     sugar->visible = false;
     p.items_.push_back(sugar); 
-    // if (p.dir == 1) {
-    //     glm::vec2 pos = glm::vec2(p.pos.x - 30.f, p.pos.y);
-    //     SDL_FRect collider = {
-    //         .x = 28 * (p.dir),
-    //         .y = 0,
-    //         .w = 0.f,
-    //         .h = 0.f
-    //         };
-    // } else {
-    //     glm::vec2 pos = glm::vec2(p.pos.x + 30.f, p.pos.y);
-    //     SDL_FRect collider = {
-    //         .x = 28 * (p.dir),
-    //         .y = 0,
-    //         .w = 0.f,
-    //         .h = 0.f
-    //         };
-    //     this->sugarEffectObject(pos, collider, res.texSugarEffectR);
-    // }
-
 }
 
 void useBouncyBall(const SDLState &state, GameData &gd, Resources &res, Player &p) {}
