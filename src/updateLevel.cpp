@@ -118,20 +118,21 @@ void levelInputs(SDLState &state, GameData &gd, Resources &res, float deltaTime)
 //handler for clicking in the level
 void handleLevelClick(SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime, SDL_Event event, bool buttonDown) {
     //LEFT CLICK FOR CHARACTER WEAPON DEPLOY
+    //printf("Player %d Character Type %d\n", gd.playerIndex, gd.players_[gd.playerIndex].character);
     if(gd.controls->actionPerformed(ACTION_ABILITY, event) && buttonDown){
         //JETPACK DEPLOY
-        if(((LevelState *)currState)->character == JETPACK) {
+        if(p.character == JETPACK) {
             if (p.cooldownTimer.isTimeOut() && p.state_->stateVal != JETPACK_DEPLOY) {
                 PlayerState* jpState = new JetpackDeployState();
                 p.handleState(jpState, gd, res);
             }
-        } else if (((LevelState *)currState)->character == SHOTGUN) {
+        } else if (p.character == SHOTGUN) {
             //SHOTGUN DEPLOY
             if(p.cooldownTimer.isTimeOut() && p.state_->stateVal != SHOTGUN_DEPLOY) {
                 PlayerState* sgState = new ShotgunDeployState();
                 p.handleState(sgState, gd, res);
             }
-        } else if (((LevelState *)currState)->character == SWORD) {
+        } else if (p.character == SWORD) {
             //SWORD DEPLOY
             if(p.cooldownTimer.isTimeOut() && p.state_->stateVal != SWORD_DEPLOY) {
                 PlayerState* swState = new SwordDeployState();
