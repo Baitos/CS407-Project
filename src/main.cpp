@@ -151,6 +151,9 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
             printf("Handling message\n");
             if(!inLobby){                             //Message handling for Matchmaker Server Conection
                 switch(event.type){
+                    case ENET_EVENT_TYPE_CONNECT:{
+                        printf("Connected to matchmaker!\n");
+                    }
                     case ENET_EVENT_TYPE_RECEIVE: {
                         std::string message((char *) event.packet->data, event.packet->dataLength);
                         enet_packet_destroy(event.packet);
