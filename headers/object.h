@@ -54,6 +54,7 @@ class Object { // generic obj type
         virtual ~Object() {}
         virtual void draw(const SDLState &state, GameData &gd, float width, float height);
         void drawDebug(const SDLState &state, GameData &gd, float width, float height);
+        void drawDebugNearby(const SDLState &state, GameData &gd, float width, float height);  
 };
 
 class AnimatedObject : public Object { // obj with anims
@@ -64,6 +65,7 @@ class AnimatedObject : public Object { // obj with anims
         float dir;
         float flip; // anti gravity
         bool visible; 
+        bool persistent; // will be drawn even if "offscreen"
         AnimatedObject() : Object() { // default
             spriteFrame = 1;
             curAnimation = -1;
@@ -71,6 +73,8 @@ class AnimatedObject : public Object { // obj with anims
             flip = 1.0f;
             type = ANIMATED;
             visible = true;
+            debug = true;
+            persistent = false;
         }
         AnimatedObject(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : // generic obj constructor
         Object(pos_, colliderRect, tex) {
@@ -81,6 +85,7 @@ class AnimatedObject : public Object { // obj with anims
             type = ANIMATED;
             visible = true;
             debug = true;
+            persistent = false;
         }
         //virtual ~AnimatedObject() {}
         void draw(const SDLState &state, GameData &gd, float width, float height);

@@ -8,10 +8,6 @@
 
 // BOMB
 void Bomb::draw(const SDLState &state, GameData &gd, float width, float height) {
-    if (this->exploded) {
-        float srcX = this->curAnimation != -1 ? this->animations[this->curAnimation].currentFrame() * width : (this->spriteFrame - 1) * width;
-        printf("srcX = %f, width = %f, height = %f\n", srcX, width, height);
-    }
     AnimatedObject::draw(state, gd, width, height); // do generic object draw
 }
 
@@ -49,58 +45,8 @@ void Bomb::useItem(const SDLState &state, GameData &gd, Resources &res, Player &
     p.items_.push_back(bomb);
 }
 
-void Bomb::checkCollision(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
-    SDL_FRect rectA{
-		.x = this->pos.x + this->collider.x,
-		.y = this->pos.y + this->collider.y,
-		.w = this->collider.w,
-		.h = this->collider.h
-	};
-    SDL_FRect rectB;
-    glm::vec2 resolution{ 0 };
-    for (Player &p2 : gd.players_) {
-        // Don't do collision if already stunned
-        if (p2.state_->stateVal == PlayerStateValue::STUNNED || this->exploded) {
-            break;
-        }
-        rectB = {
-            .x = p2.pos.x + p2.collider.x,
-            .y = p2.pos.y + p2.collider.y,
-            .w = p2.collider.w,
-            .h = p2.collider.h
-        };
-        if (intersectAABB(rectA, rectB, resolution) && this->visible) {
-            p2.vel.y = -200.0f; 
-            p2.vel.x = this->vel.x * 0.5;  
-            p2.pos.y -= 1;              
-            p2.grounded = false;
-
-            PlayerState* stunState = new StunnedState(true); // hard stun
-            p2.handleState(stunState, gd, res); // stun player you hit
-            this->exploded = true;
-            SDL_FRect expCollider = {
-                .x = 0,
-                .y = 0,
-                .w = (float)TILE_SIZE * 5,
-                .h = (float)TILE_SIZE * 5
-            };
-            this->collider = expCollider;
-            this->pos.x -= TILE_SIZE * 2;
-            this->pos.y -= TILE_SIZE * 2;
-            this->texture = res.texExplosion;
-            this->width = 156;
-            this->height = 156;
-            this->animations = res.itemAnims;
-            this->curAnimation = res.ANIM_ITEM_EXPLOSION;
-            this->animations[this->curAnimation].reset();
-        }
-    } 
-}
-
 // BOOMBOX
 void Boombox::draw(const SDLState &state, GameData &gd, float width, float height) {
-    float srcX = this->curAnimation != -1 ? this->animations[this->curAnimation].currentFrame() * width : (this->spriteFrame - 1) * width;
-    printf("srcX = %f, width = %f, height = %f\n", srcX, width, height);
     AnimatedObject::draw(state, gd, width, height); // do generic object draw
 }
 
@@ -127,36 +73,36 @@ void Boombox::useItem(const SDLState &state, GameData &gd, Resources &res, Playe
     p.items_.push_back(boombox);
 }
 
-void Boombox::checkCollision(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
-     SDL_FRect rectA{
-		.x = this->pos.x + this->collider.x,
-		.y = this->pos.y + this->collider.y,
-		.w = this->collider.w,
-		.h = this->collider.h
-	};
-    SDL_FRect rectB;
-    glm::vec2 resolution{ 0 };
-    for (Player &p2 : gd.players_) {
-        // Don't do collision on self or if already stunned
-        if (&p2 == &p || p2.state_->stateVal == PlayerStateValue::STUNNED) {
-            break;
-        }
-        rectB = {
-            .x = p2.pos.x + p2.collider.x,
-            .y = p2.pos.y + p2.collider.y,
-            .w = p2.collider.w,
-            .h = p2.collider.h
-        };
-        if (intersectAABB(rectA, rectB, resolution) && this->visible) {
-            p2.vel.y = -200.0f; 
-            p2.vel.x = this->vel.x * 0.5;  
-            p2.pos.y -= 1;              
-            p2.grounded = false;
 
-            PlayerState* stunState = new StunnedState(true); // hard stun
-            p2.handleState(stunState, gd, res); // stun player you hit
-        }
+// ICE
+void Ice::draw(const SDLState &state, GameData &gd, float width, float height) {
+    AnimatedObject::draw(state, gd, this->BOUND * width, this->BOUND * height); // do generic object draw
+} 
+// right now "persistent" is for this ice block; because it is very large it interacts weird with "isOnscreen"
+
+void Ice::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) { // currently for pie
+    this->iceTimer.step(deltaTime);
+    if (this->iceTimer.isTimeOut()) { // kill ice obj
+        this->active = false;
     }
+    this->flipTimer.step(deltaTime);
+    if (this->flipTimer.isTimeOut()) { // animation
+        this->dir = -1 * this->dir;
+        this->flipTimer.reset();
+    }
+}
+void Ice::useItem(const SDLState &state, GameData &gd, Resources &res, Player &p) {
+    SDL_FRect iceCollider = {
+        .x = 0,
+        .y = 0,
+        .w = (float)TILE_SIZE * this->BOUND,
+        .h = (float)TILE_SIZE * this->BOUND
+    };
+    int OFFSET = (this->BOUND - 1) / 2;
+    glm::vec2 iceEffectPos(p.pos.x - OFFSET * TILE_SIZE, p.pos.y - OFFSET * TILE_SIZE);
+    
+    Ice* ice = new Ice(iceEffectPos, iceCollider, res.texIce);
+    p.items_.push_back(ice);
 }
 
 // PIE
@@ -183,49 +129,6 @@ void Pie::useItem(const SDLState &state, GameData &gd, Resources &res, Player &p
     p.items_.push_back(pie);
 }
 
-void Pie::checkCollision(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
-    SDL_FRect rectA{
-		.x = this->pos.x + this->collider.x,
-		.y = this->pos.y + this->collider.y,
-		.w = this->collider.w,
-		.h = this->collider.h
-	};
-    SDL_FRect rectB;
-    glm::vec2 resolution{ 0 };
-    for (Level &l : gd.mapTiles_){
-		rectB = {
-            .x = l.pos.x + l.collider.x,
-            .y = l.pos.y + l.collider.y,
-            .w = l.collider.w,
-            .h = l.collider.h
-	    };
-        if (intersectAABB(rectA, rectB, resolution))
-	    {
-            this->active = false;
-        }
-    }
-    for (Player &p2 : gd.players_) {
-        if (&p != &p2) { // do not check on self
-            rectB = {
-                .x = p2.pos.x + p2.collider.x,
-                .y = p2.pos.y + p2.collider.y,
-                .w = p2.collider.w,
-                .h = p2.collider.h
-            };
-            if (intersectAABB(rectA, rectB, resolution) && this->visible) {
-                p2.vel.y = -200.0f; 
-                p2.vel.x = this->vel.x * 0.5;  
-                p2.pos.y -= 1;              
-                p2.grounded = false;
-
-                PlayerState* stunState = new StunnedState(true); // hard stun
-                p2.handleState(stunState, gd, res); // stun player you hit
-
-                this->active = false;
-            }
-        } 
-    }
-}
 
 // SUGAR
 void Sugar::draw(const SDLState &state, GameData &gd, float width, float height) {
@@ -270,25 +173,6 @@ void Sugar::useItem(const SDLState &state, GameData &gd, Resources &res, Player 
     sugar->sugarEffectObject.debug = false;
     sugar->visible = false;
     p.items_.push_back(sugar); 
-    // if (p.dir == 1) {
-    //     glm::vec2 pos = glm::vec2(p.pos.x - 30.f, p.pos.y);
-    //     SDL_FRect collider = {
-    //         .x = 28 * (p.dir),
-    //         .y = 0,
-    //         .w = 0.f,
-    //         .h = 0.f
-    //         };
-    // } else {
-    //     glm::vec2 pos = glm::vec2(p.pos.x + 30.f, p.pos.y);
-    //     SDL_FRect collider = {
-    //         .x = 28 * (p.dir),
-    //         .y = 0,
-    //         .w = 0.f,
-    //         .h = 0.f
-    //         };
-    //     this->sugarEffectObject(pos, collider, res.texSugarEffectR);
-    // }
-
 }
 
 void useBouncyBall(const SDLState &state, GameData &gd, Resources &res, Player &p) {}

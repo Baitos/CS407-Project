@@ -209,11 +209,11 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     texSoundwaves = loadTexture(state.renderer, "data/ItemSprites/boombox_soundwaves.png");
 
     texSugar = loadTexture(state.renderer, "data/ItemSprites/sugar.png");
+    texSugarEffect = loadTexture(state.renderer, "data/ItemSprites/SugarEffect.png");
 
     texPie = loadTexture(state.renderer, "data/ItemSprites/pie.png");
 
-    texSugarEffect = loadTexture(state.renderer, "data/ItemSprites/SugarEffect.png");
-
+    texIce = loadTexture(state.renderer, "data/ItemSprites/ice_background.png");
     //Settings
     texSettingsBackground = loadTexture(state.renderer, "data/SettingsSprites/background.png");
     texBigBorder = loadTexture(state.renderer, "data/SettingsSprites/lButtonOutline.png");

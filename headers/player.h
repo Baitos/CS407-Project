@@ -62,6 +62,13 @@ class Player : public AnimatedObject { // player
         void draw(const SDLState &state, GameData &gd, float width, float height);
         virtual void handleInput(const SDLState &state, GameData &gd, Resources &res, SDL_KeyboardEvent& key, float deltaTime);
         virtual void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+
+        void checkCollision(const SDLState &state, GameData &gd, Resources &res,
+ 	                        float deltaTime);
+        void collisionResponse(const SDLState &state, GameData &gd, Resources &res,
+ 	                           Object &o, SDL_FRect &rectA, SDL_FRect &rectB, glm::vec2 &resolution, float deltaTime);
+        void groundedCheck(Object &o, SDL_FRect &rectB);
+
         void handleState(PlayerState* &pState, GameData &gd, Resources &res);
         //void draw(const SDLState &state, GameData &gs, float width, float height);
         

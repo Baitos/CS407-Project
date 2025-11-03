@@ -115,7 +115,10 @@ void GameState::unloadGameState(GameData &gd) {
     gd.lava_.clear();
     gd.water_.clear();
     gd.signs_.clear();
+    gd.itemBoxes_.clear();
+
     gd.checkpoints_.clear();
+    
     gd.grid_.clear();
 
     gd.md.previews_.clear();
