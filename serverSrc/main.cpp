@@ -257,7 +257,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                     {
                         std::cout << "Client Connected to Matchmaker Server!\n";
                         //TESTING PURPOSES - Will be changed with menu screen inputs
-                        if(!hasClient){
+                        /*if(!hasClient){
                             hasClient = true;
                             int lobbyPort = getAvailablePort();
                             Lobby newLobby = {currLobbyID++, lobbyPort, (std::string)"username", 1};
@@ -287,7 +287,8 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                             ENetPacket * packet = enet_packet_create(replyMessage.c_str(), replyMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
                             enet_peer_send(event.peer, 0, packet);
                             enet_host_flush(matchmakerServer);
-                        }
+                            
+                        }*/
                         break;
                     }
                 case ENET_EVENT_TYPE_RECEIVE:
@@ -297,12 +298,13 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                     enet_packet_destroy(event.packet);
                     printf("Message: %s\n", message.c_str());
                     //Check what the message was
-                    if(message == (std::string) "CREATE_LOBBY"){
+                    if(message.find("HOST ") != std::string::npos){
+                        printf("%s", message.c_str());
                         printf("Creating lobby\n");
                         //Fork and create lobby process
                         int lobbyPort = getAvailablePort();
                         printf("%d\n", lobbyPort);
-                        Lobby newLobby = {currLobbyID++, lobbyPort, (std::string)"Username", 1};
+                        Lobby newLobby = {currLobbyID++, lobbyPort, (std::string)message.substr(5, message.size()-10), 1};
                     
                         lobbies.push_back(newLobby);
                         fflush(stdout);
@@ -324,14 +326,16 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                             printf("FAILED FORK\n");
                         }
                         
-                    } else if(message == (std::string) "JOIN_LOBBY"){
-                        std::string lobbiesReturnMessage = "";
+                    } else if(message.find("LOBBY_QUERY") !=  std::string::npos){
+                        std::string lobbiesReturnMessage = "LOBBIES ";
                         for (Lobby l : lobbies){
-                            lobbiesReturnMessage += std::to_string(l.id) + " " + std::to_string(l.port) + " " + l.hostName + " " + std::to_string(l.playerCount) + "\n";
+                            lobbiesReturnMessage += std::to_string(l.id) + " " + std::to_string(l.port) + " " + l.hostName + " " + std::to_string(l.playerCount) + " ";
+                        }
+                        printf("%s\n", lobbiesReturnMessage);
                             ENetPacket* packet = enet_packet_create(lobbiesReturnMessage.c_str(), lobbiesReturnMessage.size(), ENET_PACKET_FLAG_RELIABLE);
                             enet_peer_send(event.peer, 0, packet);
                             enet_host_flush(matchmakerServer);
-                        }
+                        
                     } else if(message.find("JOIN ") != std::string::npos){
                         //Client indicated desire to join a lobby "JOIN X"
                         int desiredLobbyID = std::stoi(message.substr(5, message.length() - 5));
