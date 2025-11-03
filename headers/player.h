@@ -36,18 +36,22 @@ class Player : public AnimatedObject { // player
 
         bool grounded; 
         bool isDead = false;
-        
+
+        bool isStunned = false;
         bool sprinting = false;
 
         bool canDoubleJump = true;
         bool usingSugar = false;
 
+        int currentDirection;
+        int position = 4;
+        int index;
+        // TODO maybe keep consistent across clients
         float gravityScale; 
         float maxSpeedX; // will change depending on state
         float maxWalkX = 300; // walking
         float maxRunX = 700; // running 
         float maxSprintX = 900; // sprinting
-        int currentDirection;
         
         Timer jetpackTimer;
         Timer cooldownTimer;
@@ -56,11 +60,8 @@ class Player : public AnimatedObject { // player
         int lapsCompleted = 0;
         int lastCheckpoint = 0;
 
-        int position = 8;
-        int index;
-
         void draw(const SDLState &state, GameData &gd, float width, float height);
-        virtual void handleInput(const SDLState &state, GameData &gd, Resources &res, SDL_KeyboardEvent& key, float deltaTime);
+        virtual void handleInput(const SDLState &state, GameData &gd, Resources &res, SDL_Event &event, float deltaTime);
         virtual void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
 
         void checkCollision(const SDLState &state, GameData &gd, Resources &res,

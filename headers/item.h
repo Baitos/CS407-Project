@@ -3,7 +3,6 @@
 #include "../headers/player.h"
 
 enum itemType {
-    NOITEM,
     BOMB,
     BOOMBOX,
     BOUNCYBALL,
@@ -11,7 +10,8 @@ enum itemType {
     ICE,
     MISSILE,
     SUGAR,
-    PIE
+    PIE,
+    NOITEM
 };
 /*void useBomb(const SDLState &state, GameData &gd, Resources &res, Player &p);
 void useBoombox(const SDLState &state, GameData &gd, Resources &res, Player &p);
@@ -27,7 +27,7 @@ void setItemPicked(GameData &gd, Resources &res, int index);
 class Item : public AnimatedObject {
     public:
         bool active;
-        int index = -1;
+        int index;
         itemType type;
         virtual ~Item() = default;
         virtual void draw(const SDLState &state, GameData &gd, float width, float height) {}
@@ -39,15 +39,18 @@ class Item : public AnimatedObject {
         AnimatedObject(pos_, colliderRect, tex) {
             type = NOITEM; // error
             active = true;
+            index = -1;
         }
         Item() : AnimatedObject() {
             type = NOITEM; // error
             active = true;
+            index = -1;
         }
 };
 
 class Bomb : public Item {
     public:
+        bool exploded = false; 
         void useItem(const SDLState &state, GameData &gd, Resources &res, Player &p);
         void draw(const SDLState &state, GameData &gd, float width, float height);
         void update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime);
@@ -55,6 +58,8 @@ class Bomb : public Item {
         Bomb(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) :
         Item(pos_, colliderRect, tex) {
             index = 0;
+            width = 32;
+            height = 32;
         }
         
 };
@@ -68,6 +73,28 @@ class Boombox : public Item {
         Boombox(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) :
         Item(pos_, colliderRect, tex) {
             index = 1;
+            width = 196;
+            height = 196;
+        }
+};
+
+class Ice : public Item {
+    public:
+        int BOUND; // how big is effect
+        Timer iceTimer; // lifetime of obj
+        Timer flipTimer; // timer to flip particle
+        
+        void useItem(const SDLState &state, GameData &gd, Resources &res, Player &p);
+        void draw(const SDLState &state, GameData &gd, float width, float height);
+        void update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime);
+        void checkCollision(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime);
+        Ice(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) :
+        Item(pos_, colliderRect, tex), iceTimer(30.0f), flipTimer(0.2f) {
+            index = 4;
+            BOUND = 5;
+            width = 32;
+            height = 32;
+            persistent = true;
         }
 };
 
@@ -94,6 +121,8 @@ class Pie : public Item {
         void checkCollision(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime);
         Pie(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) :
         Item(pos_, colliderRect, tex) {
+            width = 32;
+            height = 32;
             index = 7;
         }
 };

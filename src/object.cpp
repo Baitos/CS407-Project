@@ -66,7 +66,7 @@ void Object::drawDebugNearby(const SDLState &state, GameData &gd, float width, f
 }
 
 void AnimatedObject::draw(const SDLState &state, GameData &gd, float width, float height) {
-    if (!isOnscreen(state, gd, (*this))) {
+    if (!isOnscreen(state, gd, (*this)) && !this->persistent) {
         return;
     }
     float srcX = this->curAnimation != -1 ? this->animations[this->curAnimation].currentFrame() * width : (this->spriteFrame - 1) * width;
@@ -118,7 +118,7 @@ void Laser::update(const SDLState &state, GameData &gd, Resources &res, float de
 }
 
 void Hook::draw(const SDLState &state, GameData &gd, Player &p, float width, float height) {
-    if (!(*this).visible) {
+    if (!this->visible) {
         return;
     }
     SDL_SetRenderDrawColor(state.renderer, 30, 30, 30, 255); // draw line to hook
@@ -127,34 +127,34 @@ void Hook::draw(const SDLState &state, GameData &gd, Player &p, float width, flo
     //printf("x: %f, y: %f\n", gd.mouseCoords.x, gd.mouseCoords.y);
     SDL_RenderLine(state.renderer, p.pos.x - gd.mapViewport.x + pOffset.x, 
                     p.pos.y - gd.mapViewport.y + pOffset.y, 
-                    (*this).pos.x - gd.mapViewport.x + hOffset.x, 
-                    (*this).pos.y - gd.mapViewport.y + hOffset.y);
+                    this->pos.x - gd.mapViewport.x + hOffset.x, 
+                    this->pos.y - gd.mapViewport.y + hOffset.y);
     SDL_SetRenderDrawColor(state.renderer, 64, 51, 83, 255);
     if (!isOnscreen(state, gd, (*this))) {
         return;
     }
     SDL_FRect dst {
-        .x = (*this).pos.x - gd.mapViewport.x,
-        .y = (*this).pos.y - gd.mapViewport.y,
+        .x = this->pos.x - gd.mapViewport.x,
+        .y = this->pos.y - gd.mapViewport.y,
         .w = width,
         .h = height
     };
     double angle = 0; // default texture faces right, sdl_render rotates clockwise
-    if ((*this).vel.y > 0 && std::abs((*this).vel.y) > std::abs((*this).vel.x)) {
+    if (this->vel.y > 0 && std::abs(this->vel.y) > std::abs(this->vel.x)) {
         angle = 90; // down
     }
-    else if ((*this).vel.x < 0 && std::abs((*this).vel.x) > std::abs((*this).vel.y)) {
+    else if (this->vel.x < 0 && std::abs(this->vel.x) > std::abs(this->vel.y)) {
         angle = 180; // left
     }
-    else if ((*this).vel.y < 0 && std::abs((*this).vel.y) > std::abs((*this).vel.x)) {
+    else if (this->vel.y < 0 && std::abs(this->vel.y) > std::abs(this->vel.x)) {
         angle = 270; // up
     }
-    SDL_RenderTextureRotated(state.renderer, (*this).texture, nullptr, &dst, angle, nullptr, SDL_FLIP_NONE); // this could probably be done using the flip variable but there's no way to rotate the image that way
-    (*this).drawDebug(state, gd, width, height);
+    SDL_RenderTextureRotated(state.renderer, this->texture, nullptr, &dst, angle, nullptr, SDL_FLIP_NONE); // this could probably be done using the flip variable but there's no way to rotate the image that way
+    this->drawDebug(state, gd, width, height);
 }
 
 void Hook::update(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
-    (*this).pos += updatePos((*this), deltaTime);
+    this->pos += updatePos((*this), deltaTime);
 }
 
 void ItemBox::update(const SDLState &state, GameData &gd, Resources &res, float deltaTime) { // update item box timer every frame (when on cooldown)
@@ -177,24 +177,22 @@ void ItemBox::generateItem(Player &player, GameData &gd, Resources &res) {
     Item* newItem;
     std::vector<itemType> itemOptions;
     int selected;
-    // Limit items for top 25% of players
-    if ((player.position / (float)gd.numPlayers) <= 0.25) {
-        itemOptions = {itemType::BOMB, itemType::BOOMBOX, itemType::BOUNCYBALL, 
-            itemType::ICE, itemType::SUGAR, itemType::PIE};
-    }
-    // Limit items for bottom 25% of players
-    else if ((player.position / (float)gd.numPlayers) >= 0.75) {
-        itemOptions = {itemType::BOOMBOX, itemType::BOUNCYBALL, 
-            itemType::FOG, itemType::MISSILE, itemType::SUGAR, itemType::PIE};
-    }
-    else {
+    // // Limit items for top 25% of players
+    // if ((player.position / (float)gd.numPlayers) <= 0.25) {
+    //     itemOptions = {itemType::BOMB, itemType::BOOMBOX, itemType::BOUNCYBALL, 
+    //         itemType::ICE, itemType::SUGAR, itemType::PIE};
+    // }
+    // // Limit items for bottom 25% of players
+    // else if ((player.position / (float)gd.numPlayers) >= 0.75) {
+    //     itemOptions = {itemType::BOOMBOX, itemType::BOUNCYBALL, 
+    //         itemType::FOG, itemType::MISSILE, itemType::SUGAR, itemType::PIE};
+    // }
+    // else {
         // All items are available
         itemOptions = {itemType::BOMB, itemType::BOOMBOX, itemType::BOUNCYBALL, 
             itemType::FOG, itemType::ICE, itemType::MISSILE, itemType::SUGAR, itemType::PIE};
-    }
+    //}
     selected = rand() % itemOptions.size();
-    //printf("%d %d\n", selected, itemOptions.size());
-    
     switch (itemOptions[selected]) {
         case itemType::BOMB:
             newItem = new Bomb(player.pos, defaultCollider, res.texBomb);
@@ -208,9 +206,13 @@ void ItemBox::generateItem(Player &player, GameData &gd, Resources &res) {
         case itemType::PIE:
             newItem = new Pie(player.pos, defaultCollider, res.texPie);
             break;
+        case itemType::ICE:
+            newItem = new Ice(player.pos, defaultCollider, res.texIce);
+            break;
         default:
             printf("Your item is in another castle\n");
-            newItem = new Bomb(player.pos, defaultCollider, res.texBomb);
+            newItem = new Ice(player.pos, defaultCollider, res.texIce);
+            break;
     }
     if (player.heldItem != nullptr) {
         delete player.heldItem;
@@ -218,3 +220,38 @@ void ItemBox::generateItem(Player &player, GameData &gd, Resources &res) {
     player.heldItem = newItem;
     player.pickingItem = true;
 }
+
+
+// void angledStun(AnimatedObject &obj, GameData &gd, Resources &res, Player &player) {
+//     // TODO properly implement angles
+//     if (player.index == 1) {
+//         gd.currPlayer = player;
+//     }
+//     float baseKnockback = 100.0f;
+//     player.state_ = changePlayerState(gd, res, player.state_, DEAD);
+//     if (player.vel.x > 0) {
+//         player.vel.x = changeVel(baseKnockback * obj.knockbackMultiplier, player);
+//     }
+//     else if (player.vel.x < 0) {
+//         player.vel.x = changeVel(-baseKnockback* obj.knockbackMultiplier, player);
+//     }
+//     player.vel.x = changeVel(-player.vel.x, player);
+//     float shouldFlip = player.flip; // there might be a more modular way to do this. idk if we will actually use the gravity flip but having it is nice and cool
+//     if(shouldFlip * obj.pos.y < shouldFlip * player.pos.y ){
+//         player.vel.y = changeVel(baseKnockback * obj.knockbackMultiplier, player);
+//     } else {
+//         player.vel.y = changeVel(-baseKnockback* obj.knockbackMultiplier, player);
+//     }
+//     player.gravityScale = 1.0f;
+//     player.isStunned = true;
+//     player.grounded = false;
+//     // TODO rework this so it's generic
+//     if (player.index == 0) {
+//         gd.player = player;
+//     }
+//     else {
+//         gd.player2 = player;
+//     }
+//     gd.currPlayer = gd.player;
+// }
+

@@ -11,16 +11,38 @@ void Bomb::draw(const SDLState &state, GameData &gd, float width, float height) 
     AnimatedObject::draw(state, gd, width, height); // do generic object draw
 }
 
-void Bomb::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) { // currently for pie
-    printf("boombox update\n");
+void Bomb::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) { 
+    if (this->exploded) {
+        if (this->curAnimation != -1) {
+            this->animations[this->curAnimation].step(deltaTime);
+        }
+        if (this->animations[this->curAnimation].isDone()) {
+            this->active = false;
+        }
+    }
 }
 
 void Bomb::useItem(const SDLState &state, GameData &gd, Resources &res, Player &p) {
-    printf("bomb used\n");
-}
-
-void Bomb::checkCollision(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
-    printf("bomb collide\n");
+    SDL_FRect bombCollider = {
+        .x = 0,
+        .y = 0,
+        .w = 32,
+        .h = 32
+    };
+    glm::vec2 bombPos;
+    int xdiff;
+    // Set item 1 tile behind player, but we want it to be drawn at the beginning of tile
+    if (p.dir >= 0) { // moving right, place to left
+        xdiff = 32 + (int)p.pos.x % 32;
+        bombPos.x = p.pos.x - xdiff;
+    }
+    else {
+        xdiff = 32 + (32- (int)p.pos.x % 32);
+        bombPos.x = p.pos.x + xdiff;
+    }
+    bombPos.y = p.pos.y;
+    Bomb* bomb = new Bomb(bombPos, bombCollider, res.texBomb);
+    p.items_.push_back(bomb);
 }
 
 // BOOMBOX
@@ -28,15 +50,59 @@ void Boombox::draw(const SDLState &state, GameData &gd, float width, float heigh
     AnimatedObject::draw(state, gd, width, height); // do generic object draw
 }
 
-void Boombox::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) { // currently for pie
-    printf("boombox update\n");
+void Boombox::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
+    this->pos.x = p.pos.x - 82;
+    this->pos.y = p.pos.y - 82;
+    this->animations[this->curAnimation].step(deltaTime);
+    if (this->animations[this->curAnimation].isDone()) {
+        this->active = false;
+    }
 }
 void Boombox::useItem(const SDLState &state, GameData &gd, Resources &res, Player &p) {
-    printf("boombox used\n");
+        SDL_FRect soundCollider = {
+        .x = 0,
+        .y = 0,
+        .w = 196,
+        .h = 196
+    };
+    soundCollider;
+    Boombox * boombox = new Boombox(p.pos, soundCollider, res.texSoundwaves);
+    boombox->animations = res.itemAnims;
+    boombox->curAnimation = res.ANIM_ITEM_SOUNDWAVE;
+    boombox->animations[boombox->curAnimation].reset();
+    p.items_.push_back(boombox);
 }
 
-void Boombox::checkCollision(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
-    printf("boombox collide\n");
+
+// ICE
+void Ice::draw(const SDLState &state, GameData &gd, float width, float height) {
+    AnimatedObject::draw(state, gd, this->BOUND * width, this->BOUND * height); // do generic object draw
+} 
+// right now "persistent" is for this ice block; because it is very large it interacts weird with "isOnscreen"
+
+void Ice::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) { // currently for pie
+    this->iceTimer.step(deltaTime);
+    if (this->iceTimer.isTimeOut()) { // kill ice obj
+        this->active = false;
+    }
+    this->flipTimer.step(deltaTime);
+    if (this->flipTimer.isTimeOut()) { // animation
+        this->dir = -1 * this->dir;
+        this->flipTimer.reset();
+    }
+}
+void Ice::useItem(const SDLState &state, GameData &gd, Resources &res, Player &p) {
+    SDL_FRect iceCollider = {
+        .x = 0,
+        .y = 0,
+        .w = (float)TILE_SIZE * this->BOUND,
+        .h = (float)TILE_SIZE * this->BOUND
+    };
+    int OFFSET = (this->BOUND - 1) / 2;
+    glm::vec2 iceEffectPos(p.pos.x - OFFSET * TILE_SIZE, p.pos.y - OFFSET * TILE_SIZE);
+    
+    Ice* ice = new Ice(iceEffectPos, iceCollider, res.texIce);
+    p.items_.push_back(ice);
 }
 
 // PIE
@@ -46,7 +112,7 @@ void Pie::draw(const SDLState &state, GameData &gd, float width, float height) {
 
 void Pie::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) { // currently for pie
     //Item::update(state, gd, res, p, deltaTime); // generic update
-    (*this).pos += updatePos((*this), deltaTime);
+    this->pos += updatePos((*this), deltaTime);
     //printf("pie update\n");
 }
 
@@ -62,6 +128,7 @@ void Pie::useItem(const SDLState &state, GameData &gd, Resources &res, Player &p
     pie->vel.x = 350.0f * pie->dir;
     p.items_.push_back(pie);
 }
+
 
 // SUGAR
 void Sugar::draw(const SDLState &state, GameData &gd, float width, float height) {
@@ -106,25 +173,6 @@ void Sugar::useItem(const SDLState &state, GameData &gd, Resources &res, Player 
     sugar->sugarEffectObject.debug = false;
     sugar->visible = false;
     p.items_.push_back(sugar); 
-    // if (p.dir == 1) {
-    //     glm::vec2 pos = glm::vec2(p.pos.x - 30.f, p.pos.y);
-    //     SDL_FRect collider = {
-    //         .x = 28 * (p.dir),
-    //         .y = 0,
-    //         .w = 0.f,
-    //         .h = 0.f
-    //         };
-    // } else {
-    //     glm::vec2 pos = glm::vec2(p.pos.x + 30.f, p.pos.y);
-    //     SDL_FRect collider = {
-    //         .x = 28 * (p.dir),
-    //         .y = 0,
-    //         .w = 0.f,
-    //         .h = 0.f
-    //         };
-    //     this->sugarEffectObject(pos, collider, res.texSugarEffectR);
-    // }
-
 }
 
 void useBouncyBall(const SDLState &state, GameData &gd, Resources &res, Player &p) {}
@@ -160,3 +208,4 @@ void ItemStorage::update(const SDLState &state, GameData &gd, Resources &res, Pl
         setItemPicked(gd, res, p.heldItem->index);
     }
 }
+

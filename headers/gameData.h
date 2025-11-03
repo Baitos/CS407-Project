@@ -7,6 +7,7 @@
 #include "initState.h"
 #include "player.h"
 #include "menu.h"
+#include "controls.h"
 #include "minimap.h"
 #include "createCheckpoints.h"
 #include "menuData.h"
@@ -38,9 +39,22 @@ struct GameData {
               mouseCoords, 
               clickCoords;
     ItemStorage itemStorage_;
+    Controls *controls;
+    // Object settingsBorder;
+    // std::vector<Object> gameplaySettingsBrackets1_;
+    // std::vector<Object> gameplaySettingsBrackets2_;
+    // std::vector<Object> gameplaySettingsNumLaps_;
+    // std::vector<Object> gameplaySettingsModeHighlights_;
+
+    // bool usernameEditing = false;
+    // std::string tempUsername = " ";
+    // std::string displayName;
+    // int lastCursorToggle = 0;
+    // bool showCursor = true;
+    // //font for drawing on screen
+    // TTF_Font* font;
 
     //Note that volume ratio is dial.pos.x / (290-84)
-    Object * updatedDial;
     int playerIndex = -1;
     SDL_FRect mapViewport;
     
@@ -66,5 +80,6 @@ struct GameData {
         debugMode = false;
 
         int gameplay_mode;
+        controls = new Controls();
     }
 };

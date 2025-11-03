@@ -16,6 +16,7 @@ struct MenuData {
     std::vector<AnimatedObject> arrows_;
 
     Object settingsBorder;
+    Object * updatedDial;
     std::vector<Object> settingsDials_;
     std::vector<Object> gameplaySettingsBrackets1_;
     std::vector<Object> gameplaySettingsBrackets2_;
@@ -30,6 +31,7 @@ struct MenuData {
     bool showCursor = true;
     //font for drawing on screen
     TTF_Font* font;
+    int currMapVote = 0;
 
     MenuData(const SDLState &state) {
 

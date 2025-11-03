@@ -80,19 +80,19 @@ void Player::collisionResponse(const SDLState &state, GameData &gd, Resources &r
 			Level& l = dynamic_cast<Level&>(o);
 			if (resolution.x < resolution.y) {
 				
-				if ((*this).pos.x < l.pos.x) {
-					(*this).pos.x -= resolution.x;
+				if (this->pos.x < l.pos.x) {
+					this->pos.x -= resolution.x;
 				} else {
-					(*this).pos.x += resolution.x;
+					this->pos.x += resolution.x;
 				}	
-				(*this).vel.x = 0;
+				this->vel.x = 0;
 			} else {
-				if ((*this).pos.y < l.pos.y) {
-					(*this).pos.y -= resolution.y;
+				if (this->pos.y < l.pos.y) {
+					this->pos.y -= resolution.y;
 				} else {
-					(*this).pos.y += resolution.y;
+					this->pos.y += resolution.y;
 				}
-				(*this).vel.y = 0;
+				this->vel.y = 0;
 			}
 			break;
 		}	
@@ -103,17 +103,17 @@ void Player::collisionResponse(const SDLState &state, GameData &gd, Resources &r
 			if (la.laserActive){
 				//printf("FALLING");
 				PlayerState* stState = new StunnedState();
-                (*this).handleState(stState, gd, res);
+                this->handleState(stState, gd, res);
 			
-				(*this).vel.x = changeVel(-(*this).vel.x, (*this));
-				float shouldFlip = (*this).flip; // there might be a more modular way to do this. idk if we will actually use the gravity flip but having it is nice and cool
-				if(shouldFlip * o.pos.y < shouldFlip * (*this).pos.y){
-					(*this).vel.y = changeVel(200.f, (*this));
+				this->vel.x = changeVel(-this->vel.x, (*this));
+				float shouldFlip = this->flip; // there might be a more modular way to do this. idk if we will actually use the gravity flip but having it is nice and cool
+				if(shouldFlip * o.pos.y < shouldFlip * this->pos.y){
+					this->vel.y = changeVel(200.f, (*this));
 				} else {
-					(*this).vel.y = changeVel(-400.f, (*this));
+					this->vel.y = changeVel(-400.f, (*this));
 				}
 
-				(*this).gravityScale = 1.0f;
+				this->gravityScale = 1.0f;
 			} 
 			break;
 		}
@@ -122,36 +122,23 @@ void Player::collisionResponse(const SDLState &state, GameData &gd, Resources &r
 			//printf("player collided with portal\n");
 			Portal& po = dynamic_cast<Portal&>(o);
 			if (po.isEntrance == true){
-				(*this).pos = gd.ExitPortal;
+				this->pos = gd.ExitPortal;
 			}
 			break;
 		}
 		case WATER:
 		{
 			//Water& w = dynamic_cast<Water&>(o);
-			if(abs((*this).vel.x) >= 50) {
-				if((*this).vel.x > 0) {
-					(*this).vel.x-=.5;
-				} else {
-					(*this).vel.x+=.5;
-				}
-			}
-			if(abs((*this).vel.y) >= 50) {
-				if((*this).vel.y > 0) {
-					(*this).vel.y-=.5;
-				} else {
-					(*this).vel.y+=.5;
-				}
-			}
+			slowObject(this->vel, deltaTime);
 			break;
 		}
 		case LAVA:
 		{
 			//Lava& l = dynamic_cast<Lava&>(o);
-			if((*this).state_->stateVal != DEAD) {
+			if(this->state_->stateVal != DEAD) {
 				/*set player to dead and start the respawn counter*/
 				PlayerState* dState = new DeadState();
-				(*this).handleState(dState, gd, res);
+				this->handleState(dState, gd, res);
 			}
 			break;
 		}
@@ -159,7 +146,7 @@ void Player::collisionResponse(const SDLState &state, GameData &gd, Resources &r
 		{
 			ItemBox& box = dynamic_cast<ItemBox&>(o);
 			if (box.itemBoxActive) {
-				if (!(*this).pickingItem && !(*this).hasItem) {
+				if (!this->pickingItem && !this->hasItem) {
         			box.generateItem((*this), gd, res);
 					gd.itemStorage_.texture = res.texItemRandomizer;
 					gd.itemStorage_.curAnimation = res.ANIM_ITEM_CYCLE;
@@ -170,15 +157,59 @@ void Player::collisionResponse(const SDLState &state, GameData &gd, Resources &r
 			break;
 		}
 	}
+}
 
-	
+void Player::groundedCheck(Object &o, SDL_FRect &rectB) {
+	// grounded sensor
+	const float inset = 2.0;
+	SDL_FRect sensor {
+		.x = this->pos.x + this->collider.x + 1,
+		.y = this->pos.y + this->collider.y + this->collider.h,
+		.w = this->collider.w - inset,
+		.h = EPSILON
+	};
+	glm::vec2 resolution{ 0 };
+	if (intersectAABB(sensor, rectB, resolution)) {
+		this->grounded = true;
+		this->canDoubleJump = true;
+		this->gravityScale = 1.0f;
+	}
+}
+
+void Player::checkCollision(const SDLState &state, GameData &gd, Resources &res,
+ 	float deltaTime)
+{
+	SDL_FRect rectA {
+		.x = this->pos.x + this->collider.x,
+		.y = this->pos.y + this->collider.y,
+		.w = this->collider.w,
+		.h = this->collider.h
+	};
+	glm::vec2 resolution{ 0 };
+	std::vector<Object *> closeTiles_ = getCloseTiles(state, gd, this->pos);
+	for (auto &o : closeTiles_) { 
+		SDL_FRect rectB {
+			.x = o->pos.x + o->collider.x,
+			.y = o->pos.y + o->collider.y,
+			.w = o->collider.w,
+			.h = o->collider.h
+		};
+		if (intersectAABB(rectA, rectB, resolution)) {
+			this->collisionResponse(state, gd, res, (*o), rectA, rectB, resolution, deltaTime);
+		}
+		if (o->type == LEVEL) {
+			this->groundedCheck((*o), rectB);
+		}
+	}
+
+		
 	//check for weapon deployment
 	for (Player &p2 : gd.players_) {
-		if(p2.index != (*this).index) {
+		if(p2.index != this->index) {
 			//check if in shotgun player blast state
 			if(ShotgunDeployState *s = dynamic_cast<ShotgunDeployState*>(p2.state_)) {
 				//check if currently blocking/deploying sword
-				if(!dynamic_cast<SwordDeployState*> ((*this).state_)) {
+				if(!dynamic_cast<SwordDeployState*> (this->state_)) {
 					SDL_FRect rectB{
 						.x = s->blast->pos.x + s->blast->collider.x,
 						.y = s->blast->pos.y + s->blast->collider.y,
@@ -189,11 +220,11 @@ void Player::collisionResponse(const SDLState &state, GameData &gd, Resources &r
 					if (intersectAABB(rectA, rectB, resolution)){
 						//printf("Player %d shot by player %d\n", p.index, p2.index);
 						PlayerState* stState = new StunnedState();
-						(*this).isDead = true;
-						(*this).handleState(stState, gd, res);
+						this->isDead = true;
+						this->handleState(stState, gd, res);
 						
-						(*this).vel.x = 0;
-						(*this).vel.y = 0;
+						this->vel.x = 0;
+						this->vel.y = 0;
 					}
 				} else {
 					//sword blocks
@@ -202,8 +233,8 @@ void Player::collisionResponse(const SDLState &state, GameData &gd, Resources &r
 			} else if (SwordDeployState *s = dynamic_cast<SwordDeployState*>(p2.state_)) {
 				//check if in sword player swing state
 				SDL_FRect rectB{
-					.x = p2.pos.x + (*this).collider.x - 5,
-					.y = p2.pos.y + (*this).collider.y - 5,
+					.x = p2.pos.x + this->collider.x - 5,
+					.y = p2.pos.y + this->collider.y - 5,
 					.w = p2.collider.w + 10,
 					.h = p2.collider.h + 10
 				};
@@ -211,43 +242,43 @@ void Player::collisionResponse(const SDLState &state, GameData &gd, Resources &r
 				if (intersectAABB(rectA, rectB, resolution)){
 					//printf("Player %d hit by player %d's sword\n", p.index, p2.index);
 					PlayerState* stState = new StunnedState();
-					(*this).isDead = true;
-					(*this).handleState(stState, gd, res);
+					this->isDead = true;
+					this->handleState(stState, gd, res);
 					
-					(*this).vel.x = 0;
-					(*this).vel.y = 0;
+					this->vel.x = 0;
+					this->vel.y = 0;
 				}
 			}
 		}
 	}
 	//check for checkpoint system
 	for (Checkpoint cp: gd.checkpoints_) {
-		if (cp.index == ((*this).lastCheckpoint+1)%(gd.checkpoints_.size())){
+		if (cp.index == (this->lastCheckpoint+1)%(gd.checkpoints_.size())){
 			SDL_FRect rectB = cp.collider;
 			//printf("checking %d\n", cp.index);
 			glm::vec2 resolution{ 0 };
 			if (intersectAABB(rectA, rectB, resolution)){
 				printf("INTERSECT!!!");
-				if((*this).lastCheckpoint == gd.checkpoints_.size() - 1) {
-					(*this).lapsCompleted++;
-					printf("Completed the %dth lap!\n", (*this).lapsCompleted);
+				if(this->lastCheckpoint == gd.checkpoints_.size() - 1) {
+					this->lapsCompleted++;
+					printf("Completed the %dth lap!\n", this->lapsCompleted);
 				}
-				(*this).lastCheckpoint = ((*this).lastCheckpoint+1)%(gd.checkpoints_.size());
-				printf("passed checkpoint %d\n%f, %f\n%f, %f", (*this).lastCheckpoint, cp.collider.x, cp.collider.y, (*this).pos.x, (*this).pos.y);
+				this->lastCheckpoint = (this->lastCheckpoint+1)%(gd.checkpoints_.size());
+				printf("passed checkpoint %d\n%f, %f\n%f, %f", this->lastCheckpoint, cp.collider.x, cp.collider.y, this->pos.x, this->pos.y);
 			}
 		}
 	}
 	//check for game end
 	if(!gd.round_is_over) {
 		if(gd.players_.size() == 1) {
-			if((*this).lapsCompleted >= gd.laps_per_race) {
+			if(this->lapsCompleted >= gd.laps_per_race) {
 				printf("\n\nGAME OVER\n\n");
 				gd.round_is_over = true;
 			}
 		} else {
 			int numDone = 0;
 			for(Player &p: gd.players_) {
-				if((*this).lapsCompleted >= gd.laps_per_race) {
+				if(this->lapsCompleted >= gd.laps_per_race) {
 					numDone++;
 				}
 			}
@@ -261,50 +292,7 @@ void Player::collisionResponse(const SDLState &state, GameData &gd, Resources &r
 			}
 		}
 	}
-}
 
-void Player::groundedCheck(Object &o, SDL_FRect &rectB) {
-	// grounded sensor
-	const float inset = 2.0;
-	SDL_FRect sensor {
-		.x = (*this).pos.x + (*this).collider.x + 1,
-		.y = (*this).pos.y + (*this).collider.y + (*this).collider.h,
-		.w = (*this).collider.w - inset,
-		.h = 1
-	};
-	glm::vec2 resolution{ 0 };
-	if (intersectAABB(sensor, rectB, resolution)) {
-		(*this).grounded = true;
-		(*this).canDoubleJump = true;
-		(*this).gravityScale = 1.0f;
-	}
-}
-
-void Player::checkCollision(const SDLState &state, GameData &gd, Resources &res,
- 	float deltaTime)
-{
-	SDL_FRect rectA {
-		.x = (*this).pos.x + (*this).collider.x,
-		.y = (*this).pos.y + (*this).collider.y,
-		.w = (*this).collider.w,
-		.h = (*this).collider.h
-	};
-	glm::vec2 resolution{ 0 };
-	std::vector<Object *> closeTiles_ = getCloseTiles(state, gd, (*this).pos);
-	for (auto &o : closeTiles_) { 
-		SDL_FRect rectB {
-			.x = o->pos.x + o->collider.x,
-			.y = o->pos.y + o->collider.y,
-			.w = o->collider.w,
-			.h = o->collider.h
-		};
-		if (intersectAABB(rectA, rectB, resolution)) {
-			(*this).collisionResponse(state, gd, res, (*o), rectA, rectB, resolution, deltaTime);
-		}
-		if (o->type == LEVEL) {
-			(*this).groundedCheck((*o), rectB);
-		}
-	}
 }
 
 void Hook::checkCollision(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
@@ -312,30 +300,45 @@ void Hook::checkCollision(const SDLState &state, GameData &gd, Resources &res, P
         return;
     }
 	SDL_FRect rectA {
-		.x = (*this).pos.x + (*this).collider.x,
-		.y = (*this).pos.y + (*this).collider.y,
-		.w = (*this).collider.w,
-		.h = (*this).collider.h
+		.x = this->pos.x + this->collider.x,
+		.y = this->pos.y + this->collider.y,
+		.w = this->collider.w,
+		.h = this->collider.h
 	};
     SDL_FRect rectB;
     glm::vec2 resolution{ 0 };
-	std::vector<Object *> closeTiles_ = getCloseTiles(state, gd, (*this).pos);
+	std::vector<Object *> closeTiles_ = getCloseTiles(state, gd, this->pos);
 	for (auto &o : closeTiles_) { 
+		SDL_FRect rectB {
+			.x = o->pos.x + o->collider.x,
+			.y = o->pos.y + o->collider.y,
+			.w = o->collider.w,
+			.h = o->collider.h
+		};
 		if (o->type == LEVEL) {
-			SDL_FRect rectB {
-				.x = o->pos.x + o->collider.x,
-				.y = o->pos.y + o->collider.y,
-				.w = o->collider.w,
-				.h = o->collider.h
-			};
 			if (intersectAABB(rectA, rectB, resolution)) {
-				(*this).vel = glm::vec2(0);
-				if (!(*this).collided) {
+				this->vel = glm::vec2(0);
+				if (!this->collided) {
 					PlayerState* grappleState = new GrappleState();
 					p.handleState(grappleState, gd, res);
-					(*this).collided = true;
+					this->collided = true;
 				}
 			}
+		}
+		else if (o->type == ITEMBOX)
+		{
+			ItemBox& box = dynamic_cast<ItemBox&>(*o);
+			if (intersectAABB(rectA, rectB, resolution) && box.itemBoxActive) {
+				if (!p.pickingItem && !p.hasItem) {
+        			box.generateItem(p, gd, res);
+					gd.itemStorage_.texture = res.texItemRandomizer;
+					gd.itemStorage_.curAnimation = res.ANIM_ITEM_CYCLE;
+					gd.itemStorage_.animations[gd.itemStorage_.curAnimation].reset();
+    			}
+				box.itemBoxActive = false;
+				removeHook(p);
+			}
+			break;
 		}
 	}
 
@@ -347,9 +350,9 @@ void Hook::checkCollision(const SDLState &state, GameData &gd, Resources &res, P
                 .w = p2.collider.w,
                 .h = p2.collider.h
             };
-            if (intersectAABB(rectA, rectB, resolution) && !(*this).collided) {
-                p.vel = 0.7f * (*this).vel;
-                p2.vel = -0.3f * (*this).vel;
+            if (intersectAABB(rectA, rectB, resolution) && !this->collided) {
+                p.vel = 0.7f * this->vel;
+                p2.vel = -0.3f * this->vel;
                 removeHook(p);
                 removeHook(p2);
                 PlayerState* stunState = new StunnedState();
@@ -362,25 +365,107 @@ void Hook::checkCollision(const SDLState &state, GameData &gd, Resources &res, P
                 .w = h2.collider.w,
                 .h = h2.collider.h
             };
-            if (intersectAABB(rectA, rectB, resolution) && !(*this).collided && h2.visible) { // Touching other hook
+            if (intersectAABB(rectA, rectB, resolution) && !this->collided && h2.visible) { // Touching other hook
                 removeHook(p);
                 removeHook(p2);
             }
         } 
     }
 }
+void Bomb::checkCollision(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
+    SDL_FRect rectA{
+		.x = this->pos.x + this->collider.x,
+		.y = this->pos.y + this->collider.y,
+		.w = this->collider.w,
+		.h = this->collider.h
+	};
+    SDL_FRect rectB;
+    glm::vec2 resolution{ 0 };
+    for (Player &p2 : gd.players_) {
+        // Don't do collision if already stunned
+        if (p2.state_->stateVal == PlayerStateValue::STUNNED) {
+            break;
+        }
+        rectB = {
+            .x = p2.pos.x + p2.collider.x,
+            .y = p2.pos.y + p2.collider.y,
+            .w = p2.collider.w,
+            .h = p2.collider.h
+        };
+        if (intersectAABB(rectA, rectB, resolution) && this->visible) {
+            p2.vel.y = -200.0f; 
+            p2.vel.x = this->vel.x * 0.5;  
+            p2.pos.y -= 1;              
+            p2.grounded = false;
+
+            PlayerState* stunState = new StunnedState(true); // hard stun
+            p2.handleState(stunState, gd, res); // stun player you hit
+            if (this->exploded) {
+                break;
+            }
+            this->exploded = true;
+            SDL_FRect expCollider = {
+                .x = 0,
+                .y = 0,
+                .w = (float)TILE_SIZE * 5,
+                .h = (float)TILE_SIZE * 5
+            };
+            this->collider = expCollider;
+            this->pos.x -= TILE_SIZE * 2;
+            this->pos.y -= TILE_SIZE * 2;
+            this->texture = res.texExplosion;
+            this->width = 156;
+            this->height = 156;
+            this->animations = res.itemAnims;
+            this->curAnimation = res.ANIM_ITEM_EXPLOSION;
+            this->animations[this->curAnimation].reset();
+        }
+    } 
+}
+
+void Boombox::checkCollision(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
+     SDL_FRect rectA{
+		.x = this->pos.x + this->collider.x,
+		.y = this->pos.y + this->collider.y,
+		.w = this->collider.w,
+		.h = this->collider.h
+	};
+    SDL_FRect rectB;
+    glm::vec2 resolution{ 0 };
+    for (Player &p2 : gd.players_) {
+        // Don't do collision on self or if already stunned
+        if (&p2 == &p || p2.state_->stateVal == PlayerStateValue::STUNNED) {
+            break;
+        }
+        rectB = {
+            .x = p2.pos.x + p2.collider.x,
+            .y = p2.pos.y + p2.collider.y,
+            .w = p2.collider.w,
+            .h = p2.collider.h
+        };
+        if (intersectAABB(rectA, rectB, resolution) && this->visible) {
+            p2.vel.y = -200.0f; 
+            p2.vel.x = this->vel.x * 0.5;  
+            p2.pos.y -= 1;              
+            p2.grounded = false;
+
+            PlayerState* stunState = new StunnedState(true); // hard stun
+            p2.handleState(stunState, gd, res); // stun player you hit
+        }
+    }
+}
 
 void Pie::checkCollision(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
     SDL_FRect rectA{
-		.x = (*this).pos.x + (*this).collider.x,
-		.y = (*this).pos.y + (*this).collider.y,
-		.w = (*this).collider.w,
-		.h = (*this).collider.h
+		.x = this->pos.x + this->collider.x,
+		.y = this->pos.y + this->collider.y,
+		.w = this->collider.w,
+		.h = this->collider.h
 	};
     SDL_FRect rectB;
     glm::vec2 resolution{ 0 };
 
-	std::vector<Object *> closeTiles_ = getCloseTiles(state, gd, (*this).pos);
+	std::vector<Object *> closeTiles_ = getCloseTiles(state, gd, this->pos);
 	for (auto &o : closeTiles_) { 
 		if (o->type == LEVEL) {
 			SDL_FRect rectB {
@@ -403,7 +488,7 @@ void Pie::checkCollision(const SDLState &state, GameData &gd, Resources &res, Pl
                 .w = p2.collider.w,
                 .h = p2.collider.h
             };
-            if (intersectAABB(rectA, rectB, resolution) && (*this).visible) {
+            if (intersectAABB(rectA, rectB, resolution)) {
                 p2.vel.y = -200.0f; 
                 p2.vel.x = this->vel.x * 0.5;  
                 p2.pos.y -= 1;              
@@ -415,5 +500,38 @@ void Pie::checkCollision(const SDLState &state, GameData &gd, Resources &res, Pl
                 this->active = false;
             }
         } 
+    }
+}
+
+void Ice::checkCollision(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
+    SDL_FRect rectA {
+		.x = this->pos.x + this->collider.x,
+		.y = this->pos.y + this->collider.y,
+		.w = this->collider.w,
+		.h = this->collider.h
+	};
+    SDL_FRect rectB;
+    glm::vec2 resolution{ 0 };
+	int AMOUNT = 4;
+	for (Player &p2 : gd.players_) { // does affect player who used it for now
+		rectB = {
+			.x = p2.pos.x + p2.collider.x,
+			.y = p2.pos.y + p2.collider.y,
+			.w = p2.collider.w,
+			.h = p2.collider.h
+		};
+		if (intersectAABB(rectA, rectB, resolution)) {
+			slowObject(p2.vel, deltaTime * AMOUNT); // slow them down a lot
+		}
+		Hook h2 = p2.hook;
+		rectB = {
+			.x = h2.pos.x + h2.collider.x,
+			.y = h2.pos.y + h2.collider.y,
+			.w = h2.collider.w,
+			.h = h2.collider.h
+		};
+		if (intersectAABB(rectA, rectB, resolution) && h2.visible) { 
+			slowObject(p2.hook.vel, deltaTime * AMOUNT); // slow hook down too
+		}
     }
 }

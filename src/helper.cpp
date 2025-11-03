@@ -110,3 +110,20 @@ std::vector<Object*> getOnscreenTiles(const SDLState &state, GameData &gd) {
     }
     return res;
 }
+
+void slowObject(glm::vec2 &vel, float deltaTime) {
+    if (abs(vel.x) >= 50) {
+        if (vel.x > 0) {
+                vel.x -= 150.f * deltaTime;
+            } else {
+                vel.x += 150.f * deltaTime;
+            }
+        }
+    if (abs(vel.y) >= 50) {
+        if (vel.y > 0) {
+            vel.y -= 150.f * deltaTime;
+        } else {
+            vel.y += 150.f * deltaTime;
+        }
+    }		
+}
