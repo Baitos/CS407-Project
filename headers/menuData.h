@@ -16,7 +16,7 @@ struct MenuData {
     std::vector<AnimatedObject> arrows_;
 
     Object settingsBorder;
-    Object * updatedDial;
+    Object * updatedDial = nullptr;
     std::vector<Object> settingsDials_;
     std::vector<Object> gameplaySettingsBrackets1_;
     std::vector<Object> gameplaySettingsBrackets2_;
