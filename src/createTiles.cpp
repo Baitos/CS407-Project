@@ -296,43 +296,28 @@ void createTilesSpaceship(const SDLState &state, GameData &gd, const Resources &
                         };
                         
                         
+                    
                         //printf("%d",((LevelState*) currState)->character);
                         //Player player2(pos, collider, res.texIdleS, res.playerAnims, res.ANIM_PLAYER_IDLE, 250);
                         //gd.player2 = player2;
                         Player player;
-                        int i = 0;
-                        for(int i = 0; i < 8; i++){
-                            if(gd.playerTypes[i] != -1){
-                                printf("%d\n",gd.playerTypes[i] );
-                                printf("HERE\n");
-                                if(gd.playerTypes[i] == SWORD){
-                                    player = Player(pos, collider, res.texIdle[SWORD], res.playerAnims, res.ANIM_PLAYER_IDLE, 250);         
-                                    player.cooldownTimer = Timer(3.0f);
-                                    player.character = SWORD;
-                                } else if(gd.playerTypes[i] == SHOTGUN){
-                                    player = Player(pos, collider, res.texIdle[SHOTGUN], res.playerAnims, res.ANIM_PLAYER_IDLE, 250);
-                                    player.cooldownTimer = Timer(5.0f);
-                                    player.character = SHOTGUN;
-                                } else {
-                                    player = Player(pos, collider, res.texIdle[JETPACK], res.playerAnims, res.ANIM_PLAYER_IDLE, 250);
-                                    player.cooldownTimer = Timer(1.0f);
-                                    player.character = JETPACK;
-                                }
-                                
-                                player.state_ = new IdleState();
-                                player.dir = 0;
-                                player.flip = 1;
-                                player.cooldownTimer.step(5.0f);
-                                //gd.player2.state_ = newState;
-
-                                player.hook = Hook(player.pos, hookCollider, res.texGrapple);
-                                player.hook.pos += glm::vec2(-10000.0f, -10000.0f); // maybe unnecessary
-                                player.hook.vel = glm::vec2(0);
-                                gd.players_.push_back(player);
-                            }
+                        if(((LevelState*) currState)->character == SWORD){
+                            player = Player(pos, collider, res.texIdle[SWORD], res.playerAnims, res.ANIM_PLAYER_IDLE, 250);         
+                            player.cooldownTimer = Timer(3.0f);
+                        } else if(((LevelState*) currState)->character == SHOTGUN){
+                            player = Player(pos, collider, res.texIdle[SHOTGUN], res.playerAnims, res.ANIM_PLAYER_IDLE, 250);
+                            player.cooldownTimer = Timer(5.0f);
+                        } else {
+                            player = Player(pos, collider, res.texIdle[JETPACK], res.playerAnims, res.ANIM_PLAYER_IDLE, 250);
+                            player.cooldownTimer = Timer(1.0f);
                         }
-                        //add player's username (as of now, all same, will need to change w multiplayer)
-                        player.username = gd.md.tempUsername;
+                        
+                        player.character = ((LevelState*) currState)->character;
+                        player.state_ = new IdleState();
+                        player.dir = 0;
+                        player.flip = 1;
+                        player.cooldownTimer.step(5.0f);
+                        //gd.player2.state_ = newState;
 
                         player.hook = Hook(player.pos, hookCollider, res.texGrapple);
                         player.index = gd.players_.size();
@@ -340,7 +325,7 @@ void createTilesSpaceship(const SDLState &state, GameData &gd, const Resources &
                         
                         // Add itemStorage
                         SDL_FRect storageCollider; 
-                        gd.itemStorage_ = ItemStorage(gd.players_[gd.playerIndex].pos, storageCollider, res.texItemStorage);
+                        gd.itemStorage_ = ItemStorage(player.pos, storageCollider, res.texItemStorage);
                         gd.itemStorage_.animations = res.itemAnims;
                         gd.itemStorage_.curAnimation = res.ANIM_ITEM_EMPTY;
                         break; 

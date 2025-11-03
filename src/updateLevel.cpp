@@ -22,7 +22,6 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
     placement(state, gd, res, deltaTime);
 
     // update portals
-    
     for (Portal &portal : gd.portals_) {
         portal.update(state, gd, res, deltaTime);
     }
@@ -31,21 +30,20 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
     for (Laser &laser : gd.lasers_) {
         laser.update(state, gd, res, deltaTime);
     }
-   
     for (ItemBox &box : gd.itemBoxes_) {
         if (!box.itemBoxActive) {
             box.update(state, gd, res, deltaTime);
         }
     }
-
     for (Player &p : gd.players_) {
         p.update(state, gd, res, deltaTime);
     }
-    
-    //printf("%d\n", gd.player.state_->currStateVal);
 
-    gd.itemStorage_.pos.x = gd.players_[0].pos.x - 368;
-    gd.itemStorage_.pos.y = gd.players_[0].pos.y - 190;
+    //gd.players_[gd.playerIndex].update(state,gd,res,deltaTime);
+    //printf("%d\n", gd.player.state_->currStateVal);
+    
+    gd.itemStorage_.pos.x = gd.players_[gd.playerIndex].pos.x - 368;
+    gd.itemStorage_.pos.y = gd.players_[gd.playerIndex].pos.y - 190;
 
     gd.minimap.update(state, gd, res, deltaTime);
 

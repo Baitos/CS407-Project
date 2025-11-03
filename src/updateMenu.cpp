@@ -384,25 +384,25 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
         //Ready up message to server
         
         //Change to value Danny made
-        int selectedStage = SPACESHIP;
+        int selectedStage = gd.md.currMapVote;
         std::string pendingMessage = "READY " + std::to_string(gd.playerIndex) + " " + std::to_string(selectedStage);
         ENetPacket * packet = enet_packet_create(pendingMessage.c_str(), pendingMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
         enet_peer_send(serverPeer, 0, packet);
         
         //Enter Stage
         //TO DO - ONLY DO WHEN PLAYERS AGREE TO READY UP
-        characterType character = ((CharSelectState*) currState)->character;
-        if(gd.md.map_previews_[0].curAnimation == res.MAP_SPACESHIP) {
-            currState->nextStateVal = SPACESHIP;
-        } else if(gd.md.map_previews_[0].curAnimation == res.MAP_GRASSLAND)  {
-            currState->nextStateVal = GRASSLANDS;
-        } else {
-            printf("INVALID MAP\n");
-            return;
-        }
-        currState = changeState(currState, gd);
-        ((LevelState*) currState)->character = character;
-        currState->init(state, gd, res);
+        // characterType character = ((CharSelectState*) currState)->character;
+        // if(gd.md.map_previews_[0].curAnimation == res.MAP_SPACESHIP) {
+        //     currState->nextStateVal = SPACESHIP;
+        // } else if(gd.md.map_previews_[0].curAnimation == res.MAP_GRASSLAND)  {
+        //     currState->nextStateVal = GRASSLANDS;
+        // } else {
+        //     printf("INVALID MAP\n");
+        //     return;
+        // }
+        // currState = changeState(currState, gd);
+        // ((LevelState*) currState)->character = character;
+        // currState->init(state, gd, res);
     } else if ((gd.mouseCoords.x >= 35 && gd.mouseCoords.x <= 218) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)) {
         currState->nextStateVal = TITLE;
         currState = changeState(currState, gd);
@@ -431,6 +431,10 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
                 map_preview_text.curAnimation = index; 
                 map_preview_text.animations[map_preview_text.curAnimation].reset();
             }
+            gd.md.currMapVote = gd.md.currMapVote - 1;
+            if(gd.md.currMapVote<0) {
+                gd.md.currMapVote = 4;
+            }
         }
     } else if ((gd.mouseCoords.x >= 274 && gd.mouseCoords.x <= 292) && (gd.mouseCoords.y >= 286 && gd.mouseCoords.y <= 310)) {
         if(!gd.isGrandPrix) {
@@ -455,6 +459,10 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
                 map_preview_text.texture = res.texMapTextPreviews[index];
                 map_preview_text.curAnimation = index; 
                 map_preview_text.animations[map_preview_text.curAnimation].reset();
+            }
+            gd.md.currMapVote = gd.md.currMapVote + 1;
+            if(gd.md.currMapVote>4) {
+                gd.md.currMapVote = 0;
             }
         }
     }
@@ -709,14 +717,22 @@ void handleTitleClick(const SDLState &state, GameData &gd, Resources &res, float
     } else if((gd.mouseCoords.x >= 315 && gd.mouseCoords.x <= 485) && (gd.mouseCoords.y >= 368 && gd.mouseCoords.y <= 436)){        //Join
         if(gd.md.tempUsername!="") {
             
-            //currState->nextStateVal = CHAR_SELECT;
-            //currState = changeState(currState, gd);
-            //currState->init(state, gd, res);
+            
             currState->currStateVal = JOIN;
             std::string lobbyQuery = "LOBBY_QUERY";
             ENetPacket * packet = enet_packet_create(lobbyQuery.c_str(), lobbyQuery.size()+1, ENET_PACKET_FLAG_RELIABLE);
             enet_peer_send(serverPeer, 0, packet);
             enet_host_flush(client);
+
+
+            //For Testing
+            std::string joinMessage = "JOIN 1";
+            packet = enet_packet_create(joinMessage.c_str(), joinMessage.size()+1, ENET_PACKET_FLAG_RELIABLE);
+            enet_peer_send(serverPeer, 0, packet);
+            enet_host_flush(client);
+            currState->nextStateVal = CHAR_SELECT;
+            currState = changeState(currState, gd);
+            currState->init(state, gd, res);
         }
     }else if((gd.mouseCoords.x >= 589 && gd.mouseCoords.x <= 767) && (gd.mouseCoords.y >= 368 && gd.mouseCoords.y <= 436)){         //Settings
         currState->nextStateVal = SETTINGS;

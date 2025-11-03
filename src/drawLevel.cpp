@@ -11,6 +11,8 @@ void drawLevel(const SDLState &state, GameData &gd, Resources res, float deltaTi
     SDL_SetRenderDrawColor(state.renderer, 64, 51, 83, 255);
     SDL_RenderClear(state.renderer);
 
+    
+
     // draw bg tiles
     for (BackgroundObject &bg : gd.bgTiles_) {
         bg.draw(state, gd, static_cast<float>(bg.texture->w), static_cast<float>(bg.texture->h)); 

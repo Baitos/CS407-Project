@@ -30,6 +30,7 @@ struct MenuData {
     bool showCursor = true;
     //font for drawing on screen
     TTF_Font* font;
+    int currMapVote = 0;
 
     MenuData(const SDLState &state) {
 
