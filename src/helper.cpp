@@ -97,7 +97,7 @@ std::vector<Object*> getOnscreenTiles(const SDLState &state, GameData &gd) {
     int offsetW = (width - 1) / 2;
     int height = state.logH / TILE_SIZE + leeway;
     int offsetH = (height - 1) / 2;
-    glm::vec2 tilePos(std::round(gd.players_[0].pos.x / TILE_SIZE), std::round(gd.players_[0].pos.y / TILE_SIZE)); // get player pos
+    glm::vec2 tilePos(std::round(gd.players_[gd.playerIndex].pos.x / TILE_SIZE), std::round(gd.players_[gd.playerIndex].pos.y / TILE_SIZE)); // get player pos
     for (int h = 0; h < height; h++) {
         for (int w = 0; w < width; w++) {
             int x = (int)tilePos.x + w - offsetW;

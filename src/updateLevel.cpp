@@ -52,14 +52,12 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
         p.update(state, gd, res, deltaTime);
     }
 
-    //gd.players_[gd.playerIndex].update(state,gd,res,deltaTime);
-    //printf("%d\n", gd.player.state_->currStateVal);
-    
+    //gd.players_[gd.playerIndex].update(state, gd, res, deltaTime);
+
+
     gd.itemStorage_.pos.x = gd.players_[gd.playerIndex].pos.x - 368;
     gd.itemStorage_.pos.y = gd.players_[gd.playerIndex].pos.y - 190;
-
     gd.minimap.update(state, gd, res, deltaTime);
-
 
     // gd.mapViewport.x = (gd.players_[0].pos.x + TILE_SIZE / 2) - (gd.mapViewport.w / 2); 
     // gd.mapViewport.y = (gd.players_[0].pos.y + TILE_SIZE / 2) - (gd.mapViewport.h / 2); 
@@ -222,15 +220,23 @@ void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
         gd.players_[gd.playerIndex].pos.x = 0;
         gd.players_[gd.playerIndex].pos.y = 0;
     }
-    for (Player &p : gd.players_) {
-        p.handleInput(state, gd, res, event, deltaTime); 
-        if (gd.controls->actionPerformed(typeAction::ACTION_USEITEM, event) && p.hasItem) {
-            Item* item = p.heldItem;
-            item->useItem(state, gd, res, p);
-            p.hasItem = false;
-            clearItem(state, gd, res);
-        }
-    }  
+
+    gd.players_[gd.playerIndex].handleInput(state, gd, res, event, deltaTime); 
+    if (gd.controls->actionPerformed(typeAction::ACTION_USEITEM, event) && gd.players_[gd.playerIndex].hasItem) {
+        Item* item = gd.players_[gd.playerIndex].heldItem;
+        item->useItem(state, gd, res, gd.players_[gd.playerIndex]);
+        gd.players_[gd.playerIndex].hasItem = false;
+        clearItem(state, gd, res);
+    }
+    // for (Player &p : gd.players_) {
+    //     p.handleInput(state, gd, res, event, deltaTime); 
+    //     if (gd.controls->actionPerformed(typeAction::ACTION_USEITEM, event) && p.hasItem) {
+    //         Item* item = p.heldItem;
+    //         item->useItem(state, gd, res, p);
+    //         p.hasItem = false;
+    //         clearItem(state, gd, res);
+    //     }
+    // }  
 }
 
 void placement(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {

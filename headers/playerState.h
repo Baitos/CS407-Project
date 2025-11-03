@@ -231,6 +231,6 @@ std::string getStateFromEnum(PlayerStateValue ps);
 PlayerState* handleJumping (GameData &gd, Resources &res, Player &p, SDL_Event event);
 PlayerState* handleSprinting (GameData &gd, Resources &res, Player &p, SDL_Event event);
 PlayerState* handleFalling (GameData &gd, Resources &res, Player &p, SDL_Event event);
-void sharedUpdate(const SDLState &state, GameData &gd, Player &p, Resources &res, float deltaTime);
+void sharedUpdate(const SDLState &state, Player &p, Resources &res, float deltaTime,  GameData &gd);
 void sharedGravity(Player &p, float deltaTime);
 void sharedMovement(const SDLState &state, Player &p);

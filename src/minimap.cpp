@@ -4,8 +4,8 @@
 
 void Minimap::update(const SDLState &state, GameData &gd, Resources &res, float deltaTime) { // update minimap dots
     // this centers the minimap's top right corner to the top right corner of the screen, allowing for minimaps of any size to work
-    gd.minimap.pos.x = (gd.players_[0].pos.x + TILE_SIZE / 2) + (gd.mapViewport.w / 2) - gd.minimap.texture->w; 
-    gd.minimap.pos.y = (gd.players_[0].pos.y + TILE_SIZE / 2) - (gd.mapViewport.h / 2);
+    gd.minimap.pos.x = (gd.players_[gd.playerIndex].pos.x + TILE_SIZE / 2) + (gd.mapViewport.w / 2) - gd.minimap.texture->w; 
+    gd.minimap.pos.y = (gd.players_[gd.playerIndex].pos.y + TILE_SIZE / 2) - (gd.mapViewport.h / 2);
     
     float OFFSET = (this->playerDots[0].texture->w - 1) / 2; // calculate center of the square
     int count = 0;

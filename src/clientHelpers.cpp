@@ -50,7 +50,9 @@ void charSelectMessageHandler(ENetEvent * event, GameData * gd, Resources &res, 
                 } else if (std::stoi((message).substr(13)) == 1){
                     currState->nextStateVal = SPACESHIP;
                 }
+                printf("here\n");
                 currState = changeState(currState, *gd);
+                printf("here2\n");
                 currState->init(state,*gd,res);
             }
             break;

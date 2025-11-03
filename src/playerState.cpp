@@ -85,8 +85,11 @@ void sharedGravity(Player &p, float deltaTime) { // call on airborne states
     p.vel.y += changeVel(700 * p.gravityScale * deltaTime, p); // gravity
 }
 
-void sharedUpdate(const SDLState &state, Player &p, float deltaTime) { // basic animation and cooldown function, should always be called pretty much
-    sharedMovement(state, p);
+void sharedUpdate(const SDLState &state, Player &p, float deltaTime, GameData &gd) { // basic animation and cooldown function, should always be called pretty much
+    if(p.index == gd.playerIndex){
+        sharedMovement(state, p);
+    }
+    
     if (p.curAnimation != -1) {
         p.animations[p.curAnimation].step(deltaTime);
     }
@@ -107,7 +110,7 @@ PlayerState* IdleState::handleInput(const SDLState &state, GameData &gd, Resourc
 }
 
 PlayerState* IdleState::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
-    sharedUpdate(state, p, deltaTime);
+    sharedUpdate(state, p, deltaTime, gd);
     if (p.currentDirection) { // if moving change to walking
         return new WalkState(); 
     }
@@ -129,7 +132,7 @@ PlayerState* WalkState::handleInput(const SDLState &state, GameData &gd, Resourc
 }
 
 PlayerState* WalkState::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {   
-    sharedUpdate(state, p, deltaTime);
+    sharedUpdate(state, p, deltaTime, gd);
     if (state.keys[gd.controls->getActionKey(typeAction::ACTION_SPRINT)] && p.currentDirection) {
         return new RunState();
     }
@@ -167,7 +170,7 @@ PlayerState* RunState::handleInput(const SDLState &state, GameData &gd, Resource
 }
 
 PlayerState* RunState::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {   
-    sharedUpdate(state, p, deltaTime);
+    sharedUpdate(state, p, deltaTime, gd);
     if (!state.keys[gd.controls->getActionKey(typeAction::ACTION_SPRINT)] || !p.currentDirection) { // if not pressing then reset
         return new WalkState();
     }
@@ -203,7 +206,7 @@ PlayerState* SprintState::handleInput(const SDLState &state, GameData &gd, Resou
 }
 
 PlayerState* SprintState::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
-    sharedUpdate(state, p, deltaTime);
+    sharedUpdate(state, p, deltaTime, gd);
     float LEEWAY = 25;
     if (p.grounded && // if on ground and sliding or too slow reset sprint
         (isSliding(p) || std::abs(p.vel.x) < (p.maxRunX - LEEWAY) || !p.currentDirection)) {       
@@ -227,7 +230,7 @@ PlayerState* JumpState::handleInput(const SDLState &state, GameData &gd, Resourc
 }
 
 PlayerState* JumpState::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {   
-    sharedUpdate(state, p, deltaTime);
+    sharedUpdate(state, p, deltaTime, gd);
     if (p.grounded && p.dir == 0) {
         return new IdleState();
     } else if (p.grounded) {
@@ -250,7 +253,7 @@ PlayerState* LaunchState::handleInput(const SDLState &state, GameData &gd, Resou
 }
 
 PlayerState* LaunchState::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
-    sharedUpdate(state, p, deltaTime);
+    sharedUpdate(state, p, deltaTime, gd);
     if (p.animations[p.curAnimation].isDone()) {
         return new JumpState();
     }
@@ -272,7 +275,7 @@ PlayerState* RollState::handleInput(const SDLState &state, GameData &gd, Resourc
 }
 
 PlayerState* RollState::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
-    sharedUpdate(state, p, deltaTime);
+    sharedUpdate(state, p, deltaTime, gd);
     if (p.animations[p.curAnimation].isDone()) {
         return new RunState();
     }
@@ -292,7 +295,7 @@ PlayerState* SlideState::handleInput(const SDLState &state, GameData &gd, Resour
 }
 
 PlayerState* SlideState::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
-    sharedUpdate(state, p, deltaTime);
+    sharedUpdate(state, p, deltaTime, gd);
     if (p.currentDirection == 0) { // prevents you from sliding forever when you let go
         p.currentDirection = p.dir;
     } 
@@ -315,7 +318,7 @@ PlayerState* FastfallState::handleInput(const SDLState &state, GameData &gd, Res
 }
 
 PlayerState* FastfallState::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
-    sharedUpdate(state, p, deltaTime);
+    sharedUpdate(state, p, deltaTime, gd);
     if (p.grounded) {
         return new RollState();
     }
@@ -338,7 +341,7 @@ void FastfallState::exit(GameData &gd, Resources &res, Player &p) {
 
 PlayerState* StunnedState::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
     if (!this->hardStun) {
-        sharedUpdate(state, p, deltaTime);
+        sharedUpdate(state, p, deltaTime, gd);
     } else { // if hardStunned, disable control
         p.cooldownTimer.step(deltaTime);
         p.currentDirection = 0;
@@ -389,7 +392,7 @@ PlayerState* SwordDeployState::handleInput(const SDLState &state, GameData &gd, 
 }
 
 PlayerState* SwordDeployState::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
-    sharedUpdate(state, p, deltaTime);
+    sharedUpdate(state, p, deltaTime, gd);
     if (p.animations[p.curAnimation].isDone()) { 
         p.cooldownTimer.reset();
         if(p.vel.x != 0) {
@@ -421,7 +424,7 @@ PlayerState* ShotgunDeployState::handleInput(const SDLState &state, GameData &gd
 }
 
 PlayerState* ShotgunDeployState::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
-    sharedUpdate(state, p, deltaTime);
+    sharedUpdate(state, p, deltaTime, gd);
     
     if (this->blast != nullptr) { // update shotgun blast
         this->blast->update(state, gd, res, deltaTime);
@@ -489,7 +492,7 @@ PlayerState* JetpackDeployState::handleInput(const SDLState &state, GameData &gd
 }
 
 PlayerState* JetpackDeployState::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) { // TODO:
-    sharedUpdate(state, p, deltaTime);
+    sharedUpdate(state, p, deltaTime, gd);
     p.vel.y -= 600.f * deltaTime;
     int vertDir = 0;
     //calculate direction
