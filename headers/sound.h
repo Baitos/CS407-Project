@@ -1,7 +1,7 @@
 #pragma once
 #include <SDL3/SDL.h>
 #include <string>
-class  {
+class Sound {
     public:
         bool isMusic;
         Sound(std::string filepath, bool isMusic);
