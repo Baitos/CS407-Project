@@ -384,7 +384,7 @@ void Bomb::checkCollision(const SDLState &state, GameData &gd, Resources &res, P
     for (Player &p2 : gd.players_) {
         // Don't do collision if already stunned
         if (p2.state_->stateVal == PlayerStateValue::STUNNED) {
-            break;
+            continue;
         }
         rectB = {
             .x = p2.pos.x + p2.collider.x,
@@ -435,7 +435,7 @@ void Boombox::checkCollision(const SDLState &state, GameData &gd, Resources &res
     for (Player &p2 : gd.players_) {
         // Don't do collision on self or if already stunned
         if (&p2 == &p || p2.state_->stateVal == PlayerStateValue::STUNNED) {
-            break;
+            continue;
         }
         rectB = {
             .x = p2.pos.x + p2.collider.x,
