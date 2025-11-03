@@ -157,8 +157,52 @@ void Player::collisionResponse(const SDLState &state, GameData &gd, Resources &r
 			break;
 		}
 	}
+}
 
-	
+void Player::groundedCheck(Object &o, SDL_FRect &rectB) {
+	// grounded sensor
+	const float inset = 2.0;
+	SDL_FRect sensor {
+		.x = (*this).pos.x + (*this).collider.x + 1,
+		.y = (*this).pos.y + (*this).collider.y + (*this).collider.h,
+		.w = (*this).collider.w - inset,
+		.h = EPSILON
+	};
+	glm::vec2 resolution{ 0 };
+	if (intersectAABB(sensor, rectB, resolution)) {
+		(*this).grounded = true;
+		(*this).canDoubleJump = true;
+		(*this).gravityScale = 1.0f;
+	}
+}
+
+void Player::checkCollision(const SDLState &state, GameData &gd, Resources &res,
+ 	float deltaTime)
+{
+	SDL_FRect rectA {
+		.x = (*this).pos.x + (*this).collider.x,
+		.y = (*this).pos.y + (*this).collider.y,
+		.w = (*this).collider.w,
+		.h = (*this).collider.h
+	};
+	glm::vec2 resolution{ 0 };
+	std::vector<Object *> closeTiles_ = getCloseTiles(state, gd, (*this).pos);
+	for (auto &o : closeTiles_) { 
+		SDL_FRect rectB {
+			.x = o->pos.x + o->collider.x,
+			.y = o->pos.y + o->collider.y,
+			.w = o->collider.w,
+			.h = o->collider.h
+		};
+		if (intersectAABB(rectA, rectB, resolution)) {
+			(*this).collisionResponse(state, gd, res, (*o), rectA, rectB, resolution, deltaTime);
+		}
+		if (o->type == LEVEL) {
+			(*this).groundedCheck((*o), rectB);
+		}
+	}
+
+		
 	//check for weapon deployment
 	for (Player &p2 : gd.players_) {
 		if(p2.index != (*this).index) {
@@ -248,50 +292,7 @@ void Player::collisionResponse(const SDLState &state, GameData &gd, Resources &r
 			}
 		}
 	}
-}
 
-void Player::groundedCheck(Object &o, SDL_FRect &rectB) {
-	// grounded sensor
-	const float inset = 2.0;
-	SDL_FRect sensor {
-		.x = (*this).pos.x + (*this).collider.x + 1,
-		.y = (*this).pos.y + (*this).collider.y + (*this).collider.h,
-		.w = (*this).collider.w - inset,
-		.h = EPSILON
-	};
-	glm::vec2 resolution{ 0 };
-	if (intersectAABB(sensor, rectB, resolution)) {
-		(*this).grounded = true;
-		(*this).canDoubleJump = true;
-		(*this).gravityScale = 1.0f;
-	}
-}
-
-void Player::checkCollision(const SDLState &state, GameData &gd, Resources &res,
- 	float deltaTime)
-{
-	SDL_FRect rectA {
-		.x = (*this).pos.x + (*this).collider.x,
-		.y = (*this).pos.y + (*this).collider.y,
-		.w = (*this).collider.w,
-		.h = (*this).collider.h
-	};
-	glm::vec2 resolution{ 0 };
-	std::vector<Object *> closeTiles_ = getCloseTiles(state, gd, (*this).pos);
-	for (auto &o : closeTiles_) { 
-		SDL_FRect rectB {
-			.x = o->pos.x + o->collider.x,
-			.y = o->pos.y + o->collider.y,
-			.w = o->collider.w,
-			.h = o->collider.h
-		};
-		if (intersectAABB(rectA, rectB, resolution)) {
-			(*this).collisionResponse(state, gd, res, (*o), rectA, rectB, resolution, deltaTime);
-		}
-		if (o->type == LEVEL) {
-			(*this).groundedCheck((*o), rectB);
-		}
-	}
 }
 
 void Hook::checkCollision(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
@@ -308,13 +309,13 @@ void Hook::checkCollision(const SDLState &state, GameData &gd, Resources &res, P
     glm::vec2 resolution{ 0 };
 	std::vector<Object *> closeTiles_ = getCloseTiles(state, gd, (*this).pos);
 	for (auto &o : closeTiles_) { 
+		SDL_FRect rectB {
+			.x = o->pos.x + o->collider.x,
+			.y = o->pos.y + o->collider.y,
+			.w = o->collider.w,
+			.h = o->collider.h
+		};
 		if (o->type == LEVEL) {
-			SDL_FRect rectB {
-				.x = o->pos.x + o->collider.x,
-				.y = o->pos.y + o->collider.y,
-				.w = o->collider.w,
-				.h = o->collider.h
-			};
 			if (intersectAABB(rectA, rectB, resolution)) {
 				(*this).vel = glm::vec2(0);
 				if (!(*this).collided) {
@@ -323,6 +324,21 @@ void Hook::checkCollision(const SDLState &state, GameData &gd, Resources &res, P
 					(*this).collided = true;
 				}
 			}
+		}
+		else if (o->type == ITEMBOX)
+		{
+			ItemBox& box = dynamic_cast<ItemBox&>(*o);
+			if (intersectAABB(rectA, rectB, resolution) && box.itemBoxActive) {
+				if (!p.pickingItem && !p.hasItem) {
+        			box.generateItem(p, gd, res);
+					gd.itemStorage_.texture = res.texItemRandomizer;
+					gd.itemStorage_.curAnimation = res.ANIM_ITEM_CYCLE;
+					gd.itemStorage_.animations[gd.itemStorage_.curAnimation].reset();
+    			}
+				box.itemBoxActive = false;
+				removeHook(p);
+			}
+			break;
 		}
 	}
 
