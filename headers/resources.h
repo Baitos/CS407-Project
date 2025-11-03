@@ -31,7 +31,9 @@ struct Resources {
     const int ANIM_ITEM_EMPTY = 0;
     const int ANIM_ITEM_CYCLE = 1;
     const int ANIM_ITEM_PICKED = 2;
-    const int ANIM_ITEM_PIE = 3;
+    const int ANIM_ITEM_EXPLOSION = 3;
+    const int ANIM_ITEM_SOUNDWAVE = 4;
+    const int ANIM_ITEM_PIE = 5;
     std::vector<Animation> itemAnims;
     std::vector<SDL_Texture *> itemTextures;
     const int PORTAL_IDLE = 0;
@@ -95,8 +97,8 @@ struct Resources {
                 *texItemBox, *texItemStorage, *texItemRandomizer, 
                 *texBombStorage, *texBoomboxStorage, *texBouncyBallStorage, *texFogStorage, 
                 *texIceStorage, *texMissileStorage, *texSugarStorage, *texPieStorage,
-                *texBomb, *texExplosion, *texBoombox, *texSoundwaves, *texSugar, *texPie,
-                *texSugarEffect,
+                *texBomb, *texExplosion, *texBoombox, *texSoundwaves, *texSugar, *texSugarEffect, 
+                *texPie, *texIce,
                 *texSettingsBackground, *texBigBorder, *texSmallBorder, *texSlider,       
                 *texTitle, *texTextCursor,
                 *texGameplaySettingsBackground, *texGameplaySettingsLeftBracket, *texGameplaySettingsRightBracket,

@@ -78,6 +78,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         return 1;
     }
     
+    srand(time(0)); // randomize item generation
 
     //Initial Game State
     //CHANGE if testing a different screen and you want it up on start
