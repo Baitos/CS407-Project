@@ -71,10 +71,6 @@ void drawSettings(const SDLState &state, GameData &gd, Resources res, float delt
         SDL_RenderDebugText(state.renderer, curSettings->xStart,
              curSettings->yStart + i * curSettings->yOffset, controlStrings[i].c_str());
     }
-
-
-    
-
     if(gd.md.settingsBorder.pos.y != 500.f){
         //printf("drawing, %f", gd.settingsBorder->pos.y);
         gd.md.settingsBorder.draw(state, gd,static_cast<float>(gd.md.settingsBorder.texture->w) * 2, static_cast<float>(gd.md.settingsBorder.texture->h)*2);

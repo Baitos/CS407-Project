@@ -2,10 +2,12 @@
 
 #include "../ext/glm/glm.hpp"
 #include "animation.h"
-#include <vector>
 #include "object.h"
 #include "timer.h"
 #include "item.h"
+
+#include <vector>
+#include <memory>
 
 struct SDLState;
 struct GameData;
@@ -26,10 +28,11 @@ class Player : public AnimatedObject { // player
         std::string username;
         
         Hook hook;
-        Item item;
-        Item nextItem;
+        Item* heldItem; // item currently active
         bool hasItem = false;
         bool pickingItem = false;
+
+        std::vector<Item*> items_; // store all of this player's active item objs here
 
         bool grounded; 
         bool isDead = false;
@@ -42,8 +45,8 @@ class Player : public AnimatedObject { // player
 
         int currentDirection;
         int position = 4;
+        int index;
         // TODO maybe keep consistent across clients
-        int index; // Currently for keeping track of item's owner 
         float gravityScale; 
         float maxSpeedX; // will change depending on state
         float maxWalkX = 300; // walking
@@ -60,6 +63,13 @@ class Player : public AnimatedObject { // player
         void draw(const SDLState &state, GameData &gd, float width, float height);
         virtual void handleInput(const SDLState &state, GameData &gd, Resources &res, SDL_Event &event, float deltaTime);
         virtual void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+
+        void checkCollision(const SDLState &state, GameData &gd, Resources &res,
+ 	                        float deltaTime);
+        void collisionResponse(const SDLState &state, GameData &gd, Resources &res,
+ 	                           Object &o, SDL_FRect &rectA, SDL_FRect &rectB, glm::vec2 &resolution, float deltaTime);
+        void groundedCheck(Object &o, SDL_FRect &rectB);
+
         void handleState(PlayerState* &pState, GameData &gd, Resources &res);
         //void draw(const SDLState &state, GameData &gs, float width, float height);
         
@@ -73,7 +83,8 @@ class Player : public AnimatedObject { // player
             sprinting = false;
             maxSpeedX = maxSpeedX_; // should be walk speed
             gravityScale = 1.0f;
-            character = SHOTGUN;            
+            character = SHOTGUN;   
+            heldItem = nullptr;         
         }
         Player(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : // generic obj constructor
         AnimatedObject(pos_, colliderRect, tex), jetpackTimer(1.0f), cooldownTimer(5.0f), respawnTimer(2.0f) {
@@ -81,15 +92,17 @@ class Player : public AnimatedObject { // player
             sprinting = false;
             currentDirection = 0;
             gravityScale = 1.0f;
-            maxSpeedX = 250; // walk speed default
+            maxSpeedX = 300; // walk speed default
             character = SHOTGUN; 
+            heldItem = nullptr; 
         }
 
         Player() : AnimatedObject(), jetpackTimer(1.0f), cooldownTimer(5.0f), respawnTimer(2.0f) {
             grounded = false;
             gravityScale = 1.0f;
             currentDirection = 0;
-            maxSpeedX = 250; // walk speed default
+            maxSpeedX = 300; // walk speed default
             character = SHOTGUN; 
+            heldItem = nullptr; 
         } 
 };

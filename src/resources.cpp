@@ -13,20 +13,6 @@ SDL_Texture* Resources::loadTexture(SDL_Renderer *renderer, const std::string &f
 }
 
 void Resources::load(SDLState &state) { // First variable controls how many frames there are, second is how long each frame lasts (in seconds)
-    // playerAnimsJ.resize(12); // 
-    // playerAnimsJ[ANIM_PLAYER_IDLE] = Animation(1, 1.6f);
-    // playerAnimsJ[ANIM_PLAYER_WALK] = Animation(8, 1.0f);
-    // playerAnimsJ[ANIM_PLAYER_RUN] = Animation(8, 0.5f);
-    // playerAnimsJ[ANIM_PLAYER_SLIDE] = Animation(1, 1.0f);
-    // playerAnimsJ[ANIM_PLAYER_SHOOT] = Animation(1, 0.8f);
-    // playerAnimsJ[ANIM_PLAYER_JUMP] = Animation(1, 0.3f); 
-    // playerAnimsJ[ANIM_PLAYER_DIE] = Animation(1, 1.0f);
-    // playerAnimsJ[ANIM_PLAYER_LAUNCH] = Animation(3, 0.2f);
-    // playerAnimsJ[ANIM_PLAYER_SHOOT_JUMP] = Animation(1, 0.8f);
-    // playerAnimsJ[ANIM_PLAYER_ROLL] = Animation(5, 0.2f);
-    // playerAnimsJ[ANIM_PLAYER_JETPACK_DEPLOY] = Animation(1, 2.0f);
-    // playerAnimsJ[ANIM_PLAYER_SWORD_DEPLOY] = Animation(3, 0.3f);
-
     playerAnims.resize(13); // 
     playerAnims[ANIM_PLAYER_IDLE] = Animation(1, 1.6f);
     playerAnims[ANIM_PLAYER_WALK] = Animation(8, 1.0f);
@@ -42,18 +28,24 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     playerAnims[ANIM_PLAYER_JETPACK_DEPLOY] = Animation(1, 2.0f);
     playerAnims[ANIM_PLAYER_SWORD_DEPLOY] = Animation(3, 0.3f);
 
-    itemAnims.resize(5); // 
+    itemAnims.resize(6); // 
     itemAnims[ANIM_ITEM_EMPTY] = Animation(1, 1.0f);
     itemAnims[ANIM_ITEM_CYCLE] = Animation(8, 0.4f);
     itemAnims[ANIM_ITEM_PICKED] = Animation(1, 1.0f);
     itemAnims[ANIM_ITEM_EXPLOSION] = Animation(3, 0.5f);
-    itemAnims[ANIM_ITEM_SOUNDWAVE] = Animation(7, 0.4f);
+    itemAnims[ANIM_ITEM_SOUNDWAVE] = Animation(9, 0.4f);
+    itemAnims[ANIM_ITEM_PIE] = Animation(1, 1.0f);
+
     portalAnims.resize(2);
     portalAnims[PORTAL_IDLE] = Animation(3, 1.0f);
     charIconAnims.resize(1);
     charIconAnims[ICONS] = Animation(8, 0.0f);
     shotgunAnims.resize(1);
     shotgunAnims[SHOTGUN_BLAST] = Animation(3, 0.3f);
+
+    minimapAnims.resize(2);
+    minimapAnims[MAP] = Animation(1, 1.0f);
+    minimapAnims[DOTS] = Animation(3, 0.0f);
 
     errorAnims.resize(1); // default to prevent crashes
     errorAnims[ERROR] = Animation(1, 1.0f);
@@ -217,10 +209,11 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     texSoundwaves = loadTexture(state.renderer, "data/ItemSprites/boombox_soundwaves.png");
 
     texSugar = loadTexture(state.renderer, "data/ItemSprites/sugar.png");
+    texSugarEffect = loadTexture(state.renderer, "data/ItemSprites/SugarEffect.png");
 
-    texSugarEffectL = loadTexture(state.renderer, "data/ItemSprites/SugarEffectL.png");
-    texSugarEffectR = loadTexture(state.renderer, "data/ItemSprites/SugarEffectR.png");
+    texPie = loadTexture(state.renderer, "data/ItemSprites/pie.png");
 
+    texIce = loadTexture(state.renderer, "data/ItemSprites/ice_background.png");
     //Settings
     texSettingsBackground = loadTexture(state.renderer, "data/SettingsSprites/background.png");
     texBigBorder = loadTexture(state.renderer, "data/SettingsSprites/lButtonOutline.png");
@@ -242,6 +235,13 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
 
     itemTextures = {texBombStorage, texBoomboxStorage, texBouncyBallStorage, texFogStorage,
         texIceStorage, texMissileStorage, texSugarStorage, texPieStorage};
+
+    // minimap
+    texMinimap[MAP_SPACESHIP] = loadTexture(state.renderer, "data/Spaceship/minimapSpaceship.png");
+    texMinimap[MAP_GRASSLAND] = loadTexture(state.renderer, "data/Grasslands/minimapGrasslands.png");
+    texPlayerDots[SHOTGUN] = loadTexture(state.renderer, "data/CharacterSprites/playerDotShotgun.png");
+    texPlayerDots[SWORD] = loadTexture(state.renderer, "data/CharacterSprites/playerDotSword.png");
+    texPlayerDots[JETPACK] = loadTexture(state.renderer, "data/CharacterSprites/playerDotJetpack.png");
 }
 
 void Resources::unload() {

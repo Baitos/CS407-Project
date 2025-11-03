@@ -32,6 +32,7 @@ class Object { // generic obj type
         SDL_Texture *texture;
         SDL_FRect collider; // rectangle for collision
         float width, height; // size for drawing
+        bool debug; // should draw debug?
         int type;
         Object() {           
             pos = vel = acc = glm::vec2(0);
@@ -42,6 +43,7 @@ class Object { // generic obj type
                 .h = (float)TILE_SIZE
             };
             width = height = TILE_SIZE;
+            debug = true;
         }
         Object(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) {
             pos = pos_;       
@@ -49,9 +51,10 @@ class Object { // generic obj type
             collider = colliderRect;
             vel = acc = glm::vec2(0);
         }
-        void draw(const SDLState &state, GameData &gd, float width, float height);
-        void drawDebug(const SDLState &state, GameData &gd, float width, float height);
         virtual ~Object() {}
+        virtual void draw(const SDLState &state, GameData &gd, float width, float height);
+        void drawDebug(const SDLState &state, GameData &gd, float width, float height);
+        void drawDebugNearby(const SDLState &state, GameData &gd, float width, float height);  
 };
 
 class AnimatedObject : public Object { // obj with anims
@@ -64,7 +67,7 @@ class AnimatedObject : public Object { // obj with anims
         float dir;
         float flip; // anti gravity
         bool visible; 
-        float knockbackMultiplier;
+        bool persistent; // will be drawn even if "offscreen"
         AnimatedObject() : Object() { // default
             spriteFrame = 1;
             curAnimation = -1;
@@ -72,6 +75,8 @@ class AnimatedObject : public Object { // obj with anims
             flip = 1.0f;
             type = ANIMATED;
             visible = true;
+            debug = true;
+            persistent = false;
         }
         AnimatedObject(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : // generic obj constructor
         Object(pos_, colliderRect, tex) {
@@ -81,20 +86,12 @@ class AnimatedObject : public Object { // obj with anims
             flip = 1.0f;
             type = ANIMATED;
             visible = true;
+            debug = true;
+            persistent = false;
         }
-        AnimatedObject(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex, float w, float h) : // generic obj constructor
-        Object(pos_, colliderRect, tex) {
-            spriteFrame = 1;
-            curAnimation = -1;
-            dir = 1;
-            flip = 1.0f;
-            type = ANIMATED;
-            width = w;
-            height = h;
-        }
-        void (*onCollision)(AnimatedObject &obj, GameData &gd, Resources &res, Player &player);
-        void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+        //virtual ~AnimatedObject() {}
         void draw(const SDLState &state, GameData &gd, float width, float height);
+        void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
 };
 
 class BackgroundObject : public Object { // bg tiles
@@ -105,8 +102,8 @@ class BackgroundObject : public Object { // bg tiles
         BackgroundObject(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : // generic obj constructor
         Object(pos_, colliderRect, tex) {
             type = BACKGROUND;
+            debug = false;
         }
-        void draw(const SDLState &state, GameData &gd, float width, float height);
 };
 
 class Level : public Object { // the level type!
@@ -117,6 +114,7 @@ class Level : public Object { // the level type!
         Level(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : // generic obj constructor
         Object(pos_, colliderRect, tex) {
             type = LEVEL;
+            debug = true;
         }
 };
 
@@ -141,15 +139,6 @@ class Portal : public AnimatedObject { // portals
     }
 };
 
-class Effect : public AnimatedObject{
-    public:
-    bool  followsPlayer; // i.e. boombox
-    Effect() : AnimatedObject(){}
-    Effect(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex, float w, float h) :
-    AnimatedObject(pos_, colliderRect, tex, w, h) {}
-    void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
-};
-
 class Laser : public Object { // obstacle
     public:
         bool laserActive;
@@ -163,6 +152,7 @@ class Laser : public Object { // obstacle
         Object(pos_, colliderRect, tex), laserTimer(2.1f) {
             laserActive = true;
             type = LASER;
+            debug = true;
         }
         void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
 };
@@ -171,36 +161,39 @@ class Sign:  public Object {
     public:
         Sign() : Object() { // default 
             type = SIGN;
+            debug = false;
         }
         Sign(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : // generic obj constructor
         Object(pos_, colliderRect, tex) {
             type = SIGN;
+            debug = false;
         }
-        void draw(const SDLState &state, GameData &gd, float width, float height);
 };
 
 class Water: public Object {
     public:
         Water() : Object() { // default 
             type = WATER;
+            debug = false;
         }
         Water(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : // generic obj constructor
         Object(pos_, colliderRect, tex) {
             type = WATER;
+            debug = false;
         }
-        void draw(const SDLState &state, GameData &gd, float width, float height);
 };
 
 class Lava: public Object {
     public:
         Lava() : Object() { // default 
             type = LAVA;
+            debug = false;
         }
         Lava(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : // generic obj constructor
         Object(pos_, colliderRect, tex) {
             type = LAVA;
+            debug = false;
         }
-        void draw(const SDLState &state, GameData &gd, float width, float height);
 };
 
 class ItemBox : public Object {
@@ -222,8 +215,6 @@ class ItemBox : public Object {
 
 // Stun for animated objects
 void angledStun(AnimatedObject &obj, GameData &gd, Resources &res, Player &player);
-void effectExplosion(GameData &gd, Resources &res, AnimatedObject obj);
-
 
 class Hook : public AnimatedObject { // grappling hook projectile
     public:
@@ -236,6 +227,7 @@ class Hook : public AnimatedObject { // grappling hook projectile
         AnimatedObject(pos_, colliderRect, tex) { // generic obj constructor
             collided = false;
             visible = false;
+            debug = true;
         }
         void draw(const SDLState &state, GameData &gd, Player &p, float width, float height);
         void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);

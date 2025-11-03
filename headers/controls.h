@@ -40,7 +40,6 @@ class Controls {
         return this->keyboardControls[action].key;
     }
     bool actionPerformed(typeAction action, SDL_Event event) {
-        printf("Checking action\n");
         controlStruct con = this->keyboardControls[action];
         if (con.isMouseButton) {
             return event.button.button == con.key;

@@ -4,7 +4,7 @@ class Timer;
 class Player;
 
 enum PlayerStateValue {
-    NONE,
+    NOSTATE,
     IDLE, 
     WALK, 
     RUN, 
@@ -33,7 +33,7 @@ class PlayerState {
         virtual void enter(GameData &gd, Resources &res, Player &p) {}
         virtual void exit(GameData &gd, Resources &res, Player &p) {}
         PlayerState() {
-            stateVal = NONE; // if it's ever this we have a problem
+            stateVal = NOSTATE; // if it's ever this we have a problem
         }
 };
 
@@ -137,6 +137,7 @@ class RollState : public PlayerState {
 
 class StunnedState : public PlayerState {
     public:
+        bool hardStun;
         void draw(const SDLState &state, GameData &gd) {} // do nothing
         PlayerState* handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_Event event) { return nullptr; } // do nothing
         PlayerState* update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime);
@@ -144,6 +145,11 @@ class StunnedState : public PlayerState {
         void exit(GameData &gd, Resources &res, Player &p) {} // do nothing
         StunnedState() {
             stateVal = STUNNED;
+            hardStun = false;
+        }
+        StunnedState(bool hardStun_) {
+            stateVal = STUNNED;
+            hardStun = hardStun_;
         }
 };
 
@@ -190,7 +196,7 @@ class JetpackDeployState : public PlayerState {
         PlayerState* handleInput(const SDLState &state, GameData &gd, Resources &res, Player &p, SDL_Event event);
         PlayerState* update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime);
         void enter(GameData &gd, Resources &res, Player &p);
-        void exit(GameData &gd, Resources &res, Player &p) {} // do nothing
+        void exit(GameData &gd, Resources &res, Player &p);
         JetpackDeployState() {
             stateVal = JETPACK_DEPLOY;
         }

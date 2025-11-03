@@ -8,33 +8,32 @@
 #include "player.h"
 #include "menu.h"
 #include "controls.h"
+#include "minimap.h"
 #include "createCheckpoints.h"
 #include "menuData.h"
+
 struct GameData {
     std::vector<Player> players_;
     int numPlayers; 
+
+    glm::vec2 mapSize; // gets x and y size of box used to create map;
 
     std::vector<BackgroundObject> bgTiles_;
     std::vector<Level> mapTiles_;
     std::vector<Laser> lasers_;
     std::vector<ItemBox> itemBoxes_;
-    std::vector<Item> items_;
-    std::vector<Effect *> effects_;
     std::vector<Portal> portals_;
     std::vector<Sign> signs_;
     std::vector<Water> water_;
     std::vector<Lava> lava_;
+    
+    std::vector<std::vector<Object*>> grid_; // all level tiles as pointers
 
     std::vector<Checkpoint> checkpoints_;
 
     MenuData md;
 
-    // std::vector<charIconObject> charIcons_;
-    // std::vector<AnimatedObject> previews_;
-    // std::vector<AnimatedObject> map_previews_;
-    // std::vector<AnimatedObject> map_previews_text_;
-    // std::vector<AnimatedObject> arrows_;
-
+    Minimap minimap; // the minimap for the current map
     glm::vec2 ExitPortal, 
               EntrancePortal, 
               mouseCoords, 
@@ -42,7 +41,6 @@ struct GameData {
     ItemStorage itemStorage_;
     Controls *controls;
     // Object settingsBorder;
-    std::vector<Object> settingsDials_;
     // std::vector<Object> gameplaySettingsBrackets1_;
     // std::vector<Object> gameplaySettingsBrackets2_;
     // std::vector<Object> gameplaySettingsNumLaps_;
@@ -57,7 +55,6 @@ struct GameData {
     // TTF_Font* font;
 
     //Note that volume ratio is dial.pos.x / (290-84)
-    Object * updatedDial;
     int playerIndex = -1;
     SDL_FRect mapViewport;
     bool debugMode = false;
@@ -66,7 +63,7 @@ struct GameData {
     int laps_per_race = 1;
     bool round_is_over = false;
     
-    GameData(const SDLState &state): md(state) {
+    GameData(const SDLState &state) : md(state) {
         playerIndex = -1; // will change when map is loaded
         numPlayers = 8;
         mapViewport = SDL_FRect {

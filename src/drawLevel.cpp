@@ -16,56 +16,73 @@ void drawLevel(const SDLState &state, GameData &gd, Resources res, float deltaTi
         bg.draw(state, gd, static_cast<float>(bg.texture->w), static_cast<float>(bg.texture->h)); 
     }
 
-    // draw level tiles
-    for(Level &level : gd.mapTiles_) {
-        level.draw(state, gd, TILE_SIZE, TILE_SIZE);
-    }
-
-     // draw portal tiles
-    for(Portal &portal : gd.portals_) {
-        portal.draw(state, gd, portal.width, portal.height);
-    }
-    // draw effects
-    for (Effect *effect : gd.effects_) {
-        effect->draw(state, gd, effect->width, effect->height);
-    }
-
-    // draw lasers
-    for(Laser &laser : gd.lasers_) {
-        if (laser.laserActive) {
-            laser.draw(state, gd, TILE_SIZE, TILE_SIZE);
+    std::vector<Object *> onscreenTiles_ = getOnscreenTiles(state, gd);
+    for (Object* o : onscreenTiles_) {
+        switch (o->type) {
+            case LEVEL: 
+            {
+                Level& l = dynamic_cast<Level&>((*o));
+                l.draw(state, gd, TILE_SIZE, TILE_SIZE);
+                break;
+            }
+            case PORTAL:
+            {
+                Portal& po = dynamic_cast<Portal&>((*o));
+                po.draw(state, gd, TILE_SIZE, TILE_SIZE * 2);
+                break;
+            }
+            case LASER:
+            {
+                Laser& la = dynamic_cast<Laser&>((*o));
+                if (la.laserActive) {
+                    la.draw(state, gd, TILE_SIZE, TILE_SIZE);
+                }
+                break;
+            }
+            case SIGN:
+            {
+                Sign& s = dynamic_cast<Sign&>((*o));
+                s.draw(state, gd, TILE_SIZE, TILE_SIZE);
+                break;
+            }
+            case LAVA:
+            {
+                Lava& l = dynamic_cast<Lava&>((*o));
+                l.draw(state, gd, TILE_SIZE, TILE_SIZE);
+                break;
+            }
+            case WATER:
+            {
+                Water& w = dynamic_cast<Water&>((*o));
+                w.draw(state, gd, TILE_SIZE, TILE_SIZE);
+                break;
+            }
+            case ITEMBOX:
+            {
+                ItemBox& box = dynamic_cast<ItemBox&>((*o));
+                if (box.itemBoxActive) {
+                    box.draw(state, gd, TILE_SIZE, TILE_SIZE);
+                }
+                break;
+            }
         }
     }
 
-    //draw signs
-    for(Sign &sign : gd.signs_) {
-        sign.draw(state, gd, TILE_SIZE, TILE_SIZE);
-    }
-    //draw lava
-    for(Lava &lava : gd.lava_) {
-        lava.draw(state, gd, TILE_SIZE, TILE_SIZE);
-    }
-    //draw water
-    for(Water &water : gd.water_) {
-        water.draw(state, gd, TILE_SIZE, TILE_SIZE);
-    }
     // draw players
     for(Player &p : gd.players_) {
         p.draw(state, gd, TILE_SIZE, TILE_SIZE);
         p.state_->draw(state, gd); // currently only for shotgun but could be used in future for state based particles/power up effects
-    }
-
-
-    for(ItemBox &box : gd.itemBoxes_) {
-        if (box.itemBoxActive) {
-            box.draw(state, gd, TILE_SIZE, TILE_SIZE);
+        std::vector<Object *> closeTiles_ = getCloseTiles(state, gd, p.pos);
+        for (Object* o : closeTiles_) {
+            o->drawDebugNearby(state, gd, o->texture->w, o->texture->h);
         }
     }
-    for (Item &item : gd.items_) {
-        item.draw(state, gd, item.width, item.height);
-    }
+
+
+
     gd.itemStorage_.draw(state, gd, 68, 68);
 
+    gd.minimap.draw(state, gd, gd.minimap.texture->w, gd.minimap.texture->h);
     //dont need unless debugging checkpoint system and need to see checkpoints
     //renderCheckpoints(state.renderer, courseCheckpoints, gd);
 

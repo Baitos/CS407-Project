@@ -27,7 +27,6 @@ void charSelectUpdate(const SDLState &state, GameData &gd, Resources &res, float
 
 //Update for Settings Screen
 void settingsUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
-    //printf("update\n");
     // Update controls
     Controls * controls  = gd.controls;
     SettingsState * curSettings = ((SettingsState *)currState);
@@ -52,24 +51,23 @@ void settingsUpdate(const SDLState &state, GameData &gd, Resources &res, float d
         }
         curSettings->controlStrings[i] = keyName;
     }
-
     // Update audio
     //Note that volume ratio is dial.pos.x / (290-84)
-    masterVolume = gd.settingsDials_[0].pos.x / (290 - 84) -40.8;
+    masterVolume = gd.md.settingsDials_[0].pos.x / (290 - 84) -40.8;
     if (masterVolume > 1.0f) {
         masterVolume = 1.0f;
     }
     else if (masterVolume < 0.0f) {
         masterVolume = 0.0f;
     }
-    musicVolume = gd.settingsDials_[1].pos.x / (290 - 84) - 40.8;
+    musicVolume = gd.md.settingsDials_[1].pos.x / (290 - 84) - 40.8;
         if (musicVolume > 1.0f) {
         musicVolume = 1.0f;
     }
     else if (masterVolume < 0.0f) {
         musicVolume = 0.0f;
     }
-    sfxVolume = gd.settingsDials_[2].pos.x / (290 - 84) - 40.8;
+    sfxVolume = gd.md.settingsDials_[2].pos.x / (290 - 84) - 40.8;
         if (sfxVolume > 1.0f) {
         sfxVolume = 1.0f;
     }
@@ -77,7 +75,6 @@ void settingsUpdate(const SDLState &state, GameData &gd, Resources &res, float d
         sfxVolume = 0.0f;
     }
     
-
     //printf("Master = %.1f, music = %.1f, sfx = %f\n", masterVolume, musicVolume, sfxVolume);
 }
 
@@ -173,7 +170,7 @@ void settingsInputs(SDLState &state, GameData &gd, Resources &res, float deltaTi
                 }  case SDL_EVENT_MOUSE_BUTTON_UP:
 
                 {
-                    gd.updatedDial = NULL;
+                    gd.md.updatedDial = NULL;
                 }
             }
         }
@@ -214,7 +211,7 @@ void gameplaySettingsInput(SDLState &state, GameData &gd, Resources &res, float 
                 }  case SDL_EVENT_MOUSE_BUTTON_UP:
 
                 {
-                    //gd.updatedDial = NULL;
+                    //gd.md.updatedDial = NULL;
                 }
             }
         }
@@ -228,10 +225,8 @@ void handleMousePointerCharSelect(const SDLState &state, GameData &gd, Resources
     SDL_GetMouseState(&gd.mouseCoords.x, &gd.mouseCoords.y);
     float CROSSHAIR_SIZE = 15;
     float OFFSET = 7;
-    float yRatio = (float)state.logH / state.height;
-    float xRatio = (float)state.logW / state.width;
-    gd.mouseCoords.x = gd.mouseCoords.x * xRatio;
-    gd.mouseCoords.y = gd.mouseCoords.y * yRatio;
+    gd.mouseCoords.x = gd.mouseCoords.x * state.xRatio;
+    gd.mouseCoords.y = gd.mouseCoords.y * state.yRatio;
     SDL_FRect dst { 
         .x = gd.mouseCoords.x - OFFSET,
         .y = gd.mouseCoords.y - OFFSET,
@@ -271,25 +266,22 @@ void handleMousePointerSettings(const SDLState &state, GameData &gd, Resources &
     SDL_GetMouseState(&gd.mouseCoords.x, &gd.mouseCoords.y);
     float CROSSHAIR_SIZE = 15;
     float OFFSET = 7;
-    float yRatio = (float)state.logH / state.height;
-    float xRatio = (float)state.logW / state.width;
-    gd.mouseCoords.x = gd.mouseCoords.x * xRatio;
-    gd.mouseCoords.y = gd.mouseCoords.y * yRatio;
+    gd.mouseCoords.x = gd.mouseCoords.x * state.xRatio;
+    gd.mouseCoords.y = gd.mouseCoords.y * state.yRatio;
     SDL_FRect dst { 
         .x = gd.mouseCoords.x - OFFSET,
         .y = gd.mouseCoords.y - OFFSET,
         .w = (float)TILE_SIZE,
         .h = (float)TILE_SIZE
     };
-    if(gd.updatedDial != NULL){
-        gd.updatedDial->pos.x = gd.mouseCoords.x;
-        if (gd.updatedDial->pos.x  > 290.f){ 
-            gd.updatedDial->pos.x  = 290.f;
-        } else if(gd.updatedDial->pos.x < 84.f) {
-            gd.updatedDial->pos.x  = 84.f;
+    if(gd.md.updatedDial != NULL){
+        gd.md.updatedDial->pos.x = gd.mouseCoords.x;
+        if (gd.md.updatedDial->pos.x  > 290.f){ 
+            gd.md.updatedDial->pos.x  = 290.f;
+        } else if(gd.md.updatedDial->pos.x < 84.f) {
+            gd.md.updatedDial->pos.x  = 84.f;
         }
-        gd.updatedDial->draw(state,gd,static_cast<float>( gd.updatedDial->texture->w) * 2, static_cast<float>( gd.updatedDial->texture->h) * 2);
-
+        gd.md.updatedDial->draw(state,gd,static_cast<float>( gd.md.updatedDial->texture->w) * 2, static_cast<float>( gd.md.updatedDial->texture->h) * 2);
     } else {
         if((gd.mouseCoords.x >= 35 && gd.mouseCoords.x <= 218) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)){ //Big Border on Exit
             //printf("1\n");
@@ -325,11 +317,7 @@ void handleMousePointerSettings(const SDLState &state, GameData &gd, Resources &
             gd.md.settingsBorder.pos = glm::vec2(500,500);
         }
     }
-    
-
-
     SDL_RenderTexture(state.renderer, res.texCursor, nullptr, &dst); // src is for sprite stripping, dest is for where sprite should be drawn*/ 
-    
 }
 void handleMousePointerGameplaySettings (const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
     SDL_GetMouseState(&gd.mouseCoords.x, &gd.mouseCoords.y);
@@ -556,7 +544,7 @@ void handleSettingsClick(const SDLState &state, GameData &gd, Resources &res, fl
     for(Object &o : gd.md.settingsDials_){
         
         if((gd.mouseCoords.x >= o.pos.x && gd.mouseCoords.x <= o.pos.x + (static_cast<float>(o.texture->w) * 2)) && (gd.mouseCoords.y >= o.pos.y && gd.mouseCoords.y <= o.pos.y + (static_cast<float>(o.texture->h) * 2))){
-           gd.updatedDial = &o; 
+           gd.md.updatedDial = &o; 
         }
     }
 }
@@ -754,7 +742,7 @@ void titleInput(SDLState &state, GameData &gd, Resources &res, float deltaTime){
 
                 {
                     //handleTitleClick(state,gd, res, deltaTime);
-                    //gd.updatedDial = NULL;
+                    //gd.md.updatedDial = NULL;
                 }
             }
         }

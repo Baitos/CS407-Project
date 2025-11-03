@@ -49,51 +49,20 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
     //         i--;
     //     }
     // }
-    for (int i = 0; i < gd.effects_.size(); i++) {
-        Effect *effect = gd.effects_[i];
-        effect->update(state, gd, res, deltaTime);
-        if (effect->animations[effect->curAnimation].isDone()) {
-            printf("erase it\n");
-            delete effect;
-            gd.effects_.erase(gd.effects_.begin() + i);
-            i--;
-            printf("erased\n");
-        }
-
-    }
     for (Player &p : gd.players_) {
         p.update(state, gd, res, deltaTime);
-
-        if (p.usingSugar) { // TODO: this currently draws below the screen, and this should probably be in draw
-            //Draw sugar effect
-            if(p.dir == 1) {
-                glm::vec2 pos = glm::vec2(p.pos.x - 30.f, p.pos.y);
-                SDL_FRect collider = {
-                    .x = 28 * (p.dir),
-                    .y = 0,
-                    .w = 0.f,
-                    .h = 0.f
-                    };
-                Object sugarEffectObject(pos, collider, res.texSugarEffectL);
-                sugarEffectObject.draw(state,gd,32,32);
-            } else {
-                glm::vec2 pos = glm::vec2(p.pos.x + 30.f, p.pos.y);
-                SDL_FRect collider = {
-                    .x = 28 * (p.dir),
-                    .y = 0,
-                    .w = 0.f,
-                    .h = 0.f
-                    };
-                Object sugarEffectObject(pos, collider, res.texSugarEffectR);
-                sugarEffectObject.draw(state,gd,32,32);
-            }
-        }
     }
 
     //printf("%d\n", gd.player.state_->currStateVal);
 
     gd.itemStorage_.pos.x = gd.players_[0].pos.x - 368;
-    gd.itemStorage_.pos.y = gd.players_[0].pos.y - 200;
+    gd.itemStorage_.pos.y = gd.players_[0].pos.y - 190;
+
+    gd.minimap.update(state, gd, res, deltaTime);
+
+
+    // gd.mapViewport.x = (gd.players_[0].pos.x + TILE_SIZE / 2) - (gd.mapViewport.w / 2); 
+    // gd.mapViewport.y = (gd.players_[0].pos.y + TILE_SIZE / 2) - (gd.mapViewport.h / 2); 
 
 }
 
@@ -200,10 +169,8 @@ void handleCrosshair(const SDLState &state, GameData &gd, Resources &res, float 
     SDL_GetMouseState(&gd.mouseCoords.x, &gd.mouseCoords.y);
     float CROSSHAIR_SIZE = 15;
     float OFFSET = 7;
-    float yRatio = (float)state.logH / state.height;
-    float xRatio = (float)state.logW / state.width;
-    gd.mouseCoords.x = gd.mouseCoords.x * xRatio;
-    gd.mouseCoords.y = gd.mouseCoords.y * yRatio;
+    gd.mouseCoords.x = gd.mouseCoords.x * state.xRatio;
+    gd.mouseCoords.y = gd.mouseCoords.y * state.yRatio;
     SDL_FRect dst { 
         .x = gd.mouseCoords.x - OFFSET,
         .y = gd.mouseCoords.y - OFFSET,
@@ -245,23 +212,23 @@ void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
     if (key.scancode == SDL_SCANCODE_F1) {
         running = false;
     }
-    if (key.scancode == SDL_SCANCODE_F2) {
+    if (key.scancode == SDL_SCANCODE_F2 && key.down) {
         currState = changeState(currState, gd);
         currState->init(state, gd, res);
     }
-    if (key.scancode == SDL_SCANCODE_F3) {
+    if (key.scancode == SDL_SCANCODE_F3 && key.down) {
         
-        gd.players_[0].pos.x = 950;
-        gd.players_[0].pos.y = -654;
+        gd.players_[0].pos.x = 0;
+        gd.players_[0].pos.y = 0;
     }
     for (Player &p : gd.players_) {
         p.handleInput(state, gd, res, event, deltaTime); 
-        // if (gd.controls->actionPerformed(typeAction::ACTION_USEITEM, event) && p.hasItem) {
-        //     Item item = p.item;
-        //     item.useItem(state, gd, res, p);
-        //     p.hasItem = false;
-        //     clearItem(state, gd, res);
-        // }
+        if (gd.controls->actionPerformed(typeAction::ACTION_USEITEM, event) && p.hasItem) {
+            Item* item = p.heldItem;
+            item->useItem(state, gd, res, p);
+            p.hasItem = false;
+            clearItem(state, gd, res);
+        }
     }  
 }
 

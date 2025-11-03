@@ -13,7 +13,7 @@ const float JUMP_FORCE = -450.f;
 
 std::string getStateFromEnum(PlayerStateValue ps) {
     switch (ps) {
-        case NONE: return "NONE";
+        case NOSTATE: return "NOSTATE";
         case IDLE: return "IDLE";
         case WALK: return "WALK";
         case RUN: return "RUN";
@@ -35,11 +35,9 @@ std::string getStateFromEnum(PlayerStateValue ps) {
 
 //HandlersACTION_JUMP
 PlayerState* handleJumping(GameData &gd, Resources &res, Player &p, SDL_Event event) {
-    printf("Handle jumping\n");
     SDL_KeyboardEvent key = event.key;
     if (gd.controls->actionPerformed(ACTION_JUMP, event) && key.down && !key.repeat) {
         if (p.grounded) { // single jump
-            printf("Jumped!\n");
             return new LaunchState();
         } else if (p.canDoubleJump) { // double jump
             p.canDoubleJump = false;
@@ -97,15 +95,6 @@ void sharedUpdate(const SDLState &state, Player &p, float deltaTime) { // basic 
     if (p.currentDirection) { // update direction based on currentDirection
         p.dir = p.currentDirection;
     }
-
-    if(p.usingSugar) {
-        ((Sugar *) &p.item)->sugarTimer.step(deltaTime);
-        p.vel.x += .5f * p.currentDirection;
-        if(((Sugar *) &p.item)->sugarTimer.isTimeOut()){
-            //printf("Stopped sugar\n");
-            p.usingSugar = false;
-        }
-    }
     if (!p.grounded) { 
         sharedGravity(p, deltaTime);
     }
@@ -141,7 +130,7 @@ PlayerState* WalkState::handleInput(const SDLState &state, GameData &gd, Resourc
 
 PlayerState* WalkState::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {   
     sharedUpdate(state, p, deltaTime);
-    if (state.keys[SDL_SCANCODE_LSHIFT] && p.currentDirection) {
+    if (state.keys[gd.controls->getActionKey(typeAction::ACTION_SPRINT)] && p.currentDirection) {
         return new RunState();
     }
     if (!p.currentDirection && p.grounded) { // if not moving, slow down
@@ -179,18 +168,18 @@ PlayerState* RunState::handleInput(const SDLState &state, GameData &gd, Resource
 
 PlayerState* RunState::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {   
     sharedUpdate(state, p, deltaTime);
-    if (!state.keys[SDL_SCANCODE_LSHIFT] || !p.currentDirection) { // if not pressing then reset
+    if (!state.keys[gd.controls->getActionKey(typeAction::ACTION_SPRINT)] || !p.currentDirection) { // if not pressing then reset
         return new WalkState();
     }
     float LEEWAY = 25;
     if (p.grounded && std::abs(p.vel.x) >= (p.maxRunX - LEEWAY)) { // if grounded and moving fast enter sprint (eventually)                
-        if (!(*this).sprintTimer.isTimeOut()) {
-            (*this).sprintTimer.step(deltaTime);
+        if (!this->sprintTimer.isTimeOut()) {
+            this->sprintTimer.step(deltaTime);
         } else {
             return new SprintState();
         }
     } else {
-        (*this).sprintTimer.reset();
+        this->sprintTimer.reset();
     }
     if (isSliding(p)) { // moving in different direction of vel and pressing a direction, sliding
         return new SlideState();
@@ -202,7 +191,7 @@ void RunState::enter(GameData &gd, Resources &res, Player &p) {
     p.texture = res.texRun[p.character];
     p.curAnimation = res.ANIM_PLAYER_RUN; 
     p.maxSpeedX = p.maxRunX;
-    (*this).sprintTimer.reset();
+    this->sprintTimer.reset();
 }
 
 // SPRINT
@@ -269,7 +258,6 @@ PlayerState* LaunchState::update(const SDLState &state, GameData &gd, Resources 
 }
 
 void LaunchState::enter(GameData &gd, Resources &res, Player &p) {
-    printf("Launch!\n");
     p.texture = res.texLaunch[p.character];
     p.curAnimation = res.ANIM_PLAYER_LAUNCH; 
     p.animations[p.curAnimation].reset();
@@ -349,7 +337,15 @@ void FastfallState::exit(GameData &gd, Resources &res, Player &p) {
 // STUNNED
 
 PlayerState* StunnedState::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
-    sharedUpdate(state, p, deltaTime);
+    if (!this->hardStun) {
+        sharedUpdate(state, p, deltaTime);
+    } else { // if hardStunned, disable control
+        p.cooldownTimer.step(deltaTime);
+        p.currentDirection = 0;
+        if (!p.grounded) { 
+            sharedGravity(p, deltaTime);
+        }
+    }
     if (p.grounded) { // if moving change to running
         return new RollState();  
     }
@@ -368,6 +364,9 @@ void DeadState::enter(GameData &gd, Resources &res, Player &p) {
     p.texture = res.texDie[p.character];
     p.curAnimation = res.ANIM_PLAYER_DIE; 
     p.animations[p.curAnimation].reset();
+    p.respawnTimer.reset();
+    p.isDead = true;        
+    p.vel = glm::vec2(0);
 }
 
 PlayerState* DeadState::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
@@ -411,8 +410,8 @@ void SwordDeployState::enter(GameData &gd, Resources &res, Player &p) {
 // SHOTGUN DEPLOY
 void ShotgunDeployState::draw(const SDLState &state, GameData &gd) {
     //draw blast if needed for shotgun
-    if((*this).blast != nullptr) {
-        (*this).blast->draw(state, gd, 80, 48);
+    if(this->blast != nullptr) {
+        this->blast->draw(state, gd, 80, 48);
     }  
 }
 
@@ -424,11 +423,11 @@ PlayerState* ShotgunDeployState::handleInput(const SDLState &state, GameData &gd
 PlayerState* ShotgunDeployState::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
     sharedUpdate(state, p, deltaTime);
     
-    if ((*this).blast != nullptr) { // update shotgun blast
-        (*this).blast->update(state, gd, res, deltaTime);
+    if (this->blast != nullptr) { // update shotgun blast
+        this->blast->update(state, gd, res, deltaTime);
     }
     
-    if((*this).blast->animations[(*this).blast->curAnimation].isDone()) { 
+    if(this->blast->animations[this->blast->curAnimation].isDone()) { 
         if(p.vel.x != 0) {
             return new WalkState();
         } else {
@@ -436,17 +435,17 @@ PlayerState* ShotgunDeployState::update(const SDLState &state, GameData &gd, Res
         }
     } else {
         if(p.dir == 1) {
-            (*this).blast->pos = glm::vec2(p.pos.x + 32, p.pos.y - 4);
-            (*this).blast->dir = 1;
+            this->blast->pos = glm::vec2(p.pos.x + 32, p.pos.y - 4);
+            this->blast->dir = 1;
         } else if (p.dir == -1) {
-            (*this).blast->pos = glm::vec2(p.pos.x - 80, p.pos.y - 4);
-            (*this).blast->dir = -1;
+            this->blast->pos = glm::vec2(p.pos.x - 80, p.pos.y - 4);
+            this->blast->dir = -1;
         }
     }
 
     //draw blast if needed for shotgun, could be put into its own draw function absolutely
-    if((*this).blast != nullptr) {
-        (*this).blast->draw(state, gd, 80, 48);
+    if(this->blast != nullptr) {
+        this->blast->draw(state, gd, 80, 48);
     }
 
     return nullptr;
@@ -474,12 +473,12 @@ void ShotgunDeployState::enter(GameData &gd, Resources &res, Player &p) {
     }
     blast->animations = res.shotgunAnims;
     blast->curAnimation = res.SHOTGUN_BLAST;
-    (*this).blast = blast;
+    this->blast = blast;
 }
 
 void ShotgunDeployState::exit(GameData &gd, Resources &res, Player &p) {
-    delete (*this).blast;
-    (*this).blast = nullptr;
+    delete this->blast;
+    this->blast = nullptr;
     p.cooldownTimer.reset();
 }
 
@@ -491,7 +490,7 @@ PlayerState* JetpackDeployState::handleInput(const SDLState &state, GameData &gd
 
 PlayerState* JetpackDeployState::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) { // TODO:
     sharedUpdate(state, p, deltaTime);
-    p.vel.y -= 3.f;
+    p.vel.y -= 600.f * deltaTime;
     int vertDir = 0;
     //calculate direction
      if (state.keys[SDL_SCANCODE_W]) {
@@ -500,26 +499,26 @@ PlayerState* JetpackDeployState::update(const SDLState &state, GameData &gd, Res
     if (state.keys[SDL_SCANCODE_S]) {
         vertDir += 1.f;
     }
-    if(p.currentDirection == 1 && vertDir == 0) {
-        p.vel.x += 5.f;
-    } else if (p.currentDirection == -1 && vertDir == 0) {
-        p.vel.x -= 5.f;
-    } else if (p.currentDirection == 0 && vertDir == 1) {
-        p.vel.y += 5.f;
-    } else if (p.currentDirection == 0 && vertDir == -1) {
-        p.vel.y -= 5.f;
-    } else if (p.currentDirection == 1 && vertDir == 1) {
-        p.vel.x += (5/sqrt(2));
-        p.vel.y += (5/sqrt(2));
-    } else if (p.currentDirection == 1 && vertDir == -1) {
-        p.vel.x += (5/sqrt(2));
-        p.vel.y -= (5/sqrt(2));
-    } else if (p.currentDirection == -1 && vertDir == 1) {
-        p.vel.x -= (5/sqrt(2));
-        p.vel.y += (5/sqrt(2));
-    } else if (p.currentDirection == -1 && vertDir == -1) {
-        p.vel.x -= (5/sqrt(2));
-        p.vel.y -= (5/sqrt(2));
+    if(p.currentDirection == 1 && vertDir == 0) { // right
+        p.vel.x += 1000.f * deltaTime;
+    } else if (p.currentDirection == -1 && vertDir == 0) { // left
+        p.vel.x -= 1000.f * deltaTime;
+    } else if (p.currentDirection == 0 && vertDir == 1) { // down
+        p.vel.y += 1000.f * deltaTime;
+    } else if (p.currentDirection == 0 && vertDir == -1) { // up
+        p.vel.y -= 1000.f * deltaTime;
+    } else if (p.currentDirection == 1 && vertDir == 1) { // right-down
+        p.vel.x += (1000/sqrt(2)) * deltaTime;
+        p.vel.y += (1000/sqrt(2)) * deltaTime;
+    } else if (p.currentDirection == 1 && vertDir == -1) { // right-up
+        p.vel.x += (1000/sqrt(2)) * deltaTime;
+        p.vel.y -= (1000/sqrt(2)) * deltaTime;
+    } else if (p.currentDirection == -1 && vertDir == 1) { // left-down
+        p.vel.x -= (1000/sqrt(2)) * deltaTime;
+        p.vel.y += (1000/sqrt(2)) * deltaTime;
+    } else if (p.currentDirection == -1 && vertDir == -1) { // left-up
+        p.vel.x -= (1000/sqrt(2)) * deltaTime;
+        p.vel.y -= (1000/sqrt(2)) * deltaTime;
     }
 
     //Check timer for state change
@@ -527,7 +526,10 @@ PlayerState* JetpackDeployState::update(const SDLState &state, GameData &gd, Res
         p.jetpackTimer.step(deltaTime);
     } else {
         p.cooldownTimer.reset();
-        if(p.vel.x != 0) {
+        if (!p.grounded) {
+            return new JumpState();
+        }
+        else if (p.vel.x != 0) {
             return new WalkState();
         } else {
             return new IdleState();
@@ -541,6 +543,10 @@ void JetpackDeployState::enter(GameData &gd, Resources &res, Player &p) {
     p.curAnimation = res.ANIM_PLAYER_JETPACK_DEPLOY;
     p.animations[p.curAnimation].reset();
     p.jetpackTimer.reset();
+}
+
+void JetpackDeployState::exit(GameData &gd, Resources &res, Player &p) {
+    p.cooldownTimer.step(5.0f); // temp, testing
 }
 
 // GRAPPLE

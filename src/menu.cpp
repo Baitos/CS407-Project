@@ -8,7 +8,7 @@
 
 void charIconObject::draw(const SDLState &state, GameData &gd, float width, float height) {
 
-    float srcX = ((*this).spriteFrame - 1) * width;
+    float srcX = (this->spriteFrame - 1) * width;
     
     SDL_FRect src {
         .x = srcX,
@@ -18,14 +18,14 @@ void charIconObject::draw(const SDLState &state, GameData &gd, float width, floa
     };
 
     SDL_FRect dst {
-        .x = (*this).pos.x,
-        .y = (*this).pos.y,
+        .x = this->pos.x,
+        .y = this->pos.y,
         .w = width,
         .h = height
     };
     SDL_FlipMode flipMode; // = obj.dir == -1 ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
     flipMode = SDL_FLIP_NONE;
-    SDL_RenderTextureRotated(state.renderer, (*this).texture, &src, &dst, 0, nullptr, flipMode); // src is for sprite stripping, dest is for where sprite should be drawn
+    SDL_RenderTextureRotated(state.renderer, this->texture, &src, &dst, 0, nullptr, flipMode); // src is for sprite stripping, dest is for where sprite should be drawn
 }
 
 void charIconObject::update(const SDLState &state, GameData &gd, Resources &res, float deltaTime, int newState) { // just step the anims
