@@ -253,10 +253,10 @@ void placement(const SDLState &state, GameData &gd, Resources &res, float deltaT
         [&gd](const Player* p1, const Player* p2) {
             //first sort by laps completed
             if (p1->lapsCompleted != p2->lapsCompleted) {
-                return p1->lapsCompleted < p2->lapsCompleted;
+                return p1->lapsCompleted > p2->lapsCompleted;
             } else if (p1->lastCheckpoint != p2->lastCheckpoint) {
                 //next by last checkpoint
-                return p1->lastCheckpoint < p2->lastCheckpoint;
+                return p1->lastCheckpoint > p2->lastCheckpoint;
             } else {
                 //finally by distance until the next checkpoint
                 return abs(calculateDistanceSDL(
