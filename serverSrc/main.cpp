@@ -193,7 +193,32 @@ void createLobbyServer(int port){
     
     bool inGame =true;
     while(inGame){
-
+        while(enet_host_service(lobbyServer, &event, 0) > 0){
+            //std::string message;
+            switch (event.type) {
+                case ENET_EVENT_TYPE_CONNECT:
+                 {   //Do the things you do when you connect
+                    break;
+                 }
+                case ENET_EVENT_TYPE_RECEIVE:
+                 {   //Add conditionals to do what server says
+                    std::string message((char *) event.packet->data, event.packet->dataLength);
+                    enet_packet_destroy(event.packet);
+                    printf("%s\n", message.c_str());
+                    int playerID = std::stoi(message.substr(6, 1));
+                    int keyID = std::stoi(message.substr(8, 1));
+                    int keyDown = std::stoi(message.substr(10, 1));
+                    
+                    break;
+                }
+                case ENET_EVENT_TYPE_DISCONNECT:
+                  {  //Do the things to do when disconnecting
+                    printf("player left game\n");
+                    inGame = false;
+                  }
+                  break;
+            }
+        }
     }
 
     //Leave Lobby
@@ -256,39 +281,6 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                 case ENET_EVENT_TYPE_CONNECT:
                     {
                         std::cout << "Client Connected to Matchmaker Server!\n";
-                        //TESTING PURPOSES - Will be changed with menu screen inputs
-                        /*if(!hasClient){
-                            hasClient = true;
-                            int lobbyPort = getAvailablePort();
-                            Lobby newLobby = {currLobbyID++, lobbyPort, (std::string)"username", 1};
-                        
-                            lobbies.push_back(newLobby);
-                            
-                            pid_t pid = fork();
-
-                            if(pid == 0){ //Child Process
-                                //Destroy file descriptor for matchmaker server in the child
-                                enet_host_destroy(matchmakerServer);
-                                createLobbyServer(lobbyPort);
-                                enet_deinitialize();
-                                return 0;
-                            } else if (pid > 0){//Parent Process
-                                //Send new port to client
-                                std::string replyMessage = "LOBBY_PORT " + std::to_string(lobbyPort);
-                                ENetPacket * packet = enet_packet_create(replyMessage.c_str(), replyMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
-                                enet_peer_send(event.peer, 0, packet);
-                                enet_host_flush(matchmakerServer);
-                                printf("%s\n", replyMessage.c_str());
-                            } else {
-                                printf("FAILED FORK\n");
-                            }
-                        } else {
-                            std::string replyMessage = "LOBBY_PORT " + std::to_string(40000);
-                            ENetPacket * packet = enet_packet_create(replyMessage.c_str(), replyMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
-                            enet_peer_send(event.peer, 0, packet);
-                            enet_host_flush(matchmakerServer);
-                            
-                        }*/
                         break;
                     }
                 case ENET_EVENT_TYPE_RECEIVE:
@@ -318,7 +310,9 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                             return 0;
                         } else if (pid > 0){//Parent Process
                             //Send new port to client
+                            
                             std::string replyMessage = "LOBBY_PORT " + std::to_string(lobbyPort);
+                            printf("%s", replyMessage.c_str());
                             ENetPacket * packet = enet_packet_create(replyMessage.c_str(), replyMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
                             enet_peer_send(event.peer, 0, packet);
                             enet_host_flush(matchmakerServer);
@@ -347,6 +341,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                                 l.playerCount++;
                             }
                         }
+                        //lobbyPort = 40000;
                         std::string replyMessage = "LOBBY_PORT " + std::to_string(lobbyPort);
                         ENetPacket * packet = enet_packet_create(replyMessage.c_str(), replyMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
                         enet_peer_send(event.peer, 0, packet);
