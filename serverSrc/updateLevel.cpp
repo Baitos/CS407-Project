@@ -129,37 +129,37 @@ void levelInputs(SDLState &state, GameData &gd, Resources &res, float deltaTime)
 
 //Key Input Handler for Level
 void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
-                    SDL_KeyboardEvent key, bool keyDown, float deltaTime) {
+                    int key, bool keyDown, float deltaTime) {
 
-    if (key.scancode == SDL_SCANCODE_F11 && key.down && !key.repeat) { // tp to entrance portal
+    if (key == SDL_SCANCODE_F11 && keyDown) { // tp to entrance portal
         gd.players_[0].pos = gd.EntrancePortal;
         gd.players_[0].pos.x -= TILE_SIZE;
     }
-    if (key.scancode == SDL_SCANCODE_F10 && key.down && !key.repeat) { // tp to exit portal
+    if (key == SDL_SCANCODE_F10 && keyDown) { // tp to exit portal
         gd.players_[0].pos = gd.ExitPortal;
     }
     /*if (key.scancode == SDL_SCANCODE_F2 && keyDown && !key.repeat) { // anti gravity
         gd.player().flip = -1 * gd.player().flip;
     }*/
-    if (key.scancode == SDL_SCANCODE_F1) {
-        running = false;
+    if (key == SDL_SCANCODE_F1) {
+        printf("Player Left\n");
     }
-    if (key.scancode == SDL_SCANCODE_F2) {
+    if (key == SDL_SCANCODE_F2) {
         currState = changeState(currState, gd);
         currState->init(state, gd, res);
     }
-    if (key.scancode == SDL_SCANCODE_F3) {
+    if (key == SDL_SCANCODE_F3) {
         
         gd.players_[0].pos.x = 950;
         gd.players_[0].pos.y = -654;
     }
-    for (Player &p : gd.players_) {
-        p.handleInput(state, gd, res, key, deltaTime); 
-        if (key.scancode == SDL_SCANCODE_Q && p.hasItem) {
-            Item item = p.item;
-            item.useItem(state, gd, res, p);
-            p.hasItem = false;
-            clearItem(state, gd, res);
-        }
-    }  
+    // for (Player &p : gd.players_) {
+    //     p.handleInput(state, gd, res, key, deltaTime); 
+    //     if (key.scancode == SDL_SCANCODE_Q && p.hasItem) {
+    //         Item item = p.item;
+    //         item.useItem(state, gd, res, p);
+    //         p.hasItem = false;
+    //         clearItem(state, gd, res);
+    //     }
+    // }  
 }
