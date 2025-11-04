@@ -78,7 +78,7 @@ switch(event->type){
             if(message.find("LOBBIES ") != std::string::npos){
                 printf("%s\n", message.c_str());
                 
-                //PARSE MESSAGE TO DETERMINE DISPLAY INFORMATION HERE
+                //REI TODO - PARSE MESSAGE TO DETERMINE DISPLAY INFORMATION HERE
             
             }
             break;

@@ -814,7 +814,7 @@ void handleTitleClick(const SDLState &state, GameData &gd, Resources &res, float
             enet_host_flush(client);
 
 
-            //For Testing
+            //Rei TODO - For Testing keep here, later, when player chooses lobby id X, send "JOIN X" and change state
             std::string joinMessage = "JOIN 1";
             packet = enet_packet_create(joinMessage.c_str(), joinMessage.size()+1, ENET_PACKET_FLAG_RELIABLE);
             enet_peer_send(serverPeer, 0, packet);
