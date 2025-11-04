@@ -322,7 +322,8 @@ void createTilesSpaceship(const SDLState &state, GameData &gd, const Resources &
                         player.username = gd.md.tempUsername;
 
                         player.hook = Hook(player.pos, hookCollider, res.texGrapple);
-                        player.index = gd.players_.size();
+                        player.index = 0;
+                        gd.playerIndex = 0;
                         gd.players_.push_back(player);
                         
                         // Add itemStorage
@@ -764,7 +765,8 @@ void createTilesGrassland(const SDLState &state, GameData &gd, const Resources &
                         //gd.player2.state_ = newState;
 
                         player.hook = Hook(player.pos, hookCollider, res.texGrapple);
-                        player.index = gd.players_.size();
+                        player.index = 0;
+                        gd.playerIndex = 0;
                         gd.players_.push_back(player);
                         
                         // Add itemStorage
@@ -862,6 +864,7 @@ void createTilesGrassland(const SDLState &state, GameData &gd, const Resources &
     createGrid(state, gd, MAP_ROWS, MAP_COLS);
     //load in checkpoints
     createCheckpointsGrassland(state, gd, res);
+
     
     //loadMap(foreground);
 }
