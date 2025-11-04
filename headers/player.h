@@ -44,7 +44,7 @@ class Player : public AnimatedObject { // player
         bool usingSugar = false;
 
         int currentDirection;
-        int position = 4;
+        int position = -1;
         int index;
         // TODO maybe keep consistent across clients
         float gravityScale; 

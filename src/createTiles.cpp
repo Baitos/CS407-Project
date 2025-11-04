@@ -877,6 +877,7 @@ void createTilesGrassland(const SDLState &state, GameData &gd, const Resources &
     createGrid(state, gd, MAP_ROWS, MAP_COLS);
     //load in checkpoints
     createCheckpointsGrassland(state, gd, res);
+
     
     //loadMap(foreground);
 }

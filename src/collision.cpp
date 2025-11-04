@@ -283,7 +283,7 @@ void Player::checkCollision(const SDLState &state, GameData &gd, Resources &res,
 				}
 			}
 			if(numDone >= gd.players_.size()-1) {
-				printf("\n\nGAME OVER\n\n");
+				printf("\n\nGAME OVER (multiple player)\n\n");
 				gd.round_is_over = true;
 			}else if(numDone==1) {
 				//start timer after first player ends
