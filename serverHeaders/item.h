@@ -1,8 +1,8 @@
 #pragma once
 #include "../serverHeaders/object.h"
-#include "../serverHeaders/player.h"
+#include "player.h"
 
-enum class itemType {
+enum itemType {
     BOMB,
     BOOMBOX,
     BOUNCYBALL,
@@ -10,65 +10,128 @@ enum class itemType {
     ICE,
     MISSILE,
     SUGAR,
-    PIE
+    PIE,
+    NOITEM
 };
-void useBomb(const SDLState &state, GameData &gd, Resources &res, Player &p);
+/*void useBomb(const SDLState &state, GameData &gd, Resources &res, Player &p);
 void useBoombox(const SDLState &state, GameData &gd, Resources &res, Player &p);
 void useBouncyBall(const SDLState &state, GameData &gd, Resources &res, Player &p);
 void useFog(const SDLState &state, GameData &gd, Resources &res, Player &p);
 void useIce(const SDLState &state, GameData &gd, Resources &res, Player &p);
 void useMissile(const SDLState &state, GameData &gd, Resources &res, Player &p);
 void useSugar(const SDLState &state, GameData &gd, Resources &res, Player &p);
-void usePie(const SDLState &state, GameData &gd, Resources &res, Player &p);
+void usePie(const SDLState &state, GameData &gd, Resources &res, Player &p);*/
 
-void clearItem(const SDLState &state, GameData &gd, Resources &res);
-void setItemPicked(GameData &gd, Resources &res);
+void clearItem(const SDLState &state, GameData &gd);
+void setItemPicked(GameData &gd, int index);
 class Item : public AnimatedObject {
     public:
-    int index = 0;
-    itemType type;
-    Timer sugarTimer;
-    Item() : AnimatedObject(), sugarTimer(3.0f) {}
-    Item(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) :
-    AnimatedObject(pos_, colliderRect, tex), sugarTimer(4.0f) {}
-    void (*useItem)(const SDLState &state, GameData &gd, Resources &res, Player &p);
-    //virtual void onCollision();
-    
+        bool active;
+        int index;
+        itemType type;
+        virtual ~Item() = default;
+        virtual void update(const SDLState &state, GameData &gd, Player &p, float deltaTime) {}
+        virtual void checkCollision(const SDLState &state, GameData &gd, Player &p, float deltaTime) {} // do nothing
+        virtual void useItem(const SDLState &state, GameData &gd, Player &p) {} // do nothing
+
+        Item(glm::vec2 pos_, SDL_FRect colliderRect) :
+        AnimatedObject(pos_, colliderRect) {
+            type = NOITEM; // error
+            active = true;
+            index = -1;
+        }
+        Item() : AnimatedObject() {
+            type = NOITEM; // error
+            active = true;
+            index = -1;
+        }
 };
 
 class Bomb : public Item {
     public:
-    Bomb(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) :
-    Item(pos_, colliderRect, tex) {
-        index = 0;
-        this->useItem = useBomb;
-    }
+        bool exploded = false; 
+        void useItem(const SDLState &state, GameData &gd, Player &p);
+        void update(const SDLState &state, GameData &gd, Player &p, float deltaTime);
+        void checkCollision(const SDLState &state, GameData &gd, Player &p, float deltaTime);
+        Bomb(glm::vec2 pos_, SDL_FRect colliderRect) :
+        Item(pos_, colliderRect) {
+            index = 0;
+            width = 32;
+            height = 32;
+        }
+        
 };
 
 class Boombox : public Item {
     public:
-    Boombox(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) :
-    Item(pos_, colliderRect, tex) {
-        index = 1;
-        this->useItem = useBoombox;
-    }
+        void useItem(const SDLState &state, GameData &gd, Player &p);
+        void update(const SDLState &state, GameData &gd, Player &p, float deltaTime);
+        void checkCollision(const SDLState &state, GameData &gd, Player &p, float deltaTime);
+        Boombox(glm::vec2 pos_, SDL_FRect colliderRect) :
+        Item(pos_, colliderRect) {
+            index = 1;
+            width = 196;
+            height = 196;
+        }
+};
+
+class Ice : public Item {
+    public:
+        int BOUND; // how big is effect
+        Timer iceTimer; // lifetime of obj
+        Timer flipTimer; // timer to flip particle
+        
+        void useItem(const SDLState &state, GameData &gd, Player &p);
+        void update(const SDLState &state, GameData &gd,  Player &p, float deltaTime);
+        void checkCollision(const SDLState &state, GameData &gd, Player &p, float deltaTime);
+        Ice(glm::vec2 pos_, SDL_FRect colliderRect) :
+        Item(pos_, colliderRect), iceTimer(30.0f), flipTimer(0.2f) {
+            index = 4;
+            BOUND = 5;
+            width = 32;
+            height = 32;
+            persistent = true;
+        }
 };
 
 class Sugar : public Item {
     public:
-    
-    Sugar(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) :
-    Item(pos_, colliderRect, tex) {
-        index = 6;
-        this->useItem = useSugar;
-    }
+        Timer sugarTimer;
+        AnimatedObject sugarEffectObject;
+
+        void useItem(const SDLState &state, GameData &gd, Player &p);
+        void update(const SDLState &state, GameData &gd, Player &p, float deltaTime);
+        void checkCollision(const SDLState &state, GameData &gd, Player &p, float deltaTime) {} // do nothing
+        Sugar(glm::vec2 pos_, SDL_FRect colliderRect) :
+        Item(pos_, colliderRect), sugarTimer(4.0f) {
+            index = 6;
+        }
 };
+
+class Pie : public Item {
+    public:   
+        void useItem(const SDLState &state, GameData &gd,  Player &p);
+        void update(const SDLState &state, GameData &gd, Player &p, float deltaTime);
+        void checkCollision(const SDLState &state, GameData &gd,  Player &p, float deltaTime);
+        Pie(glm::vec2 pos_, SDL_FRect colliderRect) :
+        Item(pos_, colliderRect) {
+            width = 32;
+            height = 32;
+            index = 7;
+        }
+};
+
+
 class ItemStorage : public AnimatedObject {
     public:
-    Item item;
+    Item* boxItem;
     Timer cycleTimer;
-    ItemStorage() : AnimatedObject(), cycleTimer(2.0f){}
-    ItemStorage(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) :
-    AnimatedObject(pos_, colliderRect, tex), cycleTimer(2.0f) {}
-    void update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime);
+    ItemStorage() : AnimatedObject(), cycleTimer(2.0f) {
+
+    }
+    ItemStorage(glm::vec2 pos_, SDL_FRect colliderRect) :
+    AnimatedObject(pos_, colliderRect), cycleTimer(2.0f) { 
+ 
+    }
+    void update(const SDLState &state, GameData &gd, Player &p, float deltaTime);
 };

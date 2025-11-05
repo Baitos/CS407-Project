@@ -1,29 +1,72 @@
 #pragma once
 
 #include <SDL3/SDL.h>
+//#include <SDL3_ttf/SDL_ttf.h>
 #include <vector>
 #include "../ext/glm/glm.hpp"
-#include "initState.h"
-#include "player.h"
-#include "menu.h"
+#include "../serverHeaders/initState.h"
+#include "../serverHeaders/player.h"
+#include "../serverHeaders/controls.h"
+#include "../serverHeaders/createCheckpoints.h"
 
 struct GameData {
     std::vector<Player> players_;
-    std::vector<Laser> lasers_;
-    std::vector<ItemBox> itemBoxes_;
-    std::vector<Item> items_;
-    std::vector<Portal> portals_;
-
-    glm::vec2 ExitPortal, 
-              EntrancePortal;
-
-    ItemStorage itemStorage_;
-    Object settingsBorder;
-    std::vector<Level> mapTiles_;
-
     int numPlayers; 
 
+    glm::vec2 mapSize; // gets x and y size of box used to create map;
+
+    std::vector<BackgroundObject> bgTiles_;
+    std::vector<Level> mapTiles_;
+    std::vector<Laser> lasers_;
+    std::vector<ItemBox> itemBoxes_;
+    std::vector<Portal> portals_;
+    std::vector<Sign> signs_;
+    std::vector<Water> water_;
+    std::vector<Lava> lava_;
+    
+    std::vector<std::vector<Object*>> grid_; // all level tiles as pointers
+
+    std::vector<Checkpoint> checkpoints_;
+
+    glm::vec2 ExitPortal, 
+              EntrancePortal, 
+              mouseCoords, 
+              clickCoords;
+    ItemStorage itemStorage_;
+    Controls *controls;
+    // Object settingsBorder;
+    // std::vector<Object> gameplaySettingsBrackets1_;
+    // std::vector<Object> gameplaySettingsBrackets2_;
+    // std::vector<Object> gameplaySettingsNumLaps_;
+    // std::vector<Object> gameplaySettingsModeHighlights_;
+
+    // bool usernameEditing = false;
+    // std::string tempUsername = " ";
+    // std::string displayName;
+    // int lastCursorToggle = 0;
+    // bool showCursor = true;
+    // //font for drawing on screen
+    // TTF_Font* font;
+
+    //Note that volume ratio is dial.pos.x / (290-84)
+    int playerIndex = -1;
+    SDL_FRect mapViewport;
+    
+    int playerTypes[8];
+
+    bool isGrandPrix = false;
+    int laps_per_race = 1;
+    bool round_is_over = false;
+    
     GameData(const SDLState &state) {
+        for(int i = 0; i < 8; i++){
+            playerTypes[i] = -1;
+        }
+        playerIndex = -1; // will change when map is loaded
         numPlayers = 0;
+        
+
+        int gameplay_mode;
+        controls = new Controls();
     }
 };

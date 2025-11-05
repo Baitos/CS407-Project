@@ -13,18 +13,15 @@
 
 #include "../serverHeaders/initState.h"
 #include "../serverHeaders/gameData.h"
-#include "../serverHeaders/resources.h"
 #include "../serverHeaders/player.h"
 #include "../serverHeaders/globals.h"
 #include "../serverHeaders/createTiles.h"
-#include "../serverHeaders/updateMenu.h"
 #include "../serverHeaders/updateLevel.h"
 #include "../serverHeaders/helper.h"
-#include "../serverHeaders/drawMenu.h"
-#include "../serverHeaders/drawLevel.h"
 #include "../serverHeaders/state.h"
 #include "../serverHeaders/playerState.h"
-#include "../serverHeaders/menu.h"
+#include "../serverHeaders/updateLevel.h"
+
 
 #include "../serverHeaders/enet.h"
 
@@ -77,8 +74,6 @@ void createLobbyServer(int port){
     //Initial Game State
     currState = new CharSelectState();
     currState->nextStateVal = SPACESHIP;
-    currState->update = charSelectUpdate;
-    currState->input = charSelectInputs;
     
     bool ready = false;
     int readyPlayers[8] = {0};
@@ -206,9 +201,9 @@ void createLobbyServer(int port){
                     enet_packet_destroy(event.packet);
                     printf("%s\n", message.c_str());
                     int playerID = std::stoi(message.substr(6, 1));
-                    int keyID = std::stoi(message.substr(8, 1));
-                    int keyDown = std::stoi(message.substr(10, 1));
-                    
+                    int keyID = std::stoi(message.substr(8, message.length()-10));
+                    int keyDown = std::stoi(message.substr(message.length() -2, 1));
+                    printf("%d %d %d\n", playerID, keyID, keyDown);
                     break;
                 }
                 case ENET_EVENT_TYPE_DISCONNECT:

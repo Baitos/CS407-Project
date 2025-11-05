@@ -70,7 +70,7 @@ struct GameData {
             playerTypes[i] = -1;
         }
         playerIndex = -1; // will change when map is loaded
-        numPlayers = 8;
+        numPlayers = 0;
         mapViewport = SDL_FRect {
             .x = 0,
             .y = 0,

@@ -1,10 +1,8 @@
 #include "../serverHeaders/createTiles.h"
-#include "../serverHeaders/drawLevel.h"
-#include "../serverHeaders/updateMenu.h"
 #include "../serverHeaders/updateLevel.h"
 #include "../serverHeaders/state.h"
 #include "../serverHeaders/collision.h"
-#include "../serverHeaders/drawMenu.h"
+
 
 //Function called to change the state
 //NOTE: When a state is changed, call currState->init() immediately after
@@ -15,42 +13,68 @@
 
 GameState * changeState(GameState * tempState, GameData &gd){
     GameState * newState;
+    //tempState->nextStateVal = CHAR_SELECT;
     //Initialize nextState
     switch (tempState->nextStateVal){
         case TITLE:
         {
-            printf("TITLE");
+            newState = new TitleState();
+           
             break;
         }
         case SETTINGS:
         {
+            newState = new SettingsState();
+           
             break;
         }
         case HOST:
         {
+            //newState = new HostState();
+            printf("HOST\n");
+            
             break;
         }
         case JOIN:
         {
+            printf("JOIN\n");
+            // newState = new JoinState();
+            // newState->init = initSettings;
+            // newState->update = settingsUpdate;
+            // newState->render = drawSettings;
+            // newState->input = settingsInputs;
             break;
         }
         case CHAR_SELECT:
         {
             newState = new CharSelectState();
-            newState->init = initCharSelect;
-            newState->update = charSelectUpdate;
-            //newState->render = drawCharSelect;
-            newState->input = charSelectInputs;
+          
             break;           
         }
         case SPACESHIP:
+        {
+            printf("space\n");
+            //Creating LevelState with init of Spaceship
+            newState = new LevelState();
+            newState->input = levelInputs;
+            newState->update = levelUpdate;
+            newState->init = createTilesSpaceship;    
+            break;
+        }
+        case GRASSLANDS:
         {
             //Creating LevelState with init of Spaceship
             newState = new LevelState();
             newState->input = levelInputs;
             newState->update = levelUpdate;
-            //newState->render = drawLevel;
-            newState->init = createTiles;    
+            newState->init = createTilesGrassland;    
+            break;
+        }
+        case GAMEPLAY_SETTINGS:
+        {
+             //Creating LevelState with init of Spaceship
+            newState = new GameplaySettingsState();
+          
             break;
         }
 
@@ -65,6 +89,25 @@ GameState * changeState(GameState * tempState, GameData &gd){
     newState->prevState = tempState;
 
     //To be removed when new screens are added
-    newState->nextStateVal = SPACESHIP;
+    //newState->nextStateVal = SPACESHIP;
     return newState;
+}
+
+void GameState::unloadGameState(GameData &gd) {
+    gd.mapTiles_.clear();
+    gd.bgTiles_.clear();
+    gd.lasers_.clear();
+    gd.portals_.clear();
+    gd.lava_.clear();
+    gd.water_.clear();
+    gd.signs_.clear();
+    gd.itemBoxes_.clear();
+
+    gd.checkpoints_.clear();
+    
+    gd.grid_.clear();
+
+
+    //TTF_CloseFont(gd.font);
+    //TO-DO Add clearing players
 }
