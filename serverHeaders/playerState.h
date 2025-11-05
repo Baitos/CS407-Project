@@ -28,8 +28,8 @@ class PlayerState {
         PlayerStateValue stateVal; // enum for state value
         virtual ~PlayerState() = default;
         // Generic handlers (The player's state will call these by default if they don't have a new version defined, mostly for enter/exit)
-        virtual PlayerState* handleInput(const SDLState &state, GameData &gd, Player &p, SDL_Event event) { return nullptr; }
-        virtual PlayerState* update(const SDLState &state, GameData &gd, Player &p, float deltaTime) { return nullptr; }
+        virtual PlayerState* handleInput(const SDLState &state, GameData &gd, Player &p, int keyID, int keyDown) { return nullptr; }
+        virtual PlayerState* update(const SDLState &state, GameData &gd, Player &p, float deltaTime, int keyID, int keyDown) { return nullptr; }
         virtual void enter(GameData &gd, Player &p) {}
         virtual void exit(GameData &gd, Player &p) {}
         PlayerState() {
@@ -39,8 +39,8 @@ class PlayerState {
 
 class IdleState : public PlayerState {
     public:
-        PlayerState* handleInput(const SDLState &state, GameData &gd,  Player &p, SDL_Event event);
-        PlayerState* update(const SDLState &state, GameData &gd, Player &p, float deltaTime);
+        PlayerState* handleInput(const SDLState &state, GameData &gd, Player &p, int keyID, int keyDown);
+        PlayerState* update(const SDLState &state, GameData &gd, Player &p, float deltaTime, int keyID, int keyDown);
         void enter(GameData &gd, Player &p);
         void exit(GameData &gd, Player &p) {} // do nothing
         IdleState() {
@@ -50,8 +50,8 @@ class IdleState : public PlayerState {
 
 class WalkState : public PlayerState {
     public:
-        PlayerState* handleInput(const SDLState &state, GameData &gd, Player &p, SDL_Event event);
-        PlayerState* update(const SDLState &state, GameData &gd, Player &p, float deltaTime);
+        PlayerState* handleInput(const SDLState &state, GameData &gd, Player &p, int keyID, int keyDown);
+        PlayerState* update(const SDLState &state, GameData &gd, Player &p, float deltaTime, int keyID, int keyDown);
         void enter(GameData &gd, Player &p);
         void exit(GameData &gd,Player &p) {} // do nothing
         WalkState() {
@@ -62,8 +62,8 @@ class WalkState : public PlayerState {
 class RunState : public PlayerState {
     public:
         Timer sprintTimer;
-        PlayerState* handleInput(const SDLState &state, GameData &gd, Player &p, SDL_Event event);
-        PlayerState* update(const SDLState &state, GameData &gd, Player &p, float deltaTime);
+        PlayerState* handleInput(const SDLState &state, GameData &gd, Player &p, int keyID, int keyDown);
+        PlayerState* update(const SDLState &state, GameData &gd, Player &p, float deltaTime, int keyID, int keyDown);
         void enter(GameData &gd, Player &p);
         void exit(GameData &gd, Player &p) {} // do nothing
         RunState() : sprintTimer(1.5f) {
@@ -74,8 +74,8 @@ class RunState : public PlayerState {
 class SprintState : public PlayerState {
     public:
         AnimatedObject afterImage[3];
-        PlayerState* handleInput(const SDLState &state, GameData &gd, Player &p, SDL_Event event);
-        PlayerState* update(const SDLState &state, GameData &gd, Player &p, float deltaTime);
+        PlayerState* handleInput(const SDLState &state, GameData &gd, Player &p, int keyID, int keyDown);
+        PlayerState* update(const SDLState &state, GameData &gd, Player &p, float deltaTime, int keyID, int keyDown);
         void enter(GameData &gd, Player &p);
         void exit(GameData &gd,Player &p) {} // do nothing
         SprintState() {
@@ -86,8 +86,8 @@ class SprintState : public PlayerState {
 class SlideState : public PlayerState {
     public:
         
-        PlayerState* handleInput(const SDLState &state, GameData &gd,  Player &p, SDL_Event event);
-        PlayerState* update(const SDLState &state, GameData &gd,  Player &p, float deltaTime);
+        PlayerState* handleInput(const SDLState &state, GameData &gd, Player &p, int keyID, int keyDown);
+        PlayerState* update(const SDLState &state, GameData &gd,  Player &p, float deltaTime, int keyID, int keyDown);
         void enter(GameData &gd, Player &p);
         void exit(GameData &gd, Player &p) {} // do nothing
         SlideState() {
@@ -97,8 +97,8 @@ class SlideState : public PlayerState {
 
 class LaunchState : public PlayerState {
     public:
-        PlayerState* handleInput(const SDLState &state, GameData &gd,  Player &p, SDL_Event event);
-        PlayerState* update(const SDLState &state, GameData &gd,  Player &p, float deltaTime);
+        PlayerState* handleInput(const SDLState &state, GameData &gd, Player &p, int keyID, int keyDown);
+        PlayerState* update(const SDLState &state, GameData &gd,  Player &p, float deltaTime, int keyID, int keyDown);
         void enter(GameData &gd,  Player &p);
         void exit(GameData &gd, Player &p) {} // do nothing
         LaunchState() {
@@ -108,8 +108,8 @@ class LaunchState : public PlayerState {
 
 class JumpState : public PlayerState {
     public:
-        PlayerState* handleInput(const SDLState &state, GameData &gd,  Player &p, SDL_Event event);
-        PlayerState* update(const SDLState &state, GameData &gd,  Player &p, float deltaTime);
+        PlayerState* handleInput(const SDLState &state, GameData &gd, Player &p, int keyID, int keyDown);
+        PlayerState* update(const SDLState &state, GameData &gd,  Player &p, float deltaTime, int keyID, int keyDown);
         void enter(GameData &gd,  Player &p);
         void exit(GameData &gd,  Player &p) {} // do nothing
         JumpState() {
@@ -120,8 +120,8 @@ class JumpState : public PlayerState {
 class RollState : public PlayerState {
     public:
          // do nothing
-        PlayerState* handleInput(const SDLState &state, GameData &gd,  Player &p, SDL_Event event);
-        PlayerState* update(const SDLState &state, GameData &gd,  Player &p, float deltaTime);
+        PlayerState* handleInput(const SDLState &state, GameData &gd, Player &p, int keyID, int keyDown);
+        PlayerState* update(const SDLState &state, GameData &gd,  Player &p, float deltaTime, int keyID, int keyDown);
         void enter(GameData &gd,  Player &p);
         void exit(GameData &gd,  Player &p) {} // do nothing
         RollState() {
@@ -134,7 +134,7 @@ class StunnedState : public PlayerState {
         bool hardStun;
          // do nothing
         PlayerState* handleInput(const SDLState &state, GameData &gd,  Player &p, SDL_Event event) { return nullptr; } // do nothing
-        PlayerState* update(const SDLState &state, GameData &gd,  Player &p, float deltaTime);
+        PlayerState* update(const SDLState &state, GameData &gd,  Player &p, float deltaTime, int keyID, int keyDown);
         void enter(GameData &gd,  Player &p);
         void exit(GameData &gd,  Player &p) {} // do nothing
         StunnedState() {
@@ -151,7 +151,7 @@ class DeadState : public PlayerState {
     public:
          // do nothing
         PlayerState* handleInput(const SDLState &state, GameData &gd,  Player &p, SDL_Event event) { return nullptr; } // do nothing
-        PlayerState* update(const SDLState &state, GameData &gd,  Player &p, float deltaTime);
+        PlayerState* update(const SDLState &state, GameData &gd,  Player &p, float deltaTime, int keyID, int keyDown);
         void enter(GameData &gd,  Player &p);
         void exit(GameData &gd,  Player &p) {} // do nothing
         DeadState() {
@@ -163,8 +163,8 @@ class ShotgunDeployState : public PlayerState {
     public:
         AnimatedObject* blast;
         void draw(const SDLState &state, GameData &gd);
-        PlayerState* handleInput(const SDLState &state, GameData &gd,  Player &p, SDL_Event event);
-        PlayerState* update(const SDLState &state, GameData &gd,  Player &p, float deltaTime);
+        PlayerState* handleInput(const SDLState &state, GameData &gd, Player &p, int keyID, int keyDown);
+        PlayerState* update(const SDLState &state, GameData &gd,  Player &p, float deltaTime, int keyID, int keyDown);
         void enter(GameData &gd,  Player &p);
         void exit(GameData &gd,  Player &p); // do nothing
         ShotgunDeployState() {
@@ -175,8 +175,8 @@ class ShotgunDeployState : public PlayerState {
 class SwordDeployState : public PlayerState {
     public:
          // do nothing
-        PlayerState* handleInput(const SDLState &state, GameData &gd,  Player &p, SDL_Event event);
-        PlayerState* update(const SDLState &state, GameData &gd,  Player &p, float deltaTime);
+        PlayerState* handleInput(const SDLState &state, GameData &gd, Player &p, int keyID, int keyDown);
+        PlayerState* update(const SDLState &state, GameData &gd,  Player &p, float deltaTime, int keyID, int keyDown);
         void enter(GameData &gd,  Player &p);
         void exit(GameData &gd,  Player &p) {} // do nothing
         SwordDeployState() {
@@ -187,8 +187,8 @@ class SwordDeployState : public PlayerState {
 class JetpackDeployState : public PlayerState {
     public:
          // do nothing
-        PlayerState* handleInput(const SDLState &state, GameData &gd,  Player &p, SDL_Event event);
-        PlayerState* update(const SDLState &state, GameData &gd,  Player &p, float deltaTime);
+        PlayerState* handleInput(const SDLState &state, GameData &gd, Player &p, int keyID, int keyDown);
+        PlayerState* update(const SDLState &state, GameData &gd,  Player &p, float deltaTime, int keyID, int keyDown);
         void enter(GameData &gd,  Player &p);
         void exit(GameData &gd,  Player &p);
         JetpackDeployState() {
@@ -199,8 +199,8 @@ class JetpackDeployState : public PlayerState {
 class GrappleState : public PlayerState {
     public:
          // do nothing
-        PlayerState* handleInput(const SDLState &state, GameData &gd,  Player &p, SDL_Event event);
-        PlayerState* update(const SDLState &state, GameData &gd,  Player &p, float deltaTime);
+        PlayerState* handleInput(const SDLState &state, GameData &gd, Player &p, int keyID, int keyDown);
+        PlayerState* update(const SDLState &state, GameData &gd,  Player &p, float deltaTime, int keyID, int keyDown);
         void enter(GameData &gd,  Player &p);
         void exit(GameData &gd,  Player &p);
         GrappleState() {
@@ -211,8 +211,8 @@ class GrappleState : public PlayerState {
 class FastfallState : public PlayerState {
     public:
          // do nothing
-        PlayerState* handleInput(const SDLState &state, GameData &gd,  Player &p, SDL_Event event);
-        PlayerState* update(const SDLState &state, GameData &gd,  Player &p, float deltaTime);
+        PlayerState* handleInput(const SDLState &state, GameData &gd, Player &p, int keyID, int keyDown);
+        PlayerState* update(const SDLState &state, GameData &gd,  Player &p, float deltaTime, int keyID, int keyDown);
         void enter(GameData &gd,  Player &p);
         void exit(GameData &gd,  Player &p);
         FastfallState() {
@@ -222,9 +222,9 @@ class FastfallState : public PlayerState {
 
 std::string getStateFromEnum(PlayerStateValue ps);
 //Handlers
-PlayerState* handleJumping (GameData &gd,  Player &p, SDL_Event event);
-PlayerState* handleSprinting (GameData &gd,  Player &p, SDL_Event event);
-PlayerState* handleFalling (GameData &gd,  Player &p, SDL_Event event);
+PlayerState* handleJumping (GameData &gd,  Player &p, int keyID, int keyDown);
+PlayerState* handleSprinting (GameData &gd,  Player &p, int keyID, int keyDown);
+PlayerState* handleFalling (GameData &gd,  Player &p, int keyID, int keyDown);
 void sharedUpdate(const SDLState &state, Player &p,  float deltaTime,  GameData &gd);
 void sharedGravity(Player &p, float deltaTime);
 void sharedMovement(const SDLState &state, Player &p);

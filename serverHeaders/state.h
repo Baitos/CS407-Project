@@ -36,7 +36,7 @@ class GameState{
         GameState * prevState;
         GameState * nextState; //May not need
         void (*input)(SDLState &state, GameData &gd, float deltaTime);
-        void (*update)(const SDLState &state, GameData &gd, float deltaTime);
+        void (*update)(const SDLState &state, GameData &gd, float deltaTime, int keyID, int keyDown, int playerID);
         void (*init)(const SDLState &state, GameData &gd);
        
         void unloadGameState(GameData &gd);

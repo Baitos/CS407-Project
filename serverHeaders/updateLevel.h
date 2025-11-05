@@ -6,9 +6,9 @@ struct GameData;
 struct Resources;
 class Player;
 
-void levelUpdate(const SDLState &state, GameData &gd, float deltaTime);
+void levelUpdate(const SDLState &state, GameData &gd, float deltaTime, int keyID, int keyDown, int playerID);
 void handleKeyInput(const SDLState &state, GameData &gd,
-                    SDL_Event event, bool keyDown, float deltaTime); 
+                    int playerID, int keyID, int keyDown, float deltaTime); 
 void handleCrosshair(const SDLState &state, GameData &gd, float deltaTime);
 void levelInputs(SDLState &state, GameData &gd, float deltaTime);
 void handleLevelClick(SDLState &state, GameData &gd, Player &p, float deltaTime, SDL_Event event, bool buttonDown);

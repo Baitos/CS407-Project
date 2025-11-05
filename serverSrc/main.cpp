@@ -52,8 +52,10 @@ void createLobbyServer(int port){
     
     SDLState state;
     
-    
     SDL_Init(0);
+
+    uint64_t prevTime = SDL_GetTicks();
+    uint64_t lastTime = 0;
 
     GameData gd(state);
     printf("NUMPLAYERS: %d\n", gd.numPlayers);
@@ -95,6 +97,7 @@ void createLobbyServer(int port){
                     
                     //readyPlayers
                     playerClasses[gd.numPlayers] = SWORD;
+                    gd.playerTypes[gd.numPlayers] = SWORD;
 
                     std::string replyMessage = "PLAYER_ID " + std::to_string(gd.numPlayers++);
                     ENetPacket * packet = enet_packet_create(replyMessage.c_str(), replyMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
@@ -151,7 +154,17 @@ void createLobbyServer(int port){
                                         mapWinner = i;
                                     }
                                 }
-                                printf("READY FOR GAME\n");
+                                //0 is grasslands, 1 is spaceship
+                                if(mapWinner == 0){
+                                    currState->nextStateVal =  GRASSLANDS;
+                                } else if( mapWinner == 1){
+                                    currState->nextStateVal = SPACESHIP;
+                                }
+
+                                currState = changeState(currState, gd);
+                                currState->init(state, gd);
+
+                                 printf("READY FOR GAME\n");
                                 for(ENetPeer * client : clients){
                                     std::string replyMessage = "CHANGE_STATE " + std::to_string(mapWinner);
                                     ENetPacket * packet = enet_packet_create(replyMessage.c_str(), replyMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
@@ -165,6 +178,7 @@ void createLobbyServer(int port){
                             }
                         }
                     } else if (message.find("CLASS ") != std::string::npos){     //Player indicated Class change - Format "CLASS player_id player_class"
+                        gd.playerTypes[std::stoi(message.substr(6,1))] = std::stoi(message.substr(8,1));
                         playerClasses[std::stoi(message.substr(6,1))] = std::stoi(message.substr(8,1));
                         for(ENetPeer * client : clients){
                             std::string replyMessage = message;
@@ -188,6 +202,17 @@ void createLobbyServer(int port){
     
     bool inGame =true;
     while(inGame){
+        uint64_t nowTime = SDL_GetTicks(); // take time from previous frame to calculate delta
+
+        if (nowTime > lastTime + 1000) { // fps counter
+            lastTime = nowTime;
+            
+        }
+        float deltaTime = (nowTime - prevTime) / 1000.0f; 
+        int keyID= -1;
+        int keyDown = -1;
+        int playerID = -1;
+
         while(enet_host_service(lobbyServer, &event, 0) > 0){
             //std::string message;
             switch (event.type) {
@@ -200,10 +225,16 @@ void createLobbyServer(int port){
                     std::string message((char *) event.packet->data, event.packet->dataLength);
                     enet_packet_destroy(event.packet);
                     printf("%s\n", message.c_str());
-                    int playerID = std::stoi(message.substr(6, 1));
-                    int keyID = std::stoi(message.substr(8, message.length()-10));
-                    int keyDown = std::stoi(message.substr(message.length() -2, 1));
+                    playerID = std::stoi(message.substr(6, 1));
+                    keyID = std::stoi(message.substr(8, message.length()-10));
+                    keyDown = std::stoi(message.substr(message.length() -2, 1));
                     printf("%d %d %d\n", playerID, keyID, keyDown);
+                    if(keyDown == 1){
+                        state.keys[playerID][keyID] = true;
+                    } else {
+                        state.keys[playerID][keyID] = false;
+                    }
+                    handleKeyInput(state, gd, playerID, keyID, keyDown, deltaTime);
                     break;
                 }
                 case ENET_EVENT_TYPE_DISCONNECT:
@@ -214,6 +245,10 @@ void createLobbyServer(int port){
                   break;
             }
         }
+        //printf("update start\n");
+        currState->update(state, gd, deltaTime, keyID, keyDown, playerID);
+        //printf("update finish\n");
+        prevTime = nowTime;
     }
 
     //Leave Lobby
@@ -242,8 +277,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     atexit(enet_deinitialize);
 
     //currState->init(state,gd,res);
-    uint64_t prevTime = SDL_GetTicks();
-    uint64_t lastTime = 0;
+    
 
     //Create your ENET Server
     ENetAddress address = {};
@@ -262,13 +296,6 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     // Start Server loop
     while (true) {
         ENetEvent event;
-        uint64_t nowTime = SDL_GetTicks(); // take time from previous frame to calculate delta
-
-        if (nowTime > lastTime + 1000) { // fps counter
-            lastTime = nowTime;
-            
-        }
-        float deltaTime = (nowTime - prevTime) / 1000.0f; 
         
         
         while(enet_host_service(matchmakerServer, &event, 0) > 0){
@@ -358,8 +385,8 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         //currState->update(state, gd, res, deltaTime);
         //currState->render(state, gd, res, deltaTime);
 
-        prevTime = nowTime;
-        }
+
+    }
 
     delete currState;
     
