@@ -457,7 +457,7 @@ PlayerState* JetpackDeployState::handleInput(const SDLState &state, GameData &gd
     return nullptr;
 }
 
-PlayerState* JetpackDeployState::update(const SDLState &state, GameData &gd, Player &p, float deltaTime, int keyID, int keyDown) { // TODO:
+PlayerState* JetpackDeployState::update(const SDLState &state, GameData &gd, Player &p, float deltaTime, int keyID, int keyDown) {
     sharedUpdate(state, p, deltaTime, gd);
     p.vel.y -= 600.f * deltaTime;
     int vertDir = 0;

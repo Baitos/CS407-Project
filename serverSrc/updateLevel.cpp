@@ -34,20 +34,7 @@ void levelUpdate(const SDLState &state, GameData &gd, float deltaTime, int keyID
             box.update(state, gd, deltaTime);
         }
     }
-    // for (int i = 0; i < gd.items_.size(); i++) {
-    //     // TODO This shit sucks ass please fix lol - Rei
-    //     Item item = gd.items_[i];
-    //     item.update(state, gd, deltaTime);
-    //     if (item.type == itemType::BOOMBOX) {
-    //         item.pos.x = gd.player.pos.x - (item.width / 2) + 16;
-    //         item.pos.y = gd.player.pos.y - (item.height/2) + 16;
-    //     }
-    //     gd.items_[i] = item;
-    //     if (item.animations[item.curAnimation].isDone()) {
-    //         gd.items_.erase(gd.items_.begin() + i);
-    //         i--;
-    //     }
-    // }
+
     for (Player &p : gd.players_) {
         if (playerID == p.index){
             p.update(state, gd, deltaTime, keyID, keyDown);

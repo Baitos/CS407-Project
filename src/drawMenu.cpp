@@ -220,7 +220,6 @@ void drawJoinLobby(const SDLState &state, GameData &gd, Resources res, float del
         SDL_DestroyTexture(textTex);
         SDL_DestroySurface(textSurface);
     }
-    // TODO set up indexes to be based on scroll level
     Lobby lobby;
     std::vector<Lobby> lobbies = gd.md.isPrivate ? gd.md.privateLobbies_ : gd.md.publicLobbies_;
     const char * lobbyName;
