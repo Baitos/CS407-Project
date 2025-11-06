@@ -71,7 +71,7 @@ void levelMessageHandler(ENetEvent * event, GameData * gd, Resources &res, SDLSt
             std::string message((char *) event->packet->data, event->packet->dataLength);
             enet_packet_destroy(event->packet);
             
-            if(message.find("UPDATE ") != std::string::npos){
+            if(message.find("U ") != std::string::npos){
                 std::vector<std::string> parts;
 
                 std::string word;
@@ -88,13 +88,61 @@ void levelMessageHandler(ENetEvent * event, GameData * gd, Resources &res, SDLSt
                 if (!word.empty()){
                     parts.push_back(word);
                 }
-                
-                for(int i = 0; i < gd->players_.size(); i++){
-                    gd->players_[std::stoi(parts[5*i+1])].pos.x = std::stof(parts[5*i+2]);
-                    gd->players_[std::stoi(parts[5*i+1])].pos.y = std::stof(parts[5*i+3]);
+                if(parts.size() == 1+(gd->players_.size()*12)){
+                    //printf("%s\n", message.c_str());
+                    for(int i = 0; i < gd->players_.size(); i++){
+                        gd->players_[std::stoi(parts[12*i+1])].pos.x = std::stof(parts[12*i+2]);
+                        gd->players_[std::stoi(parts[12*i+1])].pos.y = std::stof(parts[12*i+3]);
+                        gd->players_[std::stoi(parts[12*i+1])].vel.x = std::stof(parts[12*i+4]);
+                        gd->players_[std::stoi(parts[12*i+1])].vel.y = std::stof(parts[12*i+5]);
+                        //printf("%d to %d\n", gd->players_[std::stoi(parts[12*i+1])].state_->stateVal, std::stoi(parts[12*i+6]));
+                        if((std::stoi(parts[12*i+6]) == LAUNCH || std::stoi(parts[12*i+6]) == FASTFALL || std::stoi(parts[12*i+6]) == JUMP || std::stoi(parts[12*i+6]) == SPRINT) && gd->players_[std::stoi(parts[12*i+1])].state_->stateVal !=  std::stoi(parts[12*i+6])){
+                            
+                            if(std::stoi(parts[12*i+6]) == LAUNCH){
+                                PlayerState *newState = new LaunchState();
+                                gd->players_[std::stoi(parts[12*i+1])].handleState(newState, *gd, res);
+                            } else if (std::stoi(parts[12*i+6]) == JUMP){
+                                if(gd->players_[std::stoi(parts[12*i+1])].state_->stateVal != LAUNCH){
+                                    PlayerState *newState = new LaunchState();
+                                    gd->players_[std::stoi(parts[12*i+1])].handleState(newState, *gd, res);
+                                } 
+                            } else if((int)std::stof(parts[12*i+6]) == FASTFALL){
+                                PlayerState *newState = new FastfallState();
+                                gd->players_[std::stoi(parts[12*i+1])].handleState(newState, *gd, res);
+                            } else if((int)std::stof(parts[12*i+6]) == SPRINT){
+                                PlayerState *newState = new SprintState();
+                                gd->players_[std::stoi(parts[12*i+1])].handleState(newState, *gd, res);
+                            }
+                            
+                        }
+                        if(gd->players_[std::stoi(parts[12*i+1])].dir != std::stof(parts[12*i+7])){
+                            gd->players_[std::stoi(parts[12*i+1])].dir = std::stof(parts[12*i+7]);
+                        }
+                        
+                        if(gd->players_[std::stoi(parts[12*i+1])].canDoubleJump != std::stoi(parts[12*i+8])){
+                            gd->players_[std::stoi(parts[12*i+1])].canDoubleJump = std::stoi(parts[12*i+8]);
+                        }
+                        
+                        if(gd->players_[std::stoi(parts[12*i+1])].grounded != std::stoi(parts[12*i+9])){
+                            gd->players_[std::stoi(parts[12*i+1])].grounded = std::stoi(parts[12*i+9]);
+                        }
+
+                        if(gd->players_[std::stoi(parts[12*i+1])].isStunned != std::stoi(parts[12*i+10])){
+                            gd->players_[std::stoi(parts[12*i+1])].isStunned = std::stoi(parts[12*i+10]);
+                        }
+
+                        if(gd->players_[std::stoi(parts[12*i+1])].isDead != std::stoi(parts[12*i+11])){
+                            gd->players_[std::stoi(parts[12*i+1])].isDead = std::stoi(parts[12*i+11]);
+                        }
+
+                        if(gd->players_[std::stoi(parts[12*i+1])].currentDirection != std::stoi(parts[12*i+12])){
+                            gd->players_[std::stoi(parts[12*i+1])].currentDirection = std::stoi(parts[12*i+12]);
+                        }
+
+                    }
                 }
 
-                //REI TODO - PARSE MESSAGE TO DETERMINE DISPLAY INFORMATION HERE
+                
             
             }
             break;

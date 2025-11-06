@@ -194,7 +194,7 @@ void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
     //Send server your input
     if(!key.repeat){
         std::string pendingMessage = "INPUT " + std::to_string(gd.playerIndex) + " " + std::to_string(key.scancode) + " " + std::to_string(key.down);
-        ENetPacket * packet = enet_packet_create(pendingMessage.c_str(), pendingMessage.size() + 1, 0);
+        ENetPacket * packet = enet_packet_create(pendingMessage.c_str(), pendingMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
         enet_peer_send(serverPeer, 0, packet);
         enet_host_flush(client);
     }
