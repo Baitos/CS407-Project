@@ -10,7 +10,7 @@ extern GameState * currState;
 
 void charSelectMessageHandler(ENetEvent * event, GameData * gd, Resources &res, SDLState &state){
     //std::string message;
-    printf("Handling message of type %d\n", event->type);
+    //printf("Handling message of type %d\n", event->type);
     switch(event->type){
         case ENET_EVENT_TYPE_CONNECT:{
             printf("CONNECTED2\n");
@@ -62,11 +62,48 @@ void charSelectMessageHandler(ENetEvent * event, GameData * gd, Resources &res, 
 
 
 void levelMessageHandler(ENetEvent * event, GameData * gd, Resources &res, SDLState &state){
+    switch(event->type){
+        case ENET_EVENT_TYPE_CONNECT:{
+            break;
+        }
+        case ENET_EVENT_TYPE_RECEIVE: {
+            
+            std::string message((char *) event->packet->data, event->packet->dataLength);
+            enet_packet_destroy(event->packet);
+            
+            if(message.find("UPDATE ") != std::string::npos){
+                std::vector<std::string> parts;
 
+                std::string word;
+                for (char c : message) {
+                    if (c == ' ') {
+                        if (!word.empty()) {
+                            parts.push_back(word);
+                            word.clear();
+                        }
+                    } else {
+                        word += c;
+                    }
+                }
+                if (!word.empty()){
+                    parts.push_back(word);
+                }
+                
+                for(int i = 0; i < gd->players_.size(); i++){
+                    gd->players_[std::stoi(parts[5*i+1])].pos.x = std::stof(parts[5*i+2]);
+                    gd->players_[std::stoi(parts[5*i+1])].pos.y = std::stof(parts[5*i+3]);
+                }
+
+                //REI TODO - PARSE MESSAGE TO DETERMINE DISPLAY INFORMATION HERE
+            
+            }
+            break;
+        }
+    }
 }
 
 void joinMessageHandler(ENetEvent * event, GameData * gd, Resources &res, SDLState &state){
-switch(event->type){
+    switch(event->type){
         case ENET_EVENT_TYPE_CONNECT:{
             break;
         }
@@ -77,7 +114,6 @@ switch(event->type){
             
             if(message.find("LOBBIES ") != std::string::npos){
                 printf("%s\n", message.c_str());
-                
                 //REI TODO - PARSE MESSAGE TO DETERMINE DISPLAY INFORMATION HERE
             
             }
