@@ -75,7 +75,7 @@ void createLobbyServer(int port){
     std::vector<ENetPeer *> clients;
     //Initial Game State
     currState = new CharSelectState();
-    currState->nextStateVal = SPACESHIP;
+    //currState->nextStateVal = SPACESHIP;
     
     bool ready = false;
     int readyPlayers[8] = {0};
@@ -144,7 +144,7 @@ void createLobbyServer(int port){
                                 
                                 totalReady += ready;
                             }
-                            printf("%d %d\n", totalReady, gd.numPlayers);
+                            //printf("%d %d\n", totalReady, gd.numPlayers);
                             if(totalReady == gd.numPlayers){   //If 3/4 of players agree to ready, they enter the game
                                 //Send message to go to level
                                 //Update Game Data
@@ -156,14 +156,16 @@ void createLobbyServer(int port){
                                 }
                                 //0 is grasslands, 1 is spaceship
                                 if(mapWinner == 0){
+                                    printf("Grasslands\n");
                                     currState->nextStateVal =  GRASSLANDS;
                                 } else if( mapWinner == 1){
+                                    printf("Spaceship\n");
                                     currState->nextStateVal = SPACESHIP;
                                 }
 
                                 currState = changeState(currState, gd);
                                 currState->init(state, gd);
-
+                                
                                  printf("READY FOR GAME\n");
                                 for(ENetPeer * client : clients){
                                     std::string replyMessage = "CHANGE_STATE " + std::to_string(mapWinner);
@@ -200,6 +202,30 @@ void createLobbyServer(int port){
         //currState->update(state, gd, res, deltaTime);
     }
     
+    const Uint64 UPDATE_INTERVAL_MS = 50;
+ 
+    Uint64 lastBroadcast = SDL_GetTicks();
+    
+    if(gd.players_[0].grounded == 0){
+        //printf("not grounded");
+    }
+
+    for(ENetPeer * c : clients){
+        //Broadcast player states
+        std::string updateMessage = "UPDATE";
+        for (Player p : gd.players_){
+            updateMessage += " " + std::to_string(p.index) + " ";
+            updateMessage += std::to_string(p.pos.x) + " " + std::to_string(p.pos.y) + " ";
+            updateMessage += std::to_string(p.vel.x) + " " + std::to_string(p.vel.y) + " ";
+            // updateMessage += std::to_string(p.state_->stateVal) + " ";
+            // updateMessage += std::to_string(p.dir) + " " + std::to_string(p.canDoubleJump) + " " + std::to_string(p.grounded) + " ";
+            // updateMessage += std::to_string(p.isStunned) + " " + std::to_string(p.isDead);
+        }
+        ENetPacket * packet = enet_packet_create(updateMessage.c_str(), updateMessage.size()+1, 0);             //0 means unreliable
+        enet_peer_send(c, 0, packet);
+        enet_host_flush(lobbyServer);
+    }
+    prevTime = SDL_GetTicks();
     bool inGame =true;
     while(inGame){
         uint64_t nowTime = SDL_GetTicks(); // take time from previous frame to calculate delta
@@ -224,17 +250,19 @@ void createLobbyServer(int port){
                  {   //Add conditionals to do what server says
                     std::string message((char *) event.packet->data, event.packet->dataLength);
                     enet_packet_destroy(event.packet);
-                    printf("%s\n", message.c_str());
+                    //printf("%s\n", message.c_str());
                     playerID = std::stoi(message.substr(6, 1));
                     keyID = std::stoi(message.substr(8, message.length()-10));
                     keyDown = std::stoi(message.substr(message.length() -2, 1));
-                    printf("%d %d %d\n", playerID, keyID, keyDown);
+                    //printf("%d %d %d\n", playerID, keyID, keyDown);
                     if(keyDown == 1){
                         state.keys[playerID][keyID] = true;
                     } else {
                         state.keys[playerID][keyID] = false;
                     }
+                    //printf("1: %f\n", gd.players_[0].pos.y);
                     handleKeyInput(state, gd, playerID, keyID, keyDown, deltaTime);
+                    //printf("2: %f\n", gd.players_[0].pos.y);
                     break;
                 }
                 case ENET_EVENT_TYPE_DISCONNECT:
@@ -246,8 +274,28 @@ void createLobbyServer(int port){
             }
         }
         //printf("update start\n");
+        
         currState->update(state, gd, deltaTime, keyID, keyDown, playerID);
-        //printf("update finish\n");
+        
+        if(nowTime-lastBroadcast >= UPDATE_INTERVAL_MS){
+            for(ENetPeer * c : clients){
+                //Broadcast player states
+                std::string updateMessage = "UPDATE";
+                for (Player p : gd.players_){
+                    updateMessage += " " + std::to_string(p.index) + " ";
+                    updateMessage += std::to_string(p.pos.x) + " " + std::to_string(p.pos.y) + " ";
+                    updateMessage += std::to_string(p.vel.x) + " " + std::to_string(p.vel.y) + " ";
+                    // updateMessage += std::to_string(p.state_->stateVal) + " ";
+                    // updateMessage += std::to_string(p.dir) + " " + std::to_string(p.canDoubleJump) + " " + std::to_string(p.grounded) + " ";
+                    // updateMessage += std::to_string(p.isStunned) + " " + std::to_string(p.isDead);
+                }
+                ENetPacket * packet = enet_packet_create(updateMessage.c_str(), updateMessage.size()+1, 0);             //0 means unreliable
+                enet_peer_send(c, 0, packet);
+                enet_host_flush(lobbyServer);
+            }
+            lastBroadcast = nowTime;
+
+        }
         prevTime = nowTime;
     }
 

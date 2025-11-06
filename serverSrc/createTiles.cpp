@@ -271,7 +271,7 @@ void createTilesSpaceship(const SDLState &state, GameData &gd) { // 280 x 60
                             .h = 30 // more accurate at 31, bug caused where player stuck in jump state in small ceilingd
                         };
                         
-                        
+                        printf("r: %d c: %d", r,c);
                     
                         //printf("%d",((LevelState*) currState)->character);
                         //Player player2(pos, collider, res.playerAnims, res.ANIM_PLAYER_IDLE, 250);
@@ -721,7 +721,7 @@ void createTilesGrassland(const SDLState &state, GameData &gd) { // 600 x 80
                             .h = 30 // more accurate at 31, bug caused where player stuck in jump state in small ceilingd
                         };
                         
-                        
+                        //printf("r: %d c: %d", r,c);
                         //printf("%d",((LevelState*) currState)->character);
                         //Player player2(pos, collider, res.playerAnims, res.ANIM_PLAYER_IDLE, 250);
                         //gd.player2 = player2;
@@ -729,7 +729,7 @@ void createTilesGrassland(const SDLState &state, GameData &gd) { // 600 x 80
                         
                         for(int index = 0; index < 8; index++){
                             if(gd.playerTypes[index] != -1){
-                                printf("added player\n");
+                                //printf("added player\n");
                                 if(gd.playerTypes[index]== SWORD){
                                     player = Player(pos, collider, 250);         
                                     player.cooldownTimer = Timer(3.0f);

@@ -167,6 +167,7 @@ void Player::groundedCheck(Object &o, SDL_FRect &rectB) {
 	};
 	glm::vec2 resolution{ 0 };
 	if (intersectAABB(sensor, rectB, resolution)) {
+		//printf("grounded\n");
 		this->grounded = true;
 		this->canDoubleJump = true;
 		this->gravityScale = 1.0f;
@@ -184,6 +185,7 @@ void Player::checkCollision(const SDLState &state, GameData &gd,
 	};
 	glm::vec2 resolution{ 0 };
 	std::vector<Object *> closeTiles_ = getCloseTiles(state, gd, this->pos);
+	//printf("Close Tiles %d\n", closeTiles_.size());
 	for (auto &o : closeTiles_) { 
 		SDL_FRect rectB {
 			.x = o->pos.x + o->collider.x,

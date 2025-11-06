@@ -85,7 +85,9 @@ void sharedGravity(Player &p, float deltaTime) { // call on airborne states
 
 void sharedUpdate(const SDLState &state, Player &p, float deltaTime, GameData &gd) { // basic animation and cooldown function, should always be called pretty much
     //if(p.index == gd.playerIndex){
-        sharedMovement(state, p);
+    //printf("1: %f\n", gd.players_[0].pos.y);
+    sharedMovement(state, p);
+    //printf("2: %f\n", gd.players_[0].pos.y);
     //}
     
     p.cooldownTimer.step(deltaTime);
@@ -94,6 +96,7 @@ void sharedUpdate(const SDLState &state, Player &p, float deltaTime, GameData &g
         p.dir = p.currentDirection;
     }
     if (!p.grounded) { 
+        printf("gravity\n");
         sharedGravity(p, deltaTime);
     }
 }
