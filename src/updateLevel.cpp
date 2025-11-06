@@ -65,6 +65,25 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
     // gd.mapViewport.x = (gd.players_[0].pos.x + TILE_SIZE / 2) - (gd.mapViewport.w / 2); 
     // gd.mapViewport.y = (gd.players_[0].pos.y + TILE_SIZE / 2) - (gd.mapViewport.h / 2); 
 
+    //check if game over
+    if(gd.round_is_over) {
+        gd.round_is_over = false;
+        if(gd.isGrandPrix) {
+            if(currState->currStateVal==GRASSLANDS) {
+                currState->nextStateVal = SPACESHIP;
+            } else if(currState->currStateVal==SPACESHIP) {
+                gd.isGrandPrix = false;
+                currState->nextStateVal = TITLE;
+            }
+            currState = changeState(currState, gd);
+            currState->init(state, gd, res);
+        } else {
+            currState->nextStateVal = TITLE;
+            currState = changeState(currState, gd);
+            currState->init(state, gd, res);
+        }
+    }
+
 }
 
 //

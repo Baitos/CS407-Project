@@ -6,6 +6,8 @@
 #include "../headers/collision.h"
 #include "../headers/drawMenu.h"
 
+extern GameState * currState;
+
 //Function called to change the state
 //NOTE: When a state is changed, call currState->init() immediately after
 
@@ -63,23 +65,38 @@ GameState * changeState(GameState * tempState, GameData &gd){
         }
         case SPACESHIP:
         {
-            printf("space\n");
+            characterType type;
+            if(((LevelState*)currState)->character) {
+                type = ((LevelState*)currState)->character;
+            }
             //Creating LevelState with init of Spaceship
             newState = new LevelState();
             newState->input = levelInputs;
             newState->update = levelUpdate;
             newState->render = drawLevel;
             newState->init = createTilesSpaceship;    
+            
+            if(type) {
+                ((LevelState*)newState)->character = type;
+            }
             break;
         }
         case GRASSLANDS:
         {
+            characterType type;
+            if(((LevelState*)currState)->character) {
+                type = ((LevelState*)currState)->character;
+            }
             //Creating LevelState with init of Spaceship
             newState = new LevelState();
             newState->input = levelInputs;
             newState->update = levelUpdate;
             newState->render = drawLevel;
             newState->init = createTilesGrassland;    
+
+            if(type) {
+                ((LevelState*)newState)->character = type;
+            }
             break;
         }
         case GAMEPLAY_SETTINGS:
@@ -119,12 +136,18 @@ void GameState::unloadGameState(GameData &gd) {
     gd.itemBoxes_.clear();
 
     gd.checkpoints_.clear();
-    
-    gd.grid_.clear();
 
+    gd.md.gameplaySettingsNumLaps_.clear();
+    gd.md.map_previews_.clear();
+    gd.md.gameplaySettingsBrackets1_.clear();
+    gd.md.gameplaySettingsBrackets2_.clear();
+    gd.md.map_previews_text_.clear();
     gd.md.previews_.clear();
     gd.md.arrows_.clear();
 
+    gd.grid_.clear();
+
     //TTF_CloseFont(gd.font);
     //TO-DO Add clearing players
+    gd.players_.clear();
 }
