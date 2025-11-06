@@ -25,7 +25,7 @@ bool initialize(SDLState &state) {
         cleanup(state);
         initSuccess = false;
     }
-    state.keys = SDL_GetKeyboardState(nullptr);
+    state.keys[8][SDL_SCANCODE_COUNT-1] = {0};
 
     //SDL_SetRenderVSync(state.renderer, 1); // turn this SHIT off
 

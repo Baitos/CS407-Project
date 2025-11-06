@@ -60,8 +60,8 @@ class Player : public AnimatedObject { // player
         int lastCheckpoint = 0;
 
     
-        virtual void handleInput(const SDLState &state, GameData &gd, SDL_Event &event, float deltaTime);
-        virtual void update(const SDLState &state, GameData &gd, float deltaTime);
+        virtual void handleInput(const SDLState &state, GameData &gd, int keyID, int keyDown, float deltaTime);
+        virtual void update(const SDLState &state, GameData &gd, float deltaTime, int keyID, int keyDown);
 
         void checkCollision(const SDLState &state, GameData &gd, 
  	                        float deltaTime);

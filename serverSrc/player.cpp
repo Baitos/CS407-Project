@@ -17,14 +17,14 @@ void Player::handleState(PlayerState* &pState, GameData &gd) {
     }
 }
 
-void Player::handleInput(const SDLState &state, GameData &gd, SDL_Event &event, float deltaTime) {
-    PlayerState* pState = state_->handleInput(state, gd, (*this), event);
+void Player::handleInput(const SDLState &state, GameData &gd, int keyID, int keyDown, float deltaTime) {
+    PlayerState* pState = state_->handleInput(state, gd, (*this), keyID, keyDown);
     this->handleState(pState, gd);
 }
 
-void Player::update(const SDLState &state, GameData &gd, float deltaTime) {
+void Player::update(const SDLState &state, GameData &gd, float deltaTime, int keyID, int keyDown) {
     
-    PlayerState* pState = state_->update(state, gd, (*this), deltaTime);
+    PlayerState* pState = state_->update(state, gd, (*this), deltaTime, keyID, keyDown);
     this->handleState(pState, gd);
 
     if (this->pickingItem) { // update item roulette

@@ -301,7 +301,7 @@ void createTilesSpaceship(const SDLState &state, GameData &gd) { // 280 x 60
                                 //gd.player2.state_ = newState;
 
                                 player.hook = Hook(player.pos, hookCollider);
-                                player.index = gd.players_.size();
+                                player.index = index;
                                 gd.players_.push_back(player);
                             }
                         }
@@ -729,6 +729,7 @@ void createTilesGrassland(const SDLState &state, GameData &gd) { // 600 x 80
                         
                         for(int index = 0; index < 8; index++){
                             if(gd.playerTypes[index] != -1){
+                                printf("added player\n");
                                 if(gd.playerTypes[index]== SWORD){
                                     player = Player(pos, collider, 250);         
                                     player.cooldownTimer = Timer(3.0f);
@@ -751,7 +752,7 @@ void createTilesGrassland(const SDLState &state, GameData &gd) { // 600 x 80
                                 //gd.player2.state_ = newState;
 
                                 player.hook = Hook(player.pos, hookCollider);
-                                player.index = gd.players_.size();
+                                player.index = index;
                                 gd.players_.push_back(player);
                             }
                         }
