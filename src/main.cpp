@@ -148,7 +148,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         
         while (enet_host_service(client, &event, 0) > 0) {
             //std::string message;
-            printf("Handling message %d\n", currState->currStateVal);
+            //printf("Handling message %d\n", currState->currStateVal);
             if(!inLobby){                             //Message handling for Matchmaker Server Conection
                 switch(event.type){
                     case ENET_EVENT_TYPE_CONNECT:{
