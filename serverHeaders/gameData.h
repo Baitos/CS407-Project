@@ -18,12 +18,17 @@ struct GameData {
               EntrancePortal;
 
     ItemStorage itemStorage_;
-    Object settingsBorder;
+    Object border;
     std::vector<Level> mapTiles_;
 
     int numPlayers; 
 
     GameData(const SDLState &state) {
-        numPlayers = 0;
+        numPlayers = 0;std::vector<Lobby> parseLobbies(std::string LobbyQuery) {
+    // TODO Parse lobbies
+}
+void sendJoinRequest(Lobby lobby) {
+    // Todo Format join
+}
     }
 };

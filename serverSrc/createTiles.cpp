@@ -393,8 +393,8 @@ void initCharSelect(const SDLState &state, GameData &gd, const Resources &res) {
 
         Object border(pos, collider, res.texBigBorder);
         
-        gd.settingsBorder = border;
-        gd.settingsBorder.pos.y =  500;
+        gd.border = border;
+        gd.border.pos.y =  500;
         
     //loadMap(foreground);
     //assert(gd.playerIndex != -1);

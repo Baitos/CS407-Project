@@ -127,3 +127,11 @@ void slowObject(glm::vec2 &vel, float deltaTime) {
         }
     }		
 }
+std::vector<Lobby> parseLobbies(std::string LobbyQuery) {
+    // TODO parse lobbies
+    
+}
+void sendJoinRequest(Lobby lobby) {
+    // TODO send join message
+
+}

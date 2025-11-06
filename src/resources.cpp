@@ -229,7 +229,13 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     texGameplaySettings3 = loadTexture(state.renderer, "data/GameplaySettings/3.png");
     texGameplaySettings4 = loadTexture(state.renderer, "data/GameplaySettings/4.png");
     texGameplaySettings5 = loadTexture(state.renderer, "data/GameplaySettings/5.png");
-
+    // Lobby menus
+    texHostLobbyPrivate = loadTexture(state.renderer, "data/LobbyMenus/HostLobbyPrivate.png");
+    texHostLobbyPublic = loadTexture(state.renderer, "data/LobbyMenus/HostLobbyPublic.png");
+    texJoinLobbyPublic = loadTexture(state.renderer, "data/LobbyMenus/JoinLobbyPublic.png");
+    texJoinLobbyPrivate = loadTexture(state.renderer, "data/LobbyMenus/JoinLobbyPrivate.png");
+    texLobbySelectionBorder = loadTexture(state.renderer, "data/LobbyMenus/LobbySelectionBorder.png");
+    texVerticalSlider = loadTexture(state.renderer, "data/LobbyMenus/VerticalSlider.png");
     texTitle = loadTexture(state.renderer, "data/TitleScreen/title.png");
     texTextCursor = loadTexture(state.renderer, "data/TitleScreen/text_cursor.png");
 

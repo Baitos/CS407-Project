@@ -245,7 +245,7 @@ void ItemBox::generateItem(Player &player, GameData &gd, Resources &res) {
 //     player.gravityScale = 1.0f;
 //     player.isStunned = true;
 //     player.grounded = false;
-//     // TODO rework this so it's generic
+//  
 //     if (player.index == 0) {
 //         gd.player = player;
 //     }

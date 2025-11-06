@@ -985,13 +985,12 @@ void initCharSelect(const SDLState &state, GameData &gd, const Resources &res) {
 
         Object border(pos, collider, res.texBigBorder);
         
-        gd.md.settingsBorder = border;
-        gd.md.settingsBorder.pos.y =  500;
+        gd.md.border = border;
+        gd.md.border.pos.y =  500;
         
     //loadMap(foreground);
     //assert(gd.playerIndex != -1);
 }
-
 
 void initSettings(const SDLState &state, GameData &gd, const Resources &res) { // 280 x 60
         SDL_FRect collider = {
@@ -1009,8 +1008,8 @@ void initSettings(const SDLState &state, GameData &gd, const Resources &res) { /
         gd.bgTiles_.push_back(bg);
 
         Object border(pos, collider, res.texBigBorder);
-        gd.md.settingsBorder = border;
-        gd.md.settingsBorder.pos.y =  500;
+        gd.md.border = border;
+        gd.md.border.pos.y =  500;
 
         //Master
         Object dial(pos, collider, res.texSlider);
@@ -1049,8 +1048,8 @@ void initGameplaySettings(const SDLState &state, GameData &gd, const Resources &
         gd.bgTiles_.push_back(bg);
 
         Object border(pos, collider, res.texBigBorder);
-        gd.md.settingsBorder = border;
-        gd.md.settingsBorder.pos.y =  500;
+        gd.md.border = border;
+        gd.md.border.pos.y =  500;
 
         //brackets
         pos = glm::vec2(175,152);
@@ -1103,31 +1102,105 @@ void initGameplaySettings(const SDLState &state, GameData &gd, const Resources &
         gd.md.arrows_[res.RIGHT_ARROW].visible = false;
 }
 
-void initTitle(const SDLState &state, GameData &gd, const Resources &res) {
-     SDL_FRect collider = {
-            .x = 0,
-            .y = 0,
-            .w = 32,
-            .h = 32
-        };
-        
-        glm::vec2  pos = glm::vec2(0,0);
-        // Background
-        BackgroundObject bg(pos, collider, res.texTitle);
-        bg.collider.w = res.texTitle->w;
-        bg.collider.h = res.texTitle->h;
-        gd.bgTiles_.push_back(bg);
+void initHostLobby(const SDLState &state, GameData &gd, const Resources &res) {
+    SDL_FRect collider = {
+        .x = 0,
+        .y = 0,
+        .w = 32,
+        .h = 32
+    };
+    
+    glm::vec2  pos = glm::vec2(0,0);
+    // Background
+    BackgroundObject bg(pos, collider, res.texHostLobbyPublic);
+    bg.collider.w = res.texHostLobbyPublic->w;
+    bg.collider.h = res.texHostLobbyPublic->h;
+    gd.bgTiles_.push_back(bg);
 
-        Object border(pos, collider, res.texBigBorder);
-        gd.md.settingsBorder = border;
-        gd.md.settingsBorder.pos.y =  500;
-
-        //initialize font
-        if(!gd.md.font){
-            gd.md.font = TTF_OpenFont("data/Fonts/retro.ttf", 16); // 16 = point size
-            if (!gd.md.font) {
-                SDL_Log("Failed to load font");
-                return;
-            }
+    Object border(pos, collider, res.texBigBorder);
+    gd.md.border = border;
+    gd.md.border.pos.y =  500;
+    gd.md.isPrivate = false;
+    gd.md.password = "";
+    gd.md.tempStr = "";
+    //initialize font
+    if(!gd.md.font){
+        gd.md.font = TTF_OpenFont("data/Fonts/retro.ttf", 16); // 16 = point size
+        if (!gd.md.font) {
+            SDL_Log("Failed to load font");
+            return;
         }
+    }
+}
+
+void initJoinLobby(const SDLState &state, GameData &gd, const Resources &res) {
+    SDL_FRect collider = {
+        .x = 0,
+        .y = 0,
+        .w = 32,
+        .h = 32
+    };
+    SDL_FRect sliderCollider = {
+        .x = 0,
+        .y = 0,
+        .w = 8,
+        .h = 156
+    };
+    glm::vec2  pos = glm::vec2(0,0);
+    // Background
+    BackgroundObject bg(pos, collider, res.texJoinLobbyPublic);
+    bg.collider.w = res.texJoinLobbyPublic->w;
+    bg.collider.h = res.texJoinLobbyPublic->h;
+    gd.bgTiles_.push_back(bg);
+
+    Object border(pos, collider, res.texBigBorder);
+    if (gd.md.verticalDial == nullptr) {
+        gd.md.verticalDial = new Object(glm::vec2(748,56), sliderCollider, res.texVerticalSlider);
+    }
+    else 
+        gd.md.verticalDial->pos = glm::vec2(748,56);
+    if (gd.md.lobbySelectBorder == nullptr) {
+        gd.md.lobbySelectBorder = new Object(glm::vec2(41, 56), collider, res.texLobbySelectionBorder);
+    }
+    gd.md.lobbySelectBorder->visible = false;
+    gd.md.border = border;
+    gd.md.border.pos.y =  500;
+    gd.md.isPrivate = false;
+    //initialize font
+    if(!gd.md.font){
+        gd.md.font = TTF_OpenFont("data/Fonts/retro.ttf", 16); // 16 = point size
+        if (!gd.md.font) {
+            SDL_Log("Failed to load font");
+            return;
+        }
+    }
+}
+
+void initTitle(const SDLState &state, GameData &gd, const Resources &res) {
+    SDL_FRect collider = {
+        .x = 0,
+        .y = 0,
+        .w = 32,
+        .h = 32
+    };
+    
+    glm::vec2  pos = glm::vec2(0,0);
+    // Background
+    BackgroundObject bg(pos, collider, res.texTitle);
+    bg.collider.w = res.texTitle->w;
+    bg.collider.h = res.texTitle->h;
+    gd.bgTiles_.push_back(bg);
+
+    Object border(pos, collider, res.texBigBorder);
+    gd.md.border = border;
+    gd.md.border.pos.y =  500;
+
+    //initialize font
+    if(!gd.md.font){
+        gd.md.font = TTF_OpenFont("data/Fonts/retro.ttf", 16); // 16 = point size
+        if (!gd.md.font) {
+            SDL_Log("Failed to load font");
+            return;
+        }
+    }
 }

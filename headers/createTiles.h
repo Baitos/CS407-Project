@@ -12,5 +12,7 @@ void createTilesGrassland(const SDLState &state, GameData &gd, const Resources &
 
 void initCharSelect(const SDLState &state, GameData &gd, const Resources &res);
 void initSettings(const SDLState &state, GameData &gd, const Resources &res);
+void initHostLobby(const SDLState &state, GameData &gd, const Resources &res);
+void initJoinLobby(const SDLState &state, GameData &gd, const Resources &res);
 void initGameplaySettings(const SDLState &state, GameData &gd, const Resources &res);
 void initTitle(const SDLState &state, GameData &gd, const Resources &res);

@@ -38,19 +38,20 @@ GameState * changeState(GameState * tempState, GameData &gd){
         }
         case HOST:
         {
-            //newState = new HostState();
-            printf("HOST\n");
-            
+            newState = new HostState();
+            newState->init = initHostLobby;
+            newState->update = hostLobbyUpdate;
+            newState->render = drawHostLobby;
+            newState->input = hostLobbyInput;
             break;
         }
         case JOIN:
         {
-            printf("JOIN\n");
-            // newState = new JoinState();
-            // newState->init = initSettings;
-            // newState->update = settingsUpdate;
-            // newState->render = drawSettings;
-            // newState->input = settingsInputs;
+            newState = new JoinState();
+            newState->init = initJoinLobby;
+            newState->update = joinLobbyUpdate;
+            newState->render = drawJoinLobby;
+            newState->input = joinLobbyInput;
             break;
         }
         case CHAR_SELECT:

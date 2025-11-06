@@ -24,9 +24,9 @@
 //         ci.draw(state, gd, 34, 36); 
 //     }
     
-//     if(gd.settingsBorder.pos.y != 500.f){
-//         //printf("drawing, %f", gd.settingsBorder->pos.y);
-//         gd.settingsBorder.draw(state, gd,static_cast<float>(gd.settingsBorder.texture->w) * 2, static_cast<float>(gd.settingsBorder.texture->h)*2);
+//     if(gd.border.pos.y != 500.f){
+//         //printf("drawing, %f", gd.border->pos.y);
+//         gd.border.draw(state, gd,static_cast<float>(gd.border.texture->w) * 2, static_cast<float>(gd.border.texture->h)*2);
 //     }
 //     handleMousePointerCharSelect(state, gd, res, deltaTime);
 // }
@@ -50,9 +50,9 @@
 
     
 
-//     if(gd.settingsBorder.pos.y != 500.f){
-//         //printf("drawing, %f", gd.settingsBorder->pos.y);
-//         gd.settingsBorder.draw(state, gd,static_cast<float>(gd.settingsBorder.texture->w) * 2, static_cast<float>(gd.settingsBorder.texture->h)*2);
+//     if(gd.border.pos.y != 500.f){
+//         //printf("drawing, %f", gd.border->pos.y);
+//         gd.border.draw(state, gd,static_cast<float>(gd.border.texture->w) * 2, static_cast<float>(gd.border.texture->h)*2);
 //     }
 //     handleMousePointerSettings(state, gd, res, deltaTime);
 // }

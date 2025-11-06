@@ -40,14 +40,14 @@ struct GameData {
               clickCoords;
     ItemStorage itemStorage_;
     Controls *controls;
-    // Object settingsBorder;
+    // Object border;
     // std::vector<Object> gameplaySettingsBrackets1_;
     // std::vector<Object> gameplaySettingsBrackets2_;
     // std::vector<Object> gameplaySettingsNumLaps_;
     // std::vector<Object> gameplaySettingsModeHighlights_;
 
-    // bool usernameEditing = false;
-    // std::string tempUsername = " ";
+    // bool stringEditing = false;
+    // std::string tempStr = " ";
     // std::string displayName;
     // int lastCursorToggle = 0;
     // bool showCursor = true;

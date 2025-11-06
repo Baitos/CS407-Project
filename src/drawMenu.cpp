@@ -42,9 +42,9 @@ void drawCharSelect(const SDLState &state, GameData &gd, Resources res, float de
         }
     }
 
-    if(gd.md.settingsBorder.pos.y != 500.f){
-        //printf("drawing, %f", gd.settingsBorder->pos.y);
-        gd.md.settingsBorder.draw(state, gd,static_cast<float>(gd.md.settingsBorder.texture->w) * 2, static_cast<float>(gd.md.settingsBorder.texture->h)*2);
+    if(gd.md.border.pos.y != 500.f){
+        //printf("drawing, %f", gd.border->pos.y);
+        gd.md.border.draw(state, gd,static_cast<float>(gd.md.border.texture->w) * 2, static_cast<float>(gd.md.border.texture->h)*2);
     }
     handleMousePointerCharSelect(state, gd, res, deltaTime);
 }
@@ -71,9 +71,9 @@ void drawSettings(const SDLState &state, GameData &gd, Resources res, float delt
         SDL_RenderDebugText(state.renderer, curSettings->xStart,
              curSettings->yStart + i * curSettings->yOffset, controlStrings[i].c_str());
     }
-    if(gd.md.settingsBorder.pos.y != 500.f){
-        //printf("drawing, %f", gd.settingsBorder->pos.y);
-        gd.md.settingsBorder.draw(state, gd,static_cast<float>(gd.md.settingsBorder.texture->w) * 2, static_cast<float>(gd.md.settingsBorder.texture->h)*2);
+    if(gd.md.border.pos.y != 500.f){
+        //printf("drawing, %f", gd.border->pos.y);
+        gd.md.border.draw(state, gd,static_cast<float>(gd.md.border.texture->w) * 2, static_cast<float>(gd.md.border.texture->h)*2);
     }
     handleMousePointerSettings(state, gd, res, deltaTime);
 }
@@ -104,9 +104,9 @@ void drawGameplaySettings(const SDLState &state, GameData &gd, Resources res, fl
         bg.draw(state, gd, static_cast<float>(bg.texture->w), static_cast<float>(bg.texture->h)); 
     }
 
-    if(gd.md.settingsBorder.pos.y != 500.f){
-        //printf("drawing, %f", gd.settingsBorder->pos.y);
-        gd.md.settingsBorder.draw(state, gd,static_cast<float>(gd.md.settingsBorder.texture->w) * 2, static_cast<float>(gd.md.settingsBorder.texture->h)*2);
+    if(gd.md.border.pos.y != 500.f){
+        //printf("drawing, %f", gd.border->pos.y);
+        gd.md.border.draw(state, gd,static_cast<float>(gd.md.border.texture->w) * 2, static_cast<float>(gd.md.border.texture->h)*2);
     }
 
     //draw arrows
@@ -132,9 +132,9 @@ void drawTitle(const SDLState &state, GameData &gd, Resources res, float deltaTi
     for (BackgroundObject &bg : gd.bgTiles_) {
         bg.draw(state, gd, static_cast<float>(bg.texture->w), static_cast<float>(bg.texture->h)); 
     }
-    if(gd.md.settingsBorder.pos.y != 500.f){
-        //printf("drawing, %f", gd.settingsBorder->pos.y);
-        gd.md.settingsBorder.draw(state, gd,static_cast<float>(gd.md.settingsBorder.texture->w) * 2, static_cast<float>(gd.md.settingsBorder.texture->h)*2);
+    if(gd.md.border.pos.y != 500.f){
+        //printf("drawing, %f", gd.border->pos.y);
+        gd.md.border.draw(state, gd,static_cast<float>(gd.md.border.texture->w) * 2, static_cast<float>(gd.md.border.texture->h)*2);
     }
 
     //draw username
@@ -150,6 +150,90 @@ void drawTitle(const SDLState &state, GameData &gd, Resources res, float deltaTi
         SDL_DestroyTexture(textTex);
         SDL_DestroySurface(textSurface);
     }
-
     handleMousePointerTitle(state, gd, res, deltaTime);
+}
+void drawHostLobby(const SDLState &state, GameData &gd, Resources res, float deltaTime){
+    // used for camera system
+    gd.mapViewport.x = 0; 
+    gd.mapViewport.y = 0; 
+    //draw bg
+    SDL_SetRenderDrawColor(state.renderer, 13, 22, 59, 255);
+    SDL_RenderClear(state.renderer);
+
+    // draw bg tiles
+    for (BackgroundObject &bg : gd.bgTiles_) {
+        bg.draw(state, gd, static_cast<float>(bg.texture->w), static_cast<float>(bg.texture->h)); 
+    }
+    if(gd.md.border.pos.y != 500.f){
+        //printf("drawing, %f", gd.border->pos.y);
+        gd.md.border.draw(state, gd,static_cast<float>(gd.md.border.texture->w) * 2, static_cast<float>(gd.md.border.texture->h)*2);
+    }
+
+    //draw username
+    //std::string username = "temp";
+    SDL_Color color = {0, 239, 255, 255};
+    if(gd.md.password != "") {
+        SDL_Surface* textSurface = TTF_RenderText_Blended(gd.md.font, gd.md.password.c_str(), gd.md.password.length(), color);
+        SDL_Texture* textTex = SDL_CreateTextureFromSurface(state.renderer, textSurface);
+        SDL_SetTextureScaleMode(textTex, SDL_SCALEMODE_NEAREST);
+        SDL_FRect rect = { 350, 262, (float)textSurface->w, (float)textSurface->h };
+
+        SDL_RenderTexture(state.renderer, textTex, nullptr, &rect);
+        SDL_DestroyTexture(textTex);
+        SDL_DestroySurface(textSurface);
+    }
+    handleMousePointerHostLobby(state, gd, res, deltaTime);
+}
+
+void drawJoinLobby(const SDLState &state, GameData &gd, Resources res, float deltaTime){
+    // used for camera system
+    gd.mapViewport.x = 0; 
+    gd.mapViewport.y = 0; 
+    //draw bg
+    SDL_SetRenderDrawColor(state.renderer, 13, 22, 59, 255);
+    SDL_RenderClear(state.renderer);
+
+    // draw bg tiles
+    for (BackgroundObject &bg : gd.bgTiles_) {
+        bg.draw(state, gd, static_cast<float>(bg.texture->w), static_cast<float>(bg.texture->h)); 
+    }
+    if(gd.md.border.pos.y != 500.f){
+        //printf("drawing, %f", gd.border->pos.y);
+        gd.md.border.draw(state, gd,static_cast<float>(gd.md.border.texture->w) * 2, static_cast<float>(gd.md.border.texture->h)*2);
+    }
+    if (gd.md.verticalDial != nullptr) {
+        gd.md.verticalDial->draw(state, gd, static_cast<float>(gd.md.verticalDial->texture->w), static_cast<float>(gd.md.verticalDial->texture->h));
+    }
+    if (gd.md.lobbySelectBorder != nullptr && gd.md.lobbySelectBorder->visible) {
+        gd.md.lobbySelectBorder->draw(state, gd, static_cast<float>(gd.md.lobbySelectBorder->texture->w), static_cast<float>(gd.md.lobbySelectBorder->texture->h));
+    }
+    //draw username
+    //std::string username = "temp";
+    SDL_Color color = {0, 239, 255, 255};
+        if(gd.md.password != "") {
+        SDL_Surface* textSurface = TTF_RenderText_Blended(gd.md.font, gd.md.password.c_str(), gd.md.password.length(), color);
+        SDL_Texture* textTex = SDL_CreateTextureFromSurface(state.renderer, textSurface);
+        SDL_SetTextureScaleMode(textTex, SDL_SCALEMODE_NEAREST);
+        SDL_FRect rect = { 320, 22, (float)textSurface->w, (float)textSurface->h };
+
+        SDL_RenderTexture(state.renderer, textTex, nullptr, &rect);
+        SDL_DestroyTexture(textTex);
+        SDL_DestroySurface(textSurface);
+    }
+    // TODO set up indexes to be based on scroll level
+    Lobby lobby;
+    std::vector<Lobby> lobbies = gd.md.isPrivate ? gd.md.privateLobbies_ : gd.md.publicLobbies_;
+    const char * lobbyName;
+    for (int i = gd.md.startLobbyIndex; (i < gd.md.startLobbyIndex + 7 && (i < lobbies.size())); i++) {
+        // TODO name lobby with number if hostName is empty
+        lobbyName = (lobbies[i].hostName + std::string("'s Lobby")).c_str();
+        SDL_Surface* textSurface = TTF_RenderText_Blended(gd.md.font, lobbyName, strlen(lobbyName), color);
+        SDL_Texture* textTex = SDL_CreateTextureFromSurface(state.renderer, textSurface);
+        SDL_SetTextureScaleMode(textTex, SDL_SCALEMODE_NEAREST);
+        SDL_FRect rect = { 70, 72 + 38*(float)(i - gd.md.startLobbyIndex), (float)textSurface->w, (float)textSurface->h};
+        SDL_RenderTexture(state.renderer, textTex, nullptr, &rect);
+        SDL_DestroyTexture(textTex);
+        SDL_DestroySurface(textSurface);
+    }
+    handleMousePointerJoinLobby(state, gd, res, deltaTime);
 }

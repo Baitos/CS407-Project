@@ -29,7 +29,6 @@ enum gameStates {
     CREDITS,
     GAMEPLAY_SETTINGS
 };
-
 class GameState{
     public:
         int prevStateVal;
@@ -62,7 +61,6 @@ class HostState : public GameState {
 };
 
 class JoinState : public GameState {
-
 };
 
 class CharSelectState : public GameState{

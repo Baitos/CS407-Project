@@ -7,6 +7,7 @@
 struct SDLState;
 struct GameData;
 struct Resources;
+struct Lobby;
 
 bool isOnscreen(const SDLState &state, GameData &gd, Object &obj);
 float changeVel(float vel, Player &p);
@@ -22,3 +23,6 @@ std::vector<Object*> getCloseTiles(const SDLState &state, GameData &gd, glm::vec
 std::vector<Object*> getOnscreenTiles(const SDLState &state, GameData &gd); // gets tiles that are onscreen
 
 void slowObject(glm::vec2 &vel, float deltaTime); // slow down object 
+
+std::vector<Lobby> parseLobbies(std::string LobbyQuery);
+void sendJoinRequest(Lobby lobby);

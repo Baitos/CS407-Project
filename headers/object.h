@@ -33,6 +33,7 @@ class Object { // generic obj type
         SDL_FRect collider; // rectangle for collision
         float width, height; // size for drawing
         bool debug; // should draw debug?
+        bool visible; 
         int type;
         Object() {           
             pos = vel = acc = glm::vec2(0);
@@ -66,7 +67,6 @@ class AnimatedObject : public Object { // obj with anims
         float height = TILE_SIZE; 
         float dir;
         float flip; // anti gravity
-        bool visible; 
         bool persistent; // will be drawn even if "offscreen"
         AnimatedObject() : Object() { // default
             spriteFrame = 1;

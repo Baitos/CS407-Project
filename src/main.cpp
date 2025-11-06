@@ -112,7 +112,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     //Create your ENET Client
     //ONLY NEEDS TO BE DONE WHEN JOINING/CREATING
     ENetAddress clientAddress;
-    enet_address_set_host(&clientAddress, "100.91.68.8");
+    enet_address_set_host(&clientAddress, "100.111.250.61");
     clientAddress.port = 0; // OS chooses port
     client = enet_host_create(&clientAddress, 1, 2, 0, 0);
     if (!client) {
@@ -218,6 +218,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         //printf("Draw\n");
         currState->render(state, gd, res, deltaTime);
         //printf("draw done\n");
+        //printf("mouseX: %f, mouseY: %f\n", gd.mouseCoords.x, gd.mouseCoords.y);
         if (gd.debugMode) {
         // debug info
             SDL_SetRenderDrawColor(state.renderer, 255, 255, 255, 255);

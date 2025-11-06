@@ -8,32 +8,48 @@
 #include "player.h"
 #include "menu.h"
 #include "createCheckpoints.h"
-struct MenuData {
-    std::vector<charIconObject> charIcons_;
-    std::vector<AnimatedObject> previews_;
-    std::vector<AnimatedObject> map_previews_;
-    std::vector<AnimatedObject> map_previews_text_;
-    std::vector<AnimatedObject> arrows_;
 
-    Object settingsBorder;
+struct Lobby{
+    bool isGrandPrix;
+    int numLaps;
+    int id;
+    int port;
+    int playerCount;
+    size_t passwordHash; // hash = 0 means no password
+    std::string hostName;
+};
+
+struct MenuData {
+    bool isPrivate = false;
+    bool stringEditing = false;
+    bool showCursor = true;
+    int startLobbyIndex = 0; // index of top lobby in join screen 
+    int lobbyPicked;
+    int lastCursorToggle = 0;
+    int currMapVote = 0;
+    std::string tempStr = " ";
+    std::string password;
+    std::string displayName;
+    Object border;
+    Object * lobbySelectBorder = nullptr;
+    Object * verticalDial = nullptr;
     Object * updatedDial = nullptr;
+    TTF_Font* font; //font for drawing on screen
+
     std::vector<Object> settingsDials_;
     std::vector<Object> gameplaySettingsBrackets1_;
     std::vector<Object> gameplaySettingsBrackets2_;
     std::vector<Object> gameplaySettingsNumLaps_;
     std::vector<Object> gameplaySettingsModeHighlights_;
 
-    
-    bool usernameEditing = false;
-    std::string tempUsername = " ";
-    std::string displayName;
-    int lastCursorToggle = 0;
-    bool showCursor = true;
-    //font for drawing on screen
-    TTF_Font* font;
-    int currMapVote = 0;
+    std::vector<AnimatedObject> previews_;
+    std::vector<AnimatedObject> map_previews_;
+    std::vector<AnimatedObject> map_previews_text_;
+    std::vector<AnimatedObject> arrows_;
+    std::vector<charIconObject> charIcons_;
 
+    std::vector<Lobby> publicLobbies_;
+    std::vector<Lobby> privateLobbies_;
     MenuData(const SDLState &state) {
-
     }
 };

@@ -101,6 +101,7 @@ struct Resources {
                 *texPie, *texIce,
                 *texSettingsBackground, *texBigBorder, *texSmallBorder, *texSlider,       
                 *texTitle, *texTextCursor,
+                *texHostLobbyPublic,*texHostLobbyPrivate, *texJoinLobbyPublic, *texJoinLobbyPrivate, *texLobbySelectionBorder, *texVerticalSlider,
                 *texGameplaySettingsBackground, *texGameplaySettingsLeftBracket, *texGameplaySettingsRightBracket,
                 *texGameplaySettings1,*texGameplaySettings2,*texGameplaySettings3,*texGameplaySettings4,*texGameplaySettings5;
     SDL_Texture *texMinimap[5];
