@@ -96,7 +96,7 @@ void sharedUpdate(const SDLState &state, Player &p, float deltaTime, GameData &g
         p.dir = p.currentDirection;
     }
     if (!p.grounded) { 
-        printf("gravity\n");
+        //printf("gravity\n");
         sharedGravity(p, deltaTime);
     }
 }

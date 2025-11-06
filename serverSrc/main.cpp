@@ -81,7 +81,9 @@ void createLobbyServer(int port){
     int readyPlayers[8] = {0};
     int mapVote[5] = {0};                       //Spaceship, Grasslands, Stage 3, stage 4, stage 5
     int playerClasses[8] ={0};
-
+    for (int i =0; i < 8; i++){
+        playerClasses[i] = -1;
+    }
     while(!ready){
         //Checks if there is ever a point where more than 0 events happen in that instant
         while(enet_host_service(lobbyServer, &event, 0) > 0){
@@ -113,7 +115,7 @@ void createLobbyServer(int port){
                     }
                     
                     for(int j = 0; j < 8; j++){
-                        if(playerClasses[j] != 0){
+                        if(playerClasses[j] != -1){
                             std::string replyMessage = "CLASS " + std::to_string(j) + " " + std::to_string(playerClasses[j]);
                             ENetPacket * packet = enet_packet_create(replyMessage.c_str(), replyMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
                             enet_peer_send(event.peer, 0, packet);
@@ -212,14 +214,14 @@ void createLobbyServer(int port){
 
     for(ENetPeer * c : clients){
         //Broadcast player states
-        std::string updateMessage = "UPDATE";
+        std::string updateMessage = "U";
         for (Player p : gd.players_){
             updateMessage += " " + std::to_string(p.index) + " ";
-            updateMessage += std::to_string(p.pos.x) + " " + std::to_string(p.pos.y) + " ";
-            updateMessage += std::to_string(p.vel.x) + " " + std::to_string(p.vel.y) + " ";
-            // updateMessage += std::to_string(p.state_->stateVal) + " ";
-            // updateMessage += std::to_string(p.dir) + " " + std::to_string(p.canDoubleJump) + " " + std::to_string(p.grounded) + " ";
-            // updateMessage += std::to_string(p.isStunned) + " " + std::to_string(p.isDead);
+            updateMessage += std::to_string((p.pos.x)) + " " + std::to_string((p.pos.y)) + " ";
+            updateMessage += std::to_string((p.vel.x)) + " " + std::to_string((p.vel.y)) + " ";
+            updateMessage += std::to_string(p.state_->stateVal) + " ";
+            updateMessage += std::to_string(p.dir) + " " + std::to_string(p.canDoubleJump) + " " + std::to_string(p.grounded) + " ";
+            updateMessage += std::to_string(p.isStunned) + " " + std::to_string(p.isDead) + " " + std::to_string(p.currentDirection);
         }
         ENetPacket * packet = enet_packet_create(updateMessage.c_str(), updateMessage.size()+1, 0);             //0 means unreliable
         enet_peer_send(c, 0, packet);
@@ -280,14 +282,14 @@ void createLobbyServer(int port){
         if(nowTime-lastBroadcast >= UPDATE_INTERVAL_MS){
             for(ENetPeer * c : clients){
                 //Broadcast player states
-                std::string updateMessage = "UPDATE";
+                std::string updateMessage = "U";
                 for (Player p : gd.players_){
                     updateMessage += " " + std::to_string(p.index) + " ";
-                    updateMessage += std::to_string(p.pos.x) + " " + std::to_string(p.pos.y) + " ";
-                    updateMessage += std::to_string(p.vel.x) + " " + std::to_string(p.vel.y) + " ";
-                    // updateMessage += std::to_string(p.state_->stateVal) + " ";
-                    // updateMessage += std::to_string(p.dir) + " " + std::to_string(p.canDoubleJump) + " " + std::to_string(p.grounded) + " ";
-                    // updateMessage += std::to_string(p.isStunned) + " " + std::to_string(p.isDead);
+                    updateMessage += std::to_string((p.pos.x)) + " " + std::to_string((p.pos.y)) + " ";
+                    updateMessage += std::to_string((p.vel.x)) + " " + std::to_string((p.vel.y)) + " ";
+                    updateMessage += std::to_string(p.state_->stateVal) + " ";
+                    updateMessage += std::to_string(p.dir) + " " + std::to_string(p.canDoubleJump) + " " + std::to_string(p.grounded) + " ";
+                    updateMessage += std::to_string(p.isStunned) + " " + std::to_string(p.isDead) + " " + std::to_string(p.currentDirection);
                 }
                 ENetPacket * packet = enet_packet_create(updateMessage.c_str(), updateMessage.size()+1, 0);             //0 means unreliable
                 enet_peer_send(c, 0, packet);
