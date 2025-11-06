@@ -8,6 +8,7 @@
 #include "../headers/state.h"
 #include "../headers/playerState.h"
 #include "../headers/enet.h"
+#include <algorithm>
 
 using namespace std;
 
@@ -180,7 +181,7 @@ void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
     //Send server your input
     if(!key.repeat){
         std::string pendingMessage = "INPUT " + std::to_string(gd.playerIndex) + " " + std::to_string(key.scancode) + " " + std::to_string(key.down);
-        ENetPacket * packet = enet_packet_create(pendingMessage.c_str(), pendingMessage.size() + 1, 0);
+        ENetPacket * packet = enet_packet_create(pendingMessage.c_str(), pendingMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
         enet_peer_send(serverPeer, 0, packet);
         enet_host_flush(client);
     }
@@ -239,7 +240,45 @@ void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
     // }  
 }
 
+//calculate distance between two
+double calculateDistanceSDL(float x1, float y1, float x2, float y2) {
+    double dx = static_cast<double>(x2 - x1);
+    double dy = static_cast<double>(y2 - y1);
+    return std::sqrt(std::pow(dx, 2) + std::pow(dy, 2));
+}
+
 void placement(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
     //calculate the placement of each player based on their checkpoints and position
-    
+    //has to use pointers because we need to modify the .placements of the actual gd objects
+    std::vector<Player*> playersPlacement;
+    playersPlacement.reserve(gd.players_.size());
+    for (auto &p : gd.players_) {
+        playersPlacement.push_back(&p);
+    }
+
+    std::stable_sort(playersPlacement.begin(), playersPlacement.end(),
+        [&gd](const Player* p1, const Player* p2) {
+            //first sort by laps completed
+            if (p1->lapsCompleted != p2->lapsCompleted) {
+                return p1->lapsCompleted > p2->lapsCompleted;
+            } else if (p1->lastCheckpoint != p2->lastCheckpoint) {
+                //next by last checkpoint
+                return p1->lastCheckpoint > p2->lastCheckpoint;
+            } else {
+                //finally by distance until the next checkpoint
+                return abs(calculateDistanceSDL(
+                    gd.checkpoints_[p1->lastCheckpoint+1].collider.x,
+                    gd.checkpoints_[p1->lastCheckpoint+1].collider.y,
+                    p1->pos.x, p1->pos.y
+                )) < abs(calculateDistanceSDL(
+                    gd.checkpoints_[p2->lastCheckpoint+1].collider.x,
+                    gd.checkpoints_[p2->lastCheckpoint+1].collider.y,
+                    p2->pos.x, p2->pos.y
+                ));
+            }
+        });
+
+    for (int i = 0; i < playersPlacement.size(); i++) {
+        playersPlacement[i]->position = i + 1;  // Updates the real gd.players_ objects
+    }
 }

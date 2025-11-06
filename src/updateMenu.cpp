@@ -1205,8 +1205,19 @@ void handleTitleClick(const SDLState &state, GameData &gd, Resources &res, float
             currState->init(state, gd, res);
         }
     } else if((gd.mouseCoords.x >= 315 && gd.mouseCoords.x <= 485) && (gd.mouseCoords.y >= 368 && gd.mouseCoords.y <= 436)){        //Join
-        if(gd.md.tempStr!="") {
-            currState->nextStateVal = JOIN;
+        if(gd.md.tempStr!="") {    
+            currState->currStateVal = JOIN;
+            std::string lobbyQuery = "LOBBY_QUERY";
+            ENetPacket * packet = enet_packet_create(lobbyQuery.c_str(), lobbyQuery.size()+1, ENET_PACKET_FLAG_RELIABLE);
+            enet_peer_send(serverPeer, 0, packet);
+            enet_host_flush(client);
+
+            //Rei TODO - For Testing keep here, later, when player chooses lobby id X, send "JOIN X" and change state
+            std::string joinMessage = "JOIN 1";
+            packet = enet_packet_create(joinMessage.c_str(), joinMessage.size()+1, ENET_PACKET_FLAG_RELIABLE);
+            enet_peer_send(serverPeer, 0, packet);
+            enet_host_flush(client);
+            currState->nextStateVal = CHAR_SELECT;
             currState = changeState(currState, gd);
             currState->init(state, gd, res);
         }

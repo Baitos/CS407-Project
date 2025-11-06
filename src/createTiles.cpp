@@ -300,6 +300,7 @@ void createTilesSpaceship(const SDLState &state, GameData &gd, const Resources &
                         //printf("%d",((LevelState*) currState)->character);
                         //Player player2(pos, collider, res.texIdleS, res.playerAnims, res.ANIM_PLAYER_IDLE, 250);
                         //gd.player2 = player2;
+                        
                         Player player;
                         for(int index = 0; index < 8; index++){
                             if(gd.playerTypes[index] != -1){
@@ -752,7 +753,7 @@ void createTilesGrassland(const SDLState &state, GameData &gd, const Resources &
                         //Player player2(pos, collider, res.texIdleS, res.playerAnims, res.ANIM_PLAYER_IDLE, 250);
                         //gd.player2 = player2;
                         Player player;
-                        
+                        printf("r: %d, c: %d\n", r, c);
                         for(int index = 0; index < 8; index++){
                             if(gd.playerTypes[index] != -1){
                                 if(gd.playerTypes[index]== SWORD){
@@ -877,6 +878,7 @@ void createTilesGrassland(const SDLState &state, GameData &gd, const Resources &
     createGrid(state, gd, MAP_ROWS, MAP_COLS);
     //load in checkpoints
     createCheckpointsGrassland(state, gd, res);
+
     
     //loadMap(foreground);
 }

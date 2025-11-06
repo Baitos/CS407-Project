@@ -7,9 +7,10 @@ struct SDLState
     SDL_Window *window;
     SDL_Renderer *renderer;
     int width, height, logW, logH;
-    const bool *keys;
-    SDLState() : keys(SDL_GetKeyboardState(nullptr)) {
-
+    float xRatio, yRatio;
+    bool keys[8][SDL_SCANCODE_COUNT-1];
+    SDLState() {
+        
     }
 };
 bool initialize(SDLState &state);

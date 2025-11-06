@@ -1,19 +1,16 @@
 #pragma once
 #include <stdio.h>
 #include <SDL3/SDL.h>
-//include <SDL3_image/SDL_image.h>
+//#include <SDL3_image/SDL_image.h>
 #include <vector>
 #include <string>
 #include <array>
-
-#include "../serverHeaders/updateMenu.h"
 #include "../serverHeaders/updateLevel.h"
 #include "../serverHeaders/collision.h"
 #include "../serverHeaders/gameData.h"
 #include "../serverHeaders/initState.h"
 #include "../serverHeaders/helper.h"
 #include "../serverHeaders/globals.h"
-#include "../serverHeaders/resources.h"
 #include "../serverHeaders/playerState.h"
 
 
@@ -25,8 +22,10 @@ enum gameStates {
     JOIN,
     CHAR_SELECT,
     SPACESHIP,
+    GRASSLANDS,
     RESULTS,
-    CREDITS
+    CREDITS,
+    GAMEPLAY_SETTINGS
 };
 
 class GameState{
@@ -36,21 +35,11 @@ class GameState{
         int nextStateVal;
         GameState * prevState;
         GameState * nextState; //May not need
-        void (*input)(SDLState &state, GameData &gd, Resources &res, float deltaTime);
-        void (*update)(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
-        void (*render)(const SDLState &state, GameData &gd, Resources res, float deltaTime);
-        void (*init)(const SDLState &state, GameData &gd, const Resources &res);
+        void (*input)(SDLState &state, GameData &gd, float deltaTime);
+        void (*update)(const SDLState &state, GameData &gd, float deltaTime, int keyID, int keyDown, int playerID);
+        void (*init)(const SDLState &state, GameData &gd);
        
-        void unloadGameState(GameData &gd){
-            gd.mapTiles_.clear();
-            //gd.bgTiles_.clear();
-            //gd.previews_.clear();
-            gd.lasers_.clear();
-            gd.portals_.clear();
-            //TO-DO Add clearing players
-        }
-
-
+        void unloadGameState(GameData &gd);
 };
 
 class TitleState : public GameState{
@@ -58,7 +47,11 @@ class TitleState : public GameState{
 };
 
 class SettingsState : public GameState{
-
+    public:
+    std::vector<std::string> controlStrings = std::vector<std::string>(7);
+    float xStart = 600;
+    float yStart = 115;
+    float yOffset = 26;
 };
 
 class HostState : public GameState {
@@ -76,7 +69,7 @@ class CharSelectState : public GameState{
 
 class LevelState : public GameState{
     public:
-        characterType character = SWORD;
+        characterType character = SHOTGUN;
 };
 
 /*class SpaceshipState : public LevelState {
@@ -94,6 +87,10 @@ class ResultsState : public GameState {
 };
 
 class CreditsState : public GameState {
+
+};
+
+class GameplaySettingsState : public GameState{
 
 };
 

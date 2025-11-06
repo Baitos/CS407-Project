@@ -80,6 +80,37 @@ void drawLevel(const SDLState &state, GameData &gd, Resources res, float deltaTi
         }
     }
 
+    //draw player's placement
+    SDL_Color color = {0, 239, 255, 255};
+    if(gd.players_[gd.playerIndex].position != -1) {
+        std::string place = std::to_string(gd.players_[gd.playerIndex].position);
+        switch(gd.players_[gd.playerIndex].position) {
+                case 1:
+                    place.append("st");
+                    break;
+                case 2:
+                    place.append("nd");
+                    break;
+                case 3:
+                    place.append("rd");
+                    break;
+                default:
+                    place.append("th");
+                    break;
+        }
+        SDL_Surface* textSurface = TTF_RenderText_Blended(gd.md.font, place.c_str(), place.length(), color);
+        SDL_Texture* textTex = SDL_CreateTextureFromSurface(state.renderer, textSurface);
+        SDL_SetTextureScaleMode(textTex, SDL_SCALEMODE_NEAREST);
+        //change x any position to reflect viewport - should go in the bottom right
+        // this centers the minimap's top right corner to the top right corner of the screen, allowing for minimaps of any size to work
+        float xpos = (gd.players_[0].pos.x + TILE_SIZE / 2) + (gd.mapViewport.w / 2) - gd.mapViewport.x; 
+        float ypos = (gd.players_[0].pos.y + TILE_SIZE / 2) + (gd.mapViewport.h / 2) - gd.mapViewport.y;
+        SDL_FRect rect = { xpos - (float)textSurface->w, ypos - (float)textSurface->h, (float)textSurface->w, (float)textSurface->h };
+
+        SDL_RenderTexture(state.renderer, textTex, nullptr, &rect);
+        SDL_DestroyTexture(textTex);
+        SDL_DestroySurface(textSurface);
+    }
 
 
     gd.itemStorage_.draw(state, gd, 68, 68);
