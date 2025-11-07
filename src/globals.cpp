@@ -1,4 +1,5 @@
 #include "../headers/globals.h"
+#include <SDL_stdinc.h>
 
 int TILE_SIZE = 32;
 int HOOK_SIZE = 16;
@@ -12,4 +13,6 @@ float masterVolume = 100.0f;
 float musicVolume = 100.0f;
 float sfxVolume = 100.0f;
 const float EPSILON = 0.01f;
+Uint64 lastLobbyQuery = 0;
+const Uint64 UPDATE_INTERVAL_MS = 3000; // Update lobbies every 3 seconds
 std::string username = "";

@@ -1136,6 +1136,7 @@ void initHostLobby(const SDLState &state, GameData &gd, const Resources &res) {
 }
 
 void initJoinLobby(const SDLState &state, GameData &gd, const Resources &res) {
+    lastLobbyQuery = 0;
     SDL_FRect collider = {
         .x = 0,
         .y = 0,

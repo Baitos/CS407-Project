@@ -14,5 +14,6 @@ extern bool hasNewKey;
 extern float masterVolume;
 extern float musicVolume;
 extern float sfxVolume;
-
+extern Uint64 lastLobbyQuery = 0;
+extern const Uint64 UPDATE_INTERVAL_MS;
 extern std::string username;
