@@ -13,6 +13,57 @@
 
 extern GameState *currState;
 
+void createPlayer(GameData &gd, const Resources &res, glm::vec2 pos) { // case for player put in one code block
+    SDL_FRect collider = { 
+        .x = 1,
+        .y = 1,
+        .w = 28,
+        .h = 30 // more accurate at 31, bug caused where player stuck in jump state in small ceilings
+    };
+    SDL_FRect hookCollider = { 
+        .x = 0,
+        .y = 0,
+        .w = static_cast<float>(HOOK_SIZE),
+        .h = static_cast<float>(HOOK_SIZE)
+    };
+    Player player;
+    if(((LevelState*) currState)->character == SWORD){
+        player = Player(pos, collider, res.texIdle[SWORD], res.playerAnims, res.ANIM_PLAYER_IDLE, 250);         
+        player.cooldownTimer = Timer(3.0f);
+    } else if(((LevelState*) currState)->character == SHOTGUN){
+        player = Player(pos, collider, res.texIdle[SHOTGUN], res.playerAnims, res.ANIM_PLAYER_IDLE, 250);
+        player.cooldownTimer = Timer(5.0f);
+    } else {
+        player = Player(pos, collider, res.texIdle[JETPACK], res.playerAnims, res.ANIM_PLAYER_IDLE, 250);
+        player.cooldownTimer = Timer(1.0f);
+    }
+    
+    player.character = ((LevelState*) currState)->character;
+    player.state_ = new IdleState();
+    player.dir = 0;
+    player.flip = 1;
+    player.cooldownTimer.step(5.0f);
+
+    player.hook = Hook(player.pos, hookCollider, res.texGrapple);
+    player.index = 0;
+    gd.playerIndex = 0;
+    gd.players_.push_back(player);
+    
+    //add player's username (as of now, all same, will need to change w multiplayer)
+    player.username = gd.md.tempUsername;
+
+    // Add itemStorage
+    SDL_FRect storageCollider; 
+    gd.itemStorage_ = ItemStorage(player.pos, storageCollider, res.texItemStorage);
+    gd.itemStorage_.animations = res.itemAnims;
+    gd.itemStorage_.curAnimation = res.ANIM_ITEM_EMPTY;
+}
+
+void createItemBox(GameData &gd, const Resources &res, glm::vec2 pos, SDL_FRect collider) { // case for item box put in one code block
+    ItemBox box(pos, collider, res.texItemBox);
+    gd.itemBoxes_.push_back(box);
+}
+
 template <typename T>
 void placeInGrid(std::vector<T> &o, GameData &gd) { // not in .h file
     for (T &obj : o) {
@@ -194,29 +245,11 @@ void createTilesSpaceship(const SDLState &state, GameData &gd, const Resources &
     };
     const auto loadMap = [&state, &gd, &res](short layer[MAP_ROWS][MAP_COLS])
     {
-        /*const auto createLevel = [&state](int r, int c, SDL_Texture *tex) {
-            Level l;
-            l.pos = glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r) * TILE_SIZE); // subtract r from map rows to not be backwards. drawn top to bottom and flush with resolution
-            l.texture = tex;
-            l.collider = {
-                .x = 0,
-                .y = 0,
-                .w = (float)TILE_SIZE,
-                .h = (float)TILE_SIZE
-            };
-            return l;
-        };*/
         SDL_FRect collider = {
             .x = 0,
             .y = 0,
             .w = (float)TILE_SIZE,
             .h = (float)TILE_SIZE
-        };
-        SDL_FRect hookCollider = { 
-            .x = 0,
-            .y = 0,
-            .w = static_cast<float>(HOOK_SIZE),
-            .h = static_cast<float>(HOOK_SIZE)
         };
         for (int r = 0; r < MAP_ROWS; r++) {
             for (int c = 0; c < MAP_COLS; c++) {
@@ -288,49 +321,7 @@ void createTilesSpaceship(const SDLState &state, GameData &gd, const Resources &
                     }
                     case 6: //Player
                     {
-                        SDL_FRect collider = { 
-                            .x = 1,
-                            .y = 1,
-                            .w = 28,
-                            .h = 30 // more accurate at 31, bug caused where player stuck in jump state in small ceilingd
-                        };
-                        
-                        
-                        //printf("%d",((LevelState*) currState)->character);
-                        //Player player2(pos, collider, res.texIdleS, res.playerAnims, res.ANIM_PLAYER_IDLE, 250);
-                        //gd.player2 = player2;
-                        Player player;
-                        if(((LevelState*) currState)->character == SWORD){
-                            player = Player(pos, collider, res.texIdle[SWORD], res.playerAnims, res.ANIM_PLAYER_IDLE, 250);         
-                            player.cooldownTimer = Timer(3.0f);
-                        } else if(((LevelState*) currState)->character == SHOTGUN){
-                            player = Player(pos, collider, res.texIdle[SHOTGUN], res.playerAnims, res.ANIM_PLAYER_IDLE, 250);
-                            player.cooldownTimer = Timer(5.0f);
-                        } else {
-                            player = Player(pos, collider, res.texIdle[JETPACK], res.playerAnims, res.ANIM_PLAYER_IDLE, 250);
-                            player.cooldownTimer = Timer(1.0f);
-                        }
-                        
-                        player.character = ((LevelState*) currState)->character;
-                        player.state_ = new IdleState();
-                        player.dir = 0;
-                        player.flip = 1;
-                        player.cooldownTimer.step(5.0f);
-                        //gd.player2.state_ = newState;
-
-                        //add player's username (as of now, all same, will need to change w multiplayer)
-                        player.username = gd.md.tempUsername;
-
-                        player.hook = Hook(player.pos, hookCollider, res.texGrapple);
-                        player.index = 0;
-                        gd.playerIndex = 0;
-                        gd.players_.push_back(player);
-                        
-                        // Add itemStorage
-                        SDL_FRect storageCollider; 
-                        gd.itemStorage_ = ItemStorage(player.pos, storageCollider, res.texItemStorage);
-                        gd.itemStorage_.animations = res.itemAnims;
-                        gd.itemStorage_.curAnimation = res.ANIM_ITEM_EMPTY;
+                        createPlayer(gd, res, pos);
                         break; 
                     }
                     case 7: //Background
@@ -415,8 +406,7 @@ void createTilesSpaceship(const SDLState &state, GameData &gd, const Resources &
                     }
                     case 19: // Item Box
                     {
-                        ItemBox box(pos, collider, res.texItemBox);
-                        gd.itemBoxes_.push_back(box);
+                        createItemBox(gd, res, pos, collider);
                         break; 
                     }
                     case 20:{
@@ -665,29 +655,11 @@ void createTilesGrassland(const SDLState &state, GameData &gd, const Resources &
 
     const auto loadMap = [&state, &gd, &res](short layer[MAP_ROWS][MAP_COLS])
     {
-        /*const auto createLevel = [&state](int r, int c, SDL_Texture *tex) {
-            Level l;
-            l.pos = glm::vec2(c * TILE_SIZE, state.logH - (MAP_ROWS - r) * TILE_SIZE); // subtract r from map rows to not be backwards. drawn top to bottom and flush with resolution
-            l.texture = tex;
-            l.collider = {
-                .x = 0,
-                .y = 0,
-                .w = (float)TILE_SIZE,
-                .h = (float)TILE_SIZE
-            };
-            return l;
-        };*/
         SDL_FRect collider = {
             .x = 0,
             .y = 0,
             .w = (float)TILE_SIZE,
             .h = (float)TILE_SIZE
-        };
-        SDL_FRect hookCollider = { 
-            .x = 0,
-            .y = 0,
-            .w = static_cast<float>(HOOK_SIZE),
-            .h = static_cast<float>(HOOK_SIZE)
         };
         for (int r = 0; r < MAP_ROWS; r++) {
             for (int c = 0; c < MAP_COLS; c++) {
@@ -734,49 +706,8 @@ void createTilesGrassland(const SDLState &state, GameData &gd, const Resources &
                     }
                     case 6: //Player
                     {
-                        SDL_FRect collider = { 
-                            .x = 1,
-                            .y = 1,
-                            .w = 28,
-                            .h = 30 // more accurate at 31, bug caused where player stuck in jump state in small ceilingd
-                        };
-                        
-                        
-                        //printf("%d",((LevelState*) currState)->character);
-                        //Player player2(pos, collider, res.texIdleS, res.playerAnims, res.ANIM_PLAYER_IDLE, 250);
-                        //gd.player2 = player2;
-                        Player player;
-                        if(((LevelState*) currState)->character == SWORD){
-                            player = Player(pos, collider, res.texIdle[SWORD], res.playerAnims, res.ANIM_PLAYER_IDLE, 250);         
-                            player.cooldownTimer = Timer(3.0f);
-                        } else if(((LevelState*) currState)->character == SHOTGUN){
-                            player = Player(pos, collider, res.texIdle[SHOTGUN], res.playerAnims, res.ANIM_PLAYER_IDLE, 250);
-                            player.cooldownTimer = Timer(5.0f);
-                        } else {
-                            player = Player(pos, collider, res.texIdle[JETPACK], res.playerAnims, res.ANIM_PLAYER_IDLE, 250);
-                            player.cooldownTimer = Timer(1.0f);
-                        }
-                        
-                        player.character = ((LevelState*) currState)->character;
-                        player.state_ = new IdleState();
-                        player.dir = 0;
-                        player.flip = 1;
-                        player.cooldownTimer.step(5.0f);
-                        //gd.player2.state_ = newState;
-
-                        player.hook = Hook(player.pos, hookCollider, res.texGrapple);
-                        player.index = 0;
-                        gd.playerIndex = 0;
-                        gd.players_.push_back(player);
-                        
-                        // Add itemStorage
-                        SDL_FRect storageCollider; 
-                        gd.itemStorage_ = ItemStorage(player.pos, storageCollider, res.texItemStorage);
-                        gd.itemStorage_.animations = res.itemAnims;
-                        gd.itemStorage_.curAnimation = res.ANIM_ITEM_EMPTY;
-
-                        //((LevelState*) currState)->character = SHOTGUN;
-
+                        createPlayer(gd, res, pos);
+                        createPlayer(gd, res, pos);
                         break; 
                     }
                     case 7: //water
@@ -803,8 +734,7 @@ void createTilesGrassland(const SDLState &state, GameData &gd, const Resources &
                     }
                     case 10: // Item Box
                     {
-                        ItemBox box(pos, collider, res.texItemBox);
-                        gd.itemBoxes_.push_back(box);
+                        createItemBox(gd, res, pos, collider);
                         break; 
                     }
                     case 11:

@@ -221,14 +221,21 @@ void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
     }*/
        // Item select, assuming last place for now
     if (key.scancode == SDL_SCANCODE_0) {
-        selectedItem = 0; // Boombox
+        selectedItem = (int)(BOOMBOX); // Boombox
     }
     if (key.scancode == SDL_SCANCODE_1) {
-        selectedItem = 1; // Bomb
+        selectedItem = (int)(BOMB); // Bomb
     }
     if (key.scancode == SDL_SCANCODE_2) {
-        selectedItem = 5; // Sugar
+        selectedItem = (int)(SUGAR); // Sugar
     }
+    if (key.scancode == SDL_SCANCODE_3) {
+        selectedItem = (int)(PIE); // Pie
+    }
+    if (key.scancode == SDL_SCANCODE_4) {
+        selectedItem = (int)(ICE); // Ice
+    }
+
     if (key.scancode == SDL_SCANCODE_F1) {
         running = false;
     }
