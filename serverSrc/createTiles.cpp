@@ -660,46 +660,199 @@ void createTilesGrassland(const SDLState &state, GameData &gd) { // 600 x 80
         SDL_FRect collider = {
             .x = 0,
             .y = 0,
-            .w = 34,
-            .h = 34
+            .w = (float)TILE_SIZE,
+            .h = (float)TILE_SIZE
         };
-        
-        //Put player icons in top row
-        glm::vec2  pos = glm::vec2(98,86);
-        charIconObject c(pos,collider, res.texCharIcons);
-        c.animations = res.charIconAnims;
-        c.curAnimation = 0;
-        c.spriteFrame = 7;
-        
-        
-        //Put player options on right side
-        //Sword
-        c.pos = glm::vec2(658,156);
-        
-        //Jetpack
-        c.pos = glm::vec2(658,220);
-        c.spriteFrame = 2;
-        
-        //Shotgun
-        c.pos = glm::vec2(658,284);
-        c.spriteFrame = 1;
+        SDL_FRect hookCollider = { 
+            .x = 0,
+            .y = 0,
+            .w = static_cast<float>(HOOK_SIZE),
+            .h = static_cast<float>(HOOK_SIZE)
+        };
+        for (int r = 0; r < MAP_ROWS; r++) {
+            for (int c = 0; c < MAP_COLS; c++) {
+                glm::vec2 pos = glm::vec2(c * TILE_SIZE, r * TILE_SIZE);
+                switch (layer[r][c]) {
+                    case 0: //Cloud
+                    {   
+                        Level l(pos, collider);
+                        gd.mapTiles_.push_back(l);
+                        break; 
+                    }
+                    case 1: //wood
+                    {
+                        Level l(pos, collider);
+                        gd.mapTiles_.push_back(l);
+                        break; 
+                    }
+                    case 2: //nothing
+                    {
+                        break;
+                    }
+                    case 3: //leaves
+                    {
+                        Level l(pos, collider);
+                        gd.mapTiles_.push_back(l);
+                        break; 
+                    }
+                    case 4: //grass/dirt
+                    {
+                        Level l;
+                        if(layer[r-1][c] != 4 && layer[r-1][c] != 7){ //not dirt water or tree
+                            l = Level(pos, collider);
+                        } else {
+                            l = Level(pos, collider);
+                        }
+                        gd.mapTiles_.push_back(l);
+                        break; 
+                    }
+                    case 5: //stone
+                    {
+                        Level l(pos, collider);
+                        gd.mapTiles_.push_back(l);
+                        break; 
+                    }
+                    case 6: //Player
+                    {
+                        SDL_FRect collider = { 
+                            .x = 1,
+                            .y = 1,
+                            .w = 28,
+                            .h = 30 // more accurate at 31, bug caused where player stuck in jump state in small ceilingd
+                        };
+                        
+                        //printf("r: %d c: %d", r,c);
+                        //printf("%d",((LevelState*) currState)->character);
+                        //Player player2(pos, collider, res.playerAnims, res.ANIM_PLAYER_IDLE, 250);
+                        //gd.player2 = player2;
+                        Player player;
+                        
+                        for(int index = 0; index < 8; index++){
+                            if(gd.playerTypes[index] != -1){
+                                //printf("added player\n");
+                                if(gd.playerTypes[index]== SWORD){
+                                    player = Player(pos, collider, 250);         
+                                    player.cooldownTimer = Timer(3.0f);
+                                    player.character = SWORD;
+                                } else if(gd.playerTypes[index] == SHOTGUN){
+                                    player = Player(pos, collider, 250);
+                                    player.cooldownTimer = Timer(5.0f);
+                                    player.character = SHOTGUN;
+                                } else {
+                                    player = Player(pos, collider,  250);
+                                    player.cooldownTimer = Timer(1.0f);
+                                    player.character = JETPACK;
+                                }
+                                
+                                //player.character = SWORD;
+                                player.state_ = new IdleState();
+                                player.dir = 0;
+                                player.flip = 1;
+                                player.cooldownTimer.step(5.0f);
+                                //gd.player2.state_ = newState;
+
+                                player.hook = Hook(player.pos, hookCollider);
+                                player.index = index;
+                                gd.players_.push_back(player);
+                            }
+                        }
+                        
+                        // Add itemStorage
+                        SDL_FRect storageCollider; 
+                        gd.itemStorage_ = ItemStorage(player.pos, storageCollider);
+                        
+
+                        //((LevelState*) currState)->character = SHOTGUN;
+
+                        break; 
+                    }
+                    case 7: //water
+                    {
+                        /*Level l(pos, collider);
+                        gd.mapTiles_.push_back(l);*/
+                        Water w(pos, collider);
+                        gd.water_.push_back(w);
+                        break; 
+                    }
+                    case 8: //lava
+                    {
+                        /*Level l(pos, collider);
+                        gd.mapTiles_.push_back(l);*/
+                        if(layer[r-1][c]!=2) {
+                            Lava l(pos, collider);
+                            gd.lava_.push_back(l);
+                            break; 
+                        } else {
+                            BackgroundObject b(pos, collider);
+                            gd.bgTiles_.push_back(b);
+                            break;
+                        }
+                    }
+                    case 10: // Item Box
+                    {
+                        ItemBox box(pos, collider);
+                        gd.itemBoxes_.push_back(box);
+                        break; 
+                    }
+                    case 11:
+                    {
+                        break;
+                    }
+                    case 12: //Background
+                    {
+                        BackgroundObject b(pos, collider);
+                        gd.bgTiles_.push_back(b);
+                        break;
+                    }
+                    case 13: //Background
+                    {
+                        BackgroundObject b(pos, collider);
+                        gd.bgTiles_.push_back(b);
+                        break;
+                    }
+                    case 14: //Background
+                    {
+                        BackgroundObject b(pos, collider);
+                        gd.bgTiles_.push_back(b);
+                        break;
+                    }
+                    case 15: //up sign
+                    {
+                        Sign s(pos, collider);
+                        gd.signs_.push_back(s);
+                        break;
+                    }
+                    case 16: //down sign
+                    {
+                        Sign s(pos, collider);
+                        gd.signs_.push_back(s);
+                        break;
+                    }
+                    case 17: //left sign
+                    {
+                        Sign s(pos, collider);
+                        gd.signs_.push_back(s);
+                        break;
+                    }
+                    case 18: //right sign
+                    {
+                        Sign s(pos, collider);
+                        gd.signs_.push_back(s);
+                        break;
+                    }
+                }
+            }
+        }
+    };
+    loadMap(map);
+    loadMap(background);
+
     
+    createGrid(state, gd, MAP_ROWS, MAP_COLS);
+    //load in checkpoints
+    createCheckpointsGrassland(state, gd);
 
-        
-
-        
-        // Preview
-        AnimatedObject preview(pos, collider, res.texSword);
-        preview.pos = glm::vec2(530,200);
-        preview.animations = res.playerAnims;
-        preview.curAnimation = res.ANIM_PLAYER_RUN;
-        
-
-        Object border(pos, collider, res.texBigBorder);
-        
-        gd.settingsBorder = border;
-        gd.settingsBorder.pos.y =  500;
-        
+    
     //loadMap(foreground);
 }
 

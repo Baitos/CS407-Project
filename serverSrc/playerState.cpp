@@ -117,7 +117,7 @@ PlayerState* IdleState::update(const SDLState &state, GameData &gd, Player &p, f
 
 void IdleState::enter(GameData &gd, Player &p) {
     p.vel.x = 0;
-    printf("enter idle\n");
+    //printf("enter idle\n");
 }
 
 // WALK
@@ -153,7 +153,7 @@ PlayerState* WalkState::update(const SDLState &state, GameData &gd, Player &p, f
 
 void WalkState::enter(GameData &gd, Player &p) {
     p.maxSpeedX = p.maxWalkX;
-    printf("enter walk\n");
+    //printf("enter walk\n");
 }
 
 // RUN
