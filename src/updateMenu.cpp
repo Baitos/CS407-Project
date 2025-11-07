@@ -149,15 +149,6 @@ void joinLobbyUpdate(const SDLState &state, GameData &gd, Resources &res, float 
     if (gd.md.startLobbyIndex > lobbies.size() - 7) {
         gd.md.startLobbyIndex = lobbies.size() - 7;
     }
-    //         //For Testing
-    //         std::string joinMessage = "JOIN 1";
-    //         packet = enet_packet_create(joinMessage.c_str(), joinMessage.size()+1, ENET_PACKET_FLAG_RELIABLE);
-    //         enet_peer_send(serverPeer, 0, packet);
-    //         enet_host_flush(client);
-    //         currState->nextStateVal = CHAR_SELECT;
-    //         currState = changeState(currState, gd);
-    //         currState->init(state, gd, res);
-
 }
 
 //
@@ -1184,13 +1175,20 @@ if ((gd.mouseCoords.x >= 40 && gd.mouseCoords.x <= 219) && (gd.mouseCoords.y >= 
         // TODO check if lobby selected and password, then change state to char select after receiving response
         ENetPacket * packet;
         int lobbyId = -1;
+        Lobby lobby;
         if (gd.md.isPrivate) {
-            if (hash<string>{}(gd.md.password) == gd.md.privateLobbies_[gd.md.lobbyPicked].passwordHash) {
-                lobbyId = gd.md.privateLobbies_[gd.md.lobbyPicked].id;
+            lobby = gd.md.privateLobbies_[gd.md.lobbyPicked];
+            if (hash<string>{}(gd.md.password) == lobby.passwordHash) {
+                lobbyId = lobby.id;
+                gd.isGrandPrix = lobby.isGrandPrix;
+                gd.laps_per_race = lobby.numLaps;
             }
         }
         else {
-            lobbyId = gd.md.publicLobbies_[gd.md.lobbyPicked].id;
+            lobby = gd.md.publicLobbies_[gd.md.lobbyPicked];
+            lobbyId = lobby.id;
+            gd.isGrandPrix = lobby.isGrandPrix;
+            gd.laps_per_race = lobby.numLaps;
         }
         if (lobbyId != -1) {
             std::string joinMessage = "JOIN " + to_string(lobbyId);
@@ -1242,7 +1240,7 @@ void handleTitleClick(const SDLState &state, GameData &gd, Resources &res, float
             enet_peer_send(serverPeer, 0, packet);
             enet_host_flush(client);
 
-            //Rei TODO - For Testing keep here, later, when player chooses lobby id X, send "JOIN X PASSHASH" and change state
+            //Rei TODO - For Testing keep here, later, when player chooses lobby id X, send "JOIN X" and change state
             std::string joinMessage = "JOIN 1";
             packet = enet_packet_create(joinMessage.c_str(), joinMessage.size()+1, ENET_PACKET_FLAG_RELIABLE);
             enet_peer_send(serverPeer, 0, packet);
