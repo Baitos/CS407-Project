@@ -176,7 +176,7 @@ void levelMessageHandler(ENetEvent * event, GameData * gd, Resources &res, SDLSt
                 
             } else if(message.find("IM ") != std::string::npos){
                 if(std::stoi(message.substr(3,1)) == gd->playerIndex){
-                    printf("new item picked received\n");
+                    printf("%s\n", message.c_str());
                     SDL_FRect collider = {
                         .x = 0,
                         .y = 0,
@@ -197,7 +197,12 @@ void levelMessageHandler(ENetEvent * event, GameData * gd, Resources &res, SDLSt
                     }
                     Item * temp = gd->players_[gd->playerIndex].heldItem;
                     gd->players_[gd->playerIndex].heldItem = newItem;  
-                    delete temp;
+                    if(!gd->players_[gd->playerIndex].pickingItem){
+                        gd->itemStorage_.texture = res.itemTextures[gd->players_[gd->playerIndex].heldItem->index];
+                    }
+                    if (temp != nullptr) {
+                        delete temp;
+                    }
                 }
             }
             break;

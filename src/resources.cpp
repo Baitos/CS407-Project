@@ -30,7 +30,7 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
 
     itemAnims.resize(6); // 
     itemAnims[ANIM_ITEM_EMPTY] = Animation(1, 1.0f);
-    itemAnims[ANIM_ITEM_CYCLE] = Animation(8, 0.4f);
+    itemAnims[ANIM_ITEM_CYCLE] = Animation(8, 0.7f);
     itemAnims[ANIM_ITEM_PICKED] = Animation(1, 1.0f);
     itemAnims[ANIM_ITEM_EXPLOSION] = Animation(3, 0.5f);
     itemAnims[ANIM_ITEM_SOUNDWAVE] = Animation(9, 0.4f);

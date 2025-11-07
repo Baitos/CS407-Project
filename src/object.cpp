@@ -193,32 +193,32 @@ void ItemBox::generateItem(Player &player, GameData &gd, Resources &res) {
             itemType::FOG, itemType::ICE, itemType::MISSILE, itemType::SUGAR, itemType::PIE};
     //}
     selected = rand() % itemOptions.size();
-    switch (itemOptions[selected]) {
-        case itemType::BOMB:
-            newItem = new Bomb(player.pos, defaultCollider, res.texBomb);
-            break;
-        case itemType::BOOMBOX:
-            newItem = new Boombox(player.pos, defaultCollider, res.texBoombox);
-            break;
-        case itemType::SUGAR:
-            newItem = new Sugar(player.pos, defaultCollider, res.texSugar);
-            break;
-        case itemType::PIE:
-            newItem = new PieItem(player.pos, defaultCollider, res.texPie);
-            break;
-        case itemType::ICE:
-            newItem = new Ice(player.pos, defaultCollider, res.texIce);
-            break;
-        default:
-            printf("Your item is in another castle\n");
-            newItem = new Ice(player.pos, defaultCollider, res.texIce);
-            break;
-    }
+    // switch (itemOptions[selected]) {
+    //     case itemType::BOMB:
+    //         newItem = new Bomb(player.pos, defaultCollider, res.texBomb);
+    //         break;
+    //     case itemType::BOOMBOX:
+    //         newItem = new Boombox(player.pos, defaultCollider, res.texBoombox);
+    //         break;
+    //     case itemType::SUGAR:
+    //         newItem = new Sugar(player.pos, defaultCollider, res.texSugar);
+    //         break;
+    //     case itemType::PIE:
+    //         newItem = new PieItem(player.pos, defaultCollider, res.texPie);
+    //         break;
+    //     case itemType::ICE:
+    //         newItem = new Ice(player.pos, defaultCollider, res.texIce);
+    //         break;
+    //     default:
+    //         printf("Your item is in another castle\n");
+    //         newItem = new Ice(player.pos, defaultCollider, res.texIce);
+    //         break;
+    // }
     
-    if (player.heldItem != nullptr) {
-        delete player.heldItem;
-    }
-    player.heldItem = newItem;
+    // if (player.heldItem != nullptr) {
+    //     delete player.heldItem;
+    // }
+    // player.heldItem = newItem;
     player.pickingItem = true;
 }
 
