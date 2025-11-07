@@ -1115,7 +1115,7 @@ void handleHostLobbyClick(const SDLState &state, GameData &gd, Resources &res, f
         newLobby.isGrandPrix = gd.isGrandPrix;
         newLobby.numLaps = gd.laps_per_race;
         newLobby.passwordHash = 0;
-        if (gd.md.password != "") 
+        if (gd.md.isPrivate && gd.md.password != "") 
             newLobby.passwordHash = hash<string>{}(gd.md.password);
         //TELL SERVER TO MAKE LOBBY
         std::string createLobbyMessage = "HOST " + newLobby.to_string();
