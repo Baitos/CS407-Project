@@ -204,7 +204,7 @@ void ItemBox::generateItem(Player &player, GameData &gd, Resources &res) {
             newItem = new Sugar(player.pos, defaultCollider, res.texSugar);
             break;
         case itemType::PIE:
-            newItem = new Pie(player.pos, defaultCollider, res.texPie);
+            newItem = new PieItem(player.pos, defaultCollider, res.texPie);
             break;
         case itemType::ICE:
             newItem = new Ice(player.pos, defaultCollider, res.texIce);

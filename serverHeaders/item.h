@@ -55,6 +55,7 @@ class Bomb : public Item {
         void checkCollision(const SDLState &state, GameData &gd, Player &p, float deltaTime);
         Bomb(glm::vec2 pos_, SDL_FRect colliderRect) :
         Item(pos_, colliderRect) {
+            type = BOMB;
             index = 0;
             width = 32;
             height = 32;
@@ -69,6 +70,7 @@ class Boombox : public Item {
         void checkCollision(const SDLState &state, GameData &gd, Player &p, float deltaTime);
         Boombox(glm::vec2 pos_, SDL_FRect colliderRect) :
         Item(pos_, colliderRect) {
+            type = BOOMBOX;
             index = 1;
             width = 196;
             height = 196;
@@ -86,6 +88,7 @@ class Ice : public Item {
         void checkCollision(const SDLState &state, GameData &gd, Player &p, float deltaTime);
         Ice(glm::vec2 pos_, SDL_FRect colliderRect) :
         Item(pos_, colliderRect), iceTimer(30.0f), flipTimer(0.2f) {
+            type = ICE;
             index = 4;
             BOUND = 5;
             width = 32;
@@ -104,17 +107,19 @@ class Sugar : public Item {
         void checkCollision(const SDLState &state, GameData &gd, Player &p, float deltaTime) {} // do nothing
         Sugar(glm::vec2 pos_, SDL_FRect colliderRect) :
         Item(pos_, colliderRect), sugarTimer(4.0f) {
+            type = SUGAR;
             index = 6;
         }
 };
 
-class Pie : public Item {
+class PieItem : public Item {
     public:   
         void useItem(const SDLState &state, GameData &gd,  Player &p);
         void update(const SDLState &state, GameData &gd, Player &p, float deltaTime);
         void checkCollision(const SDLState &state, GameData &gd,  Player &p, float deltaTime);
-        Pie(glm::vec2 pos_, SDL_FRect colliderRect) :
+        PieItem(glm::vec2 pos_, SDL_FRect colliderRect) :
         Item(pos_, colliderRect) {
+            type = PIE;
             width = 32;
             height = 32;
             index = 7;

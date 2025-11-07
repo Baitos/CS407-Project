@@ -7,6 +7,7 @@
 #include "../serverHeaders/helper.h"
 #include "../serverHeaders/collision.h"
 #include "../serverHeaders/item.h"
+#include "../serverHeaders/enet.h"
 
 
 void AnimatedObject::update(const SDLState &state, GameData &gd, float deltaTime) { // just step the anims
@@ -70,6 +71,7 @@ void ItemBox::update(const SDLState &state, GameData &gd, float deltaTime) { // 
         // Reset timer and reactivate item box
         itemBoxTimer.reset();
         this->itemBoxActive = true;
+        
     }
 }
 
@@ -110,7 +112,7 @@ void ItemBox::generateItem(Player &player, GameData &gd) {
             newItem = new Sugar(player.pos, defaultCollider);
             break;
         case itemType::PIE:
-            newItem = new Pie(player.pos, defaultCollider);
+            newItem = new PieItem(player.pos, defaultCollider);
             break;
         case itemType::ICE:
             newItem = new Ice(player.pos, defaultCollider);
@@ -120,6 +122,7 @@ void ItemBox::generateItem(Player &player, GameData &gd) {
             newItem = new Ice(player.pos, defaultCollider);
             break;
     }
+    //newItem = new PieItem(player.pos, defaultCollider);
     if (player.heldItem != nullptr) {
         delete player.heldItem;
     }
