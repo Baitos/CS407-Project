@@ -211,4 +211,5 @@ Lobby getLobbyFromString(std::string lobbyStr) {
     // numLaps
     getline(stream, tmp, delim);
     newLobby.numLaps = atoi(tmp.c_str());
+    return newLobby;
 }
