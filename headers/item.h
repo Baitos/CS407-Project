@@ -89,7 +89,7 @@ class Ice : public Item {
         void update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime);
         void checkCollision(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime);
         Ice(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) :
-        Item(pos_, colliderRect, tex), iceTimer(30.0f), flipTimer(0.2f) {
+        Item(pos_, colliderRect, tex), iceTimer(10.0f), flipTimer(0.2f) {
             index = 4;
             BOUND = 5;
             width = 32;
