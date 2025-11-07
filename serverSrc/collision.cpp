@@ -447,7 +447,7 @@ void Boombox::checkCollision(const SDLState &state, GameData &gd, Player &p, flo
     }
 }
 
-void Pie::checkCollision(const SDLState &state, GameData &gd, Player &p, float deltaTime) {
+void PieItem::checkCollision(const SDLState &state, GameData &gd, Player &p, float deltaTime) {
     SDL_FRect rectA{
 		.x = this->pos.x + this->collider.x,
 		.y = this->pos.y + this->collider.y,

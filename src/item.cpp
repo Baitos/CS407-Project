@@ -106,24 +106,24 @@ void Ice::useItem(const SDLState &state, GameData &gd, Resources &res, Player &p
 }
 
 // PIE
-void Pie::draw(const SDLState &state, GameData &gd, float width, float height) {
+void PieItem::draw(const SDLState &state, GameData &gd, float width, float height) {
     AnimatedObject::draw(state, gd, width, height); // do generic object draw
 }
 
-void Pie::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) { // currently for pie
+void PieItem::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) { // currently for pie
     //Item::update(state, gd, res, p, deltaTime); // generic update
     this->pos += updatePos((*this), deltaTime);
     //printf("pie update\n");
 }
 
-void Pie::useItem(const SDLState &state, GameData &gd, Resources &res, Player &p) {
+void PieItem::useItem(const SDLState &state, GameData &gd, Resources &res, Player &p) {
     SDL_FRect pieCollider = {
         .x = 6,
         .y = 3,
         .w = 20,
         .h = 26
     };
-    Pie* pie = new Pie(p.pos, pieCollider, res.texPie);
+    PieItem* pie = new PieItem(p.pos, pieCollider, res.texPie);
     pie->dir = p.dir;
     pie->vel.x = 350.0f * pie->dir;
     p.items_.push_back(pie);

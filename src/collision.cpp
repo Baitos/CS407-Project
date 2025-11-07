@@ -146,11 +146,13 @@ void Player::collisionResponse(const SDLState &state, GameData &gd, Resources &r
 		{
 			ItemBox& box = dynamic_cast<ItemBox&>(o);
 			if (box.itemBoxActive) {
-				if (!this->pickingItem && !this->hasItem) {
+				if (!this->pickingItem && !this->hasItem && this->index == gd.playerIndex) {
         			box.generateItem((*this), gd, res);
 					gd.itemStorage_.texture = res.texItemRandomizer;
 					gd.itemStorage_.curAnimation = res.ANIM_ITEM_CYCLE;
 					gd.itemStorage_.animations[gd.itemStorage_.curAnimation].reset();
+
+					
     			}
 				box.itemBoxActive = false;
 			}
@@ -455,7 +457,7 @@ void Boombox::checkCollision(const SDLState &state, GameData &gd, Resources &res
     }
 }
 
-void Pie::checkCollision(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
+void PieItem::checkCollision(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
     SDL_FRect rectA{
 		.x = this->pos.x + this->collider.x,
 		.y = this->pos.y + this->collider.y,
