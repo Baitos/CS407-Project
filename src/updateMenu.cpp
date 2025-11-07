@@ -116,23 +116,6 @@ void joinLobbyUpdate(const SDLState &state, GameData &gd, Resources &res, float 
         enet_host_flush(client);
         lastLobbyQuery = nowTime;
     }
-    // Lobby lobby;
-    // gd.md.publicLobbies_.clear();
-    // gd.md.privateLobbies_.clear();
-    // for (int i = 0; i < 40; i++) {
-    //     lobby.id = i;
-    //     lobby.port = 40000 + i;
-    //     lobby.hostName = "lobby lobby" + to_string(i);
-    //     lobby.playerCount = i + 1;
-    //     if (i % 2 == 0) {
-    //         lobby.passwordHash = 0;
-    //          gd.md.publicLobbies_.push_back(lobby);
-    //     } 
-    //     else {
-    //         lobby.passwordHash = hash<string>{}(to_string(i));
-    //         gd.md.privateLobbies_.push_back(lobby);
-    //     }
-    // }
     if (gd.md.verticalDial == nullptr) {
         return;
     }

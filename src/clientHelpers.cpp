@@ -216,8 +216,10 @@ void joinMessageHandler(ENetEvent * event, GameData * gd, Resources &res, SDLSta
             enet_packet_destroy(event->packet);
             
             if(message.find("LOBBIES ") != std::string::npos){
+                gd->md.publicLobbies_.clear();
+                gd->md.privateLobbies_.clear();
                 printf("%s\n", message.c_str());
-                message = message.substr(8); // Get rid of "LOBBIES "
+                message = message.substr(8); // Get rid of "LOBBIES " in the message
                 Lobby newLobby;
                 std::stringstream stream(message);
                 std::string lobbyString;
@@ -231,6 +233,22 @@ void joinMessageHandler(ENetEvent * event, GameData * gd, Resources &res, SDLSta
                         gd->md.privateLobbies_.push_back(newLobby);
                     }
                 }
+                    // JOIN LOBBY TESTING
+                    // Lobby lobby;
+                    // for (int i = 0; i < 40; i++) {
+                    //     lobby.id = i;
+                    //     lobby.port = 40000 + i;
+                    //     lobby.hostName = "lobby lobby" + to_string(i);
+                    //     lobby.playerCount = i + 1;
+                    //     if (i % 2 == 0) {
+                    //         lobby.passwordHash = 0;
+                    //          gd.md.publicLobbies_.push_back(lobby);
+                    //     } 
+                    //     else {
+                    //         lobby.passwordHash = hash<string>{}(to_string(i));
+                    //         gd.md.privateLobbies_.push_back(lobby);
+                    //     }
+                    // }
             }
             break;
         }
