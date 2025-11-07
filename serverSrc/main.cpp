@@ -329,8 +329,9 @@ void createLobbyServer(int port){
         currState->update(state, gd, deltaTime, keyID, keyDown, playerID);
         for(int i = 0; i < gd.numPlayers; i++){
             if(itemOwner[i] == false && gd.players_[i].pickingItem == true){
-                printf("new item picked\n");
+                
                 std::string itemMessage = "IM " + std::to_string(i) + " " + std::to_string(gd.players_[i].heldItem->type);
+                printf("%s\n", itemMessage.c_str());
                 ENetPacket * packet = enet_packet_create(itemMessage.c_str(), itemMessage.size()+1, 1);             //0 means unreliable
                 enet_peer_send(clients[i], 0, packet);
                 enet_host_flush(lobbyServer);
