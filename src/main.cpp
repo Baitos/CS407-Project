@@ -9,7 +9,7 @@
 #include <array>
 #include <iostream>
 #include <functional>
-
+#include <sstream>
 #include <format>
 
 #include "../headers/initState.h"
@@ -119,7 +119,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     // Ryan IP = 100.90.167.105
 
     //Set IP Here
-    enet_address_set_host(&clientAddress, "100.111.250.61");
+    enet_address_set_host(&clientAddress, "100.91.68.8");
     clientAddress.port = 0; // OS chooses port
     client = enet_host_create(&clientAddress, 1, 2, 0, 0);
     if (!client) {
@@ -173,7 +173,46 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                                 enet_peer_disconnect(serverPeer, 0);
                             }
                         }  else if (message.find("LOBBIES ") != std::string::npos){
-                            joinMessageHandler(&gd, message);
+                            for (Lobby * l : gd.md.publicLobbies_) {
+        delete l;
+    }
+    for (Lobby * l : gd.md.privateLobbies_) {
+        delete l;
+    }
+    gd.md.publicLobbies_.clear();
+    gd.md.privateLobbies_.clear();
+    message = message.substr(8); // Get rid of "LOBBIES " in the message
+    Lobby * newLobby;
+    std::stringstream stream(message);
+    std::string lobbyString;
+    char delim = ';'; // Delimiter for separate lobby entries
+    while (getline(stream, lobbyString, delim)) {
+        printf("LobbyStr = %s\n", lobbyString.c_str());
+        newLobby = getLobbyFromString(lobbyString);
+        if (newLobby->passwordHash == 0) {
+            gd.md.publicLobbies_.push_back(newLobby);
+        }
+        else {
+            gd.md.privateLobbies_.push_back(newLobby);
+        }
+    }
+    //JOIN LOBBY TESTING
+    Lobby * lobby;
+    for (int i = 0; i < 24; i++) {
+        lobby = new Lobby();
+        lobby->id = i;
+        lobby->port = 40000 + i;
+        lobby->hostName = "TestUser" + std::to_string(i);
+        lobby->playerCount = i;
+        if (i % 2 == 0) {
+            lobby->passwordHash = 0;
+             gd.md.publicLobbies_.push_back(lobby);
+        } 
+        else {
+            lobby->passwordHash = std::hash<std::string>{}(std::to_string(i));
+            gd.md.privateLobbies_.push_back(lobby);
+        }
+    }
                         }
                         break;
                     }
