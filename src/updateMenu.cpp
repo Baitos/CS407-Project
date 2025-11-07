@@ -119,9 +119,6 @@ void joinLobbyUpdate(const SDLState &state, GameData &gd, Resources &res, float 
     if (gd.md.verticalDial == nullptr) {
         return;
     }
-    for (Lobby l : gd.md.publicLobbies_) {
-        printf("Lobby = %s\n", l.to_string().c_str());
-    }
     // set gd.md.startLobbyIndex
     std::vector<Lobby> lobbies = gd.md.isPrivate ? gd.md.privateLobbies_ : gd.md.publicLobbies_;
     float dialPercentage = (gd.md.verticalDial->pos.y - 56.0) / 130.0f; // Top yPpos = 56, bottom yPos = 186, diff = 130
@@ -1115,7 +1112,7 @@ void handleHostLobbyClick(const SDLState &state, GameData &gd, Resources &res, f
         newLobby.isGrandPrix = gd.isGrandPrix;
         newLobby.numLaps = gd.laps_per_race;
         newLobby.passwordHash = 0;
-        if (gd.md.isPrivate && gd.md.password != "") 
+        if (gd.md.password != "") 
             newLobby.passwordHash = hash<string>{}(gd.md.password);
         //TELL SERVER TO MAKE LOBBY
         std::string createLobbyMessage = "HOST " + newLobby.to_string();

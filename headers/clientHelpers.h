@@ -2,5 +2,5 @@
 
 void charSelectMessageHandler(ENetEvent * event, GameData * gd, Resources &res, SDLState &state);
 void levelMessageHandler(ENetEvent * event, GameData * gd, Resources &res, SDLState &state);
-void joinMessageHandler(GameData gd, std::string message);
+void joinMessageHandler(ENetEvent * event, GameData * gd, Resources &res, SDLState &state);
 Lobby getLobbyFromString(std::string lobbyStr);

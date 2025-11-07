@@ -205,43 +205,54 @@ void levelMessageHandler(ENetEvent * event, GameData * gd, Resources &res, SDLSt
     }
 }
 
-void joinMessageHandler(GameData gd, std::string message){
-    // gd.md.publicLobbies_.clear();
-    // gd.md.privateLobbies_.clear();
-    message = message.substr(8); // Get rid of "LOBBIES " in the message
-    Lobby newLobby;
-    std::stringstream stream(message);
-    std::string lobbyString;
-    char delim = ';'; // Delimiter for separate lobby entries
-    while (getline(stream, lobbyString, delim)) {
-        printf("LobbyStr = %s\n", lobbyString.c_str());
-        newLobby = getLobbyFromString(lobbyString);
-        printf("hash = %lu", newLobby.passwordHash);
-        if (newLobby.passwordHash == 0) {
-            printf("PUSH BACK\n");
-            gd.md.publicLobbies_.push_back(newLobby);
+void joinMessageHandler(ENetEvent * event, GameData * gd, Resources &res, SDLState &state){
+    switch(event->type){
+        case ENET_EVENT_TYPE_CONNECT:{
+            break;
         }
-        else {
-            printf("PUSH BACK???\n");
-            gd.md.privateLobbies_.push_back(newLobby);
+        case ENET_EVENT_TYPE_RECEIVE: {
+            
+            std::string message((char *) event->packet->data, event->packet->dataLength);
+            enet_packet_destroy(event->packet);
+            
+            if(message.find("LOBBIES ") != std::string::npos){
+                gd->md.publicLobbies_.clear();
+                gd->md.privateLobbies_.clear();
+                printf("%s\n", message.c_str());
+                message = message.substr(8); // Get rid of "LOBBIES " in the message
+                Lobby newLobby;
+                std::stringstream stream(message);
+                std::string lobbyString;
+                char delim = ';'; // Delimiter for separate lobby entries
+                while (getline(stream, lobbyString, delim)) {
+                    newLobby = getLobbyFromString(lobbyString);
+                    if (newLobby.passwordHash == 0) {
+                        gd->md.publicLobbies_.push_back(newLobby);
+                    }
+                    else {
+                        gd->md.privateLobbies_.push_back(newLobby);
+                    }
+                }
+                    // JOIN LOBBY TESTING
+                    // Lobby lobby;
+                    // for (int i = 0; i < 40; i++) {
+                    //     lobby.id = i;
+                    //     lobby.port = 40000 + i;
+                    //     lobby.hostName = "lobby lobby" + to_string(i);
+                    //     lobby.playerCount = i + 1;
+                    //     if (i % 2 == 0) {
+                    //         lobby.passwordHash = 0;
+                    //          gd.md.publicLobbies_.push_back(lobby);
+                    //     } 
+                    //     else {
+                    //         lobby.passwordHash = hash<string>{}(to_string(i));
+                    //         gd.md.privateLobbies_.push_back(lobby);
+                    //     }
+                    // }
+            }
+            break;
         }
     }
-    // JOIN LOBBY TESTING
-    // Lobby lobby;
-    // for (int i = 0; i < 40; i++) {
-    //     lobby.id = i;
-    //     lobby.port = 40000 + i;
-    //     lobby.hostName = "lobby lobby" + to_string(i);
-    //     lobby.playerCount = i + 1;
-    //     if (i % 2 == 0) {
-    //         lobby.passwordHash = 0;
-    //          gd.md.publicLobbies_.push_back(lobby);
-    //     } 
-    //     else {
-    //         lobby.passwordHash = hash<string>{}(to_string(i));
-    //         gd.md.privateLobbies_.push_back(lobby);
-    //     }
-    // }
 }
 
 Lobby getLobbyFromString(std::string lobbyStr) {
