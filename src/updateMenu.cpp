@@ -119,6 +119,9 @@ void joinLobbyUpdate(const SDLState &state, GameData &gd, Resources &res, float 
     if (gd.md.verticalDial == nullptr) {
         return;
     }
+    for (Lobby l : gd.md.publicLobbies_) {
+        printf("Lobby = %s\n", l.to_string().c_str());
+    }
     // set gd.md.startLobbyIndex
     std::vector<Lobby> lobbies = gd.md.isPrivate ? gd.md.privateLobbies_ : gd.md.publicLobbies_;
     float dialPercentage = (gd.md.verticalDial->pos.y - 56.0) / 130.0f; // Top yPpos = 56, bottom yPos = 186, diff = 130
@@ -1112,7 +1115,7 @@ void handleHostLobbyClick(const SDLState &state, GameData &gd, Resources &res, f
         newLobby.isGrandPrix = gd.isGrandPrix;
         newLobby.numLaps = gd.laps_per_race;
         newLobby.passwordHash = 0;
-        if (gd.md.password != "") 
+        if (gd.md.isPrivate && gd.md.password != "") 
             newLobby.passwordHash = hash<string>{}(gd.md.password);
         //TELL SERVER TO MAKE LOBBY
         std::string createLobbyMessage = "HOST " + newLobby.to_string();
@@ -1214,23 +1217,23 @@ void handleTitleClick(const SDLState &state, GameData &gd, Resources &res, float
         }
     } else if((gd.mouseCoords.x >= 315 && gd.mouseCoords.x <= 485) && (gd.mouseCoords.y >= 368 && gd.mouseCoords.y <= 436)){        //Join
         if(gd.md.tempStr!="") {    
-            // currState->nextStateVal = JOIN;
-            // currState = changeState(currState, gd);
-            // currState->init(state, gd, res);
-
-            std::string lobbyQuery = "LOBBY_QUERY";
-            ENetPacket * packet = enet_packet_create(lobbyQuery.c_str(), lobbyQuery.size()+1, ENET_PACKET_FLAG_RELIABLE);
-            enet_peer_send(serverPeer, 0, packet);
-            enet_host_flush(client);
-
-            //Rei TODO - For Testing keep here, later, when player chooses lobby id X, send "JOIN X" and change state
-            std::string joinMessage = "JOIN 1";
-            packet = enet_packet_create(joinMessage.c_str(), joinMessage.size()+1, ENET_PACKET_FLAG_RELIABLE);
-            enet_peer_send(serverPeer, 0, packet);
-            enet_host_flush(client);
-            currState->nextStateVal = CHAR_SELECT;
+            currState->nextStateVal = JOIN;
             currState = changeState(currState, gd);
             currState->init(state, gd, res);
+
+            // std::string lobbyQuery = "LOBBY_QUERY";
+            // ENetPacket * packet = enet_packet_create(lobbyQuery.c_str(), lobbyQuery.size()+1, ENET_PACKET_FLAG_RELIABLE);
+            // enet_peer_send(serverPeer, 0, packet);
+            // enet_host_flush(client);
+
+            // //Rei TODO - For Testing keep here, later, when player chooses lobby id X, send "JOIN X" and change state
+            // std::string joinMessage = "JOIN 1";
+            // packet = enet_packet_create(joinMessage.c_str(), joinMessage.size()+1, ENET_PACKET_FLAG_RELIABLE);
+            // enet_peer_send(serverPeer, 0, packet);
+            // enet_host_flush(client);
+            // currState->nextStateVal = CHAR_SELECT;
+            // currState = changeState(currState, gd);
+            // currState->init(state, gd, res);
     
         }
     }else if((gd.mouseCoords.x >= 589 && gd.mouseCoords.x <= 767) && (gd.mouseCoords.y >= 368 && gd.mouseCoords.y <= 436)){         //Settings

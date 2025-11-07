@@ -112,7 +112,13 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     //Create your ENET Client
     //ONLY NEEDS TO BE DONE WHEN JOINING/CREATING
     ENetAddress clientAddress;
-    // rei IP = 100.111.250.61
+    
+    // Rei IP = 100.111.250.61
+    // Ellie IP = 100.91.68.8
+    // Danny IP = 100.115.232.114
+    // Ryan IP = 100.90.167.105
+
+    //Set IP Here
     enet_address_set_host(&clientAddress, "100.111.250.61");
     clientAddress.port = 0; // OS chooses port
     client = enet_host_create(&clientAddress, 1, 2, 0, 0);
@@ -167,7 +173,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                                 enet_peer_disconnect(serverPeer, 0);
                             }
                         }  else if (message.find("LOBBIES ") != std::string::npos){
-                            printf("%s", message.c_str());
+                            joinMessageHandler(gd, message);
                         }
                         break;
                     }
@@ -191,8 +197,6 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                     levelMessageHandler(&event, &gd, res, state);
                 } else if (currState->currStateVal == GRASSLANDS){
                     levelMessageHandler(&event, &gd, res, state);
-                } else if (currState->currStateVal == JOIN){
-                    joinMessageHandler(&event, &gd, res, state);
                 } else {
                     printf("Message fell through %d\n", currState->currStateVal);
                     switch(event.type){
