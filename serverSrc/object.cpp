@@ -99,6 +99,9 @@ void ItemBox::generateItem(Player &player, GameData &gd) {
             itemType::FOG, itemType::ICE, itemType::MISSILE, itemType::SUGAR, itemType::PIE};
     //}
     selected = rand() % itemOptions.size();
+
+
+
     switch (itemOptions[selected]) {
         case itemType::BOMB:
             newItem = new Bomb(player.pos, defaultCollider);
@@ -110,7 +113,7 @@ void ItemBox::generateItem(Player &player, GameData &gd) {
             newItem = new Sugar(player.pos, defaultCollider);
             break;
         case itemType::PIE:
-            newItem = new Pie(player.pos, defaultCollider);
+            newItem = new PieItem(player.pos, defaultCollider);
             break;
         case itemType::ICE:
             newItem = new Ice(player.pos, defaultCollider);
@@ -120,6 +123,7 @@ void ItemBox::generateItem(Player &player, GameData &gd) {
             newItem = new Ice(player.pos, defaultCollider);
             break;
     }
+    
     if (player.heldItem != nullptr) {
         delete player.heldItem;
     }

@@ -4,6 +4,11 @@
 #include "../headers/gameData.h"
 #include "../headers/clientHelpers.h"
 #include "../headers/state.h"
+//#include "../headers/item.h"
+
+
+
+
 extern int pendingLobby;
 extern GameState * currState;
 
@@ -141,9 +146,59 @@ void levelMessageHandler(ENetEvent * event, GameData * gd, Resources &res, SDLSt
 
                     }
                 }
-
-                
             
+            } else if(message.find("I ") != std::string::npos){
+                printf("item used by player");
+                if(std::stoi(message.substr(2,1)) != gd->playerIndex){
+                    SDL_FRect collider = {
+                        .x = 0,
+                        .y = 0,
+                        .w = float(TILE_SIZE),
+                        .h = float(TILE_SIZE)
+                    };
+                    Item * newItem;
+                    if (std::stoi(message.substr(4,1)) == PIE){
+                        newItem = new PieItem(gd->players_[std::stoi(message.substr(2,1))].pos, collider, res.texPie);
+                    } else if (std::stoi(message.substr(4,1)) == BOOMBOX){
+                        newItem = new Boombox(gd->players_[std::stoi(message.substr(2,1))].pos, collider, res.texBoombox);
+                    } else if (std::stoi(message.substr(4,1)) == ICE){
+                        newItem = new Ice(gd->players_[std::stoi(message.substr(2,1))].pos, collider, res.texIce);
+                    } else if (std::stoi(message.substr(4,1)) == SUGAR){
+                        newItem = new Sugar(gd->players_[std::stoi(message.substr(2,1))].pos, collider, res.texSugar);
+                    } else if (std::stoi(message.substr(4,1)) == BOMB){
+                        newItem = new Bomb(gd->players_[std::stoi(message.substr(2,1))].pos, collider, res.texBomb);
+                    }
+                    gd->players_[std::stoi(message.substr(2,1))].heldItem = newItem;
+                    gd->players_[std::stoi(message.substr(2,1))].heldItem->useItem(state,*gd,res,gd->players_[std::stoi(message.substr(2,1))]);
+                    gd->players_[std::stoi(message.substr(2,1))].hasItem = false;
+                    
+                }
+                
+            } else if(message.find("IM ") != std::string::npos){
+                if(std::stoi(message.substr(3,1)) == gd->playerIndex){
+                    printf("new item picked received\n");
+                    SDL_FRect collider = {
+                        .x = 0,
+                        .y = 0,
+                        .w = float(TILE_SIZE),
+                        .h = float(TILE_SIZE)
+                    };
+                    Item * newItem;
+                    if (std::stoi(message.substr(5,1)) == PIE){
+                        newItem = new PieItem(gd->players_[gd->playerIndex].pos, collider, res.texPie);
+                    } else if (std::stoi(message.substr(5,1)) == BOOMBOX){
+                        newItem = new Boombox(gd->players_[gd->playerIndex].pos, collider, res.texBoombox);
+                    } else if (std::stoi(message.substr(5,1)) == ICE){
+                        newItem = new Ice(gd->players_[gd->playerIndex].pos, collider, res.texIce);
+                    } else if (std::stoi(message.substr(5,1)) == SUGAR){
+                        newItem = new Sugar(gd->players_[gd->playerIndex].pos, collider, res.texSugar);
+                    } else if (std::stoi(message.substr(5,1)) == BOMB){
+                        newItem = new Bomb(gd->players_[gd->playerIndex].pos, collider, res.texBomb);
+                    }
+                    Item * temp = gd->players_[gd->playerIndex].heldItem;
+                    gd->players_[gd->playerIndex].heldItem = newItem;  
+                    delete temp;
+                }
             }
             break;
         }

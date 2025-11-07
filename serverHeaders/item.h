@@ -108,12 +108,12 @@ class Sugar : public Item {
         }
 };
 
-class Pie : public Item {
+class PieItem : public Item {
     public:   
         void useItem(const SDLState &state, GameData &gd,  Player &p);
         void update(const SDLState &state, GameData &gd, Player &p, float deltaTime);
         void checkCollision(const SDLState &state, GameData &gd,  Player &p, float deltaTime);
-        Pie(glm::vec2 pos_, SDL_FRect colliderRect) :
+        PieItem(glm::vec2 pos_, SDL_FRect colliderRect) :
         Item(pos_, colliderRect) {
             width = 32;
             height = 32;
