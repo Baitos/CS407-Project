@@ -112,7 +112,8 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     //Create your ENET Client
     //ONLY NEEDS TO BE DONE WHEN JOINING/CREATING
     ENetAddress clientAddress;
-    enet_address_set_host(&clientAddress, "100.91.68.8");
+    // rei IP = 100.111.250.61
+    enet_address_set_host(&clientAddress, "100.111.250.61");
     clientAddress.port = 0; // OS chooses port
     client = enet_host_create(&clientAddress, 1, 2, 0, 0);
     if (!client) {

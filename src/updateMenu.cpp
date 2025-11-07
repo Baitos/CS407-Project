@@ -102,27 +102,19 @@ void hostLobbyUpdate(const SDLState &state, GameData &gd, Resources &res, float 
     }
 }
 void joinLobbyUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
-    // TODO Receive lobbies from server
-    // std::string lobbyQuery = "LOBBY_QUERY";
-    //         ENetPacket * packet = enet_packet_create(lobbyQuery.c_str(), lobbyQuery.size()+1, ENET_PACKET_FLAG_RELIABLE);
-    //         enet_peer_send(serverPeer, 0, packet);
-    //         enet_host_flush(client);
-    Lobby lobby;
-    gd.md.publicLobbies_.clear();
-    gd.md.privateLobbies_.clear();
-    for (int i = 0; i < 40; i++) {
-        lobby.id = i;
-        lobby.port = 40000 + i;
-        lobby.hostName = "lobby lobby" + to_string(i);
-        lobby.playerCount = i + 1;
-        if (i % 2 == 0) {
-            lobby.passwordHash = 0;
-             gd.md.publicLobbies_.push_back(lobby);
-        } 
-        else {
-            lobby.passwordHash = hash<string>{}(to_string(i));
-            gd.md.privateLobbies_.push_back(lobby);
-        }
+    std::string lobbyQuery = "LOBBY_QUERY";
+    Uint64 nowTime = SDL_GetTicks();
+    if(lastLobbyQuery == 0) {
+        ENetPacket * packet = enet_packet_create(lobbyQuery.c_str(), lobbyQuery.size()+1, ENET_PACKET_FLAG_RELIABLE);
+        enet_peer_send(serverPeer, 0, packet);
+        enet_host_flush(client);
+        lastLobbyQuery = nowTime;
+    }
+    else if (nowTime - lastLobbyQuery >= UPDATE_INTERVAL_MS) {
+        ENetPacket * packet = enet_packet_create(lobbyQuery.c_str(), lobbyQuery.size()+1, ENET_PACKET_FLAG_RELIABLE);
+        enet_peer_send(serverPeer, 0, packet);
+        enet_host_flush(client);
+        lastLobbyQuery = nowTime;
     }
     if (gd.md.verticalDial == nullptr) {
         return;
@@ -140,15 +132,6 @@ void joinLobbyUpdate(const SDLState &state, GameData &gd, Resources &res, float 
     if (gd.md.startLobbyIndex > lobbies.size() - 7) {
         gd.md.startLobbyIndex = lobbies.size() - 7;
     }
-    //         //For Testing
-    //         std::string joinMessage = "JOIN 1";
-    //         packet = enet_packet_create(joinMessage.c_str(), joinMessage.size()+1, ENET_PACKET_FLAG_RELIABLE);
-    //         enet_peer_send(serverPeer, 0, packet);
-    //         enet_host_flush(client);
-    //         currState->nextStateVal = CHAR_SELECT;
-    //         currState = changeState(currState, gd);
-    //         currState->init(state, gd, res);
-
 }
 
 //
@@ -1123,10 +1106,16 @@ void handleHostLobbyClick(const SDLState &state, GameData &gd, Resources &res, f
         currState->init(state, gd, res);
     }
     else if((gd.mouseCoords.x >= 589 && gd.mouseCoords.x <= 767) && (gd.mouseCoords.y >= 368 && gd.mouseCoords.y <= 436) && !gd.md.stringEditing){   //Host
-        // TODO ADD PASSWORD HASH TO MESSAGE
-        size_t passwordHash = hash<string>{}(gd.md.password);
+        Lobby newLobby;
+        newLobby.hostName = gd.md.displayName;
+        newLobby.passwordHash = 
+        newLobby.isGrandPrix = gd.isGrandPrix;
+        newLobby.numLaps = gd.laps_per_race;
+        newLobby.passwordHash = 0;
+        if (gd.md.password != "") 
+            newLobby.passwordHash = hash<string>{}(gd.md.password);
         //TELL SERVER TO MAKE LOBBY
-        std::string createLobbyMessage = "HOST " + gd.md.displayName + " " + std::to_string(gd.isGrandPrix) + " " + std::to_string(gd.laps_per_race);
+        std::string createLobbyMessage = "HOST " + newLobby.to_string();
         ENetPacket * packet = enet_packet_create(createLobbyMessage.c_str(), createLobbyMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
         enet_peer_send(serverPeer, 0, packet);
         enet_host_flush(client);
@@ -1167,13 +1156,32 @@ if ((gd.mouseCoords.x >= 40 && gd.mouseCoords.x <= 219) && (gd.mouseCoords.y >= 
     }
     else if((gd.mouseCoords.x >= 589 && gd.mouseCoords.x <= 767) && (gd.mouseCoords.y >= 368 && gd.mouseCoords.y <= 436) && !gd.md.stringEditing){   //Join
         // TODO check if lobby selected and password, then change state to char select after receiving response
+        ENetPacket * packet;
+        int lobbyId = -1;
+        Lobby lobby;
         if (gd.md.isPrivate) {
-            if (hash<string>{}(gd.md.password) == gd.md.privateLobbies_[gd.md.lobbyPicked].passwordHash) {
-                printf("Password Good! Join %d\n", gd.md.privateLobbies_[gd.md.lobbyPicked].id);
+            lobby = gd.md.privateLobbies_[gd.md.lobbyPicked];
+            if (hash<string>{}(gd.md.password) == lobby.passwordHash) {
+                lobbyId = lobby.id;
+                gd.isGrandPrix = lobby.isGrandPrix;
+                gd.laps_per_race = lobby.numLaps;
             }
         }
-        else 
-            printf("join %d\n", gd.md.publicLobbies_[gd.md.lobbyPicked].id);
+        else {
+            lobby = gd.md.publicLobbies_[gd.md.lobbyPicked];
+            lobbyId = lobby.id;
+            gd.isGrandPrix = lobby.isGrandPrix;
+            gd.laps_per_race = lobby.numLaps;
+        }
+        if (lobbyId != -1) {
+            std::string joinMessage = "JOIN " + to_string(lobbyId);
+            packet = enet_packet_create(joinMessage.c_str(), joinMessage.size()+1, ENET_PACKET_FLAG_RELIABLE);
+            enet_peer_send(serverPeer, 0, packet);
+            enet_host_flush(client);
+            currState->nextStateVal = CHAR_SELECT;
+            currState = changeState(currState, gd);
+            currState->init(state, gd, res);
+        }
     }
     else if ((gd.mouseCoords.x >= gd.md.verticalDial->pos.x && gd.mouseCoords.x <= gd.md.verticalDial->pos.x + gd.md.verticalDial->texture->w * 2) && // Vertical Slider
         (gd.mouseCoords.y >= gd.md.verticalDial->pos.y && gd.mouseCoords.y <= gd.md.verticalDial->pos.y + gd.md.verticalDial->texture->h))
