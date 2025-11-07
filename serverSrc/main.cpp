@@ -33,7 +33,7 @@ GameState * currState;
 using namespace std;
 
 //Globals for Networking
-struct Lobby{
+struct Lobby{ // isGrandPrix, numLaps, ID, Port, playerCount, passHash, hostName
     bool isGrandPrix;
     int numLaps;
     int id;
