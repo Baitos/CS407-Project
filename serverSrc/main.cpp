@@ -322,13 +322,13 @@ void createLobbyServer(int port){
                 
             // }
 
-            for(ENetPeer * c : clients){
-                //Broadcast player states
+            // for(ENetPeer * c : clients){
+            //     //Broadcast player states
                 
-                ENetPacket * packet = enet_packet_create(updateMessage.c_str(), updateMessage.size()+1, 0);             //0 means unreliable
-                enet_peer_send(c, 0, packet);
-                enet_host_flush(lobbyServer);
-            }
+            //     ENetPacket * packet = enet_packet_create(updateMessage.c_str(), updateMessage.size()+1, 0);             //0 means unreliable
+            //     enet_peer_send(c, 0, packet);
+            //     enet_host_flush(lobbyServer);
+            // }
             lastBroadcast = nowTime;
 
         }
