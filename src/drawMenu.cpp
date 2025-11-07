@@ -221,18 +221,13 @@ void drawJoinLobby(const SDLState &state, GameData &gd, Resources res, float del
         SDL_DestroySurface(textSurface);
     }
     Lobby lobby;
-    std::vector<Lobby> lobbies = gd.md.isPrivate ? gd.md.privateLobbies_ : gd.md.publicLobbies_;
+    std::vector<Lobby *> lobbies = gd.md.isPrivate ? gd.md.privateLobbies_ : gd.md.publicLobbies_;
     std::string lobbyCapacity;
     const char * lobbyName;
     for (int i = gd.md.startLobbyIndex; (i < gd.md.startLobbyIndex + 7 && (i < lobbies.size())); i++) {
         // TODO name lobby with number if hostName is empty
-        lobbyCapacity = std::to_string(lobbies[i].playerCount) + " / 8";
-        if (lobbies[i].hostName == "") {
-            lobbyName = ("Lobby " + std::to_string(lobbies[i].id) + lobbyCapacity).c_str();
-        }
-        else {
-            lobbyName = (lobbies[i].hostName + std::string("'s Lobby") + lobbyCapacity).c_str();
-        }
+        lobbyCapacity = std::to_string(lobbies[i]->playerCount) + " / 8)";
+        lobbyName = (lobbies[i]->hostName + std::string("'s Lobby (") + lobbyCapacity).c_str();
         SDL_Surface* textSurface = TTF_RenderText_Blended(gd.md.font, lobbyName, strlen(lobbyName), color);
         SDL_Texture* textTex = SDL_CreateTextureFromSurface(state.renderer, textSurface);
         SDL_SetTextureScaleMode(textTex, SDL_SCALEMODE_NEAREST);

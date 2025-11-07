@@ -173,7 +173,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                                 enet_peer_disconnect(serverPeer, 0);
                             }
                         }  else if (message.find("LOBBIES ") != std::string::npos){
-                            joinMessageHandler(gd, message);
+                            joinMessageHandler(&gd, message);
                         }
                         break;
                     }

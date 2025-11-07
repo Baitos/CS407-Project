@@ -205,73 +205,77 @@ void levelMessageHandler(ENetEvent * event, GameData * gd, Resources &res, SDLSt
     }
 }
 
-void joinMessageHandler(GameData gd, std::string message){
-    // gd.md.publicLobbies_.clear();
-    // gd.md.privateLobbies_.clear();
+void joinMessageHandler(GameData * gd, std::string message){
+    for (Lobby * l : gd->md.publicLobbies_) {
+        delete l;
+    }
+    for (Lobby * l : gd->md.privateLobbies_) {
+        delete l;
+    }
+    gd->md.publicLobbies_.clear();
+    gd->md.privateLobbies_.clear();
     message = message.substr(8); // Get rid of "LOBBIES " in the message
-    Lobby newLobby;
+    Lobby * newLobby;
     std::stringstream stream(message);
     std::string lobbyString;
     char delim = ';'; // Delimiter for separate lobby entries
     while (getline(stream, lobbyString, delim)) {
         printf("LobbyStr = %s\n", lobbyString.c_str());
         newLobby = getLobbyFromString(lobbyString);
-        printf("hash = %lu", newLobby.passwordHash);
-        if (newLobby.passwordHash == 0) {
-            printf("PUSH BACK\n");
-            gd.md.publicLobbies_.push_back(newLobby);
+        if (newLobby->passwordHash == 0) {
+            gd->md.publicLobbies_.push_back(newLobby);
         }
         else {
-            printf("PUSH BACK???\n");
-            gd.md.privateLobbies_.push_back(newLobby);
+            gd->md.privateLobbies_.push_back(newLobby);
         }
     }
-    // JOIN LOBBY TESTING
-    // Lobby lobby;
-    // for (int i = 0; i < 40; i++) {
-    //     lobby.id = i;
-    //     lobby.port = 40000 + i;
-    //     lobby.hostName = "lobby lobby" + to_string(i);
-    //     lobby.playerCount = i + 1;
-    //     if (i % 2 == 0) {
-    //         lobby.passwordHash = 0;
-    //          gd.md.publicLobbies_.push_back(lobby);
-    //     } 
-    //     else {
-    //         lobby.passwordHash = hash<string>{}(to_string(i));
-    //         gd.md.privateLobbies_.push_back(lobby);
-    //     }
-    // }
+    //JOIN LOBBY TESTING
+    Lobby * lobby;
+    for (int i = 0; i < 24; i++) {
+        lobby = new Lobby();
+        lobby->id = i;
+        lobby->port = 40000 + i;
+        lobby->hostName = "TestUser" + std::to_string(i);
+        lobby->playerCount = i;
+        if (i % 2 == 0) {
+            lobby->passwordHash = 0;
+             gd->md.publicLobbies_.push_back(lobby);
+        } 
+        else {
+            lobby->passwordHash = std::hash<std::string>{}(std::to_string(i));
+            gd->md.privateLobbies_.push_back(lobby);
+        }
+    }
 }
 
-Lobby getLobbyFromString(std::string lobbyStr) {
+Lobby * getLobbyFromString(std::string lobbyStr) {
     // ID,PORT,HOSTNAME,PLAYERCOUNT,PASSHASH,isGrandPrix[0/1],numLaps; 
-    Lobby newLobby;
+    Lobby * newLobby = new Lobby();
     std::string tmp;
     std::stringstream tmpStream;
     char delim = ',';
     std::stringstream stream(lobbyStr);
     // ID
     getline(stream, tmp, delim);
-    newLobby.id = atoi(tmp.c_str());
+    newLobby->id = atoi(tmp.c_str());
     // Port
     getline(stream, tmp, delim);
-    newLobby.port = atoi(tmp.c_str());
+    newLobby->port = atoi(tmp.c_str());
     // Hostname
     getline(stream, tmp, delim);
-    newLobby.hostName = tmp;
+    newLobby->hostName = tmp;
     // Playercount
     getline(stream, tmp, delim);
-    newLobby.playerCount = atoi(tmp.c_str());
+    newLobby->playerCount = atoi(tmp.c_str());
     // PassHash
     getline(stream, tmp, delim);
     tmpStream = std::stringstream(tmp);
-    tmpStream >> newLobby.passwordHash;
+    tmpStream >> newLobby->passwordHash;
     // isGrandPrix
     getline(stream, tmp, delim);
-    newLobby.isGrandPrix = (atoi(tmp.c_str()) == 1);
+    newLobby->isGrandPrix = (atoi(tmp.c_str()) == 1);
     // numLaps
     getline(stream, tmp, delim);
-    newLobby.numLaps = atoi(tmp.c_str());
+    newLobby->numLaps = atoi(tmp.c_str());
     return newLobby;
 }

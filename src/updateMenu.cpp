@@ -119,11 +119,8 @@ void joinLobbyUpdate(const SDLState &state, GameData &gd, Resources &res, float 
     if (gd.md.verticalDial == nullptr) {
         return;
     }
-    for (Lobby l : gd.md.publicLobbies_) {
-        printf("Lobby = %s\n", l.to_string().c_str());
-    }
     // set gd.md.startLobbyIndex
-    std::vector<Lobby> lobbies = gd.md.isPrivate ? gd.md.privateLobbies_ : gd.md.publicLobbies_;
+    std::vector<Lobby *> lobbies = gd.md.isPrivate ? gd.md.privateLobbies_ : gd.md.publicLobbies_;
     float dialPercentage = (gd.md.verticalDial->pos.y - 56.0) / 130.0f; // Top yPpos = 56, bottom yPos = 186, diff = 130
     if (lobbies.size() <= 7) { // max 7 lobbies in join screen
         gd.md.startLobbyIndex = 0;
@@ -1109,20 +1106,19 @@ void handleHostLobbyClick(const SDLState &state, GameData &gd, Resources &res, f
         currState->init(state, gd, res);
     }
     else if((gd.mouseCoords.x >= 589 && gd.mouseCoords.x <= 767) && (gd.mouseCoords.y >= 368 && gd.mouseCoords.y <= 436) && !gd.md.stringEditing){   //Host
-        Lobby newLobby;
-        newLobby.hostName = gd.md.displayName;
-        newLobby.passwordHash = 
-        newLobby.isGrandPrix = gd.isGrandPrix;
-        newLobby.numLaps = gd.laps_per_race;
-        newLobby.passwordHash = 0;
+        Lobby * newLobby = new Lobby();
+        newLobby->hostName = gd.md.displayName;
+        newLobby->isGrandPrix = gd.isGrandPrix;
+        newLobby->numLaps = gd.laps_per_race;
+        newLobby->passwordHash = 0;
         if (gd.md.isPrivate && gd.md.password != "") 
-            newLobby.passwordHash = hash<string>{}(gd.md.password);
+            newLobby->passwordHash = hash<string>{}(gd.md.password);
         //TELL SERVER TO MAKE LOBBY
-        std::string createLobbyMessage = "HOST " + newLobby.to_string();
+        std::string createLobbyMessage = "HOST " + newLobby->to_string();
         ENetPacket * packet = enet_packet_create(createLobbyMessage.c_str(), createLobbyMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
         enet_peer_send(serverPeer, 0, packet);
         enet_host_flush(client);
-
+        delete newLobby;
         currState->nextStateVal = CHAR_SELECT;
         currState = changeState(currState, gd);
         currState->init(state, gd, res);
@@ -1161,20 +1157,22 @@ if ((gd.mouseCoords.x >= 40 && gd.mouseCoords.x <= 219) && (gd.mouseCoords.y >= 
         // TODO check if lobby selected and password, then change state to char select after receiving response
         ENetPacket * packet;
         int lobbyId = -1;
-        Lobby lobby;
+        Lobby * lobby;
         if (gd.md.isPrivate) {
             lobby = gd.md.privateLobbies_[gd.md.lobbyPicked];
-            if (hash<string>{}(gd.md.password) == lobby.passwordHash) {
-                lobbyId = lobby.id;
-                gd.isGrandPrix = lobby.isGrandPrix;
-                gd.laps_per_race = lobby.numLaps;
+            if (hash<string>{}(gd.md.password) == lobby->passwordHash && lobby->playerCount < 8) {
+                lobbyId = lobby->id;
+                gd.isGrandPrix = lobby->isGrandPrix;
+                gd.laps_per_race = lobby->numLaps;
             }
         }
         else {
             lobby = gd.md.publicLobbies_[gd.md.lobbyPicked];
-            lobbyId = lobby.id;
-            gd.isGrandPrix = lobby.isGrandPrix;
-            gd.laps_per_race = lobby.numLaps;
+            if (lobby->playerCount < 8) {
+                lobbyId = lobby->id;
+                gd.isGrandPrix = lobby->isGrandPrix;
+                gd.laps_per_race = lobby->numLaps;
+            }
         }
         if (lobbyId != -1) {
             std::string joinMessage = "JOIN " + to_string(lobbyId);
@@ -1196,7 +1194,7 @@ if ((gd.mouseCoords.x >= 40 && gd.mouseCoords.x <= 219) && (gd.mouseCoords.y >= 
     else if ((gd.mouseCoords.x >= 50 && gd.mouseCoords.x <= 720) && (gd.mouseCoords.y >= 65 && gd.mouseCoords.y <= 330)) { // Within lobby select
         // 38 is vertical difference between lobby entries, lobbyPicked is between startLobbyIndex and startLobbyIndex + 6
         gd.md.lobbyPicked = gd.md.startLobbyIndex + (int)(gd.mouseCoords.y - 65) / 38;
-        std::vector<Lobby> lobbies = gd.md.isPrivate ? gd.md.privateLobbies_ : gd.md.publicLobbies_;
+        std::vector<Lobby *> lobbies = gd.md.isPrivate ? gd.md.privateLobbies_ : gd.md.publicLobbies_;
         if (gd.md.lobbyPicked < lobbies.size()) {
             // Activate lobby selection border
             gd.md.lobbySelectBorder->pos.y = 56 + ((gd.md.lobbyPicked - gd.md.startLobbyIndex) * 38);

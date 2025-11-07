@@ -26,6 +26,7 @@ struct Lobby{
             grandPrix + "," + std::to_string(numLaps);
         return lobbyStr;
     }
+    Lobby(){}
 };
 
 struct MenuData {
@@ -57,8 +58,8 @@ struct MenuData {
     std::vector<AnimatedObject> arrows_;
     std::vector<charIconObject> charIcons_;
 
-    std::vector<Lobby> publicLobbies_;
-    std::vector<Lobby> privateLobbies_;
+    std::vector<Lobby *> publicLobbies_;
+    std::vector<Lobby *> privateLobbies_;
     MenuData(const SDLState &state) {
     }
 };
