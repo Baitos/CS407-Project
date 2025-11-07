@@ -47,8 +47,8 @@ struct Lobby{ // isGrandPrix, numLaps, ID, Port, playerCount, passHash, hostName
         std::string lobbyStr;
         std::string grandPrix = isGrandPrix ? "1" : "0";
         lobbyStr = std::to_string(id) + "," + std::to_string(port) + "," + 
-            hostName + "," + std::to_string(passwordHash) + "," +
-            std::to_string(playerCount) + "," + grandPrix + "," + std::to_string(numLaps) + ";";
+            hostName + "," + std::to_string(playerCount) + "," +
+            std::to_string(passwordHash) + "," + grandPrix + "," + std::to_string(numLaps) + ";";
         return lobbyStr;
     }
 };
