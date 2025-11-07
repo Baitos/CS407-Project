@@ -17,6 +17,15 @@ struct Lobby{
     int playerCount;
     size_t passwordHash; // hash = 0 means no password
     std::string hostName;
+    // Lobby info in comma delimited string format
+    std::string to_string() {
+        //HOSTNAME,PASSHASH,isGrandPrix[0/1],numLaps
+        std::string lobbyStr;
+        std::string grandPrix = isGrandPrix ? "1" : "0";
+        lobbyStr = hostName + "," + std::to_string(passwordHash) + "," +
+            grandPrix + "," + std::to_string(numLaps);
+        return lobbyStr;
+    }
 };
 
 struct MenuData {

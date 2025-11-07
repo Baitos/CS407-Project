@@ -103,8 +103,8 @@ void drawLevel(const SDLState &state, GameData &gd, Resources res, float deltaTi
         SDL_SetTextureScaleMode(textTex, SDL_SCALEMODE_NEAREST);
         //change x any position to reflect viewport - should go in the bottom right
         // this centers the minimap's top right corner to the top right corner of the screen, allowing for minimaps of any size to work
-        float xpos = (gd.players_[0].pos.x + TILE_SIZE / 2) + (gd.mapViewport.w / 2) - gd.mapViewport.x; 
-        float ypos = (gd.players_[0].pos.y + TILE_SIZE / 2) + (gd.mapViewport.h / 2) - gd.mapViewport.y;
+        float xpos = (gd.players_[gd.playerIndex].pos.x + TILE_SIZE / 2) + (gd.mapViewport.w / 2) - gd.mapViewport.x; 
+        float ypos = (gd.players_[gd.playerIndex].pos.y + TILE_SIZE / 2) + (gd.mapViewport.h / 2) - gd.mapViewport.y;
         SDL_FRect rect = { xpos - (float)textSurface->w, ypos - (float)textSurface->h, (float)textSurface->w, (float)textSurface->h };
 
         SDL_RenderTexture(state.renderer, textTex, nullptr, &rect);

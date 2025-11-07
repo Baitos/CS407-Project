@@ -214,6 +214,7 @@ void ItemBox::generateItem(Player &player, GameData &gd, Resources &res) {
             newItem = new Ice(player.pos, defaultCollider, res.texIce);
             break;
     }
+    
     if (player.heldItem != nullptr) {
         delete player.heldItem;
     }

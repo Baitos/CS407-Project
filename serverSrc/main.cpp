@@ -10,6 +10,7 @@
 //#include <format>
 #include <set>
 #include <unistd.h>
+#include <sstream>
 
 #include "../serverHeaders/initState.h"
 #include "../serverHeaders/gameData.h"
@@ -32,11 +33,24 @@ GameState * currState;
 using namespace std;
 
 //Globals for Networking
-struct Lobby{
+struct Lobby{ // isGrandPrix, numLaps, ID, Port, playerCount, passHash, hostName
+    bool isGrandPrix;
+    int numLaps;
     int id;
     int port;
-    std::string hostName;
     int playerCount;
+    size_t passwordHash; // hash = 0 means no password
+    std::string hostName;
+    // Lobby info in comma delimited string format
+    std::string to_string() {
+        // ID,PORT,HOSTNAME,PLAYERCOUNT,PASSHASH,isGrandPrix[0/1],numLaps
+        std::string lobbyStr;
+        std::string grandPrix = isGrandPrix ? "1" : "0";
+        lobbyStr = std::to_string(id) + "," + std::to_string(port) + "," + 
+            hostName + "," + std::to_string(passwordHash) + "," +
+            std::to_string(playerCount) + "," + grandPrix + "," + std::to_string(numLaps) + ";";
+        return lobbyStr;
+    }
 };
 
 const int startPort = 40000;
@@ -46,6 +60,37 @@ int currLobbyID = 1;
 std::vector<Lobby> lobbies;
 std::set<int> usedPorts;
 
+Lobby parseHostMessage(std::string message, int lobbyID, int lobbyPort) {
+    size_t passHash;
+    bool isGrandPrix;
+    int numLaps;
+    std::string hostName;
+    std::string tmp;
+    std::stringstream tmpStream;
+    char delim = ',';
+
+    message = message.substr(5);
+    std::stringstream stream(message);
+    // Get hostname
+    getline(stream, hostName, delim);
+    // Get password hash
+    getline(stream, tmp, delim);
+    tmpStream = std::stringstream(tmp);
+    tmpStream >> passHash;
+    // Get isGrandPrix
+    getline(stream, tmp, delim);
+    isGrandPrix = atoi(tmp.c_str()) == 1;
+    // Get numLaps
+    getline(stream, tmp, delim);
+    numLaps = atoi(tmp.c_str());
+    printf("%s", message.c_str());
+    printf("Creating lobby\n");
+    //Fork and create lobby process
+    printf("%d\n", lobbyPort);
+    // isGrandPrix, numLaps, ID, Port, playerCount, passHash, hostName
+    Lobby newLobby = {isGrandPrix, numLaps, lobbyID, lobbyPort, 1, passHash, hostName};
+    return newLobby;
+}
 void createLobbyServer(int port){
     printf("Game lobby server\n");
     
@@ -397,13 +442,8 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                     printf("Message: %s\n", message.c_str());
                     //Check what the message was
                     if(message.find("HOST ") != std::string::npos){
-                        printf("%s", message.c_str());
-                        printf("Creating lobby\n");
-                        //Fork and create lobby process
                         int lobbyPort = getAvailablePort();
-                        printf("%d\n", lobbyPort);
-                        Lobby newLobby = {currLobbyID++, lobbyPort, (std::string)message.substr(5, message.size()-10), 1};
-                    
+                        Lobby newLobby = parseHostMessage(message, currLobbyID++, lobbyPort);
                         lobbies.push_back(newLobby);
                         fflush(stdout);
                         pid_t pid = fork();
@@ -429,7 +469,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                     } else if(message.find("LOBBY_QUERY") !=  std::string::npos){
                         std::string lobbiesReturnMessage = "LOBBIES ";
                         for (Lobby l : lobbies){
-                            lobbiesReturnMessage += std::to_string(l.id) + " " + std::to_string(l.port) + " " + l.hostName + " " + std::to_string(l.playerCount) + " ";
+                            lobbiesReturnMessage += l.to_string();
                         }
                         printf("%s\n", lobbiesReturnMessage);
                             ENetPacket* packet = enet_packet_create(lobbiesReturnMessage.c_str(), lobbiesReturnMessage.size(), ENET_PACKET_FLAG_RELIABLE);

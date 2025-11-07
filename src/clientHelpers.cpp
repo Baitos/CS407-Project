@@ -1,9 +1,14 @@
 //#pragma once
 #include <string>
-
+#include <sstream>
 #include "../headers/gameData.h"
 #include "../headers/clientHelpers.h"
 #include "../headers/state.h"
+//#include "../headers/item.h"
+
+
+
+
 extern int pendingLobby;
 extern GameState * currState;
 
@@ -141,9 +146,59 @@ void levelMessageHandler(ENetEvent * event, GameData * gd, Resources &res, SDLSt
 
                     }
                 }
-
-                
             
+            } else if(message.find("I ") != std::string::npos){
+                printf("item used by player");
+                if(std::stoi(message.substr(2,1)) != gd->playerIndex){
+                    SDL_FRect collider = {
+                        .x = 0,
+                        .y = 0,
+                        .w = float(TILE_SIZE),
+                        .h = float(TILE_SIZE)
+                    };
+                    Item * newItem;
+                    if (std::stoi(message.substr(4,1)) == PIE){
+                        newItem = new PieItem(gd->players_[std::stoi(message.substr(2,1))].pos, collider, res.texPie);
+                    } else if (std::stoi(message.substr(4,1)) == BOOMBOX){
+                        newItem = new Boombox(gd->players_[std::stoi(message.substr(2,1))].pos, collider, res.texBoombox);
+                    } else if (std::stoi(message.substr(4,1)) == ICE){
+                        newItem = new Ice(gd->players_[std::stoi(message.substr(2,1))].pos, collider, res.texIce);
+                    } else if (std::stoi(message.substr(4,1)) == SUGAR){
+                        newItem = new Sugar(gd->players_[std::stoi(message.substr(2,1))].pos, collider, res.texSugar);
+                    } else if (std::stoi(message.substr(4,1)) == BOMB){
+                        newItem = new Bomb(gd->players_[std::stoi(message.substr(2,1))].pos, collider, res.texBomb);
+                    }
+                    gd->players_[std::stoi(message.substr(2,1))].heldItem = newItem;
+                    gd->players_[std::stoi(message.substr(2,1))].heldItem->useItem(state,*gd,res,gd->players_[std::stoi(message.substr(2,1))]);
+                    gd->players_[std::stoi(message.substr(2,1))].hasItem = false;
+                    
+                }
+                
+            } else if(message.find("IM ") != std::string::npos){
+                if(std::stoi(message.substr(3,1)) == gd->playerIndex){
+                    printf("new item picked received\n");
+                    SDL_FRect collider = {
+                        .x = 0,
+                        .y = 0,
+                        .w = float(TILE_SIZE),
+                        .h = float(TILE_SIZE)
+                    };
+                    Item * newItem;
+                    if (std::stoi(message.substr(5,1)) == PIE){
+                        newItem = new PieItem(gd->players_[gd->playerIndex].pos, collider, res.texPie);
+                    } else if (std::stoi(message.substr(5,1)) == BOOMBOX){
+                        newItem = new Boombox(gd->players_[gd->playerIndex].pos, collider, res.texBoombox);
+                    } else if (std::stoi(message.substr(5,1)) == ICE){
+                        newItem = new Ice(gd->players_[gd->playerIndex].pos, collider, res.texIce);
+                    } else if (std::stoi(message.substr(5,1)) == SUGAR){
+                        newItem = new Sugar(gd->players_[gd->playerIndex].pos, collider, res.texSugar);
+                    } else if (std::stoi(message.substr(5,1)) == BOMB){
+                        newItem = new Bomb(gd->players_[gd->playerIndex].pos, collider, res.texBomb);
+                    }
+                    Item * temp = gd->players_[gd->playerIndex].heldItem;
+                    gd->players_[gd->playerIndex].heldItem = newItem;  
+                    delete temp;
+                }
             }
             break;
         }
@@ -161,11 +216,73 @@ void joinMessageHandler(ENetEvent * event, GameData * gd, Resources &res, SDLSta
             enet_packet_destroy(event->packet);
             
             if(message.find("LOBBIES ") != std::string::npos){
+                gd->md.publicLobbies_.clear();
+                gd->md.privateLobbies_.clear();
                 printf("%s\n", message.c_str());
-                //REI TODO - PARSE MESSAGE TO DETERMINE DISPLAY INFORMATION HERE
-            
+                message = message.substr(8); // Get rid of "LOBBIES " in the message
+                Lobby newLobby;
+                std::stringstream stream(message);
+                std::string lobbyString;
+                char delim = ';'; // Delimiter for separate lobby entries
+                while (getline(stream, lobbyString, delim)) {
+                    newLobby = getLobbyFromString(lobbyString);
+                    if (newLobby.passwordHash == 0) {
+                        gd->md.publicLobbies_.push_back(newLobby);
+                    }
+                    else {
+                        gd->md.privateLobbies_.push_back(newLobby);
+                    }
+                }
+                    // JOIN LOBBY TESTING
+                    // Lobby lobby;
+                    // for (int i = 0; i < 40; i++) {
+                    //     lobby.id = i;
+                    //     lobby.port = 40000 + i;
+                    //     lobby.hostName = "lobby lobby" + to_string(i);
+                    //     lobby.playerCount = i + 1;
+                    //     if (i % 2 == 0) {
+                    //         lobby.passwordHash = 0;
+                    //          gd.md.publicLobbies_.push_back(lobby);
+                    //     } 
+                    //     else {
+                    //         lobby.passwordHash = hash<string>{}(to_string(i));
+                    //         gd.md.privateLobbies_.push_back(lobby);
+                    //     }
+                    // }
             }
             break;
         }
     }
+}
+
+Lobby getLobbyFromString(std::string lobbyStr) {
+    // ID,PORT,HOSTNAME,PLAYERCOUNT,PASSHASH,isGrandPrix[0/1],numLaps; 
+    Lobby newLobby;
+    std::string tmp;
+    std::stringstream tmpStream;
+    char delim = ',';
+    std::stringstream stream(lobbyStr);
+    // ID
+    getline(stream, tmp, delim);
+    newLobby.id = atoi(tmp.c_str());
+    // Port
+    getline(stream, tmp, delim);
+    newLobby.port = atoi(tmp.c_str());
+    // Hostname
+    getline(stream, tmp, delim);
+    newLobby.hostName = tmp;
+    // Playercount
+    getline(stream, tmp, delim);
+    newLobby.playerCount = atoi(tmp.c_str());
+    // PassHash
+    getline(stream, tmp, delim);
+    tmpStream = std::stringstream(tmp);
+    tmpStream >> newLobby.passwordHash;
+    // isGrandPrix
+    getline(stream, tmp, delim);
+    newLobby.isGrandPrix = (atoi(tmp.c_str()) == 1);
+    // numLaps
+    getline(stream, tmp, delim);
+    newLobby.numLaps = atoi(tmp.c_str());
+    return newLobby;
 }
