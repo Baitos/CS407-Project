@@ -160,7 +160,7 @@ void setItemPicked(GameData &gd, int index) {
 }
 
 void ItemStorage::update(const SDLState &state, GameData &gd, Player &p, float deltaTime) {
-    
+    this->cycleTimer.step(deltaTime);
     
     if (this->cycleTimer.isTimeOut()) {
         // Reset timer and set item

@@ -8,6 +8,7 @@
 #include "../serverHeaders/playerState.h"
 #include "../serverHeaders/enet.h"
 #include <algorithm>
+#include<vector>
 
 using namespace std;
 
@@ -133,17 +134,32 @@ void handleCrosshair(const SDLState &state, GameData &gd, float deltaTime) {
 
 //Key Input Handler for Level
 void handleKeyInput(const SDLState &state, GameData &gd,
-                    int playerID, int keyID, int keyDown, float deltaTime) {
+                    int playerID, int keyID, int keyDown, float deltaTime, ENetHost* lobbyServer, std::vector<ENetPeer *> clients) {
 
     
     gd.players_[playerID].handleInput(state, gd, keyID, keyDown, deltaTime); 
     
-    // if (gd.controls->actionPerformed(typeAction::ACTION_USEITEM, event) && gd.players_[gd.playerIndex].hasItem) {
-    //     Item* item = gd.players_[gd.playerIndex].heldItem;
-    //     item->useItem(state, gd, gd.players_[gd.playerIndex]);
-    //     gd.players_[gd.playerIndex].hasItem = false;
-    //     clearItem(state, gd);
-    // }
+    if (keyID==SDL_SCANCODE_Q && keyDown && !gd.players_[playerID].hasItem) {
+        printf("no item used\n");
+    }
+
+    if (keyID==SDL_SCANCODE_Q && keyDown && gd.players_[playerID].hasItem) {
+        printf("item used\n");
+        Item* item = gd.players_[playerID].heldItem;
+
+        std::string itemMessage = "I " + std::to_string(playerID) + " " + std::to_string(item->type);
+        for(ENetPeer * c : clients){
+            //Send info about item
+            ENetPacket * packet = enet_packet_create(itemMessage.c_str(), itemMessage.size()+1, ENET_PACKET_FLAG_RELIABLE);
+            enet_peer_send(c, 0, packet);
+            enet_host_flush(lobbyServer);
+        }
+        
+        
+        item->useItem(state, gd, gd.players_[playerID]);
+        gd.players_[playerID].hasItem = false;
+        clearItem(state, gd);
+    }
     // for (Player &p : gd.players_) {
     //     p.handleInput(state, gd, event, deltaTime); 
     //     if (gd.controls->actionPerformed(typeAction::ACTION_USEITEM, event) && p.hasItem) {

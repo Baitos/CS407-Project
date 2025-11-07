@@ -149,6 +149,7 @@ void Player::collisionResponse(const SDLState &state, GameData &gd,
 				if (!this->pickingItem && !this->hasItem) {
         			box.generateItem((*this), gd);
     			}
+				
 				box.itemBoxActive = false;
 			}
 			break;
