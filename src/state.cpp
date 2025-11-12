@@ -99,6 +99,24 @@ GameState * changeState(GameState * tempState, GameData &gd){
             }
             break;
         }
+        case SNOW:
+        {
+            characterType type;
+            if(((LevelState*)currState)->character) {
+                type = ((LevelState*)currState)->character;
+            }
+            //Creating LevelState with init of Spaceship
+            newState = new LevelState();
+            newState->input = levelInputs;
+            newState->update = levelUpdate;
+            newState->render = drawLevel;
+            newState->init = createTilesSnow;    
+
+            if(type) {
+                ((LevelState*)newState)->character = type;
+            }
+            break;
+        }
         case GAMEPLAY_SETTINGS:
         {
              //Creating LevelState with init of Spaceship

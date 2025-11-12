@@ -55,29 +55,29 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     //Initial Game State
     //CHANGE if testing a different screen and you want it up on start
 
-    currState = new TitleState();
-    currState->currStateVal =  TITLE;
-    //currState->nextStateVal = CHAR_SELECT;
-    currState->init = initTitle;
-    currState->update = titleUpdate;
-    currState->render = drawTitle;
-    currState->input = titleInput;
+    // currState = new TitleState();
+    // currState->currStateVal =  TITLE;
+    // //currState->nextStateVal = CHAR_SELECT;
+    // currState->init = initTitle;
+    // currState->update = titleUpdate;
+    // currState->render = drawTitle;
+    // currState->input = titleInput;
     
     // currState = new SettingsState();
     // currState->currStateVal =  SETTINGS;
-    // currState->nextStateVal = SPACESHIP;
+    // currState->nextStateVal = SNOW;
     // currState->init = initSettings;
     // currState->update = settingsUpdate;
     // currState->render = drawSettings;
     // currState->input = settingsInputs;
     
-        // currState = new LevelState();
-        // currState->currStateVal = GRASSLANDS;
-        // currState->nextStateVal = SPACESHIP;
-        // currState->init = createTilesGrassland;
-        // currState->update = levelUpdate;
-        // currState->render = drawLevel;
-        // currState->input = levelInputs;
+        currState = new LevelState();
+        currState->currStateVal = SNOW;
+        currState->nextStateVal = SPACESHIP;
+        currState->init = createTilesSnow;
+        currState->update = levelUpdate;
+        currState->render = drawLevel;
+        currState->input = levelInputs;
 
         // currState = new LevelState();
         // currState->currStateVal = SPACESHIP;

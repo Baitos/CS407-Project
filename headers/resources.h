@@ -92,6 +92,8 @@ struct Resources {
                 *texCloud, *texWood, *texLeaves, *texStone, *texWater, *texLava, *texGrass, *texDirt,
                 *texBgWood, *texBgSky, *texBgStone,
                 *texSignUp, *texSignDown, *texSignRight, *texSignLeft,
+                *texDoor, *texGondola1, *texGondola2, *texGondola3, *texIceBlock, *texLog, *texPlank, *texPlankV, *texBgPlank,
+                *texBgSkySnow, *texBgSnow, *texSnow, *texWire, *texWoodDark,
                 *texCharSelectBackground, *texCursor, *texCharIcons, *texSword, *texShotgun, *texJetpack, 
                 *texLeftArrow, *texRightArrow,
                 *texItemBox, *texItemStorage, *texItemRandomizer, 

@@ -164,6 +164,22 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     texSignRight = loadTexture(state.renderer, "data/Grasslands/sign_right.png");
     texSignLeft = loadTexture(state.renderer, "data/Grasslands/sign_left.png");
 
+    //Snow
+    texDoor = loadTexture(state.renderer, "data/Snow/door.png");
+    texGondola1 = loadTexture(state.renderer, "data/Snow/gondola-1.png");
+    texGondola2 = loadTexture(state.renderer, "data/Snow/gondola-2.png");
+    texGondola3 = loadTexture(state.renderer, "data/Snow/gondola-3.png");
+    texIceBlock = loadTexture(state.renderer, "data/Snow/ice.png");
+    texLog = loadTexture(state.renderer, "data/Snow/log.png");
+    texPlank = loadTexture(state.renderer, "data/Snow/planks.png");
+    texPlankV = loadTexture(state.renderer, "data/Snow/plank_vertical.png");
+    texBgPlank = loadTexture(state.renderer, "data/Snow/planks_bg.png");
+    texBgSkySnow = loadTexture(state.renderer, "data/Snow/sky.png");
+    texBgSnow = loadTexture(state.renderer, "data/Snow/snow_bg.png");
+    texSnow = loadTexture(state.renderer, "data/Snow/snow.png");
+    texWire = loadTexture(state.renderer, "data/Snow/wire.png");
+    texWoodDark = loadTexture(state.renderer, "data/Snow/wood_dark.png");
+
     //Char Select Background
     
     texCharSelectBackground = loadTexture(state.renderer, "data/CharSelect/background.png");
