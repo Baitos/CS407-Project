@@ -92,7 +92,7 @@ struct Resources {
                 *texCloud, *texWood, *texLeaves, *texStone, *texWater, *texLava, *texGrass, *texDirt,
                 *texBgWood, *texBgSky, *texBgStone,
                 *texSignUp, *texSignDown, *texSignRight, *texSignLeft,
-                *texDoor, *texGondola1, *texGondola2, *texGondola3, *texIceBlock, *texLog, *texPlank, *texPlankV, *texBgPlank,
+                *texDoorR, *texDoorL, *texGondola1, *texGondola2, *texGondola3, *texIceBlock, *texLog, *texPlank, *texPlankV, *texBgPlank,
                 *texBgSkySnow, *texBgSnow, *texSnow, *texWire, *texWoodDark,
                 *texCharSelectBackground, *texCursor, *texCharIcons, *texSword, *texShotgun, *texJetpack, 
                 *texLeftArrow, *texRightArrow,
@@ -106,7 +106,7 @@ struct Resources {
                 *texGameplaySettingsBackground, *texGameplaySettingsLeftBracket, *texGameplaySettingsRightBracket,
                 *texGameplaySettings1,*texGameplaySettings2,*texGameplaySettings3,*texGameplaySettings4,*texGameplaySettings5;
     SDL_Texture *texMinimap[5];
-    SDL_Texture *texPlayerDots[3];  
+    SDL_Texture *texPlayerDots[3]; 
     SDL_Texture *loadTexture(SDL_Renderer *renderer, const std::string &filepath);
     void load(SDLState &state);
     void unload();

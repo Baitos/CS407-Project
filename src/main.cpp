@@ -73,6 +73,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     
         currState = new LevelState();
         currState->currStateVal = SNOW;
+        ((LevelState*)currState)->character = JETPACK;
         currState->nextStateVal = SPACESHIP;
         currState->init = createTilesSnow;
         currState->update = levelUpdate;

@@ -165,7 +165,8 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     texSignLeft = loadTexture(state.renderer, "data/Grasslands/sign_left.png");
 
     //Snow
-    texDoor = loadTexture(state.renderer, "data/Snow/door.png");
+    texDoorL = loadTexture(state.renderer, "data/Snow/doorL.png");
+    texDoorR = loadTexture(state.renderer, "data/Snow/doorR.png");
     texGondola1 = loadTexture(state.renderer, "data/Snow/gondola-1.png");
     texGondola2 = loadTexture(state.renderer, "data/Snow/gondola-2.png");
     texGondola3 = loadTexture(state.renderer, "data/Snow/gondola-3.png");

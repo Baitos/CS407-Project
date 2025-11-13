@@ -65,6 +65,17 @@ void Object::drawDebugNearby(const SDLState &state, GameData &gd, float width, f
     }
 }
 
+void Wire::draw(const SDLState &state, GameData &gd, float width, float height) {
+    SDL_FRect dst {
+        .x = this->pos.x - gd.mapViewport.x,
+        .y = this->pos.y - gd.mapViewport.y,
+        .w = width*2,
+        .h = height*2
+    };
+    SDL_RenderTexture(state.renderer, this->texture, nullptr, &dst);
+    this->drawDebug(state, gd, width, height);
+}
+
 void AnimatedObject::draw(const SDLState &state, GameData &gd, float width, float height) {
     if (!isOnscreen(state, gd, (*this)) && !this->persistent) {
         return;
