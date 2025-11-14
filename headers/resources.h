@@ -103,7 +103,8 @@ struct Resources {
                 *texSettingsBackground, *texBigBorder, *texSmallBorder, *texSlider,       
                 *texTitle, *texTextCursor,
                 *texGameplaySettingsBackground, *texGameplaySettingsLeftBracket, *texGameplaySettingsRightBracket,
-                *texGameplaySettings1,*texGameplaySettings2,*texGameplaySettings3,*texGameplaySettings4,*texGameplaySettings5;
+                *texGameplaySettings1,*texGameplaySettings2,*texGameplaySettings3,*texGameplaySettings4,*texGameplaySettings5,
+                *texResults, *texEndResults;
     SDL_Texture *texMinimap[5];
     SDL_Texture *texPlayerDots[3];  
     SDL_Texture *loadTexture(SDL_Renderer *renderer, const std::string &filepath);

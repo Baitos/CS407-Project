@@ -112,6 +112,12 @@ GameState * changeState(GameState * tempState, GameData &gd){
 
         case RESULTS:
         {
+            
+            break;
+        }
+        case END_RESULTS:
+        {
+
             break;
         }
     }

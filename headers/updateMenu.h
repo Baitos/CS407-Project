@@ -26,3 +26,6 @@ void titleUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
 void handleMousePointerTitle(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
 void titleInput(SDLState &state, GameData &gd, Resources &res, float deltaTime);
 void handleTitleClick(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+
+void handleMousePointerResults(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+void handleMousePointerEndResults(const SDLState &state, GameData &gd, Resources &res, float deltaTime);

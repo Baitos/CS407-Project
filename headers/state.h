@@ -27,7 +27,8 @@ enum gameStates {
     GRASSLANDS,
     RESULTS,
     CREDITS,
-    GAMEPLAY_SETTINGS
+    GAMEPLAY_SETTINGS,
+    END_RESULTS
 };
 
 class GameState{
@@ -97,5 +98,8 @@ class GameplaySettingsState : public GameState{
 
 };
 
+class endResultsState : public GameState{
+
+};
 
 GameState * changeState(GameState * tempState, GameData &gd);

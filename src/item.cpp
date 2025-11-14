@@ -181,6 +181,7 @@ void Fog::draw(const SDLState &state, GameData &gd, float width, float height) {
     if (gd.players_[gd.playerIndex].hasFog) {
         //Draw sugar effect
         //printf("has fog\n");
+        this->pos = glm::vec2(gd.mapViewport.x, gd.mapViewport.y);
         AnimatedObject::draw(state, gd, gd.mapViewport.w, gd.mapViewport.h);
         
     }
@@ -189,6 +190,7 @@ void Fog::draw(const SDLState &state, GameData &gd, float width, float height) {
 
 void Fog::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
     if (gd.players_[gd.playerIndex].hasFog) {
+        //this->pos = glm::vec2(gd.mapViewport.x, gd.mapViewport.y);
         this->fogTimer.step(deltaTime);
         if(this->fogTimer.getTime() < 5.f){
             if (this->animations[curAnimation].currentFrame() != 6) {
@@ -213,7 +215,7 @@ void Fog::update(const SDLState &state, GameData &gd, Resources &res, Player &p,
             p.hasFog = false;
             this->active = false;
         }
-        this->pos = glm::vec2(gd.mapViewport.x, gd.mapViewport.y);
+        
     }
 }
 
@@ -235,7 +237,7 @@ void Fog::useItem(const SDLState &state, GameData &gd, Resources &res, Player &p
             
             gd.players_[i].items_.push_back(fog); 
             }
-         }
+        }
 }
 
 void useIce(const SDLState &state, GameData &gd, Resources &res, Player &p) {}
