@@ -28,13 +28,14 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     playerAnims[ANIM_PLAYER_JETPACK_DEPLOY] = Animation(1, 2.0f);
     playerAnims[ANIM_PLAYER_SWORD_DEPLOY] = Animation(3, 0.3f);
 
-    itemAnims.resize(6); // 
+    itemAnims.resize(7); // 
     itemAnims[ANIM_ITEM_EMPTY] = Animation(1, 1.0f);
     itemAnims[ANIM_ITEM_CYCLE] = Animation(8, 0.4f);
     itemAnims[ANIM_ITEM_PICKED] = Animation(1, 1.0f);
     itemAnims[ANIM_ITEM_EXPLOSION] = Animation(3, 0.5f);
     itemAnims[ANIM_ITEM_SOUNDWAVE] = Animation(9, 0.4f);
     itemAnims[ANIM_ITEM_PIE] = Animation(1, 1.0f);
+    itemAnims[ANIM_ITEM_FOG] = Animation(7, 2.0f);
 
     portalAnims.resize(2);
     portalAnims[PORTAL_IDLE] = Animation(3, 1.0f);
@@ -214,6 +215,9 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     texPie = loadTexture(state.renderer, "data/ItemSprites/pie.png");
 
     texIce = loadTexture(state.renderer, "data/ItemSprites/ice_background.png");
+
+    texFog = loadTexture(state.renderer, "data/ItemSprites/fog_overlay.png");
+    texFogExit = loadTexture(state.renderer, "data/ItemSprites/fog_overlay_exit.png");
     //Settings
     texSettingsBackground = loadTexture(state.renderer, "data/SettingsSprites/background.png");
     texBigBorder = loadTexture(state.renderer, "data/SettingsSprites/lButtonOutline.png");

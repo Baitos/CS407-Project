@@ -193,7 +193,8 @@ void ItemBox::generateItem(Player &player, GameData &gd, Resources &res) {
             itemType::FOG, itemType::ICE, itemType::MISSILE, itemType::SUGAR, itemType::PIE};
     //}
     selected = rand() % itemOptions.size();
-    selected = selectedItem;
+    //selected = 3;
+    //selected = selectedItem;
     switch (itemOptions[selected]) {
         case itemType::BOMB:
             newItem = new Bomb(player.pos, defaultCollider, res.texBomb);
@@ -209,6 +210,9 @@ void ItemBox::generateItem(Player &player, GameData &gd, Resources &res) {
             break;
         case itemType::ICE:
             newItem = new Ice(player.pos, defaultCollider, res.texIce);
+            break;
+        case itemType::FOG:
+            newItem = new Fog(player.pos, defaultCollider, res.texFog);
             break;
         default:
             printf("Your item is in another castle\n");
