@@ -109,6 +109,7 @@ void drawLevel(const SDLState &state, GameData &gd, Resources res, float deltaTi
                     place.append("th");
                     break;
         }
+        
         SDL_Surface* textSurface = TTF_RenderText_Blended(gd.md.font, place.c_str(), place.length(), color);
         SDL_Texture* textTex = SDL_CreateTextureFromSurface(state.renderer, textSurface);
         SDL_SetTextureScaleMode(textTex, SDL_SCALEMODE_NEAREST);
@@ -126,7 +127,7 @@ void drawLevel(const SDLState &state, GameData &gd, Resources res, float deltaTi
 
     gd.itemStorage_.draw(state, gd, 68, 68);
 
-    //gd.minimap.draw(state, gd, gd.minimap.texture->w, gd.minimap.texture->h);
+    gd.minimap.draw(state, gd, gd.minimap.texture->w, gd.minimap.texture->h);
     //dont need unless debugging checkpoint system and need to see checkpoints
     //renderCheckpoints(state.renderer, courseCheckpoints, gd);
 

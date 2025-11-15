@@ -50,13 +50,13 @@ struct Resources {
     //anim for map select
     const int MAP_GRASSLAND = 0;
     const int MAP_SPACESHIP = 1;
-    const int MAP_3 = 2;
+    const int MAP_SNOW = 2;
     const int MAP_4 = 3;
     const int MAP_5 = 4;
     std::vector<Animation> mapAnims;
     const int MAP_GRASSLAND_TEXT = 0;
     const int MAP_SPACESHIP_TEXT = 1;
-    const int MAP_3_TEXT = 2;
+    const int MAP_SNOW_TEXT = 2;
     const int MAP_4_TEXT = 3;
     const int MAP_5_TEXT = 4;
     const int MAP_GRAND_PRIX = 5;

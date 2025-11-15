@@ -1281,7 +1281,7 @@ void createTilesSnow(const SDLState &state, GameData &gd, const Resources &res) 
         };
     Wire b(pos, collider, res.texWire);
     gd.wire_.push_back(b);
-    //createMinimap(state, gd, res, res.MAP_SNOW, 1);
+    createMinimap(state, gd, res, res.MAP_SNOW, 1);
     createGrid(state, gd, MAP_ROWS, MAP_COLS);
     //createCheckpointsSnow(state, gd, res);
 }

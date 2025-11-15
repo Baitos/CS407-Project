@@ -53,7 +53,7 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     mapAnims.resize(6);
     mapAnims[MAP_GRASSLAND] = Animation(1, 1.0f);
     mapAnims[MAP_SPACESHIP] = Animation(1, 1.0f);
-    mapAnims[MAP_3] = Animation(1, 1.0f);
+    mapAnims[MAP_SNOW] = Animation(1, 1.0f);
     mapAnims[MAP_4] = Animation(1, 1.0f);
     mapAnims[MAP_5] = Animation(1, 1.0f);
     mapAnims[MAP_GRAND_PRIX] = Animation(1, 1.0f);
@@ -61,7 +61,7 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     mapTextAnims.resize(5);
     mapTextAnims[MAP_GRASSLAND_TEXT] = Animation(1, 1.0f);
     mapTextAnims[MAP_SPACESHIP_TEXT] = Animation(1, 1.0f);
-    mapTextAnims[MAP_3_TEXT] = Animation(1, 1.0f);
+    mapTextAnims[MAP_SNOW_TEXT] = Animation(1, 1.0f);
     mapTextAnims[MAP_4_TEXT] = Animation(1, 1.0f);
     mapTextAnims[MAP_5_TEXT] = Animation(1, 1.0f);
 
@@ -192,14 +192,14 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
 
     texMapPreviews[MAP_GRASSLAND] = loadTexture(state.renderer, "data/CharSelect/grasslands_preview.png");
     texMapPreviews[MAP_SPACESHIP] = loadTexture(state.renderer, "data/CharSelect/spaceship_preview.png");
-    texMapPreviews[MAP_3] = loadTexture(state.renderer, "data/CharSelect/stage_3_preview.png");
+    texMapPreviews[MAP_SNOW] = loadTexture(state.renderer, "data/CharSelect/snow_preview.png");
     texMapPreviews[MAP_4] = loadTexture(state.renderer, "data/CharSelect/stage_4_preview.png");
     texMapPreviews[MAP_5] = loadTexture(state.renderer, "data/CharSelect/stage_5_preview.png");
     texMapPreviews[MAP_GRAND_PRIX] = loadTexture(state.renderer, "data/CharSelect/grand_prix_preview.png");
 
     texMapTextPreviews[MAP_GRASSLAND_TEXT] = loadTexture(state.renderer, "data/CharSelect/grasslands_preview_text.png");
     texMapTextPreviews[MAP_SPACESHIP_TEXT] = loadTexture(state.renderer, "data/CharSelect/spaceship_preview_text.png");
-    texMapTextPreviews[MAP_3_TEXT] = loadTexture(state.renderer, "data/CharSelect/stage_3_preview_text.png");
+    texMapTextPreviews[MAP_SNOW_TEXT] = loadTexture(state.renderer, "data/CharSelect/snow_preview_text.png");
     texMapTextPreviews[MAP_4_TEXT] = loadTexture(state.renderer, "data/CharSelect/stage_4_preview_text.png");
     texMapTextPreviews[MAP_5_TEXT] = loadTexture(state.renderer, "data/CharSelect/stage_5_preview_text.png");
 
@@ -256,6 +256,7 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     // minimap
     texMinimap[MAP_SPACESHIP] = loadTexture(state.renderer, "data/Spaceship/minimapSpaceship.png");
     texMinimap[MAP_GRASSLAND] = loadTexture(state.renderer, "data/Grasslands/minimapGrasslands.png");
+    texMinimap[MAP_SNOW] = loadTexture(state.renderer, "data/Snow/snow_minimap.png");
     texPlayerDots[SHOTGUN] = loadTexture(state.renderer, "data/CharacterSprites/playerDotShotgun.png");
     texPlayerDots[SWORD] = loadTexture(state.renderer, "data/CharacterSprites/playerDotSword.png");
     texPlayerDots[JETPACK] = loadTexture(state.renderer, "data/CharacterSprites/playerDotJetpack.png");

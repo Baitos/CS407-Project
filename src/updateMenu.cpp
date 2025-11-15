@@ -439,6 +439,8 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
             currState->nextStateVal = SPACESHIP;
         } else if(gd.md.map_previews_[0].curAnimation == res.MAP_GRASSLAND)  {
             currState->nextStateVal = GRASSLANDS;
+        } else if(gd.md.map_previews_[0].curAnimation == res.MAP_SNOW)  {
+            currState->nextStateVal = SNOW;
         } else if (gd.md.map_previews_[0].curAnimation == res.MAP_GRAND_PRIX) {
             currState->nextStateVal = GRASSLANDS;
         } else {

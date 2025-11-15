@@ -59,7 +59,7 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
     gd.itemStorage_.pos.x = gd.players_[0].pos.x - 368;
     gd.itemStorage_.pos.y = gd.players_[0].pos.y - 190;
 
-    //gd.minimap.update(state, gd, res, deltaTime);
+    gd.minimap.update(state, gd, res, deltaTime);
 
 
     // gd.mapViewport.x = (gd.players_[0].pos.x + TILE_SIZE / 2) - (gd.mapViewport.w / 2); 
@@ -72,6 +72,8 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
             if(currState->currStateVal==GRASSLANDS) {
                 currState->nextStateVal = SPACESHIP;
             } else if(currState->currStateVal==SPACESHIP) {
+                currState->nextStateVal = SNOW;
+            } else if (currState->currStateVal==SNOW) {
                 gd.isGrandPrix = false;
                 currState->nextStateVal = TITLE;
             }
