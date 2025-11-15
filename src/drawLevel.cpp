@@ -129,7 +129,7 @@ void drawLevel(const SDLState &state, GameData &gd, Resources res, float deltaTi
 
     gd.minimap.draw(state, gd, gd.minimap.texture->w, gd.minimap.texture->h);
     //dont need unless debugging checkpoint system and need to see checkpoints
-    //renderCheckpoints(state.renderer, courseCheckpoints, gd);
+    renderCheckpoints(state.renderer, courseCheckpoints, gd);
 
     handleCrosshair(state, gd, res, deltaTime);
     

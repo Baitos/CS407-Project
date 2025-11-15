@@ -1283,7 +1283,7 @@ void createTilesSnow(const SDLState &state, GameData &gd, const Resources &res) 
     gd.wire_.push_back(b);
     createMinimap(state, gd, res, res.MAP_SNOW, 1);
     createGrid(state, gd, MAP_ROWS, MAP_COLS);
-    //createCheckpointsSnow(state, gd, res);
+    createCheckpointsSnow(state, gd, res);
 }
 
 
