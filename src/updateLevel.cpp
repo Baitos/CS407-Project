@@ -19,7 +19,7 @@ extern GameState * currState;
 //Update Function for level Spaceship
 void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
     //calculate placement
-    //placement(state, gd, res, deltaTime);
+    placement(state, gd, res, deltaTime);
 
     // update portals
     for (Portal &portal : gd.portals_) {
