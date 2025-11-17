@@ -1417,7 +1417,7 @@ void initTitle(const SDLState &state, GameData &gd, const Resources &res) {
         gd.md.settingsBorder.pos.y =  500;
 
         //initialize font
-        if(!gd.md.font){
+        if(gd.md.font == nullptr){
             gd.md.font = TTF_OpenFont("data/Fonts/retro.ttf", 16); // 16 = point size
             if (!gd.md.font) {
                 SDL_Log("Failed to load font");
