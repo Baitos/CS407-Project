@@ -42,6 +42,7 @@ class Player : public AnimatedObject { // player
 
         bool canDoubleJump = true;
         bool usingSugar = false;
+        bool hasFog = false;
 
         int currentDirection;
         int position = -1;

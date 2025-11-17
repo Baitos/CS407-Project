@@ -127,6 +127,20 @@ class Pie : public Item {
         }
 };
 
+class Fog : public Item {
+    public:
+        Timer fogTimer;
+        AnimatedObject fogEffectObject;
+        bool reset = false;
+        void useItem(const SDLState &state, GameData &gd, Resources &res, Player &p);
+        void draw(const SDLState &state, GameData &gd, float width, float height);
+        void update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime);
+        void checkCollision(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {} // do nothing
+        Fog(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) :
+        Item(pos_, colliderRect, tex), fogTimer(10.0f) {
+            index = 3;
+        }
+};
 
 class ItemStorage : public AnimatedObject {
     public:
