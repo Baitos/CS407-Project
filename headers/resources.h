@@ -51,13 +51,13 @@ struct Resources {
     //anim for map select
     const int MAP_GRASSLAND = 0;
     const int MAP_SPACESHIP = 1;
-    const int MAP_3 = 2;
+    const int MAP_SNOW = 2;
     const int MAP_4 = 3;
     const int MAP_5 = 4;
     std::vector<Animation> mapAnims;
     const int MAP_GRASSLAND_TEXT = 0;
     const int MAP_SPACESHIP_TEXT = 1;
-    const int MAP_3_TEXT = 2;
+    const int MAP_SNOW_TEXT = 2;
     const int MAP_4_TEXT = 3;
     const int MAP_5_TEXT = 4;
     const int MAP_GRAND_PRIX = 5;
@@ -93,6 +93,8 @@ struct Resources {
                 *texCloud, *texWood, *texLeaves, *texStone, *texWater, *texLava, *texGrass, *texDirt,
                 *texBgWood, *texBgSky, *texBgStone,
                 *texSignUp, *texSignDown, *texSignRight, *texSignLeft,
+                *texDoorR, *texDoorL, *texGondola1, *texGondola2, *texGondola3, *texIceBlock, *texLog, *texPlank, *texPlankV, *texBgPlank,
+                *texBgSkySnow, *texBgSnow, *texSnow, *texWire, *texWoodDark,
                 *texCharSelectBackground, *texCursor, *texCharIcons, *texSword, *texShotgun, *texJetpack, 
                 *texLeftArrow, *texRightArrow,
                 *texItemBox, *texItemStorage, *texItemRandomizer, 
@@ -106,7 +108,7 @@ struct Resources {
                 *texGameplaySettings1,*texGameplaySettings2,*texGameplaySettings3,*texGameplaySettings4,*texGameplaySettings5,
                 *texResults, *texEndResults;
     SDL_Texture *texMinimap[5];
-    SDL_Texture *texPlayerDots[3];  
+    SDL_Texture *texPlayerDots[3]; 
     SDL_Texture *loadTexture(SDL_Renderer *renderer, const std::string &filepath);
     void load(SDLState &state);
     void unload();

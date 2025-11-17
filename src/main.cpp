@@ -65,16 +65,17 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     
     // currState = new SettingsState();
     // currState->currStateVal =  SETTINGS;
-    // currState->nextStateVal = SPACESHIP;
+    // currState->nextStateVal = SNOW;
     // currState->init = initSettings;
     // currState->update = settingsUpdate;
     // currState->render = drawSettings;
     // currState->input = settingsInputs;
     
         // currState = new LevelState();
-        // currState->currStateVal = GRASSLANDS;
+        // currState->currStateVal = SNOW;
+        // ((LevelState*)currState)->character = JETPACK;
         // currState->nextStateVal = SPACESHIP;
-        // currState->init = createTilesGrassland;
+        // currState->init = createTilesSnow;
         // currState->update = levelUpdate;
         // currState->render = drawLevel;
         // currState->input = levelInputs;

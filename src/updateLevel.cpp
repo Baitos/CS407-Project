@@ -72,6 +72,8 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
             if(currState->currStateVal==GRASSLANDS) {
                 currState->nextStateVal = SPACESHIP;
             } else if(currState->currStateVal==SPACESHIP) {
+                currState->nextStateVal = SNOW;
+            } else if (currState->currStateVal==SNOW) {
                 gd.isGrandPrix = false;
                 currState->nextStateVal = TITLE;
             }

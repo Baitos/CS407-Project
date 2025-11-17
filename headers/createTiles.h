@@ -9,6 +9,7 @@ void createMinimap(const SDLState &state, GameData &gd, const Resources &res, in
 
 void createTilesSpaceship(const SDLState &state, GameData &gd, const Resources &res);
 void createTilesGrassland(const SDLState &state, GameData &gd, const Resources &res);
+void createTilesSnow(const SDLState &state, GameData &gd, const Resources &res);
 
 void initCharSelect(const SDLState &state, GameData &gd, const Resources &res);
 void initSettings(const SDLState &state, GameData &gd, const Resources &res);

@@ -23,7 +23,8 @@ enum ObjectType{
     ITEMBOX,
     SIGN,
     WATER,
-    LAVA
+    LAVA,
+    WIRE
 };
 
 class Object { // generic obj type    
@@ -168,6 +169,20 @@ class Sign:  public Object {
             type = SIGN;
             debug = false;
         }
+};
+
+class Wire:  public Object {
+    public:
+        Wire() : Object() { // default 
+            type = WIRE;
+            debug = false;
+        }
+        Wire(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : // generic obj constructor
+        Object(pos_, colliderRect, tex) {
+            type = WIRE;
+            debug = false;
+        }
+        void draw(const SDLState &state, GameData &gd, float width, float height);
 };
 
 class Water: public Object {
