@@ -1213,7 +1213,7 @@ void createTilesSnow(const SDLState &state, GameData &gd, const Resources &res) 
                     }
                     case 14: //ice
                     {
-                        Level l(pos, collider, res.texIceBlock);
+                        IceBlock l(pos, collider, res.texIceBlock);
                         gd.mapTiles_.push_back(l);
                         break;
                     }

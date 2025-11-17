@@ -74,6 +74,28 @@ void Player::collisionResponse(const SDLState &state, GameData &gd, Resources &r
  	Object &o, SDL_FRect &rectA, SDL_FRect &rectB, glm::vec2 &resolution, float deltaTime)
 {
 	switch (o.type) {
+		case ICE_BLOCK:
+		{
+			//printf("player collided with ice\n");
+			Level& l = dynamic_cast<Level&>(o);
+			if (resolution.x < resolution.y) {
+				
+				if (this->pos.x < l.pos.x) {
+					this->pos.x -= resolution.x;
+				} else {
+					this->pos.x += resolution.x;
+				}	
+				this->vel.x = 0;
+			} else {
+				if (this->pos.y < l.pos.y) {
+					this->pos.y -= resolution.y;
+				} else {
+					this->pos.y += resolution.y;
+				}
+				this->vel.y = 0;
+			}
+			break;
+		}
 		case LEVEL:
 		{
 			//printf("player collided with level\n");
@@ -159,7 +181,7 @@ void Player::collisionResponse(const SDLState &state, GameData &gd, Resources &r
 	}
 }
 
-void Player::groundedCheck(Object &o, SDL_FRect &rectB) {
+void Player::groundedCheck(Object &o, SDL_FRect &rectB, float deltaTime) {
 	// grounded sensor
 	const float inset = 2.0;
 	SDL_FRect sensor {
@@ -170,6 +192,9 @@ void Player::groundedCheck(Object &o, SDL_FRect &rectB) {
 	};
 	glm::vec2 resolution{ 0 };
 	if (intersectAABB(sensor, rectB, resolution)) {
+		if(o.type == ICE_BLOCK) {
+			speedObject(this->vel, deltaTime);
+		}
 		this->grounded = true;
 		this->canDoubleJump = true;
 		this->gravityScale = 1.0f;
@@ -197,8 +222,8 @@ void Player::checkCollision(const SDLState &state, GameData &gd, Resources &res,
 		if (intersectAABB(rectA, rectB, resolution)) {
 			this->collisionResponse(state, gd, res, (*o), rectA, rectB, resolution, deltaTime);
 		}
-		if (o->type == LEVEL) {
-			this->groundedCheck((*o), rectB);
+		if (o->type == LEVEL || o->type == ICE_BLOCK) {
+			this->groundedCheck((*o), rectB, deltaTime);
 		}
 	}
 

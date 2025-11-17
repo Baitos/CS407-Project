@@ -127,3 +127,20 @@ void slowObject(glm::vec2 &vel, float deltaTime) {
         }
     }		
 }
+
+void speedObject(glm::vec2 &vel, float deltaTime) {
+    if (abs(vel.x) <= 1000) {
+        if (vel.x > 0) {
+                vel.x += 1.f * vel.x * deltaTime;
+            } else {
+                vel.x -= 1.f * abs(vel.x) *deltaTime;
+            }
+        }
+    if (abs(vel.y) <= 1000) {
+        if (vel.y > 0) {
+            vel.y += 1.f * vel.y * deltaTime;
+        } else {
+            vel.y -= 1.f * abs(vel.y) * deltaTime;
+        }
+    }		
+}
