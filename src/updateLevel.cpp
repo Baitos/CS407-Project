@@ -68,22 +68,38 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
     //check if game over
     if(gd.round_is_over) {
         gd.round_is_over = false;
-        if(gd.isGrandPrix) {
-            if(currState->currStateVal==GRASSLANDS) {
-                currState->nextStateVal = SPACESHIP;
-            } else if(currState->currStateVal==SPACESHIP) {
-                currState->nextStateVal = SNOW;
-            } else if (currState->currStateVal==SNOW) {
-                gd.isGrandPrix = false;
-                currState->nextStateVal = TITLE;
+        if(gd.isGrandPrix){
+            if(currState->currStateVal != SNOW){		//TODO ELLIE MAKE THIS THE LAST STAGE IN THE GRAND PRIX
+                currState->nextStateVal = RESULTS;
+                currState = changeState(currState,gd);
+                currState->init(state, gd, res);
+            } else {
+                currState->nextStateVal = END_RESULTS;
+                currState = changeState(currState,gd);
+                currState->init(state, gd, res);
             }
-            currState = changeState(currState, gd);
-            currState->init(state, gd, res);
         } else {
-            currState->nextStateVal = TITLE;
-            currState = changeState(currState, gd);
+            printf("END RESULTS\n");
+            currState->nextStateVal = END_RESULTS;
+            currState = changeState(currState,gd);
             currState->init(state, gd, res);
         }
+        // if(gd.isGrandPrix) {
+        //     if(currState->currStateVal==GRASSLANDS) {
+        //         currState->nextStateVal = SPACESHIP;
+        //     } else if(currState->currStateVal==SPACESHIP) {
+        //         currState->nextStateVal = SNOW;
+        //     } else if (currState->currStateVal==SNOW) {
+        //         gd.isGrandPrix = false;
+        //         currState->nextStateVal = TITLE;
+        //     }
+        //     currState = changeState(currState, gd);
+        //     currState->init(state, gd, res);
+        // } else {
+        //     currState->nextStateVal = TITLE;
+        //     currState = changeState(currState, gd);
+        //     currState->init(state, gd, res);
+        // }
     }
 
 }

@@ -172,7 +172,8 @@ void drawResults(const SDLState &state, GameData &gd, Resources res, float delta
         gd.md.settingsBorder.draw(state, gd,static_cast<float>(gd.md.settingsBorder.texture->w) * 2, static_cast<float>(gd.md.settingsBorder.texture->h)*2);
     }
 
-    handleMousePointerTitle(state, gd, res, deltaTime);
+    //handleMousePointerTitle(state, gd, res, deltaTime);
+    handleMousePointerResults(state,gd,res,deltaTime);
 }
 
 void drawEndResults(const SDLState &state, GameData &gd, Resources res, float deltaTime){
@@ -192,5 +193,5 @@ void drawEndResults(const SDLState &state, GameData &gd, Resources res, float de
         gd.md.settingsBorder.draw(state, gd,static_cast<float>(gd.md.settingsBorder.texture->w) * 2, static_cast<float>(gd.md.settingsBorder.texture->h)*2);
     }
 
-    handleMousePointerTitle(state, gd, res, deltaTime);
+    handleMousePointerEndResults(state,gd,res,deltaTime);
 }

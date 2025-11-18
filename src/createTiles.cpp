@@ -801,7 +801,7 @@ void createTilesGrassland(const SDLState &state, GameData &gd, const Resources &
 }
 
 void initCharSelect(const SDLState &state, GameData &gd, const Resources &res) { // 280 x 60
-
+    
     printf("laps/round: %d\n", gd.laps_per_race);
     printf("grand prix mode? %d\n", gd.isGrandPrix);
         SDL_FRect collider = {

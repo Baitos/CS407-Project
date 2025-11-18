@@ -99,7 +99,7 @@ class GameplaySettingsState : public GameState{
 
 };
 
-class endResultsState : public GameState{
+class EndResultsState : public GameState{
 
 };
 
