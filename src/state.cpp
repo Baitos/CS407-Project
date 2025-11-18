@@ -66,8 +66,8 @@ GameState * changeState(GameState * tempState, GameData &gd){
         case SPACESHIP:
         {
             characterType type;
-            if(((LevelState*)currState)->character) {
-                type = ((LevelState*)currState)->character;
+            if(((ResultsState*)currState)->character) {
+                type = ((ResultsState*)currState)->character;
             }
             //Creating LevelState with init of Spaceship
             newState = new LevelState();
@@ -84,8 +84,8 @@ GameState * changeState(GameState * tempState, GameData &gd){
         case GRASSLANDS:
         {
             characterType type;
-            if(((LevelState*)currState)->character) {
-                type = ((LevelState*)currState)->character;
+            if(((ResultsState*)currState)->character) {
+                type = ((ResultsState*)currState)->character;
             }
             //Creating LevelState with init of Spaceship
             newState = new LevelState();
@@ -102,8 +102,8 @@ GameState * changeState(GameState * tempState, GameData &gd){
         case SNOW:
         {
             characterType type;
-            if(((LevelState*)currState)->character) {
-                type = ((LevelState*)currState)->character;
+            if(((ResultsState*)currState)->character) {
+                type = ((ResultsState*)currState)->character;
             }
             //Creating LevelState with init of Spaceship
             newState = new LevelState();
@@ -130,11 +130,18 @@ GameState * changeState(GameState * tempState, GameData &gd){
 
         case RESULTS:
         {
+            characterType type;
+            if(((LevelState*)currState)->character) {
+                type = ((LevelState*)currState)->character;
+            }
             newState = new ResultsState();
             newState->render = drawResults;
             newState->init = initResults;
             newState->input = resultsInputs;
             newState->update = gameplaySettingsUpdate;
+            if(type) {
+                ((ResultsState*)newState)->character = type;
+            }
             break;
         }
         case END_RESULTS:

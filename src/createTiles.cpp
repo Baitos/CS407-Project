@@ -708,7 +708,7 @@ void createTilesGrassland(const SDLState &state, GameData &gd, const Resources &
                     case 6: //Player
                     {
                         createPlayer(gd, res, pos);
-                        createPlayer(gd, res, pos);
+                        // createPlayer(gd, res, pos);
                         break; 
                     }
                     case 7: //water
