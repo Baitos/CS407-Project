@@ -121,6 +121,7 @@ void drawGameplaySettings(const SDLState &state, GameData &gd, Resources res, fl
 }
 
 void drawTitle(const SDLState &state, GameData &gd, Resources res, float deltaTime){
+
     // used for camera system
     gd.mapViewport.x = 0; 
     gd.mapViewport.y = 0; 
@@ -152,4 +153,45 @@ void drawTitle(const SDLState &state, GameData &gd, Resources res, float deltaTi
     }
 
     handleMousePointerTitle(state, gd, res, deltaTime);
+}
+
+void drawResults(const SDLState &state, GameData &gd, Resources res, float deltaTime){
+        // used for camera system
+    gd.mapViewport.x = 0; 
+    gd.mapViewport.y = 0; 
+    //draw bg
+    SDL_SetRenderDrawColor(state.renderer, 13, 22, 59, 255);
+    SDL_RenderClear(state.renderer);
+
+    // draw bg tiles
+    for (BackgroundObject &bg : gd.bgTiles_) {
+        bg.draw(state, gd, static_cast<float>(bg.texture->w), static_cast<float>(bg.texture->h)); 
+    }
+    if(gd.md.settingsBorder.pos.y != 500.f){
+        //printf("drawing, %f", gd.settingsBorder->pos.y);
+        gd.md.settingsBorder.draw(state, gd,static_cast<float>(gd.md.settingsBorder.texture->w) * 2, static_cast<float>(gd.md.settingsBorder.texture->h)*2);
+    }
+
+    //handleMousePointerTitle(state, gd, res, deltaTime);
+    handleMousePointerResults(state,gd,res,deltaTime);
+}
+
+void drawEndResults(const SDLState &state, GameData &gd, Resources res, float deltaTime){
+        // used for camera system
+    gd.mapViewport.x = 0; 
+    gd.mapViewport.y = 0; 
+    //draw bg
+    SDL_SetRenderDrawColor(state.renderer, 13, 22, 59, 255);
+    SDL_RenderClear(state.renderer);
+
+    // draw bg tiles
+    for (BackgroundObject &bg : gd.bgTiles_) {
+        bg.draw(state, gd, static_cast<float>(bg.texture->w), static_cast<float>(bg.texture->h)); 
+    }
+    if(gd.md.settingsBorder.pos.y != 500.f){
+        //printf("drawing, %f", gd.settingsBorder->pos.y);
+        gd.md.settingsBorder.draw(state, gd,static_cast<float>(gd.md.settingsBorder.texture->w) * 2, static_cast<float>(gd.md.settingsBorder.texture->h)*2);
+    }
+
+    handleMousePointerEndResults(state,gd,res,deltaTime);
 }

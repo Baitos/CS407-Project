@@ -130,6 +130,20 @@ GameState * changeState(GameState * tempState, GameData &gd){
 
         case RESULTS:
         {
+            newState = new ResultsState();
+            newState->render = drawResults;
+            newState->init = initResults;
+            newState->input = resultsInputs;
+            newState->update = gameplaySettingsUpdate;
+            break;
+        }
+        case END_RESULTS:
+        {
+            newState = new EndResultsState();
+            newState->render = drawEndResults;
+            newState->init = initEndResults;
+            newState->input = endResultsInputs;
+            newState->update = gameplaySettingsUpdate;
             break;
         }
     }
@@ -139,7 +153,7 @@ GameState * changeState(GameState * tempState, GameData &gd){
     newState->prevState = tempState;
 
     //To be removed when new screens are added
-    newState->nextStateVal = SPACESHIP;
+    //newState->nextStateVal = SPACESHIP;
     return newState;
 }
 

@@ -801,7 +801,7 @@ void createTilesGrassland(const SDLState &state, GameData &gd, const Resources &
 }
 
 void initCharSelect(const SDLState &state, GameData &gd, const Resources &res) { // 280 x 60
-
+    
     printf("laps/round: %d\n", gd.laps_per_race);
     printf("grand prix mode? %d\n", gd.isGrandPrix);
         SDL_FRect collider = {
@@ -1424,4 +1424,45 @@ void initTitle(const SDLState &state, GameData &gd, const Resources &res) {
                 return;
             }
         }
+}
+
+void initResults(const SDLState &state, GameData &gd, const Resources &res) {
+     SDL_FRect collider = {
+            .x = 0,
+            .y = 0,
+            .w = 32,
+            .h = 32
+        };
+        
+        glm::vec2  pos = glm::vec2(0,0);
+        // Background
+        BackgroundObject bg(pos, collider, res.texResults);
+        bg.collider.w = res.texTitle->w;
+        bg.collider.h = res.texTitle->h;
+        gd.bgTiles_.push_back(bg);
+
+        Object border(pos, collider, res.texBigBorder);
+        gd.md.settingsBorder = border;
+        gd.md.settingsBorder.pos.y =  500;
+
+}
+
+void initEndResults(const SDLState &state, GameData &gd, const Resources &res) {
+     SDL_FRect collider = {
+            .x = 0,
+            .y = 0,
+            .w = 32,
+            .h = 32
+        };
+        
+        glm::vec2  pos = glm::vec2(0,0);
+        // Background
+        BackgroundObject bg(pos, collider, res.texEndResults);
+        bg.collider.w = res.texTitle->w;
+        bg.collider.h = res.texTitle->h;
+        gd.bgTiles_.push_back(bg);
+
+        Object border(pos, collider, res.texBigBorder);
+        gd.md.settingsBorder = border;
+        gd.md.settingsBorder.pos.y =  500;
 }

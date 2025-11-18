@@ -6,6 +6,8 @@
 #include "../headers/helper.h"
 #include "../headers/createCheckpoints.h"
 
+extern GameState * currState;
+
 bool deltaIntersectAABB(SDLState &state, Object &a, Object &b, glm::vec2 &overlap, float deltaTime) {
 	glm::vec2 delta = updatePos(a, deltaTime); // attempt to move forward
 	SDL_FPoint vertices[4];
@@ -299,6 +301,7 @@ void Player::checkCollision(const SDLState &state, GameData &gd, Resources &res,
 			if(this->lapsCompleted >= gd.laps_per_race) {
 				printf("\n\nGAME OVER\n\n");
 				gd.round_is_over = true;
+				
 			}
 		} else {
 			int numDone = 0;
@@ -310,6 +313,7 @@ void Player::checkCollision(const SDLState &state, GameData &gd, Resources &res,
 			if(numDone >= gd.players_.size()-1) {
 				printf("\n\nGAME OVER (multiple player)\n\n");
 				gd.round_is_over = true;
+				
 			}else if(numDone==1) {
 				//start timer after first player ends
 
