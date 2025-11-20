@@ -91,6 +91,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     // setup game data
     GameData gd(state);
     currState->init(state,gd,res);
+    
     uint64_t prevTime = SDL_GetTicks();
 
     uint64_t frames = 0;
@@ -112,11 +113,15 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
 
         //Calls functions related to the current GameState
         //printf("new main loop\n");
+        
         currState->input(state, gd, res, deltaTime);
-        //printf("input done\n");
+        //printf("input don\n");
+        
         currState->update(state, gd, res, deltaTime);
+        
         //printf("update done\n");
         currState->render(state, gd, res, deltaTime);
+        
         //printf("draw done\n");
         if (gd.debugMode) {
         // debug info

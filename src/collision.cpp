@@ -4,9 +4,10 @@
 #include "../headers/playerState.h"
 #include "../headers/state.h"
 #include "../headers/helper.h"
-#include "../headers/createCheckpoints.h"
+#include <algorithm>
 
 extern GameState * currState;
+
 
 bool deltaIntersectAABB(SDLState &state, Object &a, Object &b, glm::vec2 &overlap, float deltaTime) {
 	glm::vec2 delta = updatePos(a, deltaTime); // attempt to move forward
@@ -289,35 +290,38 @@ void Player::checkCollision(const SDLState &state, GameData &gd, Resources &res,
 				if(this->lastCheckpoint == gd.checkpoints_.size() - 1) {
 					this->lapsCompleted++;
 					printf("Completed the %dth lap!\n", this->lapsCompleted);
+					//check if finished, add to placement
+					if(this->lapsCompleted == gd.laps_per_race) {
+						gd.num_finished++;
+						gd.player_placement_.push_back(*this);
+					}
 				}
 				this->lastCheckpoint = (this->lastCheckpoint+1)%(gd.checkpoints_.size());
 				printf("passed checkpoint %d\n%f, %f\n%f, %f", this->lastCheckpoint, cp.collider.x, cp.collider.y, this->pos.x, this->pos.y);
 			}
 		}
 	}
-	//check for game end
+	//check for game 
 	if(!gd.round_is_over) {
 		if(gd.players_.size() == 1) {
-			if(this->lapsCompleted >= gd.laps_per_race) {
+			if(gd.num_finished == 1) {
 				printf("\n\nGAME OVER\n\n");
 				gd.round_is_over = true;
-				
 			}
 		} else {
-			int numDone = 0;
-			for(Player &p: gd.players_) {
-				if(this->lapsCompleted >= gd.laps_per_race) {
-					numDone++;
-				}
-			}
-			if(numDone >= gd.players_.size()-1) {
+			if(gd.num_finished >= gd.players_.size()-1) {
 				printf("\n\nGAME OVER (multiple player)\n\n");
+				bool inArray = false;
+				for(Player p: gd.player_placement_) {
+					if(this->index == p.index){
+						inArray = true;
+						break;
+					}
+				}
+				if(!inArray) {
+					gd.player_placement_.push_back(*this);
+				}
 				gd.round_is_over = true;
-				
-			}else if(numDone==1) {
-				//start timer after first player ends
-
-				//if timer out, game over
 			}
 		}
 	}

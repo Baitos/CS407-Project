@@ -7,6 +7,8 @@ struct Resources;
 
 void settingsUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
 void charSelectUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+void resultsUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+
 void handleMousePointerCharSelect(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
 void handleMousePointerSettings(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
 void charSelectInputs(SDLState &state, GameData &gd, Resources &res, float deltaTime);

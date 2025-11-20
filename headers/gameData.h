@@ -11,10 +11,12 @@
 #include "minimap.h"
 #include "createCheckpoints.h"
 #include "menuData.h"
+#include "resultData.h"
 
 struct GameData {
     std::vector<Player> players_;
     int numPlayers; 
+    std::vector<Player> player_placement_;
 
     glm::vec2 mapSize; // gets x and y size of box used to create map;
 
@@ -33,6 +35,8 @@ struct GameData {
     std::vector<Checkpoint> checkpoints_;
 
     MenuData md;
+
+    ResultData rd;
 
     Minimap minimap; // the minimap for the current map
     glm::vec2 ExitPortal, 
@@ -62,9 +66,10 @@ struct GameData {
 
     bool isGrandPrix = false;
     int laps_per_race = 1;
+    int num_finished = 0;
     bool round_is_over = false;
     
-    GameData(const SDLState &state) : md(state) {
+    GameData(const SDLState &state) : md(state), rd(state) {
         playerIndex = -1; // will change when map is loaded
         numPlayers = 8;
         mapViewport = SDL_FRect {
