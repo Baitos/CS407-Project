@@ -157,7 +157,7 @@ GameState * changeState(GameState * tempState, GameData &gd){
             newState->render = drawEndResults;
             newState->init = initEndResults;
             newState->input = endResultsInputs;
-            newState->update = gameplaySettingsUpdate;
+            newState->update = endResultsUpdate;
             break;
         }
     }

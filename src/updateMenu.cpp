@@ -96,6 +96,10 @@ void resultsUpdate(const SDLState &state, GameData &gd, Resources &res, float de
     }
 }
 
+void endResultsUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
+
+}
+
 //
 //INPUT FUNCTIONS
 //
@@ -613,7 +617,7 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
         } else if(gd.md.map_previews_[0].curAnimation == res.MAP_SNOW)  {
             currState->nextStateVal = SNOW;
         } else if (gd.md.map_previews_[0].curAnimation == res.MAP_GRAND_PRIX) {
-            currState->nextStateVal = SPACESHIP; //change back to grasslands
+            currState->nextStateVal = GRASSLANDS;
         } else {
             printf("INVALID MAP\n");
             return;
