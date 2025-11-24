@@ -1024,6 +1024,7 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
         //Change to value Danny made
         int selectedStage = gd.md.currMapVote;
         std::string pendingMessage = "READY " + std::to_string(gd.playerIndex) + " " + std::to_string(selectedStage);
+        printf("%s\n", pendingMessage.c_str());
         ENetPacket * packet = enet_packet_create(pendingMessage.c_str(), pendingMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
         enet_peer_send(serverPeer, 0, packet);
         enet_host_flush(client);

@@ -54,6 +54,8 @@ void charSelectMessageHandler(ENetEvent * event, GameData * gd, Resources &res, 
                     currState->nextStateVal = GRASSLANDS;
                 } else if (std::stoi((message).substr(13)) == 1){
                     currState->nextStateVal = SPACESHIP;
+                } else if (std::stoi((message).substr(13)) == 2){
+                    currState->nextStateVal = SNOW;
                 }
                 printf("here\n");
                 currState = changeState(currState, *gd);

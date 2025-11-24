@@ -1287,9 +1287,9 @@ void createTilesSnow(const SDLState &state, GameData &gd, const Resources &res) 
                     }
                     case 23://player
                     {
-                        for(int i = 0; i < gd.numPlayers; i++){
+                        
                             createPlayer(gd, res, pos);
-                        }
+                        
                         break;
                     }
                 }

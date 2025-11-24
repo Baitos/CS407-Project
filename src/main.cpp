@@ -253,7 +253,9 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                     levelMessageHandler(&event, &gd, res, state);
                 } else if (currState->currStateVal == GRASSLANDS){
                     levelMessageHandler(&event, &gd, res, state);
-                } else {
+                } else if(currState->currStateVal == SNOW){
+                    levelMessageHandler(&event, &gd, res, state);
+                }else {
                     printf("Message fell through %d\n", currState->currStateVal);
                     switch(event.type){
                         case ENET_EVENT_TYPE_CONNECT:{
