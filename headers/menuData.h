@@ -46,6 +46,8 @@ struct MenuData {
     Object * updatedDial = nullptr;
     TTF_Font* font; //font for drawing on screen
 
+    Object settingsBorder;
+    Object * updatedDial = nullptr;
     std::vector<Object> settingsDials_;
     std::vector<Object> gameplaySettingsBrackets1_;
     std::vector<Object> gameplaySettingsBrackets2_;
