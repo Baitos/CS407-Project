@@ -23,6 +23,7 @@ enum gameStates {
     CHAR_SELECT,
     SPACESHIP,
     GRASSLANDS,
+    SNOW,
     RESULTS,
     CREDITS,
     GAMEPLAY_SETTINGS
