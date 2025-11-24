@@ -19,4 +19,7 @@ void createCheckpointsGrassland(const SDLState &state, GameData &gd, const Resou
 
 void createCheckpointsSpaceship(const SDLState &state, GameData &gd, const Resources &res);
 
+void createCheckpointsSnow(const SDLState &state, GameData &gd, const Resources &res);
+
+
 void renderCheckpoints(SDL_Renderer* renderer, const std::vector<Checkpoint>& checkpoints, GameData &gd);

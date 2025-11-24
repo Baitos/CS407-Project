@@ -121,6 +121,7 @@ void drawGameplaySettings(const SDLState &state, GameData &gd, Resources res, fl
 }
 
 void drawTitle(const SDLState &state, GameData &gd, Resources res, float deltaTime){
+
     // used for camera system
     gd.mapViewport.x = 0; 
     gd.mapViewport.y = 0; 
@@ -154,16 +155,6 @@ void drawTitle(const SDLState &state, GameData &gd, Resources res, float deltaTi
 }
 void drawHostLobby(const SDLState &state, GameData &gd, Resources res, float deltaTime){
     // used for camera system
-    gd.mapViewport.x = 0; 
-    gd.mapViewport.y = 0; 
-    //draw bg
-    SDL_SetRenderDrawColor(state.renderer, 13, 22, 59, 255);
-    SDL_RenderClear(state.renderer);
-
-    // draw bg tiles
-    for (BackgroundObject &bg : gd.bgTiles_) {
-        bg.draw(state, gd, static_cast<float>(bg.texture->w), static_cast<float>(bg.texture->h)); 
-    }
     if(gd.md.border.pos.y != 500.f){
         //printf("drawing, %f", gd.border->pos.y);
         gd.md.border.draw(state, gd,static_cast<float>(gd.md.border.texture->w) * 2, static_cast<float>(gd.md.border.texture->h)*2);
@@ -185,8 +176,8 @@ void drawHostLobby(const SDLState &state, GameData &gd, Resources res, float del
     handleMousePointerHostLobby(state, gd, res, deltaTime);
 }
 
-void drawJoinLobby(const SDLState &state, GameData &gd, Resources res, float deltaTime){
-    // used for camera system
+void drawResults(const SDLState &state, GameData &gd, Resources res, float deltaTime){
+        // used for camera system
     gd.mapViewport.x = 0; 
     gd.mapViewport.y = 0; 
     //draw bg
@@ -197,6 +188,27 @@ void drawJoinLobby(const SDLState &state, GameData &gd, Resources res, float del
     for (BackgroundObject &bg : gd.bgTiles_) {
         bg.draw(state, gd, static_cast<float>(bg.texture->w), static_cast<float>(bg.texture->h)); 
     }
+    if(gd.md.settingsBorder.pos.y != 500.f){
+        //printf("drawing, %f", gd.settingsBorder->pos.y);
+        gd.md.settingsBorder.draw(state, gd,static_cast<float>(gd.md.settingsBorder.texture->w) * 2, static_cast<float>(gd.md.settingsBorder.texture->h)*2);
+    }
+
+    //handleMousePointerTitle(state, gd, res, deltaTime);
+    handleMousePointerResults(state,gd,res,deltaTime);
+}
+
+void drawJoinLobby(const SDLState &state, GameData &gd, Resources res, float deltaTime){
+    gd.mapViewport.x = 0; 
+    gd.mapViewport.y = 0; 
+    //draw bg
+    SDL_SetRenderDrawColor(state.renderer, 13, 22, 59, 255);
+    SDL_RenderClear(state.renderer);
+
+    // draw bg tiles
+    for (BackgroundObject &bg : gd.bgTiles_) {
+        bg.draw(state, gd, static_cast<float>(bg.texture->w), static_cast<float>(bg.texture->h)); 
+    }
+    // used for camera system
     if(gd.md.border.pos.y != 500.f){
         //printf("drawing, %f", gd.border->pos.y);
         gd.md.border.draw(state, gd,static_cast<float>(gd.md.border.texture->w) * 2, static_cast<float>(gd.md.border.texture->h)*2);
@@ -237,4 +249,24 @@ void drawJoinLobby(const SDLState &state, GameData &gd, Resources res, float del
         SDL_DestroySurface(textSurface);
     }
     handleMousePointerJoinLobby(state, gd, res, deltaTime);
+}
+ 
+void drawEndResults(const SDLState &state, GameData &gd, Resources res, float deltaTime){
+        // used for camera system
+    gd.mapViewport.x = 0; 
+    gd.mapViewport.y = 0; 
+    //draw bg
+    SDL_SetRenderDrawColor(state.renderer, 13, 22, 59, 255);
+    SDL_RenderClear(state.renderer);
+
+    // draw bg tiles
+    for (BackgroundObject &bg : gd.bgTiles_) {
+        bg.draw(state, gd, static_cast<float>(bg.texture->w), static_cast<float>(bg.texture->h)); 
+    }
+    if(gd.md.settingsBorder.pos.y != 500.f){
+        //printf("drawing, %f", gd.settingsBorder->pos.y);
+        gd.md.settingsBorder.draw(state, gd,static_cast<float>(gd.md.settingsBorder.texture->w) * 2, static_cast<float>(gd.md.settingsBorder.texture->h)*2);
+    }
+
+    handleMousePointerEndResults(state,gd,res,deltaTime);
 }

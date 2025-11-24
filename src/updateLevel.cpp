@@ -53,6 +53,43 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
     // gd.mapViewport.x = (gd.players_[0].pos.x + TILE_SIZE / 2) - (gd.mapViewport.w / 2); 
     // gd.mapViewport.y = (gd.players_[0].pos.y + TILE_SIZE / 2) - (gd.mapViewport.h / 2); 
 
+    //check if game over
+    if(gd.round_is_over) {
+        gd.round_is_over = false;
+        if(gd.isGrandPrix){
+            if(currState->currStateVal != SNOW){		//TODO ELLIE MAKE THIS THE LAST STAGE IN THE GRAND PRIX
+                currState->nextStateVal = RESULTS;
+                currState = changeState(currState,gd);
+                currState->init(state, gd, res);
+            } else {
+                currState->nextStateVal = END_RESULTS;
+                currState = changeState(currState,gd);
+                currState->init(state, gd, res);
+            }
+        } else {
+            printf("END RESULTS\n");
+            currState->nextStateVal = END_RESULTS;
+            currState = changeState(currState,gd);
+            currState->init(state, gd, res);
+        }
+        // if(gd.isGrandPrix) {
+        //     if(currState->currStateVal==GRASSLANDS) {
+        //         currState->nextStateVal = SPACESHIP;
+        //     } else if(currState->currStateVal==SPACESHIP) {
+        //         currState->nextStateVal = SNOW;
+        //     } else if (currState->currStateVal==SNOW) {
+        //         gd.isGrandPrix = false;
+        //         currState->nextStateVal = TITLE;
+        //     }
+        //     currState = changeState(currState, gd);
+        //     currState->init(state, gd, res);
+        // } else {
+        //     currState->nextStateVal = TITLE;
+        //     currState = changeState(currState, gd);
+        //     currState->init(state, gd, res);
+        // }
+    }
+
 }
 
 //
@@ -201,14 +238,21 @@ void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
     }*/
        // Item select, assuming last place for now
     if (key.scancode == SDL_SCANCODE_0) {
-        selectedItem = 0; // Boombox
+        selectedItem = (int)(BOOMBOX); // Boombox
     }
     if (key.scancode == SDL_SCANCODE_1) {
-        selectedItem = 1; // Bomb
+        selectedItem = (int)(BOMB); // Bomb
     }
     if (key.scancode == SDL_SCANCODE_2) {
-        selectedItem = 5; // Sugar
+        selectedItem = (int)(SUGAR); // Sugar
     }
+    if (key.scancode == SDL_SCANCODE_3) {
+        selectedItem = (int)(PIE); // Pie
+    }
+    if (key.scancode == SDL_SCANCODE_4) {
+        selectedItem = (int)(ICE); // Ice
+    }
+
     if (key.scancode == SDL_SCANCODE_F1) {
         running = false;
     }

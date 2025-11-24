@@ -26,6 +26,7 @@ struct GameData {
     std::vector<Sign> signs_;
     std::vector<Water> water_;
     std::vector<Lava> lava_;
+    std::vector<Wire> wire_;
     
     std::vector<std::vector<Object*>> grid_; // all level tiles as pointers
 

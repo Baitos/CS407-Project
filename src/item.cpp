@@ -176,7 +176,70 @@ void Sugar::useItem(const SDLState &state, GameData &gd, Resources &res, Player 
 }
 
 void useBouncyBall(const SDLState &state, GameData &gd, Resources &res, Player &p) {}
-void useFog(const SDLState &state, GameData &gd, Resources &res, Player &p) {}
+
+void Fog::draw(const SDLState &state, GameData &gd, float width, float height) {
+    if (gd.players_[gd.playerIndex].hasFog) {
+        //Draw sugar effect
+        //printf("has fog\n");
+        this->pos = glm::vec2(gd.mapViewport.x, gd.mapViewport.y);
+        AnimatedObject::draw(state, gd, gd.mapViewport.w, gd.mapViewport.h);
+        
+    }
+    
+}
+
+void Fog::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
+    if (gd.players_[gd.playerIndex].hasFog) {
+        //this->pos = glm::vec2(gd.mapViewport.x, gd.mapViewport.y);
+        this->fogTimer.step(deltaTime);
+        if(this->fogTimer.getTime() < 5.f){
+            if (this->animations[curAnimation].currentFrame() != 6) {
+                this->animations[this->curAnimation].step(deltaTime);
+            } 
+        }
+        
+        if(this->fogTimer.getTime() >= 8.f){
+            this->texture = res.texFogExit;
+            if(!this->reset){
+               this->animations[curAnimation].reset();
+               this->reset = true; 
+            }
+            if (this->animations[curAnimation].currentFrame() != 6) {
+                this->animations[this->curAnimation].step(deltaTime);
+            } 
+        }
+
+        
+        if(this->fogTimer.isTimeOut()){
+            //printf("Stopped sugar\n");
+            p.hasFog = false;
+            this->active = false;
+        }
+        
+    }
+}
+
+void Fog::useItem(const SDLState &state, GameData &gd, Resources &res, Player &p){
+    this->fogTimer.reset();
+    for(int i = 0; i < gd.players_.size(); i++){
+        if(i != gd.playerIndex){
+            gd.players_[i].hasFog = true;
+            SDL_FRect collider = {
+                .x = 0,
+                .y = 0,
+                .w = 0,
+                .h = 0
+            };
+            glm::vec2 pos = glm::vec2(gd.mapViewport.x, gd.mapViewport.y);
+            Fog* fog = new Fog(pos, collider, res.texFog);
+            fog->animations = res.itemAnims;
+            fog->curAnimation = res.ANIM_ITEM_FOG;
+            
+            gd.players_[i].items_.push_back(fog); 
+            }
+        }
+}
+
 void useIce(const SDLState &state, GameData &gd, Resources &res, Player &p) {}
 void useMissile(const SDLState &state, GameData &gd, Resources &res, Player &p) {}
 

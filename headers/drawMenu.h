@@ -13,3 +13,5 @@ void drawGameplaySettings(const SDLState &state, GameData &gd, Resources res, fl
 void drawTitle(const SDLState &state, GameData &gd, Resources res, float deltaTime);
 void drawJoinLobby(const SDLState &state, GameData &gd, Resources res, float deltaTime);
 void drawHostLobby(const SDLState &state, GameData &gd, Resources res, float deltaTime);
+void drawResults(const SDLState &state, GameData &gd, Resources res, float deltaTime);
+void drawEndResults(const SDLState &state, GameData &gd, Resources res, float deltaTime);

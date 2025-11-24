@@ -25,9 +25,11 @@ enum gameStates {
     CHAR_SELECT,
     SPACESHIP,
     GRASSLANDS,
+    SNOW,
     RESULTS,
     CREDITS,
-    GAMEPLAY_SETTINGS
+    GAMEPLAY_SETTINGS,
+    END_RESULTS
 };
 class GameState{
     public:
@@ -95,5 +97,8 @@ class GameplaySettingsState : public GameState{
 
 };
 
+class EndResultsState : public GameState{
+
+};
 
 GameState * changeState(GameState * tempState, GameData &gd);

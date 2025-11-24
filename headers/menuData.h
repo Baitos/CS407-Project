@@ -59,6 +59,14 @@ struct MenuData {
     std::vector<AnimatedObject> map_previews_text_;
     std::vector<AnimatedObject> arrows_;
     std::vector<charIconObject> charIcons_;
+    
+    bool usernameEditing = false;
+    std::string tempUsername = " ";
+    std::string displayName;
+    int lastCursorToggle = 0;
+    bool showCursor = true;
+    //font for drawing on screen
+    TTF_Font* font = nullptr;
 
     std::vector<Lobby *> publicLobbies_;
     std::vector<Lobby *> privateLobbies_;
