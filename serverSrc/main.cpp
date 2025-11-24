@@ -178,6 +178,7 @@ void createLobbyServer(int port){
                     
                     //Check what the message was
                     if(message.find("READY ") != std::string::npos){            //Player indicated Ready - Format "READY player_id"
+                        
                         if(!readyPlayers[std::stoi(message.substr(6,1))]){
                             readyPlayers[std::stoi(message.substr(6,1))] = 1;
                             for (int i = 0; i < 5; i++){
@@ -297,11 +298,12 @@ void createLobbyServer(int port){
                  {   //Add conditionals to do what server says
                     std::string message((char *) event.packet->data, event.packet->dataLength);
                     enet_packet_destroy(event.packet);
-                    //printf("%s\n", message.c_str());
+                    printf("%s\n", message.c_str());
                     playerID = std::stoi(message.substr(6, 1));
                     keyID = std::stoi(message.substr(8, message.length()-10));
                     keyDown = std::stoi(message.substr(message.length() -2, 1));
-                    //printf("%d %d %d\n", playerID, keyID, keyDown);
+                    printf("%d %d %d\n", playerID, keyID, keyDown);
+                    
                     if(keyDown == 1){
                         state.keys[playerID][keyID] = true;
                     } else {
