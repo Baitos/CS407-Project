@@ -193,7 +193,8 @@ void createLobbyServer(int port){
                                 totalReady += ready;
                             }
                             //printf("%d %d\n", totalReady, gd.numPlayers);
-                            if(totalReady == gd.numPlayers){   //If 3/4 of players agree to ready, they enter the game
+                            printf("Total ready: %d NumPlayers: %d\n", totalReady, gd.numPlayers);
+                            if(totalReady == gd.numPlayers){   //If all players agree to ready, they enter the game
                                 //Send message to go to level
                                 //Update Game Data
                                 int mapWinner = 0;
@@ -209,6 +210,9 @@ void createLobbyServer(int port){
                                 } else if( mapWinner == 1){
                                     printf("Spaceship\n");
                                     currState->nextStateVal = SPACESHIP;
+                                } else if(mapWinner == 2){
+                                    printf("Snowy Resort\n");
+                                    currState->nextStateVal = SNOW;
                                 }
 
                                 currState = changeState(currState, gd);
