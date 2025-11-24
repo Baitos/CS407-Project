@@ -322,7 +322,9 @@ void createTilesSpaceship(const SDLState &state, GameData &gd, const Resources &
                     }
                     case 6: //Players
                     {
-                        createPlayer(gd, res, pos);
+                        for(int i = 0; i < gd.numPlayers; i++){
+                            createPlayer(gd, res, pos);
+                        }
                         break; 
                     }
                     case 7: //Background
@@ -709,7 +711,9 @@ void createTilesGrassland(const SDLState &state, GameData &gd, const Resources &
                     }
                     case 6: //Player
                     {
-                        createPlayer(gd, res, pos);
+                        for(int i = 0; i < gd.numPlayers; i++){
+                            createPlayer(gd, res, pos);
+                        }
                         break;
                     }
                     case 7: //water
@@ -1277,7 +1281,9 @@ void createTilesSnow(const SDLState &state, GameData &gd, const Resources &res) 
                     }
                     case 23://player
                     {
-                        createPlayer(gd, res, pos);
+                        for(int i = 0; i < gd.numPlayers; i++){
+                            createPlayer(gd, res, pos);
+                        }
                         break;
                     }
                 }

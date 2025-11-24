@@ -155,6 +155,16 @@ void drawTitle(const SDLState &state, GameData &gd, Resources res, float deltaTi
 }
 void drawHostLobby(const SDLState &state, GameData &gd, Resources res, float deltaTime){
     // used for camera system
+    gd.mapViewport.x = 0; 
+    gd.mapViewport.y = 0; 
+    //draw bg
+    SDL_SetRenderDrawColor(state.renderer, 13, 22, 59, 255);
+    SDL_RenderClear(state.renderer);
+
+    // draw bg tiles
+    for (BackgroundObject &bg : gd.bgTiles_) {
+        bg.draw(state, gd, static_cast<float>(bg.texture->w), static_cast<float>(bg.texture->h)); 
+    }
     if(gd.md.border.pos.y != 500.f){
         //printf("drawing, %f", gd.border->pos.y);
         gd.md.border.draw(state, gd,static_cast<float>(gd.md.border.texture->w) * 2, static_cast<float>(gd.md.border.texture->h)*2);
