@@ -18,40 +18,50 @@ void createPlayer(GameData &gd, const Resources &res, glm::vec2 pos) { // case f
         .x = 1,
         .y = 1,
         .w = 28,
-        .h = 30 // more accurate at 31, bug caused where player stuck in jump state in small ceilings
+        .h = 30 // more accurate at 31, bug caused where player stuck in jump state in small ceilingd
     };
+    
     SDL_FRect hookCollider = { 
         .x = 0,
         .y = 0,
         .w = static_cast<float>(HOOK_SIZE),
-        .h = static_cast<float>(HOOK_SIZE)
+        .h = static_cast<float>(HOOK_SIZE) // more accurate at 31, bug caused where player stuck in jump state in small ceilingd
     };
+
+    //printf("%d",((LevelState*) currState)->character);
+    //Player player2(pos, collider, res.texIdleS, res.playerAnims, res.ANIM_PLAYER_IDLE, 250);
+    //gd.player2 = player2;
+    
     Player player;
-    if(((LevelState*) currState)->character == SWORD){
-        player = Player(pos, collider, res.texIdle[SWORD], res.playerAnims, res.ANIM_PLAYER_IDLE, 250);         
-        player.cooldownTimer = Timer(3.0f);
-    } else if(((LevelState*) currState)->character == SHOTGUN){
-        player = Player(pos, collider, res.texIdle[SHOTGUN], res.playerAnims, res.ANIM_PLAYER_IDLE, 250);
-        player.cooldownTimer = Timer(5.0f);
-    } else {
-        player = Player(pos, collider, res.texIdle[JETPACK], res.playerAnims, res.ANIM_PLAYER_IDLE, 250);
-        player.cooldownTimer = Timer(1.0f);
+    for(int index = 0; index < 8; index++){
+        if(gd.playerTypes[index] != -1){
+            if(gd.playerTypes[index]== SWORD){
+                player = Player(pos, collider, res.texIdle[SWORD], res.playerAnims, res.ANIM_PLAYER_IDLE, 250);         
+                player.cooldownTimer = Timer(3.0f);
+                player.character = SWORD;
+            } else if(gd.playerTypes[index] == SHOTGUN){
+                player = Player(pos, collider, res.texIdle[SHOTGUN], res.playerAnims, res.ANIM_PLAYER_IDLE, 250);
+                player.cooldownTimer = Timer(5.0f);
+                player.character = SHOTGUN;
+            } else {
+                player = Player(pos, collider, res.texIdle[JETPACK], res.playerAnims, res.ANIM_PLAYER_IDLE, 250);
+                player.cooldownTimer = Timer(1.0f);
+                player.character = JETPACK;
+            }
+            
+            //player.character = SWORD;
+            player.state_ = new IdleState();
+            player.dir = 0;
+            player.flip = 1;
+            player.cooldownTimer.step(5.0f);
+            //gd.player2.state_ = newState;
+
+            player.hook = Hook(player.pos, hookCollider, res.texGrapple);
+            player.index = gd.players_.size();
+            gd.players_.push_back(player);
+        }
     }
     
-    player.character = ((LevelState*) currState)->character;
-    player.state_ = new IdleState();
-    player.dir = 0;
-    player.flip = 1;
-    player.cooldownTimer.step(5.0f);
-
-    player.hook = Hook(player.pos, hookCollider, res.texGrapple);
-    player.index = 0;
-    gd.playerIndex = 0;
-    gd.players_.push_back(player);
-    
-    //add player's username (as of now, all same, will need to change w multiplayer)
-    player.username = gd.md.tempUsername;
-
     // Add itemStorage
     SDL_FRect storageCollider; 
     gd.itemStorage_ = ItemStorage(player.pos, storageCollider, res.texItemStorage);
@@ -322,9 +332,7 @@ void createTilesSpaceship(const SDLState &state, GameData &gd, const Resources &
                     }
                     case 6: //Players
                     {
-                        for(int i = 0; i < gd.numPlayers; i++){
-                            createPlayer(gd, res, pos);
-                        }
+                        createPlayer(gd, res, pos);
                         break; 
                     }
                     case 7: //Background
@@ -711,9 +719,7 @@ void createTilesGrassland(const SDLState &state, GameData &gd, const Resources &
                     }
                     case 6: //Player
                     {
-                        for(int i = 0; i < gd.numPlayers; i++){
-                            createPlayer(gd, res, pos);
-                        }
+                        createPlayer(gd, res, pos);
                         break;
                     }
                     case 7: //water

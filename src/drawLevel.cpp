@@ -7,8 +7,8 @@ extern GameState *currState;
 //Draw Function for level Spaceship
 void drawLevel(const SDLState &state, GameData &gd, Resources res, float deltaTime){
     // used for camera system
-    gd.mapViewport.x = (gd.players_[0].pos.x + TILE_SIZE / 2) - (gd.mapViewport.w / 2); 
-    gd.mapViewport.y = (gd.players_[0].pos.y + TILE_SIZE / 2) - (gd.mapViewport.h / 2); 
+    gd.mapViewport.x = (gd.players_[gd.playerIndex].pos.x + TILE_SIZE / 2) - (gd.mapViewport.w / 2); 
+    gd.mapViewport.y = (gd.players_[gd.playerIndex].pos.y + TILE_SIZE / 2) - (gd.mapViewport.h / 2); 
     //draw bg, switch to different color for snow level
     if(currState->currStateVal!=SNOW){
         SDL_SetRenderDrawColor(state.renderer, 64, 51, 83, 255);

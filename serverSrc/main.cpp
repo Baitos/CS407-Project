@@ -253,7 +253,7 @@ void createLobbyServer(int port){
  
     Uint64 lastBroadcast = SDL_GetTicks();
     
-    if(gd.players_[0].grounded == 0){
+    if(gd.players_[gd.playerIndex].grounded == 0){
         //printf("not grounded");
     }
 
@@ -307,9 +307,9 @@ void createLobbyServer(int port){
                     } else {
                         state.keys[playerID][keyID] = false;
                     }
-                    //printf("1: %f\n", gd.players_[0].pos.y);
+                    //printf("1: %f\n", gd.players_[gd.playerIndex].pos.y);
                     handleKeyInput(state, gd, playerID, keyID, keyDown, deltaTime, lobbyServer, clients);
-                    //printf("2: %f\n", gd.players_[0].pos.y);
+                    //printf("2: %f\n", gd.players_[gd.playerIndex].pos.y);
                     break;
                 }
                 case ENET_EVENT_TYPE_DISCONNECT:

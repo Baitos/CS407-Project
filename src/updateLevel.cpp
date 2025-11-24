@@ -50,8 +50,8 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
     gd.itemStorage_.pos.y = gd.players_[gd.playerIndex].pos.y - 190;
     gd.minimap.update(state, gd, res, deltaTime);
 
-    // gd.mapViewport.x = (gd.players_[0].pos.x + TILE_SIZE / 2) - (gd.mapViewport.w / 2); 
-    // gd.mapViewport.y = (gd.players_[0].pos.y + TILE_SIZE / 2) - (gd.mapViewport.h / 2); 
+    // gd.mapViewport.x = (gd.players_[gd.playerIndex].pos.x + TILE_SIZE / 2) - (gd.mapViewport.w / 2); 
+    // gd.mapViewport.y = (gd.players_[gd.playerIndex].pos.y + TILE_SIZE / 2) - (gd.mapViewport.h / 2); 
 
     //check if game over
     if(gd.round_is_over) {
