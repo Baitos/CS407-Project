@@ -44,10 +44,9 @@ struct MenuData {
     Object * lobbySelectBorder = nullptr;
     Object * verticalDial = nullptr;
     Object * updatedDial = nullptr;
-    TTF_Font* font; //font for drawing on screen
+    TTF_Font* font = nullptr; //font for drawing on screen
 
     Object settingsBorder;
-    Object * updatedDial = nullptr;
     std::vector<Object> settingsDials_;
     std::vector<Object> gameplaySettingsBrackets1_;
     std::vector<Object> gameplaySettingsBrackets2_;
@@ -62,11 +61,7 @@ struct MenuData {
     
     bool usernameEditing = false;
     std::string tempUsername = " ";
-    std::string displayName;
-    int lastCursorToggle = 0;
-    bool showCursor = true;
-    //font for drawing on screen
-    TTF_Font* font = nullptr;
+    
 
     std::vector<Lobby *> publicLobbies_;
     std::vector<Lobby *> privateLobbies_;
