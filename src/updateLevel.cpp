@@ -267,10 +267,11 @@ void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
     }
 
     gd.players_[gd.playerIndex].handleInput(state, gd, res, event, deltaTime); 
-    if (gd.controls->actionPerformed(typeAction::ACTION_USEITEM, event) && gd.players_[gd.playerIndex].hasItem) {
+    if (gd.controls->actionPerformed(typeAction::ACTION_USEITEM, event) && gd.players_[gd.playerIndex].hasItem && !gd.players_[gd.playerIndex].pickingItem) {
         Item* item = gd.players_[gd.playerIndex].heldItem;
         item->useItem(state, gd, res, gd.players_[gd.playerIndex]);
         gd.players_[gd.playerIndex].hasItem = false;
+        printf("HAS ITEM IS FALSE via Client\n");
         clearItem(state, gd, res);
     }
     // for (Player &p : gd.players_) {

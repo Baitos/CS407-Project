@@ -61,6 +61,8 @@ class Player : public AnimatedObject { // player
         int lapsCompleted = 0;
         int lastCheckpoint = 0;
 
+        bool itemMessageReceived = false;
+
         void draw(const SDLState &state, GameData &gd, float width, float height);
         virtual void handleInput(const SDLState &state, GameData &gd, Resources &res, SDL_Event &event, float deltaTime);
         virtual void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);

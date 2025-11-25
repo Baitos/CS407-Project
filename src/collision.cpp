@@ -148,8 +148,10 @@ void Player::collisionResponse(const SDLState &state, GameData &gd, Resources &r
 		{
 			ItemBox& box = dynamic_cast<ItemBox&>(o);
 			if (box.itemBoxActive) {
+				printf("%d %d\n", this->pickingItem, this->hasItem);
 				if (!this->pickingItem && !this->hasItem && this->index == gd.playerIndex) {
-        			box.generateItem((*this), gd, res);
+					this->pickingItem = true;
+        			//box.generateItem((*this), gd, res);
 					gd.itemStorage_.texture = res.texItemRandomizer;
 					gd.itemStorage_.curAnimation = res.ANIM_ITEM_CYCLE;
 					gd.itemStorage_.animations[gd.itemStorage_.curAnimation].reset();
@@ -336,7 +338,8 @@ void Hook::checkCollision(const SDLState &state, GameData &gd, Resources &res, P
 			ItemBox& box = dynamic_cast<ItemBox&>(*o);
 			if (intersectAABB(rectA, rectB, resolution) && box.itemBoxActive) {
 				if (!p.pickingItem && !p.hasItem) {
-        			box.generateItem(p, gd, res);
+        			p.pickingItem = true;
+					//box.generateItem(p, gd, res);
 					gd.itemStorage_.texture = res.texItemRandomizer;
 					gd.itemStorage_.curAnimation = res.ANIM_ITEM_CYCLE;
 					gd.itemStorage_.animations[gd.itemStorage_.curAnimation].reset();

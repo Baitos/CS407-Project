@@ -150,7 +150,7 @@ void levelMessageHandler(ENetEvent * event, GameData * gd, Resources &res, SDLSt
                 }
             
             } else if(message.find("I ") != std::string::npos){
-                printf("item used by player");
+                printf("item used by player\n");
                 if(std::stoi(message.substr(2,1)) != gd->playerIndex){
                     SDL_FRect collider = {
                         .x = 0,
@@ -197,17 +197,22 @@ void levelMessageHandler(ENetEvent * event, GameData * gd, Resources &res, SDLSt
                     } else if (std::stoi(message.substr(5,1)) == BOMB){
                         newItem = new Bomb(gd->players_[gd->playerIndex].pos, collider, res.texBomb);
                     }
-                    Item * temp = gd->players_[gd->playerIndex].heldItem;
-                    gd->players_[gd->playerIndex].heldItem = newItem;  
-                    if(!gd->players_[gd->playerIndex].pickingItem){
-                        gd->itemStorage_.texture = res.itemTextures[gd->players_[gd->playerIndex].heldItem->index];
+
+                    if (gd->players_[gd->playerIndex].heldItem != nullptr) {
+                        delete gd->players_[gd->playerIndex].heldItem;
                     }
-                    if (temp != nullptr) {
-                        delete temp;
-                    }
+                    gd->players_[gd->playerIndex].heldItem = newItem;
+                    //gd->players_[gd->playerIndex].hasItem = true;
+                    gd->players_[gd->playerIndex].itemMessageReceived = true;
                 }
             }
             break;
+        }
+        case ENET_EVENT_TYPE_DISCONNECT:
+        {
+            printf("Disconnect\n");
+            break;
+
         }
     }
 }

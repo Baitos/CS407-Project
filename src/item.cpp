@@ -261,12 +261,14 @@ void ItemStorage::update(const SDLState &state, GameData &gd, Resources &res, Pl
         this->animations[this->curAnimation].step(deltaTime);
     }
     this->cycleTimer.step(deltaTime);
-    if (this->cycleTimer.isTimeOut()) {
+    if (this->cycleTimer.isTimeOut() && p.itemMessageReceived) {
         // Reset timer and set item
         this->cycleTimer.reset();
         this->boxItem = p.heldItem;
         p.pickingItem = false;
+        
         p.hasItem = true;
+        p.itemMessageReceived = false;
 
         setItemPicked(gd, res, p.heldItem->index);
     }
