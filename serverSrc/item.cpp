@@ -146,13 +146,56 @@ void Sugar::useItem(const SDLState &state, GameData &gd, Player &p) {
 }
 
 void useBouncyBall(const SDLState &state, GameData &gd, Player &p) {}
-void useFog(const SDLState &state, GameData &gd, Player &p) {}
+
 void useIce(const SDLState &state, GameData &gd, Player &p) {}
 void useMissile(const SDLState &state, GameData &gd, Player &p) {}
 
 void clearItem(const SDLState &state, GameData &gd) {
 
     
+}
+
+
+void Fog::update(const SDLState &state, GameData &gd,  Player &p, float deltaTime) {
+    if (gd.players_[gd.playerIndex].hasFog) {
+        //this->pos = glm::vec2(gd.mapViewport.x, gd.mapViewport.y);
+        this->fogTimer.step(deltaTime);
+        if(this->fogTimer.getTime() < 5.f){
+            
+        }
+        
+        if(this->fogTimer.getTime() >= 8.f){
+            
+        }
+
+        
+        if(this->fogTimer.isTimeOut()){
+            //printf("Stopped sugar\n");
+            p.hasFog = false;
+            this->active = false;
+        }
+        
+    }
+}
+
+void Fog::useItem(const SDLState &state, GameData &gd,  Player &p){
+    this->fogTimer.reset();
+    for(int i = 0; i < gd.players_.size(); i++){
+        if(i != p.index){
+            gd.players_[i].hasFog = true;
+            SDL_FRect collider = {
+                .x = 0,
+                .y = 0,
+                .w = 0,
+                .h = 0
+            };
+            glm::vec2 pos = glm::vec2(gd.mapViewport.x, gd.mapViewport.y);
+            Fog* fog = new Fog(pos, collider);
+            
+            
+            gd.players_[i].items_.push_back(fog); 
+            }
+        }
 }
 
 void setItemPicked(GameData &gd, int index) {

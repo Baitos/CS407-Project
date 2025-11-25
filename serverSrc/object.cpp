@@ -120,6 +120,9 @@ void ItemBox::generateItem(Player &player, GameData &gd) {
         case itemType::ICE:
             newItem = new Ice(player.pos, defaultCollider);
             break;
+        case itemType::FOG:
+            newItem = new Fog(player.pos, defaultCollider);
+            break;
         default:
             printf("Your item is in another castle\n");
             newItem = new Ice(player.pos, defaultCollider);
