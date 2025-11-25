@@ -155,8 +155,9 @@ void handleKeyInput(const SDLState &state, GameData &gd,
             enet_host_flush(lobbyServer);
         }
         
-        
-        item->useItem(state, gd, gd.players_[playerID]);
+        if(item->type != FOG){
+            item->useItem(state, gd, gd.players_[playerID]);
+        }
         gd.players_[playerID].hasItem = false;
         clearItem(state, gd);
     }

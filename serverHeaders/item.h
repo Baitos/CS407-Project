@@ -126,6 +126,18 @@ class PieItem : public Item {
         }
 };
 
+class Fog : public Item {
+  public:
+    Timer fogTimer;
+    void useItem(const SDLState &state, GameData &gd, Player &p);
+    void update(const SDLState &state, GameData &gd, Player &p, float deltaTime);
+    void checkCollision(const SDLState &state, GameData &gd, Player &p, float deltaTime) {}
+    Fog(glm::vec2 pos_, SDL_FRect colliderRect) :
+        Item(pos_, colliderRect), fogTimer(10.0f){
+            type = FOG;
+            index = 3;
+        }
+};
 
 class ItemStorage : public AnimatedObject {
     public:
