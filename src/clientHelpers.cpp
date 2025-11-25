@@ -169,6 +169,8 @@ void levelMessageHandler(ENetEvent * event, GameData * gd, Resources &res, SDLSt
                         newItem = new Sugar(gd->players_[std::stoi(message.substr(2,1))].pos, collider, res.texSugar);
                     } else if (std::stoi(message.substr(4,1)) == BOMB){
                         newItem = new Bomb(gd->players_[std::stoi(message.substr(2,1))].pos, collider, res.texBomb);
+                    } else if (std::stoi(message.substr(4,1)) == FOG){
+                        newItem = new Fog(gd->players_[std::stoi(message.substr(2,1))].pos, collider, res.texFog);
                     }
                     gd->players_[std::stoi(message.substr(2,1))].heldItem = newItem;
                     gd->players_[std::stoi(message.substr(2,1))].heldItem->useItem(state,*gd,res,gd->players_[std::stoi(message.substr(2,1))]);
@@ -196,8 +198,11 @@ void levelMessageHandler(ENetEvent * event, GameData * gd, Resources &res, SDLSt
                         newItem = new Sugar(gd->players_[gd->playerIndex].pos, collider, res.texSugar);
                     } else if (std::stoi(message.substr(5,1)) == BOMB){
                         newItem = new Bomb(gd->players_[gd->playerIndex].pos, collider, res.texBomb);
+                    } else if(std::stoi(message.substr(5,1)) == FOG){
+                        newItem = new Fog(gd->players_[gd->playerIndex].pos, collider, res.texFogStorage);
+                    } else {
+                        printf("Bad item id\n");
                     }
-
                     if (gd->players_[gd->playerIndex].heldItem != nullptr) {
                         delete gd->players_[gd->playerIndex].heldItem;
                     }

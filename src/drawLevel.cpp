@@ -93,6 +93,11 @@ void drawLevel(const SDLState &state, GameData &gd, Resources res, float deltaTi
         }
     }
 
+    for(auto &i : gd.players_[gd.playerIndex].items_){
+        if(i->type == FOG){
+            i->draw(state, gd, i->width, i->height);
+        }
+    }
     //draw player's placement
     SDL_Color color = {0, 239, 255, 255};
     if(gd.players_[gd.playerIndex].position != -1) {

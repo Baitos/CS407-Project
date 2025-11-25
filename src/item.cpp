@@ -222,7 +222,7 @@ void Fog::update(const SDLState &state, GameData &gd, Resources &res, Player &p,
 void Fog::useItem(const SDLState &state, GameData &gd, Resources &res, Player &p){
     this->fogTimer.reset();
     for(int i = 0; i < gd.players_.size(); i++){
-        if(i != gd.playerIndex){
+        if(i != p.index){
             gd.players_[i].hasFog = true;
             SDL_FRect collider = {
                 .x = 0,
