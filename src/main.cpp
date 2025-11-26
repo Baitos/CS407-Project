@@ -278,6 +278,8 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         currState->input(state, gd, res, deltaTime);
         //printf("Update\n");
         currState->update(state, gd, res, deltaTime);
+
+        
         //printf("Draw\n");
         currState->render(state, gd, res, deltaTime);
         //printf("draw done\n");

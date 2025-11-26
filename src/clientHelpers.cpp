@@ -98,10 +98,12 @@ void levelMessageHandler(ENetEvent * event, GameData * gd, Resources &res, SDLSt
                 if(parts.size() == 1+(gd->players_.size()*16)){
                     //printf("%s\n", parts[12*0 + 6].c_str());
                     for(int i = 0; i < gd->players_.size(); i++){
+                        //printf("Original Values: %f %f %f %f\n", gd->players_[std::stoi(parts[16*i+1])].pos.x,  gd->players_[std::stoi(parts[16*i+1])].pos.y, gd->players_[std::stoi(parts[16*i+1])].vel.x , gd->players_[std::stoi(parts[16*i+1])].vel.y);
                         gd->players_[std::stoi(parts[16*i+1])].pos.x = std::stof(parts[16*i+2]);
                         gd->players_[std::stoi(parts[16*i+1])].pos.y = std::stof(parts[16*i+3]);
                         gd->players_[std::stoi(parts[16*i+1])].vel.x = std::stof(parts[16*i+4]);
                         gd->players_[std::stoi(parts[16*i+1])].vel.y = std::stof(parts[16*i+5]);
+                        //printf("Updated: %f %f %f %f\n", gd->players_[std::stoi(parts[16*i+1])].pos.x,  gd->players_[std::stoi(parts[16*i+1])].pos.y, gd->players_[std::stoi(parts[16*i+1])].vel.x , gd->players_[std::stoi(parts[16*i+1])].vel.y);
                         //printf("%d to %d\n", gd->players_[std::stoi(parts[16*i+1])].state_->stateVal, std::stoi(parts[16*i+6]));
                         if(gd->players_[std::stoi(parts[16*i+1])].state_->stateVal !=  JETPACK_DEPLOY || gd->players_[std::stoi(parts[16*i+1])].state_->stateVal !=  SWORD_DEPLOY){
                             if((std::stoi(parts[16*i+6]) == LAUNCH || std::stoi(parts[16*i+6]) == FASTFALL || std::stoi(parts[16*i+6]) == JUMP || std::stoi(parts[16*i+6]) == SPRINT || std::stoi(parts[16*i+6]) == JETPACK_DEPLOY || std::stoi(parts[16*i+6]) == GRAPPLE) && gd->players_[std::stoi(parts[16*i+1])].state_->stateVal !=  std::stoi(parts[16*i+6])){
