@@ -13,5 +13,5 @@ void handleKeyInput(const SDLState &state, GameData &gd,
                     int playerID, int keyID, int keyDown, float deltaTime, ENetHost* lobbyServer, std::vector<ENetPeer *> clients); 
 void handleCrosshair(const SDLState &state, GameData &gd, float deltaTime);
 void levelInputs(SDLState &state, GameData &gd, float deltaTime);
-void handleLevelClick(SDLState &state, GameData &gd, Player &p, float deltaTime, SDL_Event event, bool buttonDown);
+void handleLevelClick(SDLState &state, GameData &gd, int playerID, float deltaTime, int key, bool buttonDown, float aH, float oH,  ENetHost* lobbyServer, std::vector<ENetPeer *> clients);
 void placement(const SDLState &state, GameData &gd, float deltaTime);
