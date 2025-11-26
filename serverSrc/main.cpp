@@ -390,7 +390,9 @@ void createLobbyServer(int port){
                     updateMessage += std::to_string(p.dir) + " " + std::to_string(p.canDoubleJump) + " " + std::to_string(p.grounded) + " ";
                     updateMessage += std::to_string(p.isStunned) + " " + std::to_string(p.isDead) + " " + std::to_string(p.currentDirection) + " ";
                     updateMessage += std::to_string(p.hook.pos.x) + " " + std::to_string(p.hook.pos.y) + " " + std::to_string(p.hook.vel.x) + " " + std::to_string(p.hook.vel.y);
-                }
+                    //printf("%s %s %s %s\n", std::to_string(p.pos.x).c_str(), std::to_string(p.pos.y).c_str(), std::to_string(p.vel.x).c_str(), std::to_string(p.vel.y).c_str());
+                }   
+                
             for(ENetPeer * c : clients){
                 //Broadcast player states
                 ENetPacket * packet = enet_packet_create(updateMessage.c_str(), updateMessage.size()+1, 0);             //0 means unreliable
