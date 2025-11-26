@@ -568,6 +568,8 @@ PlayerState* GrappleState::update(const SDLState &state, GameData &gd, Resources
     float dist = std::sqrt(xDist * xDist + yDist * yDist); // distance formula, H
     float aH = xDist / dist; // cos
     float oH = yDist / dist; // sin
+    p.aH = aH;
+    p.oH = oH;
     p.vel = 500.0f * glm::vec2(aH, oH);
     return nullptr;
 }
