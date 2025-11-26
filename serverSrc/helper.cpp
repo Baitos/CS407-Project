@@ -50,6 +50,7 @@ glm::vec2 updatePos(Object &o, float deltaTime) {
 }
 
 void removeHook(Player &p) {
+    printf("removed hook\n");
     p.hook.visible = false;
     p.hook.collided = false;
     p.hook.pos += glm::vec2(-10000.0f, -10000.0f); // maybe unnecessary

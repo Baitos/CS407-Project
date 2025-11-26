@@ -526,12 +526,13 @@ PlayerState* GrappleState::update(const SDLState &state, GameData &gd, Player &p
     glm::vec2 pOffset = findCenterOfSprite(p); 
     glm::vec2 hOffset = findCenterOfSprite(p.hook);
     // this will go in helper function later
-    float xDist = (p.hook.pos.x - gd.mapViewport.x + hOffset.x) - (p.pos.x - gd.mapViewport.x + pOffset.x); // A
-    float yDist = (p.hook.pos.y - gd.mapViewport.y + hOffset.y) - (p.pos.y - gd.mapViewport.y + pOffset.y); // O
-    float dist = std::sqrt(xDist * xDist + yDist * yDist); // distance formula, H
-    float aH = xDist / dist; // cos
-    float oH = yDist / dist; // sin
-    p.vel = 500.0f * glm::vec2(aH, oH);
+
+    // float xDist = (p.hook.pos.x - p.xViewport + hOffset.x) - (p.pos.x - p.xViewport + pOffset.x); // A
+    // float yDist = (p.hook.pos.y - p.yViewport + hOffset.y) - (p.pos.y - p.yViewport+ pOffset.y); // O
+    // float dist = std::sqrt(xDist * xDist + yDist * yDist); // distance formula, H
+    // float aH = xDist / dist; // cos
+    // float oH = yDist / dist; // sin
+    p.vel = 500.0f * glm::vec2(p.aH, p.oH);
     return nullptr;
 }
 

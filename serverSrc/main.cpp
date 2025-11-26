@@ -303,18 +303,52 @@ void createLobbyServer(int port){
                     std::string message((char *) event.packet->data, event.packet->dataLength);
                     enet_packet_destroy(event.packet);
                     printf("%s\n", message.c_str());
-                    playerID = std::stoi(message.substr(6, 1));
-                    keyID = std::stoi(message.substr(8, message.length()-10));
-                    keyDown = std::stoi(message.substr(message.length() -2, 1));
+
+                    //If key input
+                    if(message.find("INPUT ") != std::string::npos){                                //KEY INPUT
+                        playerID = std::stoi(message.substr(6, 1));
+                        keyID = std::stoi(message.substr(8, message.length()-10));
+                        keyDown = std::stoi(message.substr(message.length() -2, 1));
+                        if(keyDown == 1){
+                            state.keys[playerID][keyID] = true;
+                        } else {
+                            state.keys[playerID][keyID] = false;
+                        }
+                        //printf("1: %f\n", gd.players_[gd.playerIndex].pos.y);
+                        handleKeyInput(state, gd, playerID, keyID, keyDown, deltaTime, lobbyServer, clients);
+                    } else {                                                                        //MOUSE INPUT 
+                        playerID = std::stoi(message.substr(8, 1));                                 //2 IS LMB, 1 IS RMB
+                        keyID = std::stoi(message.substr(10, 1));
+                        keyDown = std::stoi(message.substr(12,1));
+                        if(keyID == 1){
+                            handleLevelClick(state,gd,playerID, deltaTime, keyID, keyDown, 0, 0, lobbyServer, clients);
+                        } else {
+                            std::vector<std::string> parts;
+                            std::string word;
+                            for (char c : message) {
+                                if (c == ' ') {
+                                    if (!word.empty()) {
+                                        parts.push_back(word);
+                                        word.clear();
+                                    }
+                                } else {
+                                    word += c;
+                                }
+                            }
+                            if (!word.empty()){
+                                parts.push_back(word);
+                            }
+                            printf("%s\n", message.c_str());
+                            float aH = std::stof(parts[4]);
+                            float oH = std::stof(parts[5]);
+                            gd.players_[playerID].aH = aH;
+                            gd.players_[playerID].oH = oH;
+                            handleLevelClick(state,gd,playerID, deltaTime, keyID, keyDown, aH, oH, lobbyServer, clients);
+                        }
+                    }
                     printf("%d %d %d\n", playerID, keyID, keyDown);
                     
-                    if(keyDown == 1){
-                        state.keys[playerID][keyID] = true;
-                    } else {
-                        state.keys[playerID][keyID] = false;
-                    }
-                    //printf("1: %f\n", gd.players_[gd.playerIndex].pos.y);
-                    handleKeyInput(state, gd, playerID, keyID, keyDown, deltaTime, lobbyServer, clients);
+                    
                     //printf("2: %f\n", gd.players_[gd.playerIndex].pos.y);
                     break;
                 }
@@ -354,7 +388,8 @@ void createLobbyServer(int port){
                     updateMessage += std::to_string((p.vel.x)) + " " + std::to_string((p.vel.y)) + " ";
                     updateMessage += std::to_string(p.state_->stateVal) + " ";
                     updateMessage += std::to_string(p.dir) + " " + std::to_string(p.canDoubleJump) + " " + std::to_string(p.grounded) + " ";
-                    updateMessage += std::to_string(p.isStunned) + " " + std::to_string(p.isDead) + " " + std::to_string(p.currentDirection);
+                    updateMessage += std::to_string(p.isStunned) + " " + std::to_string(p.isDead) + " " + std::to_string(p.currentDirection) + " ";
+                    updateMessage += std::to_string(p.hook.pos.x) + " " + std::to_string(p.hook.pos.y) + " " + std::to_string(p.hook.vel.x) + " " + std::to_string(p.hook.vel.y);
                 }
             for(ENetPeer * c : clients){
                 //Broadcast player states
