@@ -274,6 +274,7 @@ void Player::checkCollision(const SDLState &state, GameData &gd,
 			if(this->lapsCompleted >= gd.laps_per_race) {
 				printf("\n\nGAME OVER\n\n");
 				gd.round_is_over = true;
+				
 			}
 		} else {
 			int numDone = 0;

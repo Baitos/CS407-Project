@@ -279,149 +279,166 @@ void createLobbyServer(int port){
     }
     prevTime = SDL_GetTicks();
     bool inGame =true;
-    while(inGame){
-        uint64_t nowTime = SDL_GetTicks(); // take time from previous frame to calculate delta
+    bool inLobby = true;
+    while(inLobby){
+        while(inGame){
+            uint64_t nowTime = SDL_GetTicks(); // take time from previous frame to calculate delta
 
-        if (nowTime > lastTime + 1000) { // fps counter
-            lastTime = nowTime;
-            
-        }
-        float deltaTime = (nowTime - prevTime) / 1000.0f; 
-        int keyID= -1;
-        int keyDown = -1;
-        int playerID = -1;
+            if (nowTime > lastTime + 1000) { // fps counter
+                lastTime = nowTime;
+                
+            }
+            float deltaTime = (nowTime - prevTime) / 1000.0f; 
+            int keyID= -1;
+            int keyDown = -1;
+            int playerID = -1;
 
-        while(enet_host_service(lobbyServer, &event, 0) > 0){
-            //std::string message;
-            switch (event.type) {
-                case ENET_EVENT_TYPE_CONNECT:
-                 {   //Do the things you do when you connect
-                    break;
-                 }
-                case ENET_EVENT_TYPE_RECEIVE:
-                 {   //Add conditionals to do what server says
-                    std::string message((char *) event.packet->data, event.packet->dataLength);
-                    enet_packet_destroy(event.packet);
-                    printf("%s\n", message.c_str());
-
-                    //If key input
-                    if(message.find("INPUT ") != std::string::npos){                                //KEY INPUT
-                        playerID = std::stoi(message.substr(6, 1));
-                        keyID = std::stoi(message.substr(8, message.length()-10));
-                        keyDown = std::stoi(message.substr(message.length() -2, 1));
-                        if(keyDown == 1){
-                            state.keys[playerID][keyID] = true;
-                        } else {
-                            state.keys[playerID][keyID] = false;
-                        }
-                        //printf("1: %f\n", gd.players_[gd.playerIndex].pos.y);
-                        handleKeyInput(state, gd, playerID, keyID, keyDown, deltaTime, lobbyServer, clients);
-                    } else {                                                                        //MOUSE INPUT 
-                        playerID = std::stoi(message.substr(8, 1));                                 //2 IS LMB, 1 IS RMB
-                        keyID = std::stoi(message.substr(10, 1));
-                        keyDown = std::stoi(message.substr(12,1));
-                        if(keyID == 1){
-                            handleLevelClick(state,gd,playerID, deltaTime, keyID, keyDown, 0, 0, lobbyServer, clients);
-                        } else {
-                            std::vector<std::string> parts;
-                            std::string word;
-                            for (char c : message) {
-                                if (c == ' ') {
-                                    if (!word.empty()) {
-                                        parts.push_back(word);
-                                        word.clear();
-                                    }
-                                } else {
-                                    word += c;
-                                }
-                            }
-                            if (!word.empty()){
-                                parts.push_back(word);
-                            }
-                            printf("%s\n", message.c_str());
-                            float aH = std::stof(parts[4]);
-                            float oH = std::stof(parts[5]);
-                            gd.players_[playerID].aH = aH;
-                            gd.players_[playerID].oH = oH;
-                            handleLevelClick(state,gd,playerID, deltaTime, keyID, keyDown, aH, oH, lobbyServer, clients);
-                        }
+            while(enet_host_service(lobbyServer, &event, 0) > 0){
+                //std::string message;
+                switch (event.type) {
+                    case ENET_EVENT_TYPE_CONNECT:
+                    {   //Do the things you do when you connect
+                        break;
                     }
-                    printf("%d %d %d\n", playerID, keyID, keyDown);
-                    
-                    
-                    //printf("2: %f\n", gd.players_[gd.playerIndex].pos.y);
+                    case ENET_EVENT_TYPE_RECEIVE:
+                    {   //Add conditionals to do what server says
+                        std::string message((char *) event.packet->data, event.packet->dataLength);
+                        enet_packet_destroy(event.packet);
+                        printf("%s\n", message.c_str());
+
+                        //If key input
+                        if(message.find("INPUT ") != std::string::npos){                                //KEY INPUT
+                            playerID = std::stoi(message.substr(6, 1));
+                            keyID = std::stoi(message.substr(8, message.length()-10));
+                            keyDown = std::stoi(message.substr(message.length() -2, 1));
+                            if(keyDown == 1){
+                                state.keys[playerID][keyID] = true;
+                            } else {
+                                state.keys[playerID][keyID] = false;
+                            }
+                            //printf("1: %f\n", gd.players_[gd.playerIndex].pos.y);
+                            handleKeyInput(state, gd, playerID, keyID, keyDown, deltaTime, lobbyServer, clients);
+                        } else {                                                                        //MOUSE INPUT 
+                            playerID = std::stoi(message.substr(8, 1));                                 //2 IS LMB, 1 IS RMB
+                            keyID = std::stoi(message.substr(10, 1));
+                            keyDown = std::stoi(message.substr(12,1));
+                            if(keyID == 1){
+                                handleLevelClick(state,gd,playerID, deltaTime, keyID, keyDown, 0, 0, lobbyServer, clients);
+                            } else {
+                                std::vector<std::string> parts;
+                                std::string word;
+                                for (char c : message) {
+                                    if (c == ' ') {
+                                        if (!word.empty()) {
+                                            parts.push_back(word);
+                                            word.clear();
+                                        }
+                                    } else {
+                                        word += c;
+                                    }
+                                }
+                                if (!word.empty()){
+                                    parts.push_back(word);
+                                }
+                                printf("%s\n", message.c_str());
+                                float aH = std::stof(parts[4]);
+                                float oH = std::stof(parts[5]);
+                                gd.players_[playerID].aH = aH;
+                                gd.players_[playerID].oH = oH;
+                                handleLevelClick(state,gd,playerID, deltaTime, keyID, keyDown, aH, oH, lobbyServer, clients);
+                            }
+                        }
+                        printf("%d %d %d\n", playerID, keyID, keyDown);
+                        
+                        
+                        //printf("2: %f\n", gd.players_[gd.playerIndex].pos.y);
+                        break;
+                    }
+                    case ENET_EVENT_TYPE_DISCONNECT:
+                    {  //Do the things to do when disconnecting
+                        printf("player left game\n");
+                        inGame = false;
+                    }
                     break;
                 }
-                case ENET_EVENT_TYPE_DISCONNECT:
-                  {  //Do the things to do when disconnecting
-                    printf("player left game\n");
-                    inGame = false;
-                  }
-                  break;
             }
-        }
-        //printf("update start\n");
-        bool itemOwner[8] = {false};
-        for(int i = 0; i < gd.numPlayers; i++){
-            itemOwner[i] = gd.players_[i].pickingItem;
-        }
-    
-        currState->update(state, gd, deltaTime, keyID, keyDown, playerID);
-        for(int i = 0; i < gd.numPlayers; i++){
-            if(itemOwner[i] == false && gd.players_[i].pickingItem == true){
-                
-                std::string itemMessage = "IM " + std::to_string(i) + " " + std::to_string(gd.players_[i].heldItem->type);
-                printf("%s\n", itemMessage.c_str());
-                ENetPacket * packet = enet_packet_create(itemMessage.c_str(), itemMessage.size()+1, 1);             //0 means unreliable
-                enet_peer_send(clients[i], 0, packet);
-                enet_host_flush(lobbyServer);
+            //printf("update start\n");
+            bool itemOwner[8] = {false};
+            for(int i = 0; i < gd.numPlayers; i++){
+                itemOwner[i] = gd.players_[i].pickingItem;
             }
-        }
         
-        
-
-        if(nowTime-lastBroadcast >= UPDATE_INTERVAL_MS){
-            std::string updateMessage = "U";
-                for (Player p : gd.players_){
-                    updateMessage += " " + std::to_string(p.index) + " ";
-                    updateMessage += std::to_string((p.pos.x)) + " " + std::to_string((p.pos.y)) + " ";
-                    updateMessage += std::to_string((p.vel.x)) + " " + std::to_string((p.vel.y)) + " ";
-                    updateMessage += std::to_string(p.state_->stateVal) + " ";
-                    updateMessage += std::to_string(p.dir) + " " + std::to_string(p.canDoubleJump) + " " + std::to_string(p.grounded) + " ";
-                    updateMessage += std::to_string(p.isStunned) + " " + std::to_string(p.isDead) + " " + std::to_string(p.currentDirection) + " ";
-                    updateMessage += std::to_string(p.hook.pos.x) + " " + std::to_string(p.hook.pos.y) + " " + std::to_string(p.hook.vel.x) + " " + std::to_string(p.hook.vel.y);
-                    //printf("%s %s %s %s\n", std::to_string(p.pos.x).c_str(), std::to_string(p.pos.y).c_str(), std::to_string(p.vel.x).c_str(), std::to_string(p.vel.y).c_str());
-                }   
-                
-            for(ENetPeer * c : clients){
-                //Broadcast player states
-                ENetPacket * packet = enet_packet_create(updateMessage.c_str(), updateMessage.size()+1, 0);             //0 means unreliable
-                enet_peer_send(c, 0, packet);
-                enet_host_flush(lobbyServer);
-            }
-
-            // std::string updateMessageItems = "I";
-            // for (Player p : gd.players_){
-            //     for(Item * i : p.items_){
-            //         updateMessage += " " + std::to_string(p.index) + " ";
-            //         updateMessage += std::to_string((i->pos.x)) + " " + std::to_string((i->pos.y)) + " ";
-            //         updateMessage += std::to_string((i->vel.x)) + " " + std::to_string((i->vel.y)) + " ";
+            currState->update(state, gd, deltaTime, keyID, keyDown, playerID);
+            for(int i = 0; i < gd.numPlayers; i++){
+                if(itemOwner[i] == false && gd.players_[i].pickingItem == true){
                     
-            //     }
-                
-            // }
+                    std::string itemMessage = "IM " + std::to_string(i) + " " + std::to_string(gd.players_[i].heldItem->type);
+                    printf("%s\n", itemMessage.c_str());
+                    ENetPacket * packet = enet_packet_create(itemMessage.c_str(), itemMessage.size()+1, 1);             //0 means unreliable
+                    enet_peer_send(clients[i], 0, packet);
+                    enet_host_flush(lobbyServer);
+                }
+            }
+            
+            
 
-            // for(ENetPeer * c : clients){
-            //     //Broadcast player states
-                
-            //     ENetPacket * packet = enet_packet_create(updateMessage.c_str(), updateMessage.size()+1, 0);             //0 means unreliable
-            //     enet_peer_send(c, 0, packet);
-            //     enet_host_flush(lobbyServer);
-            // }
-            lastBroadcast = nowTime;
+            if(nowTime-lastBroadcast >= UPDATE_INTERVAL_MS){
+                std::string updateMessage = "U";
+                    for (Player p : gd.players_){
+                        updateMessage += " " + std::to_string(p.index) + " ";
+                        updateMessage += std::to_string((p.pos.x)) + " " + std::to_string((p.pos.y)) + " ";
+                        updateMessage += std::to_string((p.vel.x)) + " " + std::to_string((p.vel.y)) + " ";
+                        updateMessage += std::to_string(p.state_->stateVal) + " ";
+                        updateMessage += std::to_string(p.dir) + " " + std::to_string(p.canDoubleJump) + " " + std::to_string(p.grounded) + " ";
+                        updateMessage += std::to_string(p.isStunned) + " " + std::to_string(p.isDead) + " " + std::to_string(p.currentDirection) + " ";
+                        updateMessage += std::to_string(p.hook.pos.x) + " " + std::to_string(p.hook.pos.y) + " " + std::to_string(p.hook.vel.x) + " " + std::to_string(p.hook.vel.y);
+                        //printf("%s %s %s %s\n", std::to_string(p.pos.x).c_str(), std::to_string(p.pos.y).c_str(), std::to_string(p.vel.x).c_str(), std::to_string(p.vel.y).c_str());
+                    }   
+                    
+                for(ENetPeer * c : clients){
+                    //Broadcast player states
+                    ENetPacket * packet = enet_packet_create(updateMessage.c_str(), updateMessage.size()+1, 0);             //0 means unreliable
+                    enet_peer_send(c, 0, packet);
+                    enet_host_flush(lobbyServer);
+                }
 
+                // std::string updateMessageItems = "I";
+                // for (Player p : gd.players_){
+                //     for(Item * i : p.items_){
+                //         updateMessage += " " + std::to_string(p.index) + " ";
+                //         updateMessage += std::to_string((i->pos.x)) + " " + std::to_string((i->pos.y)) + " ";
+                //         updateMessage += std::to_string((i->vel.x)) + " " + std::to_string((i->vel.y)) + " ";
+                        
+                //     }
+                    
+                // }
+
+                // for(ENetPeer * c : clients){
+                //     //Broadcast player states
+                    
+                //     ENetPacket * packet = enet_packet_create(updateMessage.c_str(), updateMessage.size()+1, 0);             //0 means unreliable
+                //     enet_peer_send(c, 0, packet);
+                //     enet_host_flush(lobbyServer);
+                // }
+                lastBroadcast = nowTime;
+
+            }
+            prevTime = nowTime;
+            if(gd.round_is_over){
+                inGame = false;
+                if(gd.isGrandPrix){
+                    if(currState->currStateVal == SNOW){
+                        //End Results
+                        inLobby = false;
+                    } else {
+                        //Intermediate Results
+                    }
+                } else {
+                    //End Results
+                    inLobby = false;
+                }
+            }
         }
-        prevTime = nowTime;
     }
 
     //Leave Lobby

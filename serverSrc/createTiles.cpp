@@ -54,7 +54,9 @@ void createPlayer(GameData &gd, glm::vec2 pos) { // case for player put in one c
             player.cooldownTimer.step(5.0f);
             //gd.player2.state_ = newState;
 
-            player.hook = Hook(player.pos, hookCollider);
+            glm::vec2 hookPos = glm::vec2(-1,-1);
+            player.hook = Hook(hookPos, hookCollider);
+            player.hook.visible = false;
             player.index = gd.players_.size();
             gd.players_.push_back(player);
         }
