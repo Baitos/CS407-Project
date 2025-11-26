@@ -149,6 +149,12 @@ void handleLevelClick(SDLState &state, GameData &gd, Resources &res, Player &p, 
     //printf("Player %d Character Type %d\n", gd.playerIndex, gd.players_[gd.playerIndex].character);
     if(gd.controls->actionPerformed(ACTION_ABILITY, event) && buttonDown){
         //JETPACK DEPLOY
+        if(!event.key.repeat){
+            std::string pendingMessage = "INPUT_M " + std::to_string(gd.playerIndex) + " 1 " + std::to_string(buttonDown);
+            ENetPacket * packet = enet_packet_create(pendingMessage.c_str(), pendingMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
+            enet_peer_send(serverPeer, 0, packet);
+            enet_host_flush(client);
+        }
         if(p.character == JETPACK) {
             if (p.cooldownTimer.isTimeOut() && p.state_->stateVal != JETPACK_DEPLOY) {
                 PlayerState* jpState = new JetpackDeployState();
@@ -167,7 +173,9 @@ void handleLevelClick(SDLState &state, GameData &gd, Resources &res, Player &p, 
                 p.handleState(swState, gd, res);
             }
         }
+        
     } else if (buttonDown && gd.controls->actionPerformed(ACTION_GRAPPLE, event)) { // grapple
+        
         glm::vec2 pOffset = findCenterOfSprite(p);
         glm::vec2 hOffset = findCenterOfSprite(p.hook);
         float xDist = gd.mouseCoords.x - (p.pos.x - gd.mapViewport.x + pOffset.x); // A
@@ -176,10 +184,25 @@ void handleLevelClick(SDLState &state, GameData &gd, Resources &res, Player &p, 
         float aH = xDist / dist; // cos
         float oH = yDist / dist; // sin
 
+        if(!event.key.repeat){
+            std::string pendingMessage = "INPUT_M " + std::to_string(gd.playerIndex) + " 2 1 " + std::to_string(aH) + " " + std::to_string(oH);
+            ENetPacket * packet = enet_packet_create(pendingMessage.c_str(), pendingMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
+            enet_peer_send(serverPeer, 0, packet);
+            enet_host_flush(client);
+        }
+
         p.hook.pos = p.pos + hOffset;
         p.hook.visible = true;
         p.hook.vel = 500.0f * glm::vec2(aH, oH);
+
+
     } else if (!buttonDown && gd.controls->actionPerformed(ACTION_GRAPPLE, event)) { // grapple release 
+        if(!event.key.repeat){
+            std::string pendingMessage = "INPUT_M " + std::to_string(gd.playerIndex) + " 2 0 0 0";
+            ENetPacket * packet = enet_packet_create(pendingMessage.c_str(), pendingMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
+            enet_peer_send(serverPeer, 0, packet);
+            enet_host_flush(client);
+        }
         if (p.hook.collided) { // get out
             PlayerState* jState = new JumpState();
             p.handleState(jState, gd, res);

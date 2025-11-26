@@ -63,6 +63,10 @@ class Player : public AnimatedObject { // player
 
         bool itemMessageReceived = false;
 
+        float aH = -1;
+        float oH = -1;
+
+
         void draw(const SDLState &state, GameData &gd, float width, float height);
         virtual void handleInput(const SDLState &state, GameData &gd, Resources &res, SDL_Event &event, float deltaTime);
         virtual void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
