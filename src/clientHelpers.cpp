@@ -47,7 +47,9 @@ void charSelectMessageHandler(ENetEvent * event, GameData * gd, Resources &res, 
                     }
                 }   
             } else if(message.find("PLAYER_ID ") != std::string::npos){
-                gd->playerIndex = std::stoi((message).substr(10));
+                if(gd->playerIndex ==-1){
+                    gd->playerIndex = std::stoi((message).substr(10));
+                }
                 printf("New ID\n");
             } else if(message.find("CHANGE_STATE ") != std::string::npos){
                 if ( std::stoi((message).substr(13)) == 0){

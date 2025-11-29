@@ -159,6 +159,8 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     
     ENetEvent event;
 
+    Uint64 lastDisconnectCheck = SDL_GetTicks();
+
     // start game loop
     while (running) {
         uint64_t nowTime = SDL_GetTicks(); // take time from previous frame to calculate delta
@@ -172,7 +174,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         
         while (enet_host_service(client, &event, 0) > 0) {
             //std::string message;
-            //printf("Handling message %d\n", currState->currStateVal);
+            //printf("Handling message %d\n",event.type);
             if(!inLobby){                             //Message handling for Matchmaker Server Conection
                 switch(event.type){
                     case ENET_EVENT_TYPE_CONNECT:{
@@ -181,71 +183,127 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                     }
                     case ENET_EVENT_TYPE_RECEIVE: {
                         std::string message((char *) event.packet->data, event.packet->dataLength);
-                        printf("%s\n", message.c_str());
+                        //printf("%s\n", message.c_str());
                         enet_packet_destroy(event.packet);
                         if(message.find("LOBBY_PORT ") != std::string::npos){
                             pendingLobby = std::stoi(message.substr(11,5));
                             
                             if (pendingLobby != -1){
                                 enet_peer_disconnect(serverPeer, 0);
+                                
                             }
                         }  else if (message.find("LOBBIES ") != std::string::npos){
                             for (Lobby * l : gd.md.publicLobbies_) {
-        delete l;
-    }
-    for (Lobby * l : gd.md.privateLobbies_) {
-        delete l;
-    }
-    gd.md.publicLobbies_.clear();
-    gd.md.privateLobbies_.clear();
-    message = message.substr(8); // Get rid of "LOBBIES " in the message
-    Lobby * newLobby;
-    std::stringstream stream(message);
-    std::string lobbyString;
-    char delim = ';'; // Delimiter for separate lobby entries
-    while (getline(stream, lobbyString, delim)) {
-        printf("LobbyStr = %s\n", lobbyString.c_str());
-        newLobby = getLobbyFromString(lobbyString);
-        if (newLobby->passwordHash == 0) {
-            gd.md.publicLobbies_.push_back(newLobby);
-        }
-        else {
-            gd.md.privateLobbies_.push_back(newLobby);
-        }
-    }
-    //JOIN LOBBY TESTING
-    Lobby * lobby;
-    for (int i = 0; i < 24; i++) {
-        lobby = new Lobby();
-        lobby->id = i;
-        lobby->port = 40000 + i;
-        lobby->hostName = "TestUser" + std::to_string(i);
-        lobby->playerCount = i;
-        if (i % 2 == 0) {
-            lobby->passwordHash = 0;
-             gd.md.publicLobbies_.push_back(lobby);
-        } 
-        else {
-            lobby->passwordHash = std::hash<std::string>{}(std::to_string(i));
-            gd.md.privateLobbies_.push_back(lobby);
-        }
-    }
+                                delete l;
+                            }
+                            for (Lobby * l : gd.md.privateLobbies_) {
+                                delete l;
+                            }
+                            gd.md.publicLobbies_.clear();
+                            gd.md.privateLobbies_.clear();
+                            message = message.substr(8); // Get rid of "LOBBIES " in the message
+                            Lobby * newLobby;
+                            std::stringstream stream(message);
+                            std::string lobbyString;
+                            char delim = ';'; // Delimiter for separate lobby entries
+                            while (getline(stream, lobbyString, delim)) {
+                                printf("LobbyStr = %s\n", lobbyString.c_str());
+                                newLobby = getLobbyFromString(lobbyString);
+                                if (newLobby->passwordHash == 0) {
+                                    gd.md.publicLobbies_.push_back(newLobby);
+                                }
+                                else {
+                                    gd.md.privateLobbies_.push_back(newLobby);
+                                }
+                            }
+                            //JOIN LOBBY TESTING
+                            Lobby * lobby;
+                            for (int i = 0; i < 24; i++) {
+                                lobby = new Lobby();
+                                lobby->id = i;
+                                lobby->port = 40000 + i;
+                                lobby->hostName = "TestUser" + std::to_string(i);
+                                lobby->playerCount = i;
+                                if (i % 2 == 0) {
+                                    lobby->passwordHash = 0;
+                                    gd.md.publicLobbies_.push_back(lobby);
+                                } 
+                                else {
+                                    lobby->passwordHash = std::hash<std::string>{}(std::to_string(i));
+                                    gd.md.privateLobbies_.push_back(lobby);
+                                }
+                            }
                         }
                         break;
                     }
                     case ENET_EVENT_TYPE_DISCONNECT: {
-                        printf("Changing to Lobby\n");
+                        printf("Disconnecting\n");
                         if(pendingLobby != -1){
                             address.port = pendingLobby;
                             serverPeer = enet_host_connect(client, &address,2,0);
                             pendingLobby = -1;
                             inLobby = true;
+                        } else {
+                            printf("Lost Connection\n");
+                            Uint64 lastDisconnectCheck = SDL_GetTicks();
+                            bool connected = false;
+                            while(!connected){
+                                
+                                Uint64 currTime = SDL_GetTicks();
+                                if(currTime >= lastDisconnectCheck + 1000){
+                                    printf("Trying reconnection\n");
+                                    serverPeer = enet_host_connect(client, &address, 2, 0);
+                                    if(serverPeer){
+                                        connected = true;
+                                    }
+                                }
+                            }
                         }
                         break;
+                    }
+                    case ENET_EVENT_TYPE_DISCONNECT_TIMEOUT:{
+                        printf("Timed Out\n");
+                        Uint64 lastDisconnectCheck = SDL_GetTicks();
+                        bool connected = false;
+                        while(!connected){
+                            
+                            Uint64 currTime = SDL_GetTicks();
+                            if(currTime >= lastDisconnectCheck + 1000){
+                                printf("Trying reconnection\n");
+                                serverPeer = enet_host_connect(client, &address, 2, 0);
+                                if(serverPeer){
+                                    connected = true;
+                                }
+                            }
+                        }
                     }
                 
                 }
             } else {                                            //Message handling for lobby
+                if(event.type == ENET_EVENT_TYPE_DISCONNECT_TIMEOUT){
+                    printf("Timed Out\n");
+                    
+                    
+                    Uint64 currTime = SDL_GetTicks();
+                    if(currTime >= lastDisconnectCheck + 1000){
+                        lastDisconnectCheck = currTime;
+                        printf("Trying reconnection\n");
+                        serverPeer = enet_host_connect(client, &address, 2, 0);
+                        if(serverPeer){
+                            
+                            if(gd.playerIndex != -1){
+                                std::string reconnectionMessage = "RECON " + gd.playerIndex;
+                                ENetPacket * packet = enet_packet_create(reconnectionMessage.c_str(), reconnectionMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
+                                enet_peer_send(serverPeer, 0, packet);
+                                enet_host_flush(client);
+                                enet_packet_destroy(packet);
+                            }
+                         
+                        
+                        }
+                    
+                    }
+                }
                 if(currState->currStateVal == CHAR_SELECT){
                     printf("Message\n");
                     charSelectMessageHandler(&event, &gd, res, state);
