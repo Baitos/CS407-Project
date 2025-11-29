@@ -11,6 +11,7 @@
 #include <set>
 #include <unistd.h>
 #include <sstream>
+#include <algorithm>
 
 #include "../serverHeaders/initState.h"
 #include "../serverHeaders/gameData.h"
@@ -240,6 +241,14 @@ void createLobbyServer(int port){
                             enet_peer_send(client, 0, packet);
                             enet_host_flush(lobbyServer);
                         }
+                    } else if(message.find("RECON ") != std::string::npos){
+                        
+                        auto it = std::find(clients.begin(), clients.end(), event.peer);
+                        if (it != clients.end()) {
+                            clients.erase(it);
+                        }
+                        
+                        clients[std::stoi(message.substr(6,1))] = event.peer;
                     }
                     break;
                 }
