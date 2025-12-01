@@ -242,13 +242,16 @@ void createLobbyServer(int port){
                             enet_host_flush(lobbyServer);
                         }
                     } else if(message.find("RECON ") != std::string::npos){
-                        
+                        printf("here\n");
+                        //printf("Message: \'%s\'", message.c_str());
+                        int index = std::stoi(message.substr(6,1)); 
                         auto it = std::find(clients.begin(), clients.end(), event.peer);
                         if (it != clients.end()) {
                             clients.erase(it);
                         }
                         
-                        clients[std::stoi(message.substr(6,1))] = event.peer;
+                        printf("%d", index);
+                        clients[index] = event.peer;
                     }
                     break;
                 }
