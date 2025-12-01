@@ -18,7 +18,6 @@ void charSelectMessageHandler(ENetEvent * event, GameData * gd, Resources &res, 
     //printf("Handling message of type %d\n", event->type);
     switch(event->type){
         case ENET_EVENT_TYPE_CONNECT:{
-            printf("CONNECTED2\n");
             break;
         }
         case ENET_EVENT_TYPE_RECEIVE: {

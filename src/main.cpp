@@ -244,68 +244,44 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                             pendingLobby = -1;
                             inLobby = true;
                         } else {
-                            printf("Lost Connection\n");
-                            Uint64 lastDisconnectCheck = SDL_GetTicks();
-                            bool connected = false;
-                            while(!connected){
+                            printf("Lost Connection\n");    
+                            Uint64 currTime = SDL_GetTicks();
+                            if(currTime >= lastDisconnectCheck + 1000){
+                                lastDisconnectCheck = currTime;
+                                printf("Trying reconnection\n");
+                                serverPeer = enet_host_connect(client, &address, 2, 0);
                                 
-                                Uint64 currTime = SDL_GetTicks();
-                                if(currTime >= lastDisconnectCheck + 1000){
-                                    printf("Trying reconnection\n");
-                                    serverPeer = enet_host_connect(client, &address, 2, 0);
-                                    if(serverPeer){
-                                        connected = true;
-                                    }
-                                }
                             }
+                            
                         }
                         break;
                     }
                     case ENET_EVENT_TYPE_DISCONNECT_TIMEOUT:{
                         printf("Timed Out\n");
-                        Uint64 lastDisconnectCheck = SDL_GetTicks();
-                        bool connected = false;
-                        while(!connected){
+                        Uint64 currTime = SDL_GetTicks();
+                        if(currTime >= lastDisconnectCheck + 1000){
+                            lastDisconnectCheck = currTime;
+                            printf("Trying reconnection\n");
+                            serverPeer = enet_host_connect(client, &address, 2, 0);
                             
-                            Uint64 currTime = SDL_GetTicks();
-                            if(currTime >= lastDisconnectCheck + 1000){
-                                printf("Trying reconnection\n");
-                                serverPeer = enet_host_connect(client, &address, 2, 0);
-                                if(serverPeer){
-                                    connected = true;
-                                }
-                            }
                         }
+                        
                     }
                 
                 }
             } else {                                            //Message handling for lobby
                 if(event.type == ENET_EVENT_TYPE_DISCONNECT_TIMEOUT){
                     printf("Timed Out\n");
-                    
-                    
                     Uint64 currTime = SDL_GetTicks();
                     if(currTime >= lastDisconnectCheck + 1000){
                         lastDisconnectCheck = currTime;
                         printf("Trying reconnection\n");
                         serverPeer = enet_host_connect(client, &address, 2, 0);
-                        if(serverPeer){
-                            
-                            if(gd.playerIndex != -1){
-                                std::string reconnectionMessage = "RECON " + gd.playerIndex;
-                                ENetPacket * packet = enet_packet_create(reconnectionMessage.c_str(), reconnectionMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
-                                enet_peer_send(serverPeer, 0, packet);
-                                enet_host_flush(client);
-                                enet_packet_destroy(packet);
-                            }
-                         
-                        
-                        }
+                       
                     
                     }
                 }
                 if(currState->currStateVal == CHAR_SELECT){
-                    printf("Message\n");
                     charSelectMessageHandler(&event, &gd, res, state);
                 } else if (currState->currStateVal == SPACESHIP){
                     levelMessageHandler(&event, &gd, res, state);
