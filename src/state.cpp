@@ -194,8 +194,8 @@ void GameState::unloadGameState(GameData &gd) {
     gd.md.previews_.clear();
     gd.md.arrows_.clear();
 
-    gd.rd.roundResults.clear();
-    gd.rd.cumulativeResults.clear();
+    gd.rd->roundResults.clear();
+    gd.rd->cumulativeResults.clear();
 
     gd.grid_.clear();
 

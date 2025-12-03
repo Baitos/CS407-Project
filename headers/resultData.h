@@ -24,7 +24,7 @@ struct ResultData {
     //font for drawing on screen
     TTF_Font* font = nullptr;
 
-    ResultData(const SDLState &state) {
+    ResultData() {
 
     }
 };

@@ -36,7 +36,7 @@ struct GameData {
 
     MenuData md;
 
-    ResultData rd;
+    ResultData * rd = new ResultData();;
 
     Minimap minimap; // the minimap for the current map
     glm::vec2 ExitPortal, 
@@ -71,7 +71,7 @@ struct GameData {
     int num_finished = 0;
     bool round_is_over = false;
     
-    GameData(const SDLState &state): md(state), rd(state) {
+    GameData(const SDLState &state): md(state) {
         for(int i = 0; i < 8; i++){
             playerTypes[i] = -1;
         }

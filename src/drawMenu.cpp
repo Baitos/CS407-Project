@@ -206,7 +206,7 @@ void drawResults(const SDLState &state, GameData &gd, Resources res, float delta
     //render header
     SDL_Color white = { 255, 255, 255, 255 };
     int w = 400 ,h = 30;
-    SDL_Texture* header = createTextTexture(state.renderer, gd.md.font, (gd.rd.resultsPhase == ResultData::RESULTS_SHOW_ROUND ? "Round Results" : "Cumulative Standings"), white, w, h);
+    SDL_Texture* header = createTextTexture(state.renderer, gd.md.font, (gd.rd->resultsPhase == ResultData::RESULTS_SHOW_ROUND ? "Round Results" : "Cumulative Standings"), white, w, h);
     if (header) {
         SDL_FRect dst = { 400 - w/2.0f, 20.0f, static_cast<float>(w), static_cast<float>(h) };
         SDL_RenderTexture(state.renderer, header, nullptr, &dst);
@@ -214,7 +214,7 @@ void drawResults(const SDLState &state, GameData &gd, Resources res, float delta
     }
 
     //pick which list to render
-    std::vector<ResultData::ResultEntry> &list = (gd.rd.resultsPhase == ResultData::RESULTS_SHOW_ROUND) ? gd.rd.roundResults : gd.rd.cumulativeResults;
+    std::vector<ResultData::ResultEntry> &list = (gd.rd->resultsPhase == ResultData::RESULTS_SHOW_ROUND) ? gd.rd->roundResults : gd.rd->cumulativeResults;
 
     //draw rows
     float startX = 150.0f;
@@ -256,7 +256,7 @@ void drawResults(const SDLState &state, GameData &gd, Resources res, float delta
 
         //pts
         std::string ptsString;
-        if(gd.rd.resultsPhase == ResultData::RESULTS_SHOW_ROUND) {
+        if(gd.rd->resultsPhase == ResultData::RESULTS_SHOW_ROUND) {
             ptsString = "+" + std::to_string(entry.pointsEarned) + " pts";
         } else {
             ptsString = std::to_string(entry.pointsEarned) + " pts";
@@ -355,7 +355,7 @@ void drawEndResults(const SDLState &state, GameData &gd, Resources res, float de
     }
 
     //pick which list to render
-    std::vector<ResultData::ResultEntry> &list =  gd.rd.cumulativeResults;
+    std::vector<ResultData::ResultEntry> &list =  gd.rd->cumulativeResults;
 
     //draw rows
     float startX = 150.0f;

@@ -1566,7 +1566,7 @@ void initResults(const SDLState &state, GameData &gd, const Resources &res) {
         gd.md.settingsBorder.pos.y =  500;
 
         //calculate first round of placements and points
-        gd.rd.roundResults.clear();
+        gd.rd->roundResults.clear();
         for(Player &p: gd.players_) {
             p.pointsBeforeRound = p.points;
         }
@@ -1612,7 +1612,7 @@ void initResults(const SDLState &state, GameData &gd, const Resources &res) {
             e.player = p;
             e.placement = placement;
             e.pointsEarned = pointsEarned;
-            gd.rd.roundResults.push_back(e);
+            gd.rd->roundResults.push_back(e);
         }
         //add unplaced
         if(!unplaced.empty()) {
@@ -1624,7 +1624,7 @@ void initResults(const SDLState &state, GameData &gd, const Resources &res) {
                 e.player = p;
                 e.placement = placement;
                 e.pointsEarned = pointsEarned;
-                gd.rd.roundResults.push_back(e);
+                gd.rd->roundResults.push_back(e);
             }
         }
 
@@ -1634,10 +1634,10 @@ void initResults(const SDLState &state, GameData &gd, const Resources &res) {
             e.player = &p;
             e.pointsEarned = p.points;
             e.placement = 0;
-            gd.rd.cumulativeResults.push_back(e);
+            gd.rd->cumulativeResults.push_back(e);
         }
         //sort based on pointsEarned
-        std::sort(gd.rd.cumulativeResults.begin(), gd.rd.cumulativeResults.end(), [](const ResultData::ResultEntry &a, const ResultData::ResultEntry &b) {
+        std::sort(gd.rd->cumulativeResults.begin(), gd.rd->cumulativeResults.end(), [](const ResultData::ResultEntry &a, const ResultData::ResultEntry &b) {
             if(a.pointsEarned != b.pointsEarned) {
                 return a.pointsEarned > b.pointsEarned;
             }
@@ -1646,16 +1646,16 @@ void initResults(const SDLState &state, GameData &gd, const Resources &res) {
 
         //assign places
         int place = 1;
-        for(int i=0; i<gd.rd.cumulativeResults.size(); i++) {
-            if (i > 0 && gd.rd.cumulativeResults[i].pointsEarned < gd.rd.cumulativeResults[i-1].pointsEarned) {
+        for(int i=0; i<gd.rd->cumulativeResults.size(); i++) {
+            if (i > 0 && gd.rd->cumulativeResults[i].pointsEarned < gd.rd->cumulativeResults[i-1].pointsEarned) {
                 place = i+1;
             }
-            gd.rd.cumulativeResults[i].placement = place;
+            gd.rd->cumulativeResults[i].placement = place;
         }
 
         //initialize timer for switch
-        gd.rd.resultsPhase = ResultData::RESULTS_SHOW_ROUND;
-        gd.rd.resultsTimer = gd.rd.resultsRoundDuration;
+        gd.rd->resultsPhase = ResultData::RESULTS_SHOW_ROUND;
+        gd.rd->resultsTimer = gd.rd->resultsRoundDuration;
 }
 
 void initEndResults(const SDLState &state, GameData &gd, const Resources &res) {
@@ -1678,7 +1678,7 @@ void initEndResults(const SDLState &state, GameData &gd, const Resources &res) {
         gd.md.settingsBorder.pos.y =  500;
 
          //calculate first round of placements and points
-        gd.rd.roundResults.clear();
+        gd.rd->roundResults.clear();
         for(Player &p: gd.players_) {
             p.pointsBeforeRound = p.points;
         }
@@ -1724,7 +1724,7 @@ void initEndResults(const SDLState &state, GameData &gd, const Resources &res) {
             e.player = p;
             e.placement = placement;
             e.pointsEarned = pointsEarned;
-            gd.rd.roundResults.push_back(e);
+            gd.rd->roundResults.push_back(e);
         }
         //add unplaced
         if(!unplaced.empty()) {
@@ -1736,7 +1736,7 @@ void initEndResults(const SDLState &state, GameData &gd, const Resources &res) {
                 e.player = p;
                 e.placement = placement;
                 e.pointsEarned = pointsEarned;
-                gd.rd.roundResults.push_back(e);
+                gd.rd->roundResults.push_back(e);
             }
         }
 
@@ -1746,10 +1746,10 @@ void initEndResults(const SDLState &state, GameData &gd, const Resources &res) {
             e.player = &p;
             e.pointsEarned = p.points;
             e.placement = 0;
-            gd.rd.cumulativeResults.push_back(e);
+            gd.rd->cumulativeResults.push_back(e);
         }
         //sort based on pointsEarned
-        std::sort(gd.rd.cumulativeResults.begin(), gd.rd.cumulativeResults.end(), [](const ResultData::ResultEntry &a, const ResultData::ResultEntry &b) {
+        std::sort(gd.rd->cumulativeResults.begin(), gd.rd->cumulativeResults.end(), [](const ResultData::ResultEntry &a, const ResultData::ResultEntry &b) {
             if(a.pointsEarned != b.pointsEarned) {
                 return a.pointsEarned > b.pointsEarned;
             }
@@ -1758,11 +1758,11 @@ void initEndResults(const SDLState &state, GameData &gd, const Resources &res) {
 
         //assign places
         int place = 1;
-        for(int i=0; i<gd.rd.cumulativeResults.size(); i++) {
-            if (i > 0 && gd.rd.cumulativeResults[i].pointsEarned < gd.rd.cumulativeResults[i-1].pointsEarned) {
+        for(int i=0; i<gd.rd->cumulativeResults.size(); i++) {
+            if (i > 0 && gd.rd->cumulativeResults[i].pointsEarned < gd.rd->cumulativeResults[i-1].pointsEarned) {
                 place = i+1;
             }
-            gd.rd.cumulativeResults[i].placement = place;
+            gd.rd->cumulativeResults[i].placement = place;
         }
 
     }
