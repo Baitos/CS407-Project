@@ -371,7 +371,6 @@ void Hook::checkCollision(const SDLState &state, GameData &gd, Resources &res, P
 				box.itemBoxActive = false;
 				removeHook(p);
 			}
-			break;
 		}
 	}
 
