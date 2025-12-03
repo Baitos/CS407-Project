@@ -420,6 +420,9 @@ void Bomb::checkCollision(const SDLState &state, GameData &gd, Resources &res, P
         if (p2.state_->stateVal == PlayerStateValue::STUNNED) {
             continue;
         }
+		if (&p == &p2 && !this->leniencyTimer.isTimeOut()) {// dont collide w/ player who placed at start
+			continue;
+		}
         rectB = {
             .x = p2.pos.x + p2.collider.x,
             .y = p2.pos.y + p2.collider.y,

@@ -203,9 +203,9 @@ void ItemBox::generateItem(Player &player, GameData &gd, Resources &res) {
         itemOptions = {itemType::BOMB, itemType::BOOMBOX, itemType::BOUNCYBALL, 
             itemType::FOG, itemType::ICE, itemType::MISSILE, itemType::SUGAR, itemType::PIE};
     //}
-    //selected = rand() % itemOptions.size();
+    selected = rand() % itemOptions.size();
     //selected = 3;
-    selected = selectedItem;
+    //selected = selectedItem;
     switch (itemOptions[selected]) {
         case itemType::BOMB:
             newItem = new Bomb(player.pos, defaultCollider, res.texBomb);

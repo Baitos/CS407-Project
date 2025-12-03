@@ -12,6 +12,9 @@ void Bomb::draw(const SDLState &state, GameData &gd, float width, float height) 
 }
 
 void Bomb::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) { 
+    if (!this->leniencyTimer.isTimeOut()) {
+        this->leniencyTimer.step(deltaTime); 
+    }
     if (this->exploded) {
         if (this->curAnimation != -1) {
             this->animations[this->curAnimation].step(deltaTime);
@@ -29,18 +32,7 @@ void Bomb::useItem(const SDLState &state, GameData &gd, Resources &res, Player &
         .w = 32,
         .h = 32
     };
-    glm::vec2 bombPos;
-    int xdiff;
-    // Set item 1 tile behind player, but we want it to be drawn at the beginning of tile
-    if (p.dir >= 0) { // moving right, place to left
-        xdiff = 32 + (int)p.pos.x % 32;
-        bombPos.x = p.pos.x - xdiff;
-    }
-    else {
-        xdiff = 32 + (32- (int)p.pos.x % 32);
-        bombPos.x = p.pos.x + xdiff;
-    }
-    bombPos.y = p.pos.y;
+    glm::vec2 bombPos = p.pos;
     Bomb* bomb = new Bomb(bombPos, bombCollider, res.texBomb);
     p.items_.push_back(bomb);
 }
