@@ -44,6 +44,11 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     Resources res;
     res.load(state);
 
+    // set window icon
+    SDL_Surface *icon = IMG_Load("data/logo.png");
+    SDL_SetWindowIcon(state.window, icon);
+    SDL_DestroySurface(icon);
+
     //initialize SDL text
     if (TTF_Init() < 0) {
         SDL_Log("SDL_ttf init failed");

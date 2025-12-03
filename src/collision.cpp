@@ -405,6 +405,7 @@ void Hook::checkCollision(const SDLState &state, GameData &gd, Resources &res, P
         } 
     }
 }
+
 void Bomb::checkCollision(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
     SDL_FRect rectA{
 		.x = this->pos.x + this->collider.x,
@@ -485,6 +486,84 @@ void Boombox::checkCollision(const SDLState &state, GameData &gd, Resources &res
             PlayerState* stunState = new StunnedState(true); // hard stun
             p2.handleState(stunState, gd, res); // stun player you hit
         }
+    }
+}
+
+void handleBallBounce(glm::vec2 &resolution, Ball &b, Object &o) {
+	if (resolution.x < resolution.y) { // horiz
+		if (b.pos.x < o.pos.x) {
+			//printf("left ball\n");
+			b.pos.x -= resolution.x + EPSILON;
+		} else {
+			//printf("right ball\n");
+			b.pos.x += resolution.x + EPSILON;
+		}	
+		b.vel.x *= -1; 
+		b.dir = b.dir * -1;
+	} else { // vert
+		if (b.pos.y < o.pos.y) {
+			//printf("above ball\n");
+			b.pos.y -= resolution.y + EPSILON;
+		} else {
+			//printf("below ball\n");
+			b.pos.y += resolution.y + EPSILON;
+		}
+		b.vel.y *= -1;
+	}
+}
+
+void Ball::checkCollision(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
+    SDL_FRect rectA{
+		.x = this->pos.x + this->collider.x,
+		.y = this->pos.y + this->collider.y,
+		.w = this->collider.w,
+		.h = this->collider.h
+	};
+    SDL_FRect rectB;
+    glm::vec2 resolution{ 0 };
+
+	std::vector<Object *> closeTiles_ = getCloseTiles(state, gd, this->pos);
+	for (auto &o : closeTiles_) { 
+		if (o->type == LEVEL) {
+			SDL_FRect rectB {
+				.x = o->pos.x + o->collider.x,
+				.y = o->pos.y + o->collider.y,
+				.w = o->collider.w,
+				.h = o->collider.h
+			};
+			if (intersectAABB(rectA, rectB, resolution)) {
+				handleBallBounce(resolution, (*this), (*o));
+			}
+		}
+	}
+
+    for (Player &p2 : gd.players_) {
+		if (&p == &p2 && !this->leniencyTimer.isTimeOut()) {// dont collide w/ player who threw at start
+			continue;
+		}
+		rectB = {
+			.x = p2.pos.x + p2.collider.x,
+			.y = p2.pos.y + p2.collider.y,
+			.w = p2.collider.w,
+			.h = p2.collider.h
+		};
+		if (intersectAABB(rectA, rectB, resolution)) {
+			if (p2.state_->stateVal == STUNNED) { // dont hit a stunned player again
+				continue;
+			}
+			p2.vel.y = -200.0f; 
+			p2.vel.x = this->vel.x * 0.5;  
+			p2.pos.y -= 1;              
+			p2.grounded = false;
+			PlayerState* stunState = new StunnedState(true); // hard stun
+			p2.handleState(stunState, gd, res); // stun player you hit
+			handleBallBounce(resolution, (*this), p);
+			this->bounces += 1;
+			//printf("ball bounce %d\n", this->bounces);
+			if (this->bounces >= this->MAX_BOUNCES) {
+				this->active = false;
+			}
+		}
     }
 }
 

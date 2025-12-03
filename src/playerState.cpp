@@ -346,6 +346,7 @@ PlayerState* StunnedState::update(const SDLState &state, GameData &gd, Resources
             sharedGravity(p, deltaTime);
         }
     }
+    removeHook(p); // remove the hook for stunned players
     if (p.grounded) { // if moving change to running
         return new RollState();  
     }
@@ -366,12 +367,13 @@ void DeadState::enter(GameData &gd, Resources &res, Player &p) {
     p.animations[p.curAnimation].reset();
     p.respawnTimer.reset();
     p.isDead = true;        
-    p.vel = glm::vec2(0);
 }
 
 PlayerState* DeadState::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
     //step forward timer if player currently dead
     p.respawnTimer.step(deltaTime);
+    p.vel = glm::vec2(0);
+    removeHook(p);
     //check if player can respawn
     if (p.respawnTimer.isTimeOut()) {
         p.pos.x = gd.checkpoints_[p.lastCheckpoint].collider.x;

@@ -78,6 +78,26 @@ class Boombox : public Item {
         }
 };
 
+class Ball : public Item {
+    public:
+        Timer leniencyTimer; // how long before the ball hits the player that threw it
+        Timer ballTimer; // life timer
+        int bounces;
+        int MAX_BOUNCES;
+        void useItem(const SDLState &state, GameData &gd, Resources &res, Player &p);
+        void draw(const SDLState &state, GameData &gd, float width, float height);
+        void update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime);
+        void checkCollision(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime);
+        Ball(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) :
+        Item(pos_, colliderRect, tex), leniencyTimer(1.0f), ballTimer(15.0f) {
+            index = 2;
+            width = 32;
+            height = 32;
+            bounces = 0;
+            MAX_BOUNCES = 8; 
+        }
+};
+
 class Ice : public Item {
     public:
         int BOUND; // how big is effect

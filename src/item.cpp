@@ -129,6 +129,38 @@ void Pie::useItem(const SDLState &state, GameData &gd, Resources &res, Player &p
     p.items_.push_back(pie);
 }
 
+// BALL
+void Ball::draw(const SDLState &state, GameData &gd, float width, float height) {
+    AnimatedObject::draw(state, gd, width, height); // do generic object draw
+}
+
+void Ball::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
+    //Item::update(state, gd, res, p, deltaTime); // generic update
+    if (!this->leniencyTimer.isTimeOut()) {
+        this->leniencyTimer.step(deltaTime); 
+    }
+    this->ballTimer.step(deltaTime); 
+    if (this->ballTimer.isTimeOut()) {
+        this->active = false;
+    }
+    this->vel.x += 25.0f * deltaTime * this->dir; // increase horizontal speed every second
+    this->pos += updatePos((*this), deltaTime);
+    //printf("pie update\n");
+}
+
+void Ball::useItem(const SDLState &state, GameData &gd, Resources &res, Player &p) {
+    SDL_FRect ballCollider = {
+        .x = 6,
+        .y = 6,
+        .w = 20,
+        .h = 20
+    };
+    Ball* ball = new Ball(p.pos, ballCollider, res.texBall);
+    ball->dir = p.dir;
+    ball->vel.x = 350.0f * ball->dir;
+    ball->vel.y = 350.0f;
+    p.items_.push_back(ball);
+}
 
 // SUGAR
 void Sugar::draw(const SDLState &state, GameData &gd, float width, float height) {
@@ -174,8 +206,6 @@ void Sugar::useItem(const SDLState &state, GameData &gd, Resources &res, Player 
     sugar->visible = false;
     p.items_.push_back(sugar); 
 }
-
-void useBouncyBall(const SDLState &state, GameData &gd, Resources &res, Player &p) {}
 
 void Fog::draw(const SDLState &state, GameData &gd, float width, float height) {
     if (gd.players_[gd.playerIndex].hasFog) {
@@ -239,9 +269,6 @@ void Fog::useItem(const SDLState &state, GameData &gd, Resources &res, Player &p
             }
         }
 }
-
-void useIce(const SDLState &state, GameData &gd, Resources &res, Player &p) {}
-void useMissile(const SDLState &state, GameData &gd, Resources &res, Player &p) {}
 
 void clearItem(const SDLState &state, GameData &gd, Resources &res) {
     gd.itemStorage_.texture = res.texItemStorage;

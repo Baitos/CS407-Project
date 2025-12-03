@@ -213,7 +213,7 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     texItemRandomizer = loadTexture(state.renderer, "data/ItemSprites/item_randomization.png");
     texBombStorage = loadTexture(state.renderer, "data/ItemSprites/bomb_storage.png");
     texBoomboxStorage = loadTexture(state.renderer, "data/ItemSprites/boombox_storage.png");
-    texBouncyBallStorage = loadTexture(state.renderer, "data/ItemSprites/bouncyball_storage.png");
+    texBallStorage = loadTexture(state.renderer, "data/ItemSprites/bouncyball_storage.png");
     texFogStorage = loadTexture(state.renderer, "data/ItemSprites/fog_storage.png");
     texIceStorage = loadTexture(state.renderer, "data/ItemSprites/ice_storage.png");
     texMissileStorage = loadTexture(state.renderer, "data/ItemSprites/missile_storage.png");
@@ -232,6 +232,8 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     texPie = loadTexture(state.renderer, "data/ItemSprites/pie.png");
 
     texIce = loadTexture(state.renderer, "data/ItemSprites/ice_background.png");
+
+    texBall = loadTexture(state.renderer, "data/ItemSprites/ball.png");    
 
     texFog = loadTexture(state.renderer, "data/ItemSprites/fog_overlay.png");
     texFogExit = loadTexture(state.renderer, "data/ItemSprites/fog_overlay_exit.png");
@@ -256,7 +258,7 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     texResults = loadTexture(state.renderer, "data/Results/curr_results.png");
     texEndResults = loadTexture(state.renderer, "data/Results/end_results.png");
 
-    itemTextures = {texBombStorage, texBoomboxStorage, texBouncyBallStorage, texFogStorage,
+    itemTextures = {texBombStorage, texBoomboxStorage, texBallStorage, texFogStorage,
         texIceStorage, texMissileStorage, texSugarStorage, texPieStorage};
 
     // minimap
