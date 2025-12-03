@@ -86,9 +86,9 @@ class LevelX : public LevelState {
 */
 
 class ResultsState : public GameState {
-
+    public:
+        characterType character = SHOTGUN;
 };
-
 class CreditsState : public GameState {
 
 };

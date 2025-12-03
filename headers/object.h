@@ -24,7 +24,8 @@ enum ObjectType{
     SIGN,
     WATER,
     LAVA,
-    WIRE
+    WIRE,
+    ICE_BLOCK
 };
 
 class Object { // generic obj type    
@@ -207,6 +208,19 @@ class Lava: public Object {
         Lava(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : // generic obj constructor
         Object(pos_, colliderRect, tex) {
             type = LAVA;
+            debug = false;
+        }
+};
+
+class IceBlock: public Level {
+    public:
+        IceBlock() : Level() { // default 
+            type = ICE_BLOCK;
+            debug = false;
+        }
+        IceBlock(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : // generic obj constructor
+        Level(pos_, colliderRect, tex) {
+            type = ICE_BLOCK;
             debug = false;
         }
 };

@@ -4,8 +4,8 @@
 struct SDLState;
 struct GameData;
 struct Resources;
-// Title
 
+// Title
 void titleUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime) ;
 void handleMousePointerTitle(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
 void titleInput(SDLState &state, GameData &gd, Resources &res, float deltaTime);
@@ -39,14 +39,15 @@ void joinLobbyInput(SDLState &state, GameData &gd, Resources &res, float deltaTi
 void handleJoinLobbyClick(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
                     
 // Gameplay Settings
-void endResultsInputs(SDLState &state, GameData &gd, Resources &res, float deltaTime);
-void resultsInputs(SDLState &state, GameData &gd, Resources &res, float deltaTime);
-
 void gameplaySettingsUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime) ;
 void handleMousePointerGameplaySettings(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
 void gameplaySettingsInput(SDLState &state, GameData &gd, Resources &res, float deltaTime);
 void handleGameplaySettingsClick(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
 
+void endResultsInputs(SDLState &state, GameData &gd, Resources &res, float deltaTime);
+void resultsInputs(SDLState &state, GameData &gd, Resources &res, float deltaTime);
+void resultsUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+void endResultsUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
 void handleResultsClick(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
 void handleEndResultsClick(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
 void handleMousePointerResults(const SDLState &state, GameData &gd, Resources &res, float deltaTime);

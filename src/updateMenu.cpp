@@ -134,6 +134,24 @@ void joinLobbyUpdate(const SDLState &state, GameData &gd, Resources &res, float 
     }
 }
 
+void resultsUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
+    if(gd.rd.resultsPhase == ResultData::RESULTS_NONE) {
+        return;
+    }
+    //check which round of placements to show
+    if(gd.rd.resultsPhase == ResultData::RESULTS_SHOW_ROUND) {
+        //step timer
+        gd.rd.resultsTimer -= deltaTime;
+        if(gd.rd.resultsTimer <= 0.0f) {
+            gd.rd.resultsPhase = ResultData::RESULTS_SHOW_CUMULATIVE;
+        }
+    }
+}
+
+void endResultsUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
+
+}
+
 //
 //INPUT FUNCTIONS
 //

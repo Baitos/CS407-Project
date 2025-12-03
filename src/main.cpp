@@ -119,6 +119,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     // setup game data
     GameData gd(state);
     currState->init(state,gd,res);
+    
     uint64_t prevTime = SDL_GetTicks();
 
     uint64_t frames = 0;
@@ -316,6 +317,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         
         //printf("Draw\n");
         currState->render(state, gd, res, deltaTime);
+        
         //printf("draw done\n");
         //printf("mouseX: %f, mouseY: %f\n", gd.mouseCoords.x, gd.mouseCoords.y);
         if (gd.debugMode) {

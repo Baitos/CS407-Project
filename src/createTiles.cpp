@@ -9,9 +9,11 @@
 #include "../headers/minimap.h"
 #include "../headers/createCheckpoints.h"
 #include <SDL3_ttf/SDL_ttf.h>
+#include <algorithm>
 
 
 extern GameState *currState;
+
 
 void createPlayer(GameData &gd, const Resources &res, glm::vec2 pos) { // case for player put in one code block
     SDL_FRect collider = { 
@@ -1241,7 +1243,7 @@ void createTilesSnow(const SDLState &state, GameData &gd, const Resources &res) 
                     }
                     case 14: //ice
                     {
-                        Level l(pos, collider, res.texIceBlock);
+                        IceBlock l(pos, collider, res.texIceBlock);
                         gd.mapTiles_.push_back(l);
                         break;
                     }
@@ -1532,6 +1534,18 @@ void initTitle(const SDLState &state, GameData &gd, const Resources &res) {
         
 }
 
+static const int POINTS_BY_PLACEMENT[] = {
+    0,  // index 0 unused
+    15, // 1st
+    12, // 2nd
+    10, // 3rd
+    5,  // 4th
+    4,  // 5th
+    3,  // 6th
+    2,  // 7th
+    1   // 8th
+};
+
 void initResults(const SDLState &state, GameData &gd, const Resources &res) {
      SDL_FRect collider = {
             .x = 0,
@@ -1551,6 +1565,97 @@ void initResults(const SDLState &state, GameData &gd, const Resources &res) {
         gd.md.settingsBorder = border;
         gd.md.settingsBorder.pos.y =  500;
 
+        //calculate first round of placements and points
+        gd.rd.roundResults.clear();
+        for(Player &p: gd.players_) {
+            p.pointsBeforeRound = p.points;
+        }
+
+        //build placement order
+        std::vector<Player*> placementOrder;
+        //determine of player is accounted for in placement array
+        std::vector<bool> accounted(gd.players_.size(), false);
+        if(!gd.player_placement_.empty()) {
+            for(Player &p : gd.player_placement_) {
+                bool found = false;
+                for(int i=0; i<gd.players_.size(); i++) {
+                    if(gd.players_[i].username == p.username) {
+                        placementOrder.push_back(&gd.players_[i]);
+                        accounted[i] = true;
+                        found = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        //add all not in placement order to last tie list
+        std::vector<Player*> unplaced;
+        for(int i=0; i<gd.players_.size(); i++) {
+            if(!accounted[i]) {
+                unplaced.push_back(&gd.players_[i]);
+            }
+        }
+
+        //placement for tied last
+        int tiedLastPlacement = static_cast<int>(placementOrder.size()) + 1;
+
+        //build roundResults for placed
+        for(int i=0; i<placementOrder.size(); i++) {
+            Player* p = placementOrder[i];
+            int placement = i+1;
+            int pointsEarned = POINTS_BY_PLACEMENT[placement];
+
+            p->points += pointsEarned;
+
+            ResultData::ResultEntry e;
+            e.player = p;
+            e.placement = placement;
+            e.pointsEarned = pointsEarned;
+            gd.rd.roundResults.push_back(e);
+        }
+        //add unplaced
+        if(!unplaced.empty()) {
+            int placement = tiedLastPlacement;
+            int pointsEarned = POINTS_BY_PLACEMENT[placement];
+            for(Player* p: unplaced) {
+                p->points+=pointsEarned;
+                ResultData::ResultEntry e;
+                e.player = p;
+                e.placement = placement;
+                e.pointsEarned = pointsEarned;
+                gd.rd.roundResults.push_back(e);
+            }
+        }
+
+        //build cummulative results
+        for(Player &p: gd.players_) {
+            ResultData::ResultEntry e;
+            e.player = &p;
+            e.pointsEarned = p.points;
+            e.placement = 0;
+            gd.rd.cumulativeResults.push_back(e);
+        }
+        //sort based on pointsEarned
+        std::sort(gd.rd.cumulativeResults.begin(), gd.rd.cumulativeResults.end(), [](const ResultData::ResultEntry &a, const ResultData::ResultEntry &b) {
+            if(a.pointsEarned != b.pointsEarned) {
+                return a.pointsEarned > b.pointsEarned;
+            }
+            return a.player->username < b.player->username;
+        });
+
+        //assign places
+        int place = 1;
+        for(int i=0; i<gd.rd.cumulativeResults.size(); i++) {
+            if (i > 0 && gd.rd.cumulativeResults[i].pointsEarned < gd.rd.cumulativeResults[i-1].pointsEarned) {
+                place = i+1;
+            }
+            gd.rd.cumulativeResults[i].placement = place;
+        }
+
+        //initialize timer for switch
+        gd.rd.resultsPhase = ResultData::RESULTS_SHOW_ROUND;
+        gd.rd.resultsTimer = gd.rd.resultsRoundDuration;
 }
 
 void initEndResults(const SDLState &state, GameData &gd, const Resources &res) {
@@ -1571,4 +1676,93 @@ void initEndResults(const SDLState &state, GameData &gd, const Resources &res) {
         Object border(pos, collider, res.texBigBorder);
         gd.md.settingsBorder = border;
         gd.md.settingsBorder.pos.y =  500;
-}
+
+         //calculate first round of placements and points
+        gd.rd.roundResults.clear();
+        for(Player &p: gd.players_) {
+            p.pointsBeforeRound = p.points;
+        }
+
+        //build placement order
+        std::vector<Player*> placementOrder;
+        //determine of player is accounted for in placement array
+        std::vector<bool> accounted(gd.players_.size(), false);
+        if(!gd.player_placement_.empty()) {
+            for(Player &p : gd.player_placement_) {
+                bool found = false;
+                for(int i=0; i<gd.players_.size(); i++) {
+                    if(gd.players_[i].username == p.username) {
+                        placementOrder.push_back(&gd.players_[i]);
+                        accounted[i] = true;
+                        found = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        //add all not in placement order to last tie list
+        std::vector<Player*> unplaced;
+        for(int i=0; i<gd.players_.size(); i++) {
+            if(!accounted[i]) {
+                unplaced.push_back(&gd.players_[i]);
+            }
+        }
+
+        //placement for tied last
+        int tiedLastPlacement = static_cast<int>(placementOrder.size()) + 1;
+
+         //build roundResults for placed
+        for(int i=0; i<placementOrder.size(); i++) {
+            Player* p = placementOrder[i];
+            int placement = i+1;
+            int pointsEarned = POINTS_BY_PLACEMENT[placement];
+
+            p->points += pointsEarned;
+
+            ResultData::ResultEntry e;
+            e.player = p;
+            e.placement = placement;
+            e.pointsEarned = pointsEarned;
+            gd.rd.roundResults.push_back(e);
+        }
+        //add unplaced
+        if(!unplaced.empty()) {
+            int placement = tiedLastPlacement;
+            int pointsEarned = POINTS_BY_PLACEMENT[placement];
+            for(Player* p: unplaced) {
+                p->points+=pointsEarned;
+                ResultData::ResultEntry e;
+                e.player = p;
+                e.placement = placement;
+                e.pointsEarned = pointsEarned;
+                gd.rd.roundResults.push_back(e);
+            }
+        }
+
+         //build cummulative results
+        for(Player &p: gd.players_) {
+            ResultData::ResultEntry e;
+            e.player = &p;
+            e.pointsEarned = p.points;
+            e.placement = 0;
+            gd.rd.cumulativeResults.push_back(e);
+        }
+        //sort based on pointsEarned
+        std::sort(gd.rd.cumulativeResults.begin(), gd.rd.cumulativeResults.end(), [](const ResultData::ResultEntry &a, const ResultData::ResultEntry &b) {
+            if(a.pointsEarned != b.pointsEarned) {
+                return a.pointsEarned > b.pointsEarned;
+            }
+            return a.player->username < b.player->username;
+        });
+
+        //assign places
+        int place = 1;
+        for(int i=0; i<gd.rd.cumulativeResults.size(); i++) {
+            if (i > 0 && gd.rd.cumulativeResults[i].pointsEarned < gd.rd.cumulativeResults[i-1].pointsEarned) {
+                place = i+1;
+            }
+            gd.rd.cumulativeResults[i].placement = place;
+        }
+
+    }

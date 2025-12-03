@@ -66,10 +66,12 @@ GameState * changeState(GameState * tempState, GameData &gd){
             break;           
         }
         case SPACESHIP:
-        {
+        {   
+            gd.players_.clear();
+            gd.player_placement_.clear();
             characterType type;
-            if(((LevelState*)currState)->character) {
-                type = ((LevelState*)currState)->character;
+            if(((ResultsState*)currState)->character) {
+                type = ((ResultsState*)currState)->character;
             }
             //Creating LevelState with init of Spaceship
             newState = new LevelState();
@@ -85,9 +87,11 @@ GameState * changeState(GameState * tempState, GameData &gd){
         }
         case GRASSLANDS:
         {
+            gd.players_.clear();
+            gd.player_placement_.clear();
             characterType type;
-            if(((LevelState*)currState)->character) {
-                type = ((LevelState*)currState)->character;
+            if(((ResultsState*)currState)->character) {
+                type = ((ResultsState*)currState)->character;
             }
             //Creating LevelState with init of Spaceship
             newState = new LevelState();
@@ -103,9 +107,11 @@ GameState * changeState(GameState * tempState, GameData &gd){
         }
         case SNOW:
         {
+            gd.players_.clear();
+            gd.player_placement_.clear();
             characterType type;
-            if(((LevelState*)currState)->character) {
-                type = ((LevelState*)currState)->character;
+            if(((ResultsState*)currState)->character) {
+                type = ((ResultsState*)currState)->character;
             }
             //Creating LevelState with init of Spaceship
             newState = new LevelState();
@@ -132,11 +138,19 @@ GameState * changeState(GameState * tempState, GameData &gd){
 
         case RESULTS:
         {
+            characterType type;
+            if(((LevelState*)currState)->character) {
+                type = ((LevelState*)currState)->character;
+            }
+    
             newState = new ResultsState();
             newState->render = drawResults;
             newState->init = initResults;
             newState->input = resultsInputs;
-            newState->update = gameplaySettingsUpdate;
+            newState->update = resultsUpdate;
+            if(type) {
+                ((ResultsState*)newState)->character = type;
+            }
             break;
         }
         case END_RESULTS:
@@ -145,7 +159,7 @@ GameState * changeState(GameState * tempState, GameData &gd){
             newState->render = drawEndResults;
             newState->init = initEndResults;
             newState->input = endResultsInputs;
-            newState->update = gameplaySettingsUpdate;
+            newState->update = endResultsUpdate;
             break;
         }
     }
@@ -180,9 +194,14 @@ void GameState::unloadGameState(GameData &gd) {
     gd.md.previews_.clear();
     gd.md.arrows_.clear();
 
+    gd.rd.roundResults.clear();
+    gd.rd.cumulativeResults.clear();
+
     gd.grid_.clear();
+
+    gd.num_finished = 0;
 
     //TTF_CloseFont(gd.font);
     //TO-DO Add clearing players
-    gd.players_.clear();
+    //gd.players_.clear();
 }
