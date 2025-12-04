@@ -127,6 +127,7 @@ void Player::collisionResponse(const SDLState &state, GameData &gd, Resources &r
 			Laser& la = dynamic_cast<Laser&>(o);
 			if (la.laserActive){
 				//printf("FALLING");
+				ma_engine_play_sound(&engine, "data/Audio/laser.wav", NULL);
 				PlayerState* stState = new StunnedState();
                 this->handleState(stState, gd, res);
 			
@@ -358,6 +359,7 @@ void Hook::checkCollision(const SDLState &state, GameData &gd, Resources &res, P
 			if (intersectAABB(rectA, rectB, resolution)) {
 				this->vel = glm::vec2(0);
 				if (!this->collided) {
+					ma_engine_play_sound(&engine, "data/Audio/grapple.wav", NULL);
 					PlayerState* grappleState = new GrappleState();
 					p.handleState(grappleState, gd, res);
 					this->collided = true;
@@ -369,11 +371,14 @@ void Hook::checkCollision(const SDLState &state, GameData &gd, Resources &res, P
 			ItemBox& box = dynamic_cast<ItemBox&>(*o);
 			if (intersectAABB(rectA, rectB, resolution) && box.itemBoxActive) {
 				if (!p.pickingItem && !p.hasItem) {
+					ma_engine_play_sound(&engine, "data/Audio/item.wav", NULL);
         			box.generateItem(p, gd, res);
 					gd.itemStorage_.texture = res.texItemRandomizer;
 					gd.itemStorage_.curAnimation = res.ANIM_ITEM_CYCLE;
 					gd.itemStorage_.animations[gd.itemStorage_.curAnimation].reset();
-    			}
+    			} else {
+					ma_engine_play_sound(&engine, "data/Audio/grapple.wav", NULL);
+				}
 				box.itemBoxActive = false;
 				removeHook(p);
 			}
@@ -390,6 +395,7 @@ void Hook::checkCollision(const SDLState &state, GameData &gd, Resources &res, P
                 .h = p2.collider.h
             };
             if (intersectAABB(rectA, rectB, resolution) && !this->collided) {
+				ma_engine_play_sound(&engine, "data/Audio/grapple.wav", NULL);
                 p.vel = 0.7f * this->vel;
                 p2.vel = -0.3f * this->vel;
                 removeHook(p);
@@ -405,6 +411,7 @@ void Hook::checkCollision(const SDLState &state, GameData &gd, Resources &res, P
                 .h = h2.collider.h
             };
             if (intersectAABB(rectA, rectB, resolution) && !this->collided && h2.visible) { // Touching other hook
+				ma_engine_play_sound(&engine, "data/Audio/grapple.wav", NULL);
                 removeHook(p);
                 removeHook(p2);
             }
@@ -432,6 +439,7 @@ void Bomb::checkCollision(const SDLState &state, GameData &gd, Resources &res, P
             .h = p2.collider.h
         };
         if (intersectAABB(rectA, rectB, resolution) && this->visible) {
+			ma_engine_play_sound(&engine, "data/Audio/bomb.wav", NULL);
             p2.vel.y = -200.0f; 
             p2.vel.x = this->vel.x * 0.5;  
             p2.pos.y -= 1;              
@@ -514,6 +522,7 @@ void Pie::checkCollision(const SDLState &state, GameData &gd, Resources &res, Pl
 				.h = o->collider.h
 			};
 			if (intersectAABB(rectA, rectB, resolution)) {
+				ma_engine_play_sound(&engine, "data/Audio/pie.wav", NULL);
 				this->active = false;
 			}
 		}
@@ -528,6 +537,7 @@ void Pie::checkCollision(const SDLState &state, GameData &gd, Resources &res, Pl
                 .h = p2.collider.h
             };
             if (intersectAABB(rectA, rectB, resolution)) {
+				ma_engine_play_sound(&engine, "data/Audio/pie.wav", NULL);
                 p2.vel.y = -200.0f; 
                 p2.vel.x = this->vel.x * 0.5;  
                 p2.pos.y -= 1;              

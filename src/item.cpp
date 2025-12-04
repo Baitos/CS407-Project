@@ -71,6 +71,8 @@ void Boombox::useItem(const SDLState &state, GameData &gd, Resources &res, Playe
     boombox->curAnimation = res.ANIM_ITEM_SOUNDWAVE;
     boombox->animations[boombox->curAnimation].reset();
     p.items_.push_back(boombox);
+    //sound effect
+    ma_engine_play_sound(&engine, "data/Audio/boombox.wav", NULL);
 }
 
 
@@ -103,6 +105,8 @@ void Ice::useItem(const SDLState &state, GameData &gd, Resources &res, Player &p
     
     Ice* ice = new Ice(iceEffectPos, iceCollider, res.texIce);
     p.items_.push_back(ice);
+    //sound effect
+    ma_engine_play_sound(&engine, "data/Audio/ice.wav", NULL);
 }
 
 // PIE
@@ -172,7 +176,9 @@ void Sugar::useItem(const SDLState &state, GameData &gd, Resources &res, Player 
     sugar->sugarEffectObject = AnimatedObject(this->pos, collider, res.texSugarEffect);
     sugar->sugarEffectObject.debug = false;
     sugar->visible = false;
-    p.items_.push_back(sugar); 
+    p.items_.push_back(sugar);
+    //sound effect
+    ma_engine_play_sound(&engine, "data/Audio/speed.wav", NULL); 
 }
 
 void useBouncyBall(const SDLState &state, GameData &gd, Resources &res, Player &p) {}
@@ -191,6 +197,8 @@ void Fog::draw(const SDLState &state, GameData &gd, float width, float height) {
 void Fog::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
     if (gd.players_[gd.playerIndex].hasFog) {
         //this->pos = glm::vec2(gd.mapViewport.x, gd.mapViewport.y);
+        //sound effect - this one may cause issues moving to multiplayer
+        ma_engine_play_sound(&engine, "data/Audio/foghorn.wav", NULL);
         this->fogTimer.step(deltaTime);
         if(this->fogTimer.getTime() < 5.f){
             if (this->animations[curAnimation].currentFrame() != 6) {
@@ -238,6 +246,8 @@ void Fog::useItem(const SDLState &state, GameData &gd, Resources &res, Player &p
             gd.players_[i].items_.push_back(fog); 
             }
         }
+    //sound effect
+    ma_engine_play_sound(&engine, "data/Audio/foghorn.wav", NULL);
 }
 
 void useIce(const SDLState &state, GameData &gd, Resources &res, Player &p) {}
