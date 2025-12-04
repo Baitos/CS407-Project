@@ -9,9 +9,11 @@
 #include "../headers/playerState.h"
 #include "../headers/controls.h"
 #include "../headers/sound.h"
+#include "../headers/miniaudio.h"
 using namespace std;
 
 extern GameState * currState;
+extern ma_engine engine;
 
 //
 //UPDATE FUNCTIONS
@@ -325,6 +327,7 @@ void resultsInputs(SDLState &state, GameData &gd, Resources &res, float deltaTim
 
 void handleEndResultsClick(const SDLState &state, GameData &gd, Resources &res, float deltaTime){
     if((gd.mouseCoords.x >= 589 && gd.mouseCoords.x <= 767) && (gd.mouseCoords.y >= 368 && gd.mouseCoords.y <= 436)){         //Exit
+        ma_engine_play_sound(&engine, "data/Audio/button.wav", NULL);
         currState->nextStateVal = TITLE;
         currState = changeState(currState, gd);
         currState->init(state, gd, res);
@@ -333,6 +336,7 @@ void handleEndResultsClick(const SDLState &state, GameData &gd, Resources &res, 
 
 void handleResultsClick(const SDLState &state, GameData &gd, Resources &res, float deltaTime){
     if((gd.mouseCoords.x >= 589 && gd.mouseCoords.x <= 767) && (gd.mouseCoords.y >= 368 && gd.mouseCoords.y <= 436)){         //Next Stage
+        ma_engine_play_sound(&engine, "data/Audio/button.wav", NULL);
         if(currState->prevStateVal == GRASSLANDS){
             currState->nextStateVal = SPACESHIP;
         } else if (currState->prevStateVal == SPACESHIP){
@@ -547,14 +551,14 @@ void handleCharSelectKeyInput(const SDLState &state, GameData &gd, Resources &re
     if (key.scancode == SDL_SCANCODE_M) {
         // play music file
         printf("Master = %.1f, music = %.1f, sfx = %f\n", masterVolume, musicVolume, sfxVolume);
-        std::string filepath = "data/Audio/laser.wav";
+        std::string filepath = "data/Audio/button.wav";
         Sound * sound = new Sound(filepath, true);
         sound->SetupStream();
         sound->PlaySound();
     }   
     if (key.scancode == SDL_SCANCODE_N) {
         // play sfx file
-        std::string filepath = "data/Audio/laser.wav";
+        std::string filepath = "data/Audio/button.wav";
         Sound * sound = new Sound(filepath, false);
         sound->SetupStream();
         sound->PlaySound();
@@ -565,6 +569,7 @@ void handleCharSelectKeyInput(const SDLState &state, GameData &gd, Resources &re
 //Handles Clicking for Character Select Screen
 void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
     if ((gd.mouseCoords.x >= 658 && gd.mouseCoords.x <= 658+34) && (gd.mouseCoords.y >= 156 && gd.mouseCoords.y <= 156+36)){
+        ma_engine_play_sound(&engine, "data/Audio/button.wav", NULL);
         //Set Icons and Player to Sword
         gd.md.previews_[0].texture = res.texSword;
         gd.md.previews_[0].pos = glm::vec2(530,200);
@@ -579,6 +584,7 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
             }
         }
     } else if ((gd.mouseCoords.x >= 658 && gd.mouseCoords.x <= 658+34) && (gd.mouseCoords.y >= 220 && gd.mouseCoords.y <= 220+36)){
+        ma_engine_play_sound(&engine, "data/Audio/button.wav", NULL);
         //Set Icons and Player to Jetpack
         gd.md.previews_[0].texture = res.texJetpack;
         gd.md.previews_[0].pos = glm::vec2(510,200);
@@ -593,6 +599,7 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
             }
         }
     } else if ((gd.mouseCoords.x >= 658 && gd.mouseCoords.x <= 658+34) && (gd.mouseCoords.y >= 284 && gd.mouseCoords.y <= 284+36)){
+        ma_engine_play_sound(&engine, "data/Audio/button.wav", NULL);
         //Set Icons and Player to Shotgun
         gd.md.previews_[0].texture = res.texShotgun;
         gd.md.previews_[0].pos = glm::vec2(520,200);
@@ -607,6 +614,7 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
             }
         }
     } else if ((gd.mouseCoords.x >= 583 && gd.mouseCoords.x <= 766) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)) {
+        ma_engine_play_sound(&engine, "data/Audio/button.wav", NULL);
         //Enter Stage
         //TO DO - ONLY DO WHEN PLAYERS AGREE TO READY UP
         characterType character = ((CharSelectState*) currState)->character;
@@ -626,11 +634,13 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
         ((LevelState*) currState)->character = character;
         currState->init(state, gd, res);
     } else if ((gd.mouseCoords.x >= 35 && gd.mouseCoords.x <= 218) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)) {
+        ma_engine_play_sound(&engine, "data/Audio/button.wav", NULL);
         currState->nextStateVal = TITLE;
         currState = changeState(currState, gd);
         currState->init(state, gd, res);
     } else if ((gd.mouseCoords.x >= 107 && gd.mouseCoords.x <= 125) && (gd.mouseCoords.y >= 286 && gd.mouseCoords.y <= 310)){
         if(!gd.isGrandPrix) {
+            ma_engine_play_sound(&engine, "data/Audio/button.wav", NULL);
             //move map sprite - one frame
             for (AnimatedObject &map_preview : gd.md.map_previews_) {
                 int index = map_preview.curAnimation;
@@ -656,6 +666,7 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
         }
     } else if ((gd.mouseCoords.x >= 274 && gd.mouseCoords.x <= 292) && (gd.mouseCoords.y >= 286 && gd.mouseCoords.y <= 310)) {
         if(!gd.isGrandPrix) {
+            ma_engine_play_sound(&engine, "data/Audio/button.wav", NULL);
             //move map sprite + one 
             for (AnimatedObject &map_preview : gd.md.map_previews_) {
                 int index = map_preview.curAnimation;
@@ -686,36 +697,45 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
 void handleSettingsClick(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
     Controls * controls = gd.controls;
     if ((gd.mouseCoords.x >= 583 && gd.mouseCoords.x <= 766) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)) {
+        ma_engine_play_sound(&engine, "data/Audio/button.wav", NULL);
         printf("Save\n");
     } else if ((gd.mouseCoords.x >= 35 && gd.mouseCoords.x <= 218) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)) {
+        ma_engine_play_sound(&engine, "data/Audio/button.wav", NULL);
         currState->nextStateVal = TITLE;
         currState = changeState(currState, gd);
         currState->init(state, gd, res);
     } else if((gd.mouseCoords.x >= 578 && gd.mouseCoords.x <= 690) && (gd.mouseCoords.y >= 106 && gd.mouseCoords.y <= 126)){ //Sprint
+        ma_engine_play_sound(&engine, "data/Audio/button.wav", NULL);
         printf("Sprint\n");
         waitingForKey = true;
         controls->currActionRebind = typeAction::ACTION_SPRINT;
     } else if((gd.mouseCoords.x >= 578 && gd.mouseCoords.x <= 690) && (gd.mouseCoords.y >= 130 && gd.mouseCoords.y <= 150)){ //Grapple
+        ma_engine_play_sound(&engine, "data/Audio/button.wav", NULL);
         printf("Grapple\n");
         waitingForKey = true;
         controls->currActionRebind = typeAction::ACTION_GRAPPLE;
     } else if((gd.mouseCoords.x >= 578 && gd.mouseCoords.x <= 690) && (gd.mouseCoords.y >= 156 && gd.mouseCoords.y <= 174)){ //Ability
+        ma_engine_play_sound(&engine, "data/Audio/button.wav", NULL);
         printf("Ability\n");
         waitingForKey = true;
         controls->currActionRebind = typeAction::ACTION_ABILITY;
     } else if((gd.mouseCoords.x >= 578 && gd.mouseCoords.x <= 690) && (gd.mouseCoords.y >= 182 && gd.mouseCoords.y <= 202)){ //Jump
+        ma_engine_play_sound(&engine, "data/Audio/button.wav", NULL);
         printf("Jump\n");
         waitingForKey = true;
         controls->currActionRebind = typeAction::ACTION_JUMP;
     } else if((gd.mouseCoords.x >= 578 && gd.mouseCoords.x <= 690) && (gd.mouseCoords.y >= 208 && gd.mouseCoords.y <= 228)){ //Use Item
+        ma_engine_play_sound(&engine, "data/Audio/button.wav", NULL);
         printf("Use Item\n");
         waitingForKey = true;
         controls->currActionRebind = typeAction::ACTION_USEITEM;
     } else if((gd.mouseCoords.x >= 578 && gd.mouseCoords.x <= 690) && (gd.mouseCoords.y >= 234 && gd.mouseCoords.y <= 254)){ //Pause
+        ma_engine_play_sound(&engine, "data/Audio/button.wav", NULL);
         printf("Pause\n");
         waitingForKey = true;
         controls->currActionRebind = typeAction::ACTION_PAUSE;
     } else if((gd.mouseCoords.x >= 578 && gd.mouseCoords.x <= 690) && (gd.mouseCoords.y >= 260 && gd.mouseCoords.y <= 280)){ //Fast-Fall
+        ma_engine_play_sound(&engine, "data/Audio/button.wav", NULL);
         printf("Fast-fall\n");
         waitingForKey = true;
         controls->currActionRebind = typeAction::ACTION_FASTFALL;
@@ -731,6 +751,7 @@ void handleSettingsClick(const SDLState &state, GameData &gd, Resources &res, fl
 void handleGameplaySettingsClick(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
     //click back
     if ((gd.mouseCoords.x >= 35 && gd.mouseCoords.x <= 218) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)) {
+        ma_engine_play_sound(&engine, "data/Audio/button.wav", NULL);
         //set the num of laps
         for(Object &ob: gd.md.gameplaySettingsNumLaps_) {
             if(ob.texture == res.texGameplaySettings1) {
@@ -757,6 +778,7 @@ void handleGameplaySettingsClick(const SDLState &state, GameData &gd, Resources 
     //click for arrows
     if((gd.mouseCoords.x >= 494 && gd.mouseCoords.x <= 512) && (gd.mouseCoords.y >= 254 && gd.mouseCoords.y <= 272)){
         //move left
+        ma_engine_play_sound(&engine, "data/Audio/button.wav", NULL);
         for(Object &ob: gd.md.gameplaySettingsNumLaps_) {
             if(ob.texture == res.texGameplaySettings1) {
                 ob.texture = res.texGameplaySettings5;
@@ -772,6 +794,7 @@ void handleGameplaySettingsClick(const SDLState &state, GameData &gd, Resources 
         }
     } else if ((gd.mouseCoords.x >= 548 && gd.mouseCoords.x <= 566) && (gd.mouseCoords.y >= 254 && gd.mouseCoords.y <= 272)) {
         //move right
+        ma_engine_play_sound(&engine, "data/Audio/button.wav", NULL);
         for(Object &ob: gd.md.gameplaySettingsNumLaps_) {
             if(ob.texture == res.texGameplaySettings1) {
                 ob.texture = res.texGameplaySettings2;
@@ -789,8 +812,10 @@ void handleGameplaySettingsClick(const SDLState &state, GameData &gd, Resources 
 
     //click for game mode
     if((gd.mouseCoords.x >= 175 && gd.mouseCoords.x <= 380) && (gd.mouseCoords.y >= 152 && gd.mouseCoords.y <= 185)) {
+        ma_engine_play_sound(&engine, "data/Audio/button.wav", NULL);
         gd.isGrandPrix = true;
     } else if((gd.mouseCoords.x >= 400 && gd.mouseCoords.x <= 605) && (gd.mouseCoords.y >= 152 && gd.mouseCoords.y <= 185)) {
+        ma_engine_play_sound(&engine, "data/Audio/button.wav", NULL);
         gd.isGrandPrix = false;
     }
 }
@@ -893,6 +918,8 @@ void titleInput(SDLState &state, GameData &gd, Resources &res, float deltaTime){
                                 gd.md.tempUsername += c;
                             }
                         }
+                    } else if (event.key.scancode == SDL_SCANCODE_SPACE) {
+                        ma_engine_play_sound(&engine, "data/Audio/button.wav", NULL);
                     }
                     
                     break;
@@ -909,11 +936,13 @@ void titleInput(SDLState &state, GameData &gd, Resources &res, float deltaTime){
                         gd.md.usernameEditing == false) {
                         gd.md.usernameEditing = true;
                         gd.md.tempUsername = username;
+                        ma_engine_play_sound(&engine, "data/Audio/button.wav", NULL);
                     } else {
                         if (gd.md.usernameEditing) {
                             gd.md.displayName = gd.md.tempUsername;
                             gd.md.usernameEditing = false; // Clicked away
                             username = gd.md.tempUsername;
+                            ma_engine_play_sound(&engine, "data/Audio/button.wav", NULL);
                         }
                     }
                     handleTitleClick(state,gd,res,deltaTime);
@@ -934,17 +963,20 @@ void handleTitleClick(const SDLState &state, GameData &gd, Resources &res, float
 
     } else if ((gd.mouseCoords.x >= 40 && gd.mouseCoords.x <= 219) && (gd.mouseCoords.y >= 368 && gd.mouseCoords.y <= 436)){       //Host
         if(gd.md.tempUsername!="") {
+            ma_engine_play_sound(&engine, "data/Audio/button.wav", NULL);
             currState->nextStateVal = GAMEPLAY_SETTINGS;
             currState = changeState(currState, gd);
             currState->init(state, gd, res);
         }
     } else if((gd.mouseCoords.x >= 315 && gd.mouseCoords.x <= 485) && (gd.mouseCoords.y >= 368 && gd.mouseCoords.y <= 436)){        //Join
         if(gd.md.tempUsername!="") {
+            ma_engine_play_sound(&engine, "data/Audio/button.wav", NULL);
             currState->nextStateVal = CHAR_SELECT;
             currState = changeState(currState, gd);
             currState->init(state, gd, res);
         }
     }else if((gd.mouseCoords.x >= 589 && gd.mouseCoords.x <= 767) && (gd.mouseCoords.y >= 368 && gd.mouseCoords.y <= 436)){         //Settings
+        ma_engine_play_sound(&engine, "data/Audio/button.wav", NULL);
         currState->nextStateVal = SETTINGS;
         currState = changeState(currState, gd);
         currState->init(state, gd, res);

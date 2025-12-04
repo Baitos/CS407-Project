@@ -171,6 +171,7 @@ void Player::collisionResponse(const SDLState &state, GameData &gd, Resources &r
 		{
 			ItemBox& box = dynamic_cast<ItemBox&>(o);
 			if (box.itemBoxActive) {
+				ma_engine_play_sound(&engine, "data/Audio/item.wav", NULL);
 				if (!this->pickingItem && !this->hasItem) {
         			box.generateItem((*this), gd, res);
 					gd.itemStorage_.texture = res.texItemRandomizer;
@@ -236,6 +237,7 @@ void Player::checkCollision(const SDLState &state, GameData &gd, Resources &res,
 		if(p2.index != this->index) {
 			//check if in shotgun player blast state
 			if(ShotgunDeployState *s = dynamic_cast<ShotgunDeployState*>(p2.state_)) {
+				ma_engine_play_sound(&engine, "data/Audio/shotgun.wav", NULL);
 				//check if currently blocking/deploying sword
 				if(!dynamic_cast<SwordDeployState*> (this->state_)) {
 					SDL_FRect rectB{
@@ -259,6 +261,7 @@ void Player::checkCollision(const SDLState &state, GameData &gd, Resources &res,
 					//printf("Player %d BLOCKED shot by player %d\n", p.index, p2.index);
 				}
 			} else if (SwordDeployState *s = dynamic_cast<SwordDeployState*>(p2.state_)) {
+				ma_engine_play_sound(&engine, "data/Audio/sword.wav", NULL);
 				//check if in sword player swing state
 				SDL_FRect rectB{
 					.x = p2.pos.x + this->collider.x - 5,
@@ -292,8 +295,11 @@ void Player::checkCollision(const SDLState &state, GameData &gd, Resources &res,
 					printf("Completed the %dth lap!\n", this->lapsCompleted);
 					//check if finished, add to placement
 					if(this->lapsCompleted == gd.laps_per_race) {
+						ma_engine_play_sound(&engine, "data/Audio/race finish.wav", NULL);
 						gd.num_finished++;
 						gd.player_placement_.push_back(*this);
+					} else {
+						ma_engine_play_sound(&engine, "data/Audio/lap finish.wav", NULL);
 					}
 				}
 				this->lastCheckpoint = (this->lastCheckpoint+1)%(gd.checkpoints_.size());
