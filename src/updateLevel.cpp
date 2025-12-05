@@ -167,6 +167,7 @@ void handleLevelClick(SDLState &state, GameData &gd, Resources &res, Player &p, 
                 PlayerState* jpState = new JetpackDeployState();
                 p.handleState(jpState, gd, res);
                 //jetpack sound
+                ma_engine_play_sound(&engine, "data/Audio/jetpack.wav", NULL);
             }
         } else if (((LevelState *)currState)->character == SHOTGUN) {
             //SHOTGUN DEPLOY
