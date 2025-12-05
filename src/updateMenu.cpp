@@ -77,7 +77,9 @@ void settingsUpdate(const SDLState &state, GameData &gd, Resources &res, float d
         sfxVolume = 0.0f;
     }
     
-    //printf("Master = %.1f, music = %.1f, sfx = %f\n", masterVolume, musicVolume, sfxVolume);
+    //printf("Master = %.1f, music = %.1f, sfx = %.1f\n", masterVolume, musicVolume, sfxVolume);
+    //mSound.setMusicVolume(masterVolume * musicVolume);
+    //sfxSound.setMusicVolume(masterVolume * sfxVolume);
 }
 
 void gameplaySettingsUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {

@@ -9,6 +9,7 @@ public:
     void stopMusic();
     void fadeTo(const std::string& filePath, float seconds = 0.5f);
     void cleanup();
+    void setMusicVolume(float volume);
 
 private:
     ma_engine engine{};

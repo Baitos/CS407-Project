@@ -32,7 +32,7 @@ void SoundManager::stopMusic() {
     }
 }
 
-// dafe from one song to another
+// fade from one song to another
 void SoundManager::fadeTo(const std::string& filePath, float seconds) {
     if (!musicLoaded) {
         playMusic(filePath, true);
@@ -52,4 +52,8 @@ void SoundManager::cleanup() {
         musicLoaded = false;
     }
     ma_engine_uninit(&engine);
+}
+
+void SoundManager::setMusicVolume(float volume) {
+    ma_engine_set_volume(&engine, volume);
 }
