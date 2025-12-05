@@ -436,6 +436,9 @@ void createTilesSpaceship(const SDLState &state, GameData &gd, const Resources &
     createCheckpointsSpaceship(state, gd, res);
     //loadMap(foreground);
     //assert(gd.playerIndex != -1);
+
+    //music
+    //mSound.playMusic("data/Music/spaceship.wav", true);
 }
 
 void createTilesGrassland(const SDLState &state, GameData &gd, const Resources &res) { // 600 x 80
@@ -795,11 +798,17 @@ void createTilesGrassland(const SDLState &state, GameData &gd, const Resources &
     //load in checkpoints
     createCheckpointsGrassland(state, gd, res);
 
+    //music
+    //mSound.playMusic("data/Music/grasslands.wav", true);
+
     
     //loadMap(foreground);
 }
 
 void initCharSelect(const SDLState &state, GameData &gd, const Resources &res) { // 280 x 60
+
+    //music
+    //mSound.playMusic("data/Music/charSelect.wav", true);
     
     printf("laps/round: %d\n", gd.laps_per_race);
     printf("grand prix mode? %d\n", gd.isGrandPrix);
@@ -1283,10 +1292,17 @@ void createTilesSnow(const SDLState &state, GameData &gd, const Resources &res) 
     createMinimap(state, gd, res, res.MAP_SNOW, 1);
     createGrid(state, gd, MAP_ROWS, MAP_COLS);
     createCheckpointsSnow(state, gd, res);
+
+    //music
+    //mSound.playMusic("data/Music/snow.wav", true);
 }
 
 
 void initSettings(const SDLState &state, GameData &gd, const Resources &res) { // 280 x 60
+
+        //music
+        //mSound.playMusic("data/Music/settings.wav", true);
+
         SDL_FRect collider = {
             .x = 0,
             .y = 0,
@@ -1327,6 +1343,10 @@ void initSettings(const SDLState &state, GameData &gd, const Resources &res) { /
 }
 
 void initGameplaySettings(const SDLState &state, GameData &gd, const Resources &res) {
+    
+    //music
+    //mSound.playMusic("data/Music/settings.wav", true);
+
      SDL_FRect collider = {
             .x = 0,
             .y = 0,
@@ -1397,6 +1417,10 @@ void initGameplaySettings(const SDLState &state, GameData &gd, const Resources &
 }
 
 void initTitle(const SDLState &state, GameData &gd, const Resources &res) {
+
+    //music
+    //mSound.playMusic("data/music.wav", true);
+
      SDL_FRect collider = {
             .x = 0,
             .y = 0,
@@ -1438,6 +1462,10 @@ static const int POINTS_BY_PLACEMENT[] = {
 };
 
 void initResults(const SDLState &state, GameData &gd, const Resources &res) {
+
+    //music
+    //mSound.playMusic("data/Music/results.wav", true);
+
      SDL_FRect collider = {
             .x = 0,
             .y = 0,
@@ -1550,6 +1578,10 @@ void initResults(const SDLState &state, GameData &gd, const Resources &res) {
 }
 
 void initEndResults(const SDLState &state, GameData &gd, const Resources &res) {
+
+    //music
+    //mSound.playMusic("data/Music/results.wav", true);
+
      SDL_FRect collider = {
             .x = 0,
             .y = 0,

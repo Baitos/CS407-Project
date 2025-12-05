@@ -127,7 +127,7 @@ void Player::collisionResponse(const SDLState &state, GameData &gd, Resources &r
 			Laser& la = dynamic_cast<Laser&>(o);
 			if (la.laserActive){
 				//printf("FALLING");
-				sfxSound.playMusic("data/Audio/laser,wav", false);
+				sfxSound.playMusic("data/Audio/laser.wav", false);
 				PlayerState* stState = new StunnedState();
                 this->handleState(stState, gd, res);
 			
