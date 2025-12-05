@@ -23,14 +23,17 @@
 #include "../headers/state.h"
 #include "../headers/playerState.h"
 #include "../headers/menu.h"
+#include "../headers/soundManager.h"
 #define MINIAUDIO_IMPLEMENTATION
 #include "../headers/miniaudio.h"
+
 
 
 GameState * currState;
 using namespace std;
 
-ma_engine engine;
+SoundManager mSound;
+SoundManager sfxSound;
 
 int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; include argv/argc
     SDLState state;
@@ -55,20 +58,11 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         return 1;
     }
 
-    // Initialize miniaudio
-    if (ma_engine_init(NULL, &engine) != MA_SUCCESS) {
-        printf("Failed to initialize miniaudio engine.\n");
-        return 1;
-    }
+    //load and play music
+    if (!mSound.init()) return 1;
+    mSound.playMusic("data/music.wav", true);
+    if (!sfxSound.init()) return 1;
 
-    //load and play looping music
-    // ma_sound music;
-    // if (ma_sound_init_from_file(&engine, "data/music.wav", 0, nullptr, nullptr, &music) != MA_SUCCESS) {
-    //     printf("Failed to load music.wav\n");
-    // } else {
-    //     ma_sound_set_looping(&music, true);
-    //     ma_sound_start(&music);
-    // }
     
     srand(time(0)); // randomize item generation
 

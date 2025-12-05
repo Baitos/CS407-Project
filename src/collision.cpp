@@ -127,7 +127,7 @@ void Player::collisionResponse(const SDLState &state, GameData &gd, Resources &r
 			Laser& la = dynamic_cast<Laser&>(o);
 			if (la.laserActive){
 				//printf("FALLING");
-				ma_engine_play_sound(&engine, "data/Audio/laser.wav", NULL);
+				sfxSound.playMusic("data/Audio/laser,wav", false);
 				PlayerState* stState = new StunnedState();
                 this->handleState(stState, gd, res);
 			
@@ -172,7 +172,7 @@ void Player::collisionResponse(const SDLState &state, GameData &gd, Resources &r
 		{
 			ItemBox& box = dynamic_cast<ItemBox&>(o);
 			if (box.itemBoxActive) {
-				ma_engine_play_sound(&engine, "data/Audio/item.wav", NULL);
+				sfxSound.playMusic("data/Audio/item.wav", false);
 				if (!this->pickingItem && !this->hasItem) {
         			box.generateItem((*this), gd, res);
 					gd.itemStorage_.texture = res.texItemRandomizer;
@@ -238,7 +238,7 @@ void Player::checkCollision(const SDLState &state, GameData &gd, Resources &res,
 		if(p2.index != this->index) {
 			//check if in shotgun player blast state
 			if(ShotgunDeployState *s = dynamic_cast<ShotgunDeployState*>(p2.state_)) {
-				ma_engine_play_sound(&engine, "data/Audio/shotgun.wav", NULL);
+				sfxSound.playMusic("data/Audio/shotgun.wav", false);
 				//check if currently blocking/deploying sword
 				if(!dynamic_cast<SwordDeployState*> (this->state_)) {
 					SDL_FRect rectB{
@@ -262,7 +262,7 @@ void Player::checkCollision(const SDLState &state, GameData &gd, Resources &res,
 					//printf("Player %d BLOCKED shot by player %d\n", p.index, p2.index);
 				}
 			} else if (SwordDeployState *s = dynamic_cast<SwordDeployState*>(p2.state_)) {
-				ma_engine_play_sound(&engine, "data/Audio/sword.wav", NULL);
+				sfxSound.playMusic("data/Audio/sword.wav", false);
 				//check if in sword player swing state
 				SDL_FRect rectB{
 					.x = p2.pos.x + this->collider.x - 5,
@@ -296,11 +296,11 @@ void Player::checkCollision(const SDLState &state, GameData &gd, Resources &res,
 					printf("Completed the %dth lap!\n", this->lapsCompleted);
 					//check if finished, add to placement
 					if(this->lapsCompleted == gd.laps_per_race) {
-						ma_engine_play_sound(&engine, "data/Audio/race finish.wav", NULL);
+						sfxSound.playMusic("data/Audio/race finish.wav", false);
 						gd.num_finished++;
 						gd.player_placement_.push_back(*this);
 					} else {
-						ma_engine_play_sound(&engine, "data/Audio/lap finish.wav", NULL);
+						sfxSound.playMusic("data/Audio/lap finish.wav", false);
 					}
 				}
 				this->lastCheckpoint = (this->lastCheckpoint+1)%(gd.checkpoints_.size());
@@ -359,7 +359,7 @@ void Hook::checkCollision(const SDLState &state, GameData &gd, Resources &res, P
 			if (intersectAABB(rectA, rectB, resolution)) {
 				this->vel = glm::vec2(0);
 				if (!this->collided) {
-					ma_engine_play_sound(&engine, "data/Audio/grapple.wav", NULL);
+					sfxSound.playMusic("data/Audio/grapple.wav", false);
 					PlayerState* grappleState = new GrappleState();
 					p.handleState(grappleState, gd, res);
 					this->collided = true;
@@ -371,13 +371,13 @@ void Hook::checkCollision(const SDLState &state, GameData &gd, Resources &res, P
 			ItemBox& box = dynamic_cast<ItemBox&>(*o);
 			if (intersectAABB(rectA, rectB, resolution) && box.itemBoxActive) {
 				if (!p.pickingItem && !p.hasItem) {
-					ma_engine_play_sound(&engine, "data/Audio/item.wav", NULL);
+					sfxSound.playMusic("data/Audio/item.wav", false);
         			box.generateItem(p, gd, res);
 					gd.itemStorage_.texture = res.texItemRandomizer;
 					gd.itemStorage_.curAnimation = res.ANIM_ITEM_CYCLE;
 					gd.itemStorage_.animations[gd.itemStorage_.curAnimation].reset();
     			} else {
-					ma_engine_play_sound(&engine, "data/Audio/grapple.wav", NULL);
+					sfxSound.playMusic("data/Audio/grapple.wav", false);
 				}
 				box.itemBoxActive = false;
 				removeHook(p);
@@ -395,7 +395,7 @@ void Hook::checkCollision(const SDLState &state, GameData &gd, Resources &res, P
                 .h = p2.collider.h
             };
             if (intersectAABB(rectA, rectB, resolution) && !this->collided) {
-				ma_engine_play_sound(&engine, "data/Audio/grapple.wav", NULL);
+				sfxSound.playMusic("data/Audio/grapple.wav", false);
                 p.vel = 0.7f * this->vel;
                 p2.vel = -0.3f * this->vel;
                 removeHook(p);
@@ -411,7 +411,7 @@ void Hook::checkCollision(const SDLState &state, GameData &gd, Resources &res, P
                 .h = h2.collider.h
             };
             if (intersectAABB(rectA, rectB, resolution) && !this->collided && h2.visible) { // Touching other hook
-				ma_engine_play_sound(&engine, "data/Audio/grapple.wav", NULL);
+				sfxSound.playMusic("data/Audio/grapple.wav", false);
                 removeHook(p);
                 removeHook(p2);
             }
@@ -439,7 +439,7 @@ void Bomb::checkCollision(const SDLState &state, GameData &gd, Resources &res, P
             .h = p2.collider.h
         };
         if (intersectAABB(rectA, rectB, resolution) && this->visible) {
-			ma_engine_play_sound(&engine, "data/Audio/bomb.wav", NULL);
+			sfxSound.playMusic("data/Audio/bomb.wav", false);
             p2.vel.y = -200.0f; 
             p2.vel.x = this->vel.x * 0.5;  
             p2.pos.y -= 1;              
@@ -522,7 +522,7 @@ void Pie::checkCollision(const SDLState &state, GameData &gd, Resources &res, Pl
 				.h = o->collider.h
 			};
 			if (intersectAABB(rectA, rectB, resolution)) {
-				ma_engine_play_sound(&engine, "data/Audio/pie.wav", NULL);
+				sfxSound.playMusic("data/Audio/pie.wav", false);
 				this->active = false;
 			}
 		}
@@ -537,7 +537,7 @@ void Pie::checkCollision(const SDLState &state, GameData &gd, Resources &res, Pl
                 .h = p2.collider.h
             };
             if (intersectAABB(rectA, rectB, resolution)) {
-				ma_engine_play_sound(&engine, "data/Audio/pie.wav", NULL);
+				sfxSound.playMusic("data/Audio/pie.wav", false);
                 p2.vel.y = -200.0f; 
                 p2.vel.x = this->vel.x * 0.5;  
                 p2.pos.y -= 1;              

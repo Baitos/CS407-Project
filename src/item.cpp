@@ -72,7 +72,7 @@ void Boombox::useItem(const SDLState &state, GameData &gd, Resources &res, Playe
     boombox->animations[boombox->curAnimation].reset();
     p.items_.push_back(boombox);
     //sound effect
-    ma_engine_play_sound(&engine, "data/Audio/boombox.wav", NULL);
+    sfxSound.playMusic("data/Audio/boombox.wav", false);
 }
 
 
@@ -106,7 +106,7 @@ void Ice::useItem(const SDLState &state, GameData &gd, Resources &res, Player &p
     Ice* ice = new Ice(iceEffectPos, iceCollider, res.texIce);
     p.items_.push_back(ice);
     //sound effect
-    ma_engine_play_sound(&engine, "data/Audio/ice.wav", NULL);
+    sfxSound.playMusic("data/Audio/ice.wav", false);
 }
 
 // PIE
@@ -178,7 +178,7 @@ void Sugar::useItem(const SDLState &state, GameData &gd, Resources &res, Player 
     sugar->visible = false;
     p.items_.push_back(sugar);
     //sound effect
-    ma_engine_play_sound(&engine, "data/Audio/speed.wav", NULL); 
+    sfxSound.playMusic("data/Audio/speed.wav", false); 
 }
 
 void useBouncyBall(const SDLState &state, GameData &gd, Resources &res, Player &p) {}
@@ -198,7 +198,7 @@ void Fog::update(const SDLState &state, GameData &gd, Resources &res, Player &p,
     if (gd.players_[gd.playerIndex].hasFog) {
         //this->pos = glm::vec2(gd.mapViewport.x, gd.mapViewport.y);
         //sound effect - this one may cause issues moving to multiplayer
-        ma_engine_play_sound(&engine, "data/Audio/foghorn.wav", NULL);
+        sfxSound.playMusic("data/Audio/foghorn.wav", false);
         this->fogTimer.step(deltaTime);
         if(this->fogTimer.getTime() < 5.f){
             if (this->animations[curAnimation].currentFrame() != 6) {
@@ -247,7 +247,7 @@ void Fog::useItem(const SDLState &state, GameData &gd, Resources &res, Player &p
             }
         }
     //sound effect
-    ma_engine_play_sound(&engine, "data/Audio/foghorn.wav", NULL);
+    sfxSound.playMusic("data/Audio/foghorn.wav", false);
 }
 
 void useIce(const SDLState &state, GameData &gd, Resources &res, Player &p) {}
