@@ -6,6 +6,9 @@
 #include "../headers/playerState.h"
 #include "../headers/globals.h"
 #include "../headers/object.h"
+#include "../headers/state.h"
+
+extern GameState * currState;
 
 bool isOnscreen(const SDLState &state, GameData &gd, Object &obj) { // checks if obj is onscreen (with some leeway)
     bool onscreen = true;
@@ -59,6 +62,9 @@ void removeHook(Player &p) {
 
 void handleOutOfMap(GameData &gd, Resources &res, Player &p) {
     float maxY = 3000;
+    if (currState->currStateVal == DESERT) {
+        maxY = 2500;
+    }
     if (std::abs(p.pos.y) > maxY && p.state_->stateVal != DEAD) {
         PlayerState* dState = new DeadState();
         p.handleState(dState, gd, res);

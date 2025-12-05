@@ -123,6 +123,26 @@ GameState * changeState(GameState * tempState, GameData &gd){
             }
             break;
         }
+        case DESERT:
+        {
+            gd.players_.clear();
+            gd.player_placement_.clear();
+            characterType type;
+            if(((ResultsState*)currState)->character) {
+                type = ((ResultsState*)currState)->character;
+            }
+            //Creating LevelState with init of Desert
+            newState = new LevelState();
+            newState->input = levelInputs;
+            newState->update = levelUpdate;
+            newState->render = drawLevel;
+            newState->init = createTilesDesert;    
+
+            if(type) {
+                ((LevelState*)newState)->character = type;
+            }
+            break;
+        }
         case GAMEPLAY_SETTINGS:
         {
              //Creating LevelState with init of Spaceship
@@ -181,6 +201,7 @@ void GameState::unloadGameState(GameData &gd) {
     gd.signs_.clear();
     gd.itemBoxes_.clear();
     gd.wire_.clear();
+    gd.revolvers_.clear();
 
     gd.checkpoints_.clear();
 

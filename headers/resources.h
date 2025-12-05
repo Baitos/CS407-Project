@@ -41,6 +41,8 @@ struct Resources {
     std::vector<Animation> portalAnims;
     const int ICONS = 0;
     std::vector<Animation> charIconAnims;
+    const int REVOLVER_IDLE = 0;
+    std::vector<Animation> revolverAnims;
     const int ERROR = 0;
     std::vector<Animation> errorAnims;
 
@@ -52,13 +54,13 @@ struct Resources {
     const int MAP_GRASSLAND = 0;
     const int MAP_SPACESHIP = 1;
     const int MAP_SNOW = 2;
-    const int MAP_4 = 3;
+    const int MAP_DESERT = 3;
     const int MAP_5 = 4;
     std::vector<Animation> mapAnims;
     const int MAP_GRASSLAND_TEXT = 0;
     const int MAP_SPACESHIP_TEXT = 1;
     const int MAP_SNOW_TEXT = 2;
-    const int MAP_4_TEXT = 3;
+    const int MAP_DESERT_TEXT = 3;
     const int MAP_5_TEXT = 4;
     const int MAP_GRAND_PRIX = 5;
     std::vector<Animation> mapTextAnims;
@@ -97,6 +99,7 @@ struct Resources {
                 *texBgSkySnow, *texBgSnow, *texSnow, *texWire, *texWoodDark,
                 *texCharSelectBackground, *texCursor, *texCharIcons, *texSword, *texShotgun, *texJetpack, 
                 *texLeftArrow, *texRightArrow,
+                *texSand, *texCactus, *texRevolver, *texSkyYellow, *texVoidSand, *texWoodPlank, *texWoodPlankBG,
                 *texItemBox, *texItemStorage, *texItemRandomizer, 
                 *texBombStorage, *texBoomboxStorage, *texBallStorage, *texFogStorage, 
                 *texIceStorage, *texMissileStorage, *texSugarStorage, *texPieStorage,

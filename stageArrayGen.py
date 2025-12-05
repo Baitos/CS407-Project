@@ -39,7 +39,7 @@ for y in range(height):
         else:
             resultArray[y,x] = colorIdDict[color][0]
 
-filename = "C:/Users/spear/OneDrive - purdue.edu/College Documents/Fall 25/CS407/CS407-Project/data/Grasslands/" + "StageArray.txt"
+filename = "D:/Desktop/projects/Retro Runners/data/Desert/" + "StageArray.txt"
 
 with open(filename, 'w') as outputFile:
     for row in resultArray:

@@ -25,7 +25,9 @@ enum ObjectType{
     WATER,
     LAVA,
     WIRE,
-    ICE_BLOCK
+    ICE_BLOCK,
+    REVOLVER,
+    CACTUS,
 };
 
 class Object { // generic obj type    
@@ -221,6 +223,53 @@ class IceBlock: public Level {
         IceBlock(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : // generic obj constructor
         Level(pos_, colliderRect, tex) {
             type = ICE_BLOCK;
+            debug = false;
+        }
+};
+
+class Revolver : public AnimatedObject {
+    public:
+        Timer useTimer; // how long until usable again
+        bool inUse; // is someone using the revolver
+        glm::vec2 launchVel; // how much velocity to give the player using it
+        int orientation; // where is the revolver pointed
+        // 0 = R,  1 = DR, 2 = D
+        // 3 = DL, 4 = L,  5 = LU
+        // 6 = U,  7 = UR
+        int rotation; // for spinning the revolver
+        Revolver() : AnimatedObject(), useTimer(0.5f) { // default 
+            inUse = false;
+            launchVel = glm::vec2(25.0f, -1000.0f);
+            int orientation = 0;
+            rotation = 0; 
+            type = REVOLVER;
+            visible = true;
+            debug = true;
+        }  
+        Revolver(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : 
+        AnimatedObject(pos_, colliderRect, tex), useTimer(0.5f) { // generic obj constructor
+            inUse = false;
+            launchVel = glm::vec2(25.0f, -1000.0f);
+            int orientation = 0;
+            
+            rotation = 0; 
+            type = REVOLVER;
+            visible = true;
+            debug = true;
+        }
+        void draw(const SDLState &state, GameData &gd, float width, float height);
+        void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
+};
+
+class Cactus: public Level {
+    public:
+        Cactus() : Level() { // default 
+            type = CACTUS;
+            debug = false;
+        }
+        Cactus(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : // generic obj constructor
+        Level(pos_, colliderRect, tex) {
+            type = CACTUS;
             debug = false;
         }
 };

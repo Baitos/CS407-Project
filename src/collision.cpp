@@ -167,6 +167,51 @@ void Player::collisionResponse(const SDLState &state, GameData &gd, Resources &r
 			}
 			break;
 		}
+		case REVOLVER: 
+		{
+			//printf("player collided with laser\n");
+			Revolver& r = dynamic_cast<Revolver&>(o);
+			if (r.inUse) {
+				break;
+			}
+			this->pos = r.pos + glm::vec2(TILE_SIZE / 2); // center player on revolver
+			PlayerState* stState = new StunnedState(true); // hard stun
+            this->handleState(stState, gd, res);
+			this->vel = r.launchVel;
+			r.inUse = true;
+			break;
+		}
+		case CACTUS: 
+		{
+			if (resolution.x < resolution.y) {
+				
+				if (this->pos.x < o.pos.x) {
+					this->pos.x -= resolution.x;
+				} else {
+					this->pos.x += resolution.x;
+				}	
+				this->vel.x = 0;
+			} else {
+				if (this->pos.y < o.pos.y) {
+					this->pos.y -= resolution.y;
+				} else {
+					this->pos.y += resolution.y;
+				}
+				this->vel.y = 0;
+			}
+			PlayerState* stState = new StunnedState();
+			this->handleState(stState, gd, res);
+			this->vel.x = changeVel(-this->vel.x, (*this));
+			float shouldFlip = this->flip;
+			if(shouldFlip * o.pos.y < shouldFlip * this->pos.y){
+				this->vel.y = changeVel(200.f, (*this));
+			} else {
+				this->vel.y = changeVel(-400.f, (*this));
+			}
+
+			this->gravityScale = 1.0f;
+			break;
+		}
 		case ITEMBOX:
 		{
 			ItemBox& box = dynamic_cast<ItemBox&>(o);
@@ -372,6 +417,12 @@ void Hook::checkCollision(const SDLState &state, GameData &gd, Resources &res, P
 				removeHook(p);
 			}
 		}
+		else if (o->type == CACTUS) {
+			if (intersectAABB(rectA, rectB, resolution)) {
+				removeHook(p);
+			}
+			
+		}
 	}
 
     for (Player &p2 : gd.players_) {
@@ -526,7 +577,7 @@ void Ball::checkCollision(const SDLState &state, GameData &gd, Resources &res, P
 
 	std::vector<Object *> closeTiles_ = getCloseTiles(state, gd, this->pos);
 	for (auto &o : closeTiles_) { 
-		if (o->type == LEVEL) {
+		if (o->type == LEVEL || o->type == CACTUS || o->type == ICE_BLOCK) {
 			SDL_FRect rectB {
 				.x = o->pos.x + o->collider.x,
 				.y = o->pos.y + o->collider.y,
@@ -581,7 +632,7 @@ void Pie::checkCollision(const SDLState &state, GameData &gd, Resources &res, Pl
 
 	std::vector<Object *> closeTiles_ = getCloseTiles(state, gd, this->pos);
 	for (auto &o : closeTiles_) { 
-		if (o->type == LEVEL) {
+		if (o->type == LEVEL || o->type == CACTUS || o->type == ICE_BLOCK) {
 			SDL_FRect rectB {
 				.x = o->pos.x + o->collider.x,
 				.y = o->pos.y + o->collider.y,

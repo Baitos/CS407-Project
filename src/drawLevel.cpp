@@ -10,8 +10,8 @@ void drawLevel(const SDLState &state, GameData &gd, Resources res, float deltaTi
     //printf("Username: %s\n", gd.players_[gd.playerIndex].username.c_str());
     gd.mapViewport.x = (gd.players_[0].pos.x + TILE_SIZE / 2) - (gd.mapViewport.w / 2); 
     gd.mapViewport.y = (gd.players_[0].pos.y + TILE_SIZE / 2) - (gd.mapViewport.h / 2); 
-    //draw bg, switch to different color for snow level
-    if(currState->currStateVal!=SNOW){
+    //draw bg, switch to different color for snow/desert level
+    if(currState->currStateVal != SNOW || currState->currStateVal != DESERT) {
         SDL_SetRenderDrawColor(state.renderer, 64, 51, 83, 255);
     } else {
         SDL_SetRenderDrawColor(state.renderer, 199, 255, 245, 255);
@@ -71,6 +71,25 @@ void drawLevel(const SDLState &state, GameData &gd, Resources res, float deltaTi
                 w.draw(state, gd, TILE_SIZE, TILE_SIZE);
                 break;
             }
+            case ICE_BLOCK:
+            {
+                Level& l = dynamic_cast<Level&>((*o));
+                l.draw(state, gd, TILE_SIZE, TILE_SIZE);
+                break;
+            }
+            case CACTUS:
+            {
+                Level& l = dynamic_cast<Level&>((*o));
+                l.draw(state, gd, TILE_SIZE, TILE_SIZE);
+                break;
+            }
+            case REVOLVER:
+            {
+                Revolver& r = dynamic_cast<Revolver&>((*o));
+                r.draw(state, gd, TILE_SIZE * 2, TILE_SIZE * 2);
+                break;
+            }
+            
             case ITEMBOX:
             {
                 ItemBox& box = dynamic_cast<ItemBox&>((*o));

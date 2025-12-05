@@ -13,7 +13,9 @@ void Player::draw(const SDLState &state, GameData &gd, float width, float height
     for (auto &i : this->items_) { // draw active items
         i->draw(state, gd, i->width, i->height);
     }
-    AnimatedObject::draw(state, gd, width, height); // do generic object draw for player
+    if (this->visible) {
+        AnimatedObject::draw(state, gd, width, height); // do generic object draw for player
+    }
 }
 
 void Player::handleState(PlayerState* &pState, GameData &gd, Resources &res) {

@@ -31,6 +31,11 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
         laser.update(state, gd, res, deltaTime);
     }
 
+    // update revolvers
+    for (Revolver &revolver : gd.revolvers_) {
+        revolver.update(state, gd, res, deltaTime);
+    }
+
     for (ItemBox &box : gd.itemBoxes_) {
         if (!box.itemBoxActive) {
             box.update(state, gd, res, deltaTime);
@@ -156,6 +161,9 @@ void levelInputs(SDLState &state, GameData &gd, Resources &res, float deltaTime)
 
 //handler for clicking in the level
 void handleLevelClick(SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime, SDL_Event event, bool buttonDown) {
+    if (p.state_->stateVal == STUNNED || p.state_->stateVal == DEAD) { // dont let player grapple or use ability while stunned/dead
+        return;
+    }
     //LEFT CLICK FOR CHARACTER WEAPON DEPLOY
     if(gd.controls->actionPerformed(ACTION_ABILITY, event) && buttonDown){
         //JETPACK DEPLOY
