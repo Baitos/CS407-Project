@@ -174,11 +174,15 @@ void Player::collisionResponse(const SDLState &state, GameData &gd, Resources &r
 			if (r.inUse) {
 				break;
 			}
-			this->pos = r.pos + glm::vec2(TILE_SIZE / 2); // center player on revolver
-			PlayerState* stState = new StunnedState(true); // hard stun
-            this->handleState(stState, gd, res);
-			this->vel = r.launchVel;
-			r.inUse = true;
+			// if a player touches a revolver not in use
+			this->pos = r.pos + glm::vec2(TILE_SIZE / 2);
+			this->grounded = false;
+			PlayerState* stState = new StunnedState(true); // put in hard stun
+			this->handleState(stState, gd, res);
+			this->visible = false; // make player invisible
+			r.inUse = true; // set in use to true
+			r.spinning = true; // start spinning
+			r.player = this; // set revolver pointer
 			break;
 		}
 		case CACTUS: 

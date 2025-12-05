@@ -45,7 +45,8 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     shotgunAnims[SHOTGUN_BLAST] = Animation(3, 0.3f);
 
     revolverAnims.resize(1);
-    revolverAnims[REVOLVER_IDLE] = Animation(2, 0.05f);
+    revolverAnims[REVOLVER_IDLE] = Animation(2, 0.025f);
+    //revolverAnims[REVOLVER_IDLE] = Animation(2, 0.5f);
 
     minimapAnims.resize(2);
     minimapAnims[MAP] = Animation(1, 1.0f);

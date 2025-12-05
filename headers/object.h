@@ -236,26 +236,34 @@ class Revolver : public AnimatedObject {
         // 0 = R,  1 = DR, 2 = D
         // 3 = DL, 4 = L,  5 = LU
         // 6 = U,  7 = UR
+        int cycle; // used for determining when rotation should stop
+        bool spinning; // should it spin?
         int rotation; // for spinning the revolver
+        Player *player; // the player being held currently
         Revolver() : AnimatedObject(), useTimer(0.5f) { // default 
             inUse = false;
             launchVel = glm::vec2(25.0f, -1000.0f);
-            int orientation = 0;
+            orientation = 0;
             rotation = 0; 
+            cycle = 0;
             type = REVOLVER;
             visible = true;
             debug = true;
+            spinning = false;
+            player = nullptr;
         }  
         Revolver(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : 
         AnimatedObject(pos_, colliderRect, tex), useTimer(0.5f) { // generic obj constructor
             inUse = false;
             launchVel = glm::vec2(25.0f, -1000.0f);
-            int orientation = 0;
-            
+            orientation = 0;
             rotation = 0; 
+            cycle = 0;
             type = REVOLVER;
             visible = true;
             debug = true;
+            spinning = false;
+            player = nullptr;
         }
         void draw(const SDLState &state, GameData &gd, float width, float height);
         void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);

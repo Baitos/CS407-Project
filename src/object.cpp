@@ -271,25 +271,46 @@ void Revolver::draw(const SDLState &state, GameData &gd, float width, float heig
             flipMode = SDL_FLIP_NONE;
         }
     }
-    SDL_RenderTextureRotated(state.renderer, this->texture, &src, &dst, this->rotation, nullptr, flipMode); // this could probably be done using the flip variable but there's no way to rotate the image that way
+    SDL_RenderTextureRotated(state.renderer, this->texture, &src, &dst, 360 - this->rotation, nullptr, flipMode); // this could probably be done using the flip variable but there's no way to rotate the image that way
     this->drawDebug(state, gd, width, height);
 }
 
 void Revolver::update(const SDLState &state, GameData &gd, Resources &res, float deltaTime) { // just step the anims
-    if (this->curAnimation != -1) { // default update
-        this->animations[this->curAnimation].step(deltaTime);
-        if (this->animations[this->curAnimation].isDone()) {
-            this->rotation = (this->rotation + 90) % 360;
-            this->animations[this->curAnimation].reset(); 
-        }
-        // 0 = right, 90 = down, 180 = left, 270 = up
-    }
     if (this->inUse) { // if being used start running timer
         this->useTimer.step(deltaTime);
+        if (this->curAnimation != -1 && this->spinning) { // default update
+            this->animations[this->curAnimation].step(deltaTime);
+            if (this->animations[this->curAnimation].isDone()) {
+                this->rotation = (this->rotation + 90) % 360;
+                this->animations[this->curAnimation].reset(); 
+                this->cycle += 1;
+            }
+            // 0 = right, 90 = down, 180 = left, 270 = up
+        }
     }
     if (this->useTimer.isTimeOut()) { // if timer empty not in use anymore
         this->inUse = false;
+        this->cycle = 0;
         this->useTimer.reset();
+    }
+
+    if (this->player == nullptr) {
+        return;
+    }
+    if (this->cycle == 8) { // let revolver spin twice
+        this->player->vel = this->launchVel; // set player velocity
+        this->player->visible = true; // let them be seen again
+        this->spinning = false; // stop rotation
+        this->player = nullptr; // null out this revolver's player pointer
+        if (this->orientation % 2 == 1) { // fix rotation if diagonal
+            stepRevolverAnim((*this));  
+        } 
+    } else {
+        this->player->pos = this->pos + glm::vec2(TILE_SIZE / 2); // center player on revolver
+        if (!this->player->state_->stateVal == STUNNED) { // maybe unnecessary
+            PlayerState* stState = new StunnedState(true); // hard stun
+		    this->player->handleState(stState, gd, res);
+        }
     }
 }
 

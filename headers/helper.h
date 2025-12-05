@@ -25,4 +25,6 @@ std::vector<Object*> getOnscreenTiles(const SDLState &state, GameData &gd); // g
 void slowObject(glm::vec2 &vel, float deltaTime); // slow down object 
 void speedObject(glm::vec2 &vel, float deltaTime); // speed up object 
 
+void stepRevolverAnim(Revolver &r); // steps to odd length animation for diagonal revolver angle
+
 SDL_Texture* createTextTexture(SDL_Renderer* renderer, TTF_Font*font, const std::string &text, SDL_Color color, int &outW, int &outH);

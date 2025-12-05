@@ -1293,11 +1293,6 @@ void createTilesSnow(const SDLState &state, GameData &gd, const Resources &res) 
 // 3 = DL, 4 = L,  5 = LU
 // 6 = U,  7 = UR
 
-void stepRevolverAnim(Revolver &r) { // steps to odd length animation for diagonal revolver angle
-    //printf("%f\n", gd.revolvers_[index].animations[gd.revolvers_[index].curAnimation].getLength());
-    r.animations[r.curAnimation].step(r.animations[r.curAnimation].getLength() / 2);
-}
-
 void customizeRevolvers(const SDLState &state, GameData &gd, const Resources &res) {
     // 172, 14
     gd.revolvers_[0].launchVel = glm::vec2(-600.0f, -800.0f); // (LU)
@@ -1370,19 +1365,21 @@ void customizeRevolvers(const SDLState &state, GameData &gd, const Resources &re
             case 5: // LU
             {
                 revolver.rotation = 90;
-                revolver.dir = -1;
+                revolver.flip = -1;
                 stepRevolverAnim(revolver);
                 break;
             }
             case 6: // U
             {
                 revolver.rotation = 270;
-                revolver.flip = -1;
+                revolver.dir = -1;
                 break;
             }
             case 7: // UR
             {
                 revolver.rotation = 270;
+                revolver.dir = -1;
+                revolver.flip = -1;
                 stepRevolverAnim(revolver);
                 break;
             }

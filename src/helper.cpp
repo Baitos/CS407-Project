@@ -151,6 +151,11 @@ void speedObject(glm::vec2 &vel, float deltaTime) {
     }		
 }
 
+void stepRevolverAnim(Revolver &r) { // steps to odd length animation for diagonal revolver angle
+    //printf("%f\n", gd.revolvers_[index].animations[gd.revolvers_[index].curAnimation].getLength());
+    r.animations[r.curAnimation].step(r.animations[r.curAnimation].getLength() / 2);
+}
+
 SDL_Texture* createTextTexture(SDL_Renderer* renderer, TTF_Font*font, const std::string &text, SDL_Color color, int &outW, int &outH) {
     if(!font) {
         return nullptr;
