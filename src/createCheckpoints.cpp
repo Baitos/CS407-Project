@@ -101,10 +101,9 @@ void createCheckpointsDesert(const SDLState &state, GameData &gd, const Resource
         { {255*tileSize, 11*tileSize, 16, 49*tileSize}, 1 },
         { {226*tileSize, 8*tileSize, 16, 46*tileSize}, 2 },
         { {206*tileSize, 10*tileSize, 16, 50*tileSize}, 3 },
-        { {152*tileSize, 45*tileSize, 16, 10*tileSize}, 4 },
-        { {142*tileSize, 9*tileSize, 16, 20*tileSize}, 5 },
-        { {58*tileSize, 10*tileSize, 16, 44*tileSize}, 6 },
-        { {39*tileSize, 50*tileSize, tileSize, 2*tileSize}, 7 },
+        { {142*tileSize, 9*tileSize, 16, 20*tileSize}, 4 },
+        { {58*tileSize, 10*tileSize, 16, 44*tileSize}, 5 },
+        { {39*tileSize, 50*tileSize, tileSize, 2*tileSize}, 6 },
     };
     gd.checkpoints_ = courseCheckpoints;
 
