@@ -31,13 +31,13 @@ void createPlayer(GameData &gd, const Resources &res, glm::vec2 pos) { // case f
     Player player;
     if(((LevelState*) currState)->character == SWORD){
         player = Player(pos, collider, res.texIdle[SWORD], res.playerAnims, res.ANIM_PLAYER_IDLE, 250);         
-        player.cooldownTimer = Timer(3.0f);
+        player.cooldownTimer = Timer(0.75f);
     } else if(((LevelState*) currState)->character == SHOTGUN){
         player = Player(pos, collider, res.texIdle[SHOTGUN], res.playerAnims, res.ANIM_PLAYER_IDLE, 250);
-        player.cooldownTimer = Timer(5.0f);
+        player.cooldownTimer = Timer(1.5f);
     } else {
         player = Player(pos, collider, res.texIdle[JETPACK], res.playerAnims, res.ANIM_PLAYER_IDLE, 250);
-        player.cooldownTimer = Timer(1.0f);
+        player.cooldownTimer = Timer(5.0f);
     }
     
     player.character = ((LevelState*) currState)->character;
@@ -1710,7 +1710,7 @@ void createTilesDesert(const SDLState &state, GameData &gd, const Resources &res
     createMinimap(state, gd, res, res.MAP_DESERT, 1);
     createGrid(state, gd, MAP_ROWS, MAP_COLS);
     customizeRevolvers(state, gd, res);
-    //createCheckpointsSnow(state, gd, res);
+    createCheckpointsDesert(state, gd, res);
 }
 
 void initSettings(const SDLState &state, GameData &gd, const Resources &res) { // 280 x 60
