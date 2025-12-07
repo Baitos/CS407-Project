@@ -548,6 +548,7 @@ void Ball::checkCollision(const SDLState &state, GameData &gd, Resources &res, P
 				.h = o->collider.h
 			};
 			if (intersectAABB(rectA, rectB, resolution)) {
+				sfxSound.playMusic("data/Audio/ball.wav", false);
 				handleBallBounce(resolution, (*this), (*o));
 			}
 		}
