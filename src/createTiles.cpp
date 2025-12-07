@@ -1323,17 +1323,17 @@ void initSettings(const SDLState &state, GameData &gd, const Resources &res) { /
 
         //Master
         Object dial(pos, collider, res.texSlider);
-        dial.pos.x = 290.f;
+        dial.pos.x = masterVolume*(290 - 84) + 84;
         dial.pos.y = 120.f;
         gd.md.settingsDials_.push_back(dial);
 
         //Music
-        dial.pos.x = 290.f;
+        dial.pos.x = musicVolume*(290 - 84) + 84;
         dial.pos.y = 204.f;
         gd.md.settingsDials_.push_back(dial);
 
         //SFX dial
-        dial.pos.x = 290.f;
+        dial.pos.x = sfxVolume*(290 - 84) + 84;
         dial.pos.y = 288.f;
         gd.md.settingsDials_.push_back(dial);
 

@@ -55,21 +55,21 @@ void settingsUpdate(const SDLState &state, GameData &gd, Resources &res, float d
     }
     // Update audio
     //Note that volume ratio is dial.pos.x / (290-84)
-    masterVolume = gd.md.settingsDials_[0].pos.x / (290 - 84) -40.8;
+    masterVolume = (gd.md.settingsDials_[0].pos.x - 84) / (290 - 84);
     if (masterVolume > 1.0f) {
         masterVolume = 1.0f;
     }
     else if (masterVolume < 0.0f) {
         masterVolume = 0.0f;
     }
-    musicVolume = gd.md.settingsDials_[1].pos.x / (290 - 84) - 40.8;
+    musicVolume = (gd.md.settingsDials_[1].pos.x - 84) / (290 - 84);
         if (musicVolume > 1.0f) {
         musicVolume = 1.0f;
     }
     else if (masterVolume < 0.0f) {
         musicVolume = 0.0f;
     }
-    sfxVolume = gd.md.settingsDials_[2].pos.x / (290 - 84) - 40.8;
+    sfxVolume = (gd.md.settingsDials_[2].pos.x - 84) / (290 - 84);
         if (sfxVolume > 1.0f) {
         sfxVolume = 1.0f;
     }
@@ -77,9 +77,9 @@ void settingsUpdate(const SDLState &state, GameData &gd, Resources &res, float d
         sfxVolume = 0.0f;
     }
     
-    //printf("Master = %.1f, music = %.1f, sfx = %.1f\n", masterVolume, musicVolume, sfxVolume);
-    //mSound.setMusicVolume(masterVolume * musicVolume);
-    //sfxSound.setMusicVolume(masterVolume * sfxVolume);
+    // printf("Master = %.1f, music = %.1f, sfx = %.1f\n", masterVolume, musicVolume, sfxVolume);
+    mSound.setMusicVolume(masterVolume * musicVolume);
+    sfxSound.setMusicVolume(masterVolume * sfxVolume);
 }
 
 void gameplaySettingsUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
