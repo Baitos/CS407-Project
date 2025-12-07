@@ -51,12 +51,13 @@ class Item : public AnimatedObject {
 class Bomb : public Item {
     public:
         bool exploded = false; 
+        Timer leniencyTimer; // how long before the bomb blows up the player that placed it
         void useItem(const SDLState &state, GameData &gd, Resources &res, Player &p);
         void draw(const SDLState &state, GameData &gd, float width, float height);
         void update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime);
         void checkCollision(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime);
         Bomb(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) :
-        Item(pos_, colliderRect, tex) {
+        Item(pos_, colliderRect, tex), leniencyTimer(1.0f) {
             index = 0;
             width = 32;
             height = 32;
@@ -75,6 +76,26 @@ class Boombox : public Item {
             index = 1;
             width = 196;
             height = 196;
+        }
+};
+
+class Ball : public Item {
+    public:
+        Timer leniencyTimer; // how long before the ball hits the player that threw it
+        Timer ballTimer; // life timer
+        int bounces;
+        int MAX_BOUNCES;
+        void useItem(const SDLState &state, GameData &gd, Resources &res, Player &p);
+        void draw(const SDLState &state, GameData &gd, float width, float height);
+        void update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime);
+        void checkCollision(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime);
+        Ball(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) :
+        Item(pos_, colliderRect, tex), leniencyTimer(1.0f), ballTimer(15.0f) {
+            index = 2;
+            width = 32;
+            height = 32;
+            bounces = 0;
+            MAX_BOUNCES = 8; 
         }
 };
 

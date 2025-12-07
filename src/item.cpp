@@ -12,6 +12,9 @@ void Bomb::draw(const SDLState &state, GameData &gd, float width, float height) 
 }
 
 void Bomb::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) { 
+    if (!this->leniencyTimer.isTimeOut()) {
+        this->leniencyTimer.step(deltaTime); 
+    }
     if (this->exploded) {
         if (this->curAnimation != -1) {
             this->animations[this->curAnimation].step(deltaTime);
@@ -29,18 +32,7 @@ void Bomb::useItem(const SDLState &state, GameData &gd, Resources &res, Player &
         .w = 32,
         .h = 32
     };
-    glm::vec2 bombPos;
-    int xdiff;
-    // Set item 1 tile behind player, but we want it to be drawn at the beginning of tile
-    if (p.dir >= 0) { // moving right, place to left
-        xdiff = 32 + (int)p.pos.x % 32;
-        bombPos.x = p.pos.x - xdiff;
-    }
-    else {
-        xdiff = 32 + (32- (int)p.pos.x % 32);
-        bombPos.x = p.pos.x + xdiff;
-    }
-    bombPos.y = p.pos.y;
+    glm::vec2 bombPos = p.pos;
     Bomb* bomb = new Bomb(bombPos, bombCollider, res.texBomb);
     p.items_.push_back(bomb);
 }
@@ -133,6 +125,38 @@ void Pie::useItem(const SDLState &state, GameData &gd, Resources &res, Player &p
     p.items_.push_back(pie);
 }
 
+// BALL
+void Ball::draw(const SDLState &state, GameData &gd, float width, float height) {
+    AnimatedObject::draw(state, gd, width, height); // do generic object draw
+}
+
+void Ball::update(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
+    //Item::update(state, gd, res, p, deltaTime); // generic update
+    if (!this->leniencyTimer.isTimeOut()) {
+        this->leniencyTimer.step(deltaTime); 
+    }
+    this->ballTimer.step(deltaTime); 
+    if (this->ballTimer.isTimeOut()) {
+        this->active = false;
+    }
+    this->vel.x += 25.0f * deltaTime * this->dir; // increase horizontal speed every second
+    this->pos += updatePos((*this), deltaTime);
+    //printf("pie update\n");
+}
+
+void Ball::useItem(const SDLState &state, GameData &gd, Resources &res, Player &p) {
+    SDL_FRect ballCollider = {
+        .x = 6,
+        .y = 6,
+        .w = 20,
+        .h = 20
+    };
+    Ball* ball = new Ball(p.pos, ballCollider, res.texBall);
+    ball->dir = p.dir;
+    ball->vel.x = 350.0f * ball->dir;
+    ball->vel.y = 350.0f;
+    p.items_.push_back(ball);
+}
 
 // SUGAR
 void Sugar::draw(const SDLState &state, GameData &gd, float width, float height) {
@@ -180,8 +204,6 @@ void Sugar::useItem(const SDLState &state, GameData &gd, Resources &res, Player 
     //sound effect
     sfxSound.playMusic("data/Audio/speed.wav", false); 
 }
-
-void useBouncyBall(const SDLState &state, GameData &gd, Resources &res, Player &p) {}
 
 void Fog::draw(const SDLState &state, GameData &gd, float width, float height) {
     if (gd.players_[gd.playerIndex].hasFog) {
@@ -249,9 +271,6 @@ void Fog::useItem(const SDLState &state, GameData &gd, Resources &res, Player &p
     //sound effect
     sfxSound.playMusic("data/Audio/foghorn.wav", false);
 }
-
-void useIce(const SDLState &state, GameData &gd, Resources &res, Player &p) {}
-void useMissile(const SDLState &state, GameData &gd, Resources &res, Player &p) {}
 
 void clearItem(const SDLState &state, GameData &gd, Resources &res) {
     gd.itemStorage_.texture = res.texItemStorage;

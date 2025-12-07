@@ -260,6 +260,14 @@ void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
     if (key.scancode == SDL_SCANCODE_4) {
         selectedItem = (int)(ICE); // Ice
     }
+    if (key.scancode == SDL_SCANCODE_5) {
+        selectedItem = (int)(BOUNCYBALL); // Ball
+    }
+
+    if (key.scancode == SDL_SCANCODE_GRAVE) { // fail-safe, tilde
+        PlayerState* dState = new DeadState();
+        gd.players_[0].handleState(dState, gd, res);
+    }
 
     if (key.scancode == SDL_SCANCODE_F1) {
         running = false;
