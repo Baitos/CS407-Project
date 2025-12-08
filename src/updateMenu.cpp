@@ -1089,6 +1089,7 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
                 map_preview_text.curAnimation = index; 
                 map_preview_text.animations[map_preview_text.curAnimation].reset();
             }
+            printf("Curr map vote: %d\n", gd.md.currMapVote);
             gd.md.currMapVote = gd.md.currMapVote - 1;
             if(gd.md.currMapVote<0) {
                 gd.md.currMapVote = 4;
@@ -1290,6 +1291,7 @@ void handleHostLobbyClick(const SDLState &state, GameData &gd, Resources &res, f
             newLobby->passwordHash = hash<string>{}(gd.md.password);
         //TELL SERVER TO MAKE LOBBY
         std::string createLobbyMessage = "HOST " + newLobby->to_string();
+        printf("%s\n", createLobbyMessage.c_str());
         ENetPacket * packet = enet_packet_create(createLobbyMessage.c_str(), createLobbyMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
         enet_peer_send(serverPeer, 0, packet);
         enet_host_flush(client);

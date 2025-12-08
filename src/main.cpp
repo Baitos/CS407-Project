@@ -42,6 +42,7 @@ ENetPeer* serverPeer = nullptr;
 int pendingLobby = -1;
 bool inLobby = false;
 ENetHost * client;
+bool reconnectMatchmaker = true;
 
 int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; include argv/argc
     
@@ -157,6 +158,8 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         printf("Bad connection\n");
         return -1;
     }
+
+    
     
     ENetEvent event;
 
@@ -164,6 +167,9 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
 
     // start game loop
     while (running) {
+
+        
+
         uint64_t nowTime = SDL_GetTicks(); // take time from previous frame to calculate delta
         frames++;
         if (nowTime > lastTime + 1000) { // fps counter
@@ -249,7 +255,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                             Uint64 currTime = SDL_GetTicks();
                             if(currTime >= lastDisconnectCheck + 1000){
                                 lastDisconnectCheck = currTime;
-                                printf("Trying reconnection\n");
+                                printf("Trying reconnection 1\n");
                                 serverPeer = enet_host_connect(client, &address, 2, 0);
                                 
                             }
@@ -262,7 +268,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                         Uint64 currTime = SDL_GetTicks();
                         if(currTime >= lastDisconnectCheck + 1000){
                             lastDisconnectCheck = currTime;
-                            printf("Trying reconnection\n");
+                            printf("Trying reconnection 2\n");
                             serverPeer = enet_host_connect(client, &address, 2, 0);
                             
                         }
@@ -276,13 +282,12 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                     Uint64 currTime = SDL_GetTicks();
                     if(currTime >= lastDisconnectCheck + 1000){
                         lastDisconnectCheck = currTime;
-                        printf("Trying reconnection\n");
+                        printf("Trying reconnection 3\n");
                         serverPeer = enet_host_connect(client, &address, 2, 0);
-                       
-                    
                     }
                 }
                 if(currState->currStateVal == CHAR_SELECT){
+                    
                     charSelectMessageHandler(&event, &gd, res, state);
                 } else if (currState->currStateVal == SPACESHIP){
                     levelMessageHandler(&event, &gd, res, state);
@@ -307,7 +312,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                 
             }
         }
-
+        
         //Calls functions related to the current GameState
         //printf("Input\n");
         currState->input(state, gd, res, deltaTime);
@@ -318,6 +323,27 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         //printf("Draw\n");
         currState->render(state, gd, res, deltaTime);
         
+        if(currState->currStateVal == END_RESULTS){
+            if(!reconnectMatchmaker){
+                enet_peer_disconnect(serverPeer,0);
+                address.port = 1233;
+                //Attempt connection to the server
+                serverPeer = enet_host_connect(client, &address, 2, 0);
+                reconnectMatchmaker = true;
+                gd.playerIndex = -1;
+                inLobby = false;
+                pendingLobby = -1;
+                gd.md.currMapVote = 0;
+                for(int i = 0; i < 8; i++){
+                    gd.playerTypes[i] = -1;
+                }
+                
+                gd.numPlayers = 0;
+
+                //If hosting, tell server to remove lobby from list.
+            }
+        }
+
         //printf("draw done\n");
         //printf("mouseX: %f, mouseY: %f\n", gd.mouseCoords.x, gd.mouseCoords.y);
         if (gd.debugMode) {
