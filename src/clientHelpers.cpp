@@ -11,6 +11,7 @@
 
 extern int pendingLobby;
 extern GameState * currState;
+extern bool reconnectMatchmaker;
 
 
 void charSelectMessageHandler(ENetEvent * event, GameData * gd, Resources &res, SDLState &state){
@@ -18,7 +19,7 @@ void charSelectMessageHandler(ENetEvent * event, GameData * gd, Resources &res, 
     //printf("Handling message of type %d\n", event->type);
     switch(event->type){
         case ENET_EVENT_TYPE_CONNECT:{
-            printf("CONNECTED2\n");
+            reconnectMatchmaker = false;
             break;
         }
         case ENET_EVENT_TYPE_RECEIVE: {
@@ -47,13 +48,17 @@ void charSelectMessageHandler(ENetEvent * event, GameData * gd, Resources &res, 
                     }
                 }   
             } else if(message.find("PLAYER_ID ") != std::string::npos){
-                gd->playerIndex = std::stoi((message).substr(10));
+                if(gd->playerIndex ==-1){
+                    gd->playerIndex = std::stoi((message).substr(10));
+                }
                 printf("New ID\n");
             } else if(message.find("CHANGE_STATE ") != std::string::npos){
                 if ( std::stoi((message).substr(13)) == 0){
                     currState->nextStateVal = GRASSLANDS;
                 } else if (std::stoi((message).substr(13)) == 1){
                     currState->nextStateVal = SPACESHIP;
+                } else if (std::stoi((message).substr(13)) == 2){
+                    currState->nextStateVal = SNOW;
                 }
                 printf("here\n");
                 currState = changeState(currState, *gd);
@@ -93,62 +98,83 @@ void levelMessageHandler(ENetEvent * event, GameData * gd, Resources &res, SDLSt
                 if (!word.empty()){
                     parts.push_back(word);
                 }
-                if(parts.size() == 1+(gd->players_.size()*12)){
-                    //printf("%s\n", message.c_str());
+                if(parts.size() == 1+(gd->players_.size()*16)){
+                    //printf("%s\n", parts[12*0 + 6].c_str());
                     for(int i = 0; i < gd->players_.size(); i++){
-                        gd->players_[std::stoi(parts[12*i+1])].pos.x = std::stof(parts[12*i+2]);
-                        gd->players_[std::stoi(parts[12*i+1])].pos.y = std::stof(parts[12*i+3]);
-                        gd->players_[std::stoi(parts[12*i+1])].vel.x = std::stof(parts[12*i+4]);
-                        gd->players_[std::stoi(parts[12*i+1])].vel.y = std::stof(parts[12*i+5]);
-                        //printf("%d to %d\n", gd->players_[std::stoi(parts[12*i+1])].state_->stateVal, std::stoi(parts[12*i+6]));
-                        if((std::stoi(parts[12*i+6]) == LAUNCH || std::stoi(parts[12*i+6]) == FASTFALL || std::stoi(parts[12*i+6]) == JUMP || std::stoi(parts[12*i+6]) == SPRINT) && gd->players_[std::stoi(parts[12*i+1])].state_->stateVal !=  std::stoi(parts[12*i+6])){
-                            
-                            if(std::stoi(parts[12*i+6]) == LAUNCH){
-                                PlayerState *newState = new LaunchState();
-                                gd->players_[std::stoi(parts[12*i+1])].handleState(newState, *gd, res);
-                            } else if (std::stoi(parts[12*i+6]) == JUMP){
-                                if(gd->players_[std::stoi(parts[12*i+1])].state_->stateVal != LAUNCH){
+                        //printf("Original Values: %f %f %f %f\n", gd->players_[std::stoi(parts[16*i+1])].pos.x,  gd->players_[std::stoi(parts[16*i+1])].pos.y, gd->players_[std::stoi(parts[16*i+1])].vel.x , gd->players_[std::stoi(parts[16*i+1])].vel.y);
+                        gd->players_[std::stoi(parts[16*i+1])].pos.x = std::stof(parts[16*i+2]);
+                        gd->players_[std::stoi(parts[16*i+1])].pos.y = std::stof(parts[16*i+3]);
+                        gd->players_[std::stoi(parts[16*i+1])].vel.x = std::stof(parts[16*i+4]);
+                        gd->players_[std::stoi(parts[16*i+1])].vel.y = std::stof(parts[16*i+5]);
+                        //printf("Updated: %f %f %f %f\n", gd->players_[std::stoi(parts[16*i+1])].pos.x,  gd->players_[std::stoi(parts[16*i+1])].pos.y, gd->players_[std::stoi(parts[16*i+1])].vel.x , gd->players_[std::stoi(parts[16*i+1])].vel.y);
+                        //printf("%d to %d\n", gd->players_[std::stoi(parts[16*i+1])].state_->stateVal, std::stoi(parts[16*i+6]));
+                        if(gd->players_[std::stoi(parts[16*i+1])].state_->stateVal !=  JETPACK_DEPLOY || gd->players_[std::stoi(parts[16*i+1])].state_->stateVal !=  SWORD_DEPLOY){
+                            if((std::stoi(parts[16*i+6]) == LAUNCH || std::stoi(parts[16*i+6]) == FASTFALL || std::stoi(parts[16*i+6]) == JUMP || std::stoi(parts[16*i+6]) == SPRINT || std::stoi(parts[16*i+6]) == JETPACK_DEPLOY || std::stoi(parts[16*i+6]) == GRAPPLE) && gd->players_[std::stoi(parts[16*i+1])].state_->stateVal !=  std::stoi(parts[16*i+6])){
+                                
+                                if(std::stoi(parts[16*i+6]) == LAUNCH){
                                     PlayerState *newState = new LaunchState();
-                                    gd->players_[std::stoi(parts[12*i+1])].handleState(newState, *gd, res);
+                                    gd->players_[std::stoi(parts[16*i+1])].handleState(newState, *gd, res);
+                                } else if (std::stoi(parts[16*i+6]) == JUMP){
+                                    if(gd->players_[std::stoi(parts[16*i+1])].state_->stateVal != LAUNCH){
+                                        PlayerState *newState = new LaunchState();
+                                        gd->players_[std::stoi(parts[16*i+1])].handleState(newState, *gd, res);
+                                    } 
+                                } else if((int)std::stof(parts[16*i+6]) == FASTFALL){
+                                    PlayerState *newState = new FastfallState();
+                                    gd->players_[std::stoi(parts[16*i+1])].handleState(newState, *gd, res);
+                                } else if((int)std::stof(parts[16*i+6]) == SPRINT){
+                                    PlayerState *newState = new SprintState();
+                                    gd->players_[std::stoi(parts[16*i+1])].handleState(newState, *gd, res);
+                                } else if ((int)std::stof(parts[16*i+6]) == JETPACK_DEPLOY){
+                                    PlayerState *newState = new JetpackDeployState();
+                                    gd->players_[std::stoi(parts[16*i+1])].handleState(newState, *gd, res);
+                                } else if ((int)std::stof(parts[16*i+6]) == GRAPPLE){
+                                    PlayerState *newState = new GrappleState();
+                                    gd->players_[std::stoi(parts[16*i+1])].handleState(newState, *gd, res);
                                 } 
-                            } else if((int)std::stof(parts[12*i+6]) == FASTFALL){
-                                PlayerState *newState = new FastfallState();
-                                gd->players_[std::stoi(parts[12*i+1])].handleState(newState, *gd, res);
-                            } else if((int)std::stof(parts[12*i+6]) == SPRINT){
-                                PlayerState *newState = new SprintState();
-                                gd->players_[std::stoi(parts[12*i+1])].handleState(newState, *gd, res);
+                                
                             }
-                            
                         }
-                        if(gd->players_[std::stoi(parts[12*i+1])].dir != std::stof(parts[12*i+7])){
-                            gd->players_[std::stoi(parts[12*i+1])].dir = std::stof(parts[12*i+7]);
-                        }
-                        
-                        if(gd->players_[std::stoi(parts[12*i+1])].canDoubleJump != std::stoi(parts[12*i+8])){
-                            gd->players_[std::stoi(parts[12*i+1])].canDoubleJump = std::stoi(parts[12*i+8]);
+                        if(gd->players_[std::stoi(parts[16*i+1])].dir != std::stof(parts[16*i+7])){
+                            gd->players_[std::stoi(parts[16*i+1])].dir = std::stof(parts[16*i+7]);
                         }
                         
-                        if(gd->players_[std::stoi(parts[12*i+1])].grounded != std::stoi(parts[12*i+9])){
-                            gd->players_[std::stoi(parts[12*i+1])].grounded = std::stoi(parts[12*i+9]);
+                        if(gd->players_[std::stoi(parts[16*i+1])].canDoubleJump != std::stoi(parts[16*i+8])){
+                            gd->players_[std::stoi(parts[16*i+1])].canDoubleJump = std::stoi(parts[16*i+8]);
+                        }
+                        
+                        if(gd->players_[std::stoi(parts[16*i+1])].grounded != std::stoi(parts[16*i+9])){
+                            gd->players_[std::stoi(parts[16*i+1])].grounded = std::stoi(parts[16*i+9]);
                         }
 
-                        if(gd->players_[std::stoi(parts[12*i+1])].isStunned != std::stoi(parts[12*i+10])){
-                            gd->players_[std::stoi(parts[12*i+1])].isStunned = std::stoi(parts[12*i+10]);
+                        if(gd->players_[std::stoi(parts[16*i+1])].isStunned != std::stoi(parts[16*i+10])){
+                            gd->players_[std::stoi(parts[16*i+1])].isStunned = std::stoi(parts[16*i+10]);
                         }
 
-                        if(gd->players_[std::stoi(parts[12*i+1])].isDead != std::stoi(parts[12*i+11])){
-                            gd->players_[std::stoi(parts[12*i+1])].isDead = std::stoi(parts[12*i+11]);
+                        if(gd->players_[std::stoi(parts[16*i+1])].isDead != std::stoi(parts[16*i+11])){
+                            gd->players_[std::stoi(parts[16*i+1])].isDead = std::stoi(parts[16*i+11]);
                         }
 
-                        if(gd->players_[std::stoi(parts[12*i+1])].currentDirection != std::stoi(parts[12*i+12])){
-                            gd->players_[std::stoi(parts[12*i+1])].currentDirection = std::stoi(parts[12*i+12]);
+                        if(gd->players_[std::stoi(parts[16*i+1])].currentDirection != std::stoi(parts[16*i+12])){
+                            gd->players_[std::stoi(parts[16*i+1])].currentDirection = std::stoi(parts[16*i+12]);
                         }
+
+                        gd->players_[std::stoi(parts[16*i+1])].hook.pos.x = std::stof(parts[16*i+13]);
+                        gd->players_[std::stoi(parts[16*i+1])].hook.pos.y = std::stof(parts[16*i+14]);
+                        gd->players_[std::stoi(parts[16*i+1])].hook.vel.x = std::stof(parts[16*i+15]);
+                        gd->players_[std::stoi(parts[16*i+1])].hook.vel.y = std::stof(parts[16*i+16]);
+                        if(gd->players_[std::stoi(parts[16*i+1])].hook.pos.x > 0 && gd->players_[std::stoi(parts[16*i+1])].hook.pos.y >= 0){
+                            gd->players_[std::stoi(parts[16*i+1])].hook.visible = true;
+                        } else {
+                            gd->players_[std::stoi(parts[16*i+1])].hook.visible = false;
+                        }
+                        
 
                     }
                 }
             
             } else if(message.find("I ") != std::string::npos){
-                printf("item used by player");
+                printf("item used by player\n");
                 if(std::stoi(message.substr(2,1)) != gd->playerIndex){
                     SDL_FRect collider = {
                         .x = 0,
@@ -167,6 +193,8 @@ void levelMessageHandler(ENetEvent * event, GameData * gd, Resources &res, SDLSt
                         newItem = new Sugar(gd->players_[std::stoi(message.substr(2,1))].pos, collider, res.texSugar);
                     } else if (std::stoi(message.substr(4,1)) == BOMB){
                         newItem = new Bomb(gd->players_[std::stoi(message.substr(2,1))].pos, collider, res.texBomb);
+                    } else if (std::stoi(message.substr(4,1)) == FOG){
+                        newItem = new Fog(gd->players_[std::stoi(message.substr(2,1))].pos, collider, res.texFog);
                     }
                     gd->players_[std::stoi(message.substr(2,1))].heldItem = newItem;
                     gd->players_[std::stoi(message.substr(2,1))].heldItem->useItem(state,*gd,res,gd->players_[std::stoi(message.substr(2,1))]);
@@ -194,18 +222,33 @@ void levelMessageHandler(ENetEvent * event, GameData * gd, Resources &res, SDLSt
                         newItem = new Sugar(gd->players_[gd->playerIndex].pos, collider, res.texSugar);
                     } else if (std::stoi(message.substr(5,1)) == BOMB){
                         newItem = new Bomb(gd->players_[gd->playerIndex].pos, collider, res.texBomb);
+                    } else if(std::stoi(message.substr(5,1)) == FOG){
+                        newItem = new Fog(gd->players_[gd->playerIndex].pos, collider, res.texFogStorage);
+                    } else {
+                        printf("Bad item id\n");
                     }
-                    Item * temp = gd->players_[gd->playerIndex].heldItem;
-                    gd->players_[gd->playerIndex].heldItem = newItem;  
-                    if(!gd->players_[gd->playerIndex].pickingItem){
-                        gd->itemStorage_.texture = res.itemTextures[gd->players_[gd->playerIndex].heldItem->index];
+                    if (gd->players_[gd->playerIndex].heldItem != nullptr) {
+                        delete gd->players_[gd->playerIndex].heldItem;
                     }
-                    if (temp != nullptr) {
-                        delete temp;
-                    }
+                    gd->players_[gd->playerIndex].heldItem = newItem;
+                    //gd->players_[gd->playerIndex].hasItem = true;
+                    gd->players_[gd->playerIndex].itemMessageReceived = true;
                 }
+            } else if(message.find("SHOT ") != std::string::npos){
+                PlayerState *newState = new ShotgunDeployState();
+                gd->players_[std::stoi(message.substr(5,1))].handleState(newState, *gd, res);            
+            } else if (message.find("SWORD ") != std::string::npos){
+                PlayerState *newState = new SwordDeployState();
+                gd->players_[std::stoi(message.substr(6,1))].handleState(newState, *gd, res);     
+
             }
             break;
+        }
+        case ENET_EVENT_TYPE_DISCONNECT:
+        {
+            printf("Disconnect\n");
+            break;
+
         }
     }
 }

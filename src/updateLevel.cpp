@@ -50,8 +50,45 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
     gd.itemStorage_.pos.y = gd.players_[gd.playerIndex].pos.y - 190;
     gd.minimap.update(state, gd, res, deltaTime);
 
-    // gd.mapViewport.x = (gd.players_[0].pos.x + TILE_SIZE / 2) - (gd.mapViewport.w / 2); 
-    // gd.mapViewport.y = (gd.players_[0].pos.y + TILE_SIZE / 2) - (gd.mapViewport.h / 2); 
+    // gd.mapViewport.x = (gd.players_[gd.playerIndex].pos.x + TILE_SIZE / 2) - (gd.mapViewport.w / 2); 
+    // gd.mapViewport.y = (gd.players_[gd.playerIndex].pos.y + TILE_SIZE / 2) - (gd.mapViewport.h / 2); 
+
+    //check if game over
+    if(gd.round_is_over) {
+        gd.round_is_over = false;
+        if(gd.isGrandPrix){
+            if(currState->currStateVal != SNOW){		//TODO ELLIE MAKE THIS THE LAST STAGE IN THE GRAND PRIX
+                currState->nextStateVal = RESULTS;
+                currState = changeState(currState,gd);
+                currState->init(state, gd, res);
+            } else {
+                currState->nextStateVal = END_RESULTS;
+                currState = changeState(currState,gd);
+                currState->init(state, gd, res);
+            }
+        } else {
+            printf("END RESULTS\n");
+            currState->nextStateVal = END_RESULTS;
+            currState = changeState(currState,gd);
+            currState->init(state, gd, res);
+        }
+        // if(gd.isGrandPrix) {
+        //     if(currState->currStateVal==GRASSLANDS) {
+        //         currState->nextStateVal = SPACESHIP;
+        //     } else if(currState->currStateVal==SPACESHIP) {
+        //         currState->nextStateVal = SNOW;
+        //     } else if (currState->currStateVal==SNOW) {
+        //         gd.isGrandPrix = false;
+        //         currState->nextStateVal = TITLE;
+        //     }
+        //     currState = changeState(currState, gd);
+        //     currState->init(state, gd, res);
+        // } else {
+        //     currState->nextStateVal = TITLE;
+        //     currState = changeState(currState, gd);
+        //     currState->init(state, gd, res);
+        // }
+    }
 
 }
 
@@ -112,6 +149,12 @@ void handleLevelClick(SDLState &state, GameData &gd, Resources &res, Player &p, 
     //printf("Player %d Character Type %d\n", gd.playerIndex, gd.players_[gd.playerIndex].character);
     if(gd.controls->actionPerformed(ACTION_ABILITY, event) && buttonDown){
         //JETPACK DEPLOY
+        if(!event.key.repeat){
+            std::string pendingMessage = "INPUT_M " + std::to_string(gd.playerIndex) + " 1 " + std::to_string(buttonDown);
+            ENetPacket * packet = enet_packet_create(pendingMessage.c_str(), pendingMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
+            enet_peer_send(serverPeer, 0, packet);
+            enet_host_flush(client);
+        }
         if(p.character == JETPACK) {
             if (p.cooldownTimer.isTimeOut() && p.state_->stateVal != JETPACK_DEPLOY) {
                 PlayerState* jpState = new JetpackDeployState();
@@ -130,7 +173,9 @@ void handleLevelClick(SDLState &state, GameData &gd, Resources &res, Player &p, 
                 p.handleState(swState, gd, res);
             }
         }
+        
     } else if (buttonDown && gd.controls->actionPerformed(ACTION_GRAPPLE, event)) { // grapple
+        
         glm::vec2 pOffset = findCenterOfSprite(p);
         glm::vec2 hOffset = findCenterOfSprite(p.hook);
         float xDist = gd.mouseCoords.x - (p.pos.x - gd.mapViewport.x + pOffset.x); // A
@@ -139,10 +184,25 @@ void handleLevelClick(SDLState &state, GameData &gd, Resources &res, Player &p, 
         float aH = xDist / dist; // cos
         float oH = yDist / dist; // sin
 
+        if(!event.key.repeat){
+            std::string pendingMessage = "INPUT_M " + std::to_string(gd.playerIndex) + " 2 1 " + std::to_string(aH) + " " + std::to_string(oH);
+            ENetPacket * packet = enet_packet_create(pendingMessage.c_str(), pendingMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
+            enet_peer_send(serverPeer, 0, packet);
+            enet_host_flush(client);
+        }
+
         p.hook.pos = p.pos + hOffset;
         p.hook.visible = true;
         p.hook.vel = 500.0f * glm::vec2(aH, oH);
+
+
     } else if (!buttonDown && gd.controls->actionPerformed(ACTION_GRAPPLE, event)) { // grapple release 
+        if(!event.key.repeat){
+            std::string pendingMessage = "INPUT_M " + std::to_string(gd.playerIndex) + " 2 0 0 0";
+            ENetPacket * packet = enet_packet_create(pendingMessage.c_str(), pendingMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
+            enet_peer_send(serverPeer, 0, packet);
+            enet_host_flush(client);
+        }
         if (p.hook.collided) { // get out
             PlayerState* jState = new JumpState();
             p.handleState(jState, gd, res);
@@ -201,14 +261,21 @@ void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
     }*/
        // Item select, assuming last place for now
     if (key.scancode == SDL_SCANCODE_0) {
-        selectedItem = 0; // Boombox
+        selectedItem = (int)(BOOMBOX); // Boombox
     }
     if (key.scancode == SDL_SCANCODE_1) {
-        selectedItem = 1; // Bomb
+        selectedItem = (int)(BOMB); // Bomb
     }
     if (key.scancode == SDL_SCANCODE_2) {
-        selectedItem = 5; // Sugar
+        selectedItem = (int)(SUGAR); // Sugar
     }
+    if (key.scancode == SDL_SCANCODE_3) {
+        selectedItem = (int)(PIE); // Pie
+    }
+    if (key.scancode == SDL_SCANCODE_4) {
+        selectedItem = (int)(ICE); // Ice
+    }
+
     if (key.scancode == SDL_SCANCODE_F1) {
         running = false;
     }
@@ -223,10 +290,11 @@ void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
     }
 
     gd.players_[gd.playerIndex].handleInput(state, gd, res, event, deltaTime); 
-    if (gd.controls->actionPerformed(typeAction::ACTION_USEITEM, event) && gd.players_[gd.playerIndex].hasItem) {
+    if (gd.controls->actionPerformed(typeAction::ACTION_USEITEM, event) && gd.players_[gd.playerIndex].hasItem && !gd.players_[gd.playerIndex].pickingItem) {
         Item* item = gd.players_[gd.playerIndex].heldItem;
         item->useItem(state, gd, res, gd.players_[gd.playerIndex]);
         gd.players_[gd.playerIndex].hasItem = false;
+        printf("HAS ITEM IS FALSE via Client\n");
         clearItem(state, gd, res);
     }
     // for (Player &p : gd.players_) {

@@ -23,7 +23,9 @@ enum ObjectType{
     ITEMBOX,
     SIGN,
     WATER,
-    LAVA
+    LAVA,
+    WIRE,
+    ICE_BLOCK
 };
 
 class Object { // generic obj type    
@@ -170,6 +172,20 @@ class Sign:  public Object {
         }
 };
 
+class Wire:  public Object {
+    public:
+        Wire() : Object() { // default 
+            type = WIRE;
+            debug = false;
+        }
+        Wire(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : // generic obj constructor
+        Object(pos_, colliderRect, tex) {
+            type = WIRE;
+            debug = false;
+        }
+        void draw(const SDLState &state, GameData &gd, float width, float height);
+};
+
 class Water: public Object {
     public:
         Water() : Object() { // default 
@@ -192,6 +208,19 @@ class Lava: public Object {
         Lava(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : // generic obj constructor
         Object(pos_, colliderRect, tex) {
             type = LAVA;
+            debug = false;
+        }
+};
+
+class IceBlock: public Level {
+    public:
+        IceBlock() : Level() { // default 
+            type = ICE_BLOCK;
+            debug = false;
+        }
+        IceBlock(glm::vec2 pos_, SDL_FRect colliderRect, SDL_Texture *tex) : // generic obj constructor
+        Level(pos_, colliderRect, tex) {
+            type = ICE_BLOCK;
             debug = false;
         }
 };

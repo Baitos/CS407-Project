@@ -42,6 +42,7 @@ ENetPeer* serverPeer = nullptr;
 int pendingLobby = -1;
 bool inLobby = false;
 ENetHost * client;
+bool reconnectMatchmaker = true;
 
 int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; include argv/argc
     
@@ -90,6 +91,23 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     currState->update = titleUpdate;
     currState->render = drawTitle;
     currState->input = titleInput;
+    
+    // currState = new SettingsState();
+    // currState->currStateVal =  SETTINGS;
+    // currState->nextStateVal = SNOW;
+    // currState->init = initSettings;
+    // currState->update = settingsUpdate;
+    // currState->render = drawSettings;
+    // currState->input = settingsInputs;
+    
+        // currState = new LevelState();
+        // currState->currStateVal = SNOW;
+        // ((LevelState*)currState)->character = JETPACK;
+        // currState->nextStateVal = SPACESHIP;
+        // currState->init = createTilesSnow;
+        // currState->update = levelUpdate;
+        // currState->render = drawLevel;
+        // currState->input = levelInputs;
 
     // currState = new CharSelectState();
     // currState->currStateVal =  CHAR_SELECT;
@@ -102,6 +120,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     // setup game data
     GameData gd(state);
     currState->init(state,gd,res);
+    
     uint64_t prevTime = SDL_GetTicks();
 
     uint64_t frames = 0;
@@ -139,11 +158,18 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         printf("Bad connection\n");
         return -1;
     }
+
+    
     
     ENetEvent event;
 
+    Uint64 lastDisconnectCheck = SDL_GetTicks();
+
     // start game loop
     while (running) {
+
+        
+
         uint64_t nowTime = SDL_GetTicks(); // take time from previous frame to calculate delta
         frames++;
         if (nowTime > lastTime + 1000) { // fps counter
@@ -155,7 +181,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         
         while (enet_host_service(client, &event, 0) > 0) {
             //std::string message;
-            //printf("Handling message %d\n", currState->currStateVal);
+            //printf("Handling message %d\n",event.type);
             if(!inLobby){                             //Message handling for Matchmaker Server Conection
                 switch(event.type){
                     case ENET_EVENT_TYPE_CONNECT:{
@@ -164,79 +190,112 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                     }
                     case ENET_EVENT_TYPE_RECEIVE: {
                         std::string message((char *) event.packet->data, event.packet->dataLength);
-                        printf("%s\n", message.c_str());
+                        //printf("%s\n", message.c_str());
                         enet_packet_destroy(event.packet);
                         if(message.find("LOBBY_PORT ") != std::string::npos){
                             pendingLobby = std::stoi(message.substr(11,5));
                             
                             if (pendingLobby != -1){
                                 enet_peer_disconnect(serverPeer, 0);
+                                
                             }
                         }  else if (message.find("LOBBIES ") != std::string::npos){
                             for (Lobby * l : gd.md.publicLobbies_) {
-        delete l;
-    }
-    for (Lobby * l : gd.md.privateLobbies_) {
-        delete l;
-    }
-    gd.md.publicLobbies_.clear();
-    gd.md.privateLobbies_.clear();
-    message = message.substr(8); // Get rid of "LOBBIES " in the message
-    Lobby * newLobby;
-    std::stringstream stream(message);
-    std::string lobbyString;
-    char delim = ';'; // Delimiter for separate lobby entries
-    while (getline(stream, lobbyString, delim)) {
-        printf("LobbyStr = %s\n", lobbyString.c_str());
-        newLobby = getLobbyFromString(lobbyString);
-        if (newLobby->passwordHash == 0) {
-            gd.md.publicLobbies_.push_back(newLobby);
-        }
-        else {
-            gd.md.privateLobbies_.push_back(newLobby);
-        }
-    }
-    //JOIN LOBBY TESTING
-    Lobby * lobby;
-    for (int i = 0; i < 24; i++) {
-        lobby = new Lobby();
-        lobby->id = i;
-        lobby->port = 40000 + i;
-        lobby->hostName = "TestUser" + std::to_string(i);
-        lobby->playerCount = i;
-        if (i % 2 == 0) {
-            lobby->passwordHash = 0;
-             gd.md.publicLobbies_.push_back(lobby);
-        } 
-        else {
-            lobby->passwordHash = std::hash<std::string>{}(std::to_string(i));
-            gd.md.privateLobbies_.push_back(lobby);
-        }
-    }
+                                delete l;
+                            }
+                            for (Lobby * l : gd.md.privateLobbies_) {
+                                delete l;
+                            }
+                            gd.md.publicLobbies_.clear();
+                            gd.md.privateLobbies_.clear();
+                            message = message.substr(8); // Get rid of "LOBBIES " in the message
+                            Lobby * newLobby;
+                            std::stringstream stream(message);
+                            std::string lobbyString;
+                            char delim = ';'; // Delimiter for separate lobby entries
+                            while (getline(stream, lobbyString, delim)) {
+                                printf("LobbyStr = %s\n", lobbyString.c_str());
+                                newLobby = getLobbyFromString(lobbyString);
+                                if (newLobby->passwordHash == 0) {
+                                    gd.md.publicLobbies_.push_back(newLobby);
+                                }
+                                else {
+                                    gd.md.privateLobbies_.push_back(newLobby);
+                                }
+                            }
+                            //JOIN LOBBY TESTING
+                            Lobby * lobby;
+                            for (int i = 0; i < 24; i++) {
+                                lobby = new Lobby();
+                                lobby->id = i;
+                                lobby->port = 40000 + i;
+                                lobby->hostName = "TestUser" + std::to_string(i);
+                                lobby->playerCount = i;
+                                if (i % 2 == 0) {
+                                    lobby->passwordHash = 0;
+                                    gd.md.publicLobbies_.push_back(lobby);
+                                } 
+                                else {
+                                    lobby->passwordHash = std::hash<std::string>{}(std::to_string(i));
+                                    gd.md.privateLobbies_.push_back(lobby);
+                                }
+                            }
                         }
                         break;
                     }
                     case ENET_EVENT_TYPE_DISCONNECT: {
-                        printf("Changing to Lobby\n");
+                        printf("Disconnecting\n");
                         if(pendingLobby != -1){
                             address.port = pendingLobby;
                             serverPeer = enet_host_connect(client, &address,2,0);
                             pendingLobby = -1;
                             inLobby = true;
+                        } else {
+                            printf("Lost Connection\n");    
+                            Uint64 currTime = SDL_GetTicks();
+                            if(currTime >= lastDisconnectCheck + 1000){
+                                lastDisconnectCheck = currTime;
+                                printf("Trying reconnection 1\n");
+                                serverPeer = enet_host_connect(client, &address, 2, 0);
+                                
+                            }
+                            
                         }
                         break;
+                    }
+                    case ENET_EVENT_TYPE_DISCONNECT_TIMEOUT:{
+                        printf("Timed Out\n");
+                        Uint64 currTime = SDL_GetTicks();
+                        if(currTime >= lastDisconnectCheck + 1000){
+                            lastDisconnectCheck = currTime;
+                            printf("Trying reconnection 2\n");
+                            serverPeer = enet_host_connect(client, &address, 2, 0);
+                            
+                        }
+                        
                     }
                 
                 }
             } else {                                            //Message handling for lobby
+                if(event.type == ENET_EVENT_TYPE_DISCONNECT_TIMEOUT){
+                    printf("Timed Out\n");
+                    Uint64 currTime = SDL_GetTicks();
+                    if(currTime >= lastDisconnectCheck + 1000){
+                        lastDisconnectCheck = currTime;
+                        printf("Trying reconnection 3\n");
+                        serverPeer = enet_host_connect(client, &address, 2, 0);
+                    }
+                }
                 if(currState->currStateVal == CHAR_SELECT){
-                    printf("Message\n");
+                    
                     charSelectMessageHandler(&event, &gd, res, state);
                 } else if (currState->currStateVal == SPACESHIP){
                     levelMessageHandler(&event, &gd, res, state);
                 } else if (currState->currStateVal == GRASSLANDS){
                     levelMessageHandler(&event, &gd, res, state);
-                } else {
+                } else if(currState->currStateVal == SNOW){
+                    levelMessageHandler(&event, &gd, res, state);
+                }else {
                     printf("Message fell through %d\n", currState->currStateVal);
                     switch(event.type){
                         case ENET_EVENT_TYPE_CONNECT:{
@@ -253,14 +312,38 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                 
             }
         }
-
+        
         //Calls functions related to the current GameState
         //printf("Input\n");
         currState->input(state, gd, res, deltaTime);
         //printf("Update\n");
         currState->update(state, gd, res, deltaTime);
+
+        
         //printf("Draw\n");
         currState->render(state, gd, res, deltaTime);
+        
+        if(currState->currStateVal == END_RESULTS){
+            if(!reconnectMatchmaker){
+                enet_peer_disconnect(serverPeer,0);
+                address.port = 1233;
+                //Attempt connection to the server
+                serverPeer = enet_host_connect(client, &address, 2, 0);
+                reconnectMatchmaker = true;
+                gd.playerIndex = -1;
+                inLobby = false;
+                pendingLobby = -1;
+                gd.md.currMapVote = 0;
+                for(int i = 0; i < 8; i++){
+                    gd.playerTypes[i] = -1;
+                }
+                
+                gd.numPlayers = 0;
+
+                //If hosting, tell server to remove lobby from list.
+            }
+        }
+
         //printf("draw done\n");
         //printf("mouseX: %f, mouseY: %f\n", gd.mouseCoords.x, gd.mouseCoords.y);
         if (gd.debugMode) {
@@ -268,7 +351,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
             SDL_SetRenderDrawColor(state.renderer, 255, 255, 255, 255);
             SDL_RenderDebugText(state.renderer, 5, 5,
                             std::format("FPS: {}, State: {}, Grounded: {}, X: {}, Y: {}", 
-                            static_cast<int>(FPS), getStateFromEnum(gd.players_[gd.playerIndex].state_->stateVal), gd.players_[0].grounded, gd.players_[0].pos.x, gd.players_[0].pos.y).c_str());
+                            static_cast<int>(FPS), getStateFromEnum(gd.players_[gd.playerIndex].state_->stateVal), gd.players_[gd.playerIndex].grounded, gd.players_[gd.playerIndex].pos.x, gd.players_[gd.playerIndex].pos.y).c_str());
         }
 
         //swap buffers and present

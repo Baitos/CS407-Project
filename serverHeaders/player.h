@@ -59,6 +59,10 @@ class Player : public AnimatedObject { // player
         int lapsCompleted = 0;
         int lastCheckpoint = 0;
 
+        bool hasFog = false;
+        float aH = -1;
+        float oH = -1;
+        
     
         virtual void handleInput(const SDLState &state, GameData &gd, int keyID, int keyDown, float deltaTime);
         virtual void update(const SDLState &state, GameData &gd, float deltaTime, int keyID, int keyDown);

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <SDL3_ttf/SDL_ttf.h>
 #include "../ext/glm/glm.hpp"
 #include "object.h"
 #include "player.h"
@@ -24,3 +25,6 @@ std::vector<Object*> getOnscreenTiles(const SDLState &state, GameData &gd); // g
 
 void slowObject(glm::vec2 &vel, float deltaTime); // slow down object 
 void sendJoinRequest(Lobby lobby);
+void speedObject(glm::vec2 &vel, float deltaTime); // speed up object 
+
+SDL_Texture* createTextTexture(SDL_Renderer* renderer, TTF_Font*font, const std::string &text, SDL_Color color, int &outW, int &outH);

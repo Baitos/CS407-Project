@@ -4,7 +4,10 @@
 #include "../headers/playerState.h"
 #include "../headers/state.h"
 #include "../headers/helper.h"
-#include "../headers/createCheckpoints.h"
+#include <algorithm>
+
+extern GameState * currState;
+
 
 bool deltaIntersectAABB(SDLState &state, Object &a, Object &b, glm::vec2 &overlap, float deltaTime) {
 	glm::vec2 delta = updatePos(a, deltaTime); // attempt to move forward
@@ -74,6 +77,28 @@ void Player::collisionResponse(const SDLState &state, GameData &gd, Resources &r
  	Object &o, SDL_FRect &rectA, SDL_FRect &rectB, glm::vec2 &resolution, float deltaTime)
 {
 	switch (o.type) {
+		case ICE_BLOCK:
+		{
+			//printf("player collided with ice\n");
+			Level& l = dynamic_cast<Level&>(o);
+			if (resolution.x < resolution.y) {
+				
+				if (this->pos.x < l.pos.x) {
+					this->pos.x -= resolution.x;
+				} else {
+					this->pos.x += resolution.x;
+				}	
+				this->vel.x = 0;
+			} else {
+				if (this->pos.y < l.pos.y) {
+					this->pos.y -= resolution.y;
+				} else {
+					this->pos.y += resolution.y;
+				}
+				this->vel.y = 0;
+			}
+			break;
+		}
 		case LEVEL:
 		{
 			//printf("player collided with level\n");
@@ -146,8 +171,10 @@ void Player::collisionResponse(const SDLState &state, GameData &gd, Resources &r
 		{
 			ItemBox& box = dynamic_cast<ItemBox&>(o);
 			if (box.itemBoxActive) {
+				printf("%d %d\n", this->pickingItem, this->hasItem);
 				if (!this->pickingItem && !this->hasItem && this->index == gd.playerIndex) {
-        			box.generateItem((*this), gd, res);
+					this->pickingItem = true;
+        			//box.generateItem((*this), gd, res);
 					gd.itemStorage_.texture = res.texItemRandomizer;
 					gd.itemStorage_.curAnimation = res.ANIM_ITEM_CYCLE;
 					gd.itemStorage_.animations[gd.itemStorage_.curAnimation].reset();
@@ -161,7 +188,7 @@ void Player::collisionResponse(const SDLState &state, GameData &gd, Resources &r
 	}
 }
 
-void Player::groundedCheck(Object &o, SDL_FRect &rectB) {
+void Player::groundedCheck(Object &o, SDL_FRect &rectB, float deltaTime) {
 	// grounded sensor
 	const float inset = 2.0;
 	SDL_FRect sensor {
@@ -172,6 +199,9 @@ void Player::groundedCheck(Object &o, SDL_FRect &rectB) {
 	};
 	glm::vec2 resolution{ 0 };
 	if (intersectAABB(sensor, rectB, resolution)) {
+		if(o.type == ICE_BLOCK) {
+			speedObject(this->vel, deltaTime);
+		}
 		this->grounded = true;
 		this->canDoubleJump = true;
 		this->gravityScale = 1.0f;
@@ -199,8 +229,8 @@ void Player::checkCollision(const SDLState &state, GameData &gd, Resources &res,
 		if (intersectAABB(rectA, rectB, resolution)) {
 			this->collisionResponse(state, gd, res, (*o), rectA, rectB, resolution, deltaTime);
 		}
-		if (o->type == LEVEL) {
-			this->groundedCheck((*o), rectB);
+		if (o->type == LEVEL || o->type == ICE_BLOCK) {
+			this->groundedCheck((*o), rectB, deltaTime);
 		}
 	}
 
@@ -264,33 +294,38 @@ void Player::checkCollision(const SDLState &state, GameData &gd, Resources &res,
 				if(this->lastCheckpoint == gd.checkpoints_.size() - 1) {
 					this->lapsCompleted++;
 					printf("Completed the %dth lap!\n", this->lapsCompleted);
+					//check if finished, add to placement
+					if(this->lapsCompleted == gd.laps_per_race) {
+						gd.num_finished++;
+						gd.player_placement_.push_back(*this);
+					}
 				}
 				this->lastCheckpoint = (this->lastCheckpoint+1)%(gd.checkpoints_.size());
 				printf("passed checkpoint %d\n%f, %f\n%f, %f", this->lastCheckpoint, cp.collider.x, cp.collider.y, this->pos.x, this->pos.y);
 			}
 		}
 	}
-	//check for game end
+	//check for game 
 	if(!gd.round_is_over) {
 		if(gd.players_.size() == 1) {
-			if(this->lapsCompleted >= gd.laps_per_race) {
+			if(gd.num_finished == 1) {
 				printf("\n\nGAME OVER\n\n");
 				gd.round_is_over = true;
 			}
 		} else {
-			int numDone = 0;
-			for(Player &p: gd.players_) {
-				if(this->lapsCompleted >= gd.laps_per_race) {
-					numDone++;
-				}
-			}
-			if(numDone >= gd.players_.size()-1) {
+			if(gd.num_finished >= gd.players_.size()-1) {
 				printf("\n\nGAME OVER (multiple player)\n\n");
+				bool inArray = false;
+				for(Player p: gd.player_placement_) {
+					if(this->index == p.index){
+						inArray = true;
+						break;
+					}
+				}
+				if(!inArray) {
+					gd.player_placement_.push_back(*this);
+				}
 				gd.round_is_over = true;
-			}else if(numDone==1) {
-				//start timer after first player ends
-
-				//if timer out, game over
 			}
 		}
 	}
@@ -332,7 +367,8 @@ void Hook::checkCollision(const SDLState &state, GameData &gd, Resources &res, P
 			ItemBox& box = dynamic_cast<ItemBox&>(*o);
 			if (intersectAABB(rectA, rectB, resolution) && box.itemBoxActive) {
 				if (!p.pickingItem && !p.hasItem) {
-        			box.generateItem(p, gd, res);
+        			p.pickingItem = true;
+					//box.generateItem(p, gd, res);
 					gd.itemStorage_.texture = res.texItemRandomizer;
 					gd.itemStorage_.curAnimation = res.ANIM_ITEM_CYCLE;
 					gd.itemStorage_.animations[gd.itemStorage_.curAnimation].reset();

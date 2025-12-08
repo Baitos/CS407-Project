@@ -42,6 +42,8 @@ void levelUpdate(const SDLState &state, GameData &gd, float deltaTime, int keyID
         } else {
             p.update(state, gd, deltaTime, -1, -1);
         }
+
+        
     }
 
     //gd.players_[gd.playerIndex].update(state, gd, deltaTime);
@@ -51,8 +53,8 @@ void levelUpdate(const SDLState &state, GameData &gd, float deltaTime, int keyID
     //gd.itemStorage_.pos.y = gd.players_[gd.playerIndex].pos.y - 190;
     //gd.minimap.update(state, gd, deltaTime);
 
-    // gd.mapViewport.x = (gd.players_[0].pos.x + TILE_SIZE / 2) - (gd.mapViewport.w / 2); 
-    // gd.mapViewport.y = (gd.players_[0].pos.y + TILE_SIZE / 2) - (gd.mapViewport.h / 2); 
+    // gd.mapViewport.x = (gd.players_[gd.playerIndex].pos.x + TILE_SIZE / 2) - (gd.mapViewport.w / 2); 
+    // gd.mapViewport.y = (gd.players_[gd.playerIndex].pos.y + TILE_SIZE / 2) - (gd.mapViewport.h / 2); 
 
 }
 
@@ -66,48 +68,75 @@ void levelInputs(SDLState &state, GameData &gd, float deltaTime) {
 }
 
 //handler for clicking in the level
-void handleLevelClick(SDLState &state, GameData &gd, Player &p, float deltaTime, SDL_Event event, bool buttonDown) {
+void handleLevelClick(SDLState &state, GameData &gd, int playerID, float deltaTime, int key, bool buttonDown, float aH, float oH, ENetHost* lobbyServer, std::vector<ENetPeer *> clients) {
     //LEFT CLICK FOR CHARACTER WEAPON DEPLOY
     //printf("Player %d Character Type %d\n", gd.playerIndex, gd.players_[gd.playerIndex].character);
-    // if(gd.controls->actionPerformed(ACTION_ABILITY, event) && buttonDown){
-    //     //JETPACK DEPLOY
-    //     if(p.character == JETPACK) {
-    //         if (p.cooldownTimer.isTimeOut() && p.state_->stateVal != JETPACK_DEPLOY) {
-    //             PlayerState* jpState = new JetpackDeployState();
-    //             p.handleState(jpState, gd);
-    //         }
-    //     } else if (p.character == SHOTGUN) {
-    //         //SHOTGUN DEPLOY
-    //         if(p.cooldownTimer.isTimeOut() && p.state_->stateVal != SHOTGUN_DEPLOY) {
-    //             PlayerState* sgState = new ShotgunDeployState();
-    //             p.handleState(sgState, gd);
-    //         }
-    //     } else if (p.character == SWORD) {
-    //         //SWORD DEPLOY
-    //         if(p.cooldownTimer.isTimeOut() && p.state_->stateVal != SWORD_DEPLOY) {
-    //             PlayerState* swState = new SwordDeployState();
-    //             p.handleState(swState, gd);
-    //         }
-    //     }
-    // } else if (buttonDown && gd.controls->actionPerformed(ACTION_GRAPPLE, event)) { // grapple
-    //     glm::vec2 pOffset = findCenterOfSprite(p);
-    //     glm::vec2 hOffset = findCenterOfSprite(p.hook);
-    //     float xDist = gd.mouseCoords.x - (p.pos.x - gd.mapViewport.x + pOffset.x); // A
-    //     float yDist = gd.mouseCoords.y - (p.pos.y - gd.mapViewport.y + pOffset.y); // O
-    //     float dist = std::sqrt(xDist * xDist + yDist * yDist); // distance formula, H
-    //     float aH = xDist / dist; // cos
-    //     float oH = yDist / dist; // sin
+    if(key == 1 && buttonDown){
+        
+        //JETPACK DEPLOY
+        if(gd.players_[playerID].character == JETPACK) {
+            if (gd.players_[playerID].cooldownTimer.isTimeOut() && gd.players_[playerID].state_->stateVal != JETPACK_DEPLOY) {
+                PlayerState* jpState = new JetpackDeployState();
+                gd.players_[playerID].handleState(jpState, gd);
+            }
+        } else if (gd.players_[playerID].character == SHOTGUN) {
+            //SHOTGUN DEPLOY
+            if(gd.players_[playerID].cooldownTimer.isTimeOut() && gd.players_[playerID].state_->stateVal != SHOTGUN_DEPLOY) {
+                //Message telling players it was used
+                std::string updateMessage = "SHOT " + std::to_string(playerID);
+                for(ENetPeer * c : clients){
+                    //Broadcast player states
+                    ENetPacket * packet = enet_packet_create(updateMessage.c_str(), updateMessage.size()+1, ENET_PACKET_FLAG_RELIABLE);             //0 means unreliable
+                    enet_peer_send(c, 0, packet);
+                    enet_host_flush(lobbyServer);
+                }
 
-    //     p.hook.pos = p.pos + hOffset;
-    //     p.hook.visible = true;
-    //     p.hook.vel = 500.0f * glm::vec2(aH, oH);
-    // } else if (!buttonDown && gd.controls->actionPerformed(ACTION_GRAPPLE, event)) { // grapple release 
-    //     if (p.hook.collided) { // get out
-    //         PlayerState* jState = new JumpState();
-    //         p.handleState(jState, gd);
-    //     }
-    //     removeHook(p);
-    // }
+                PlayerState* sgState = new ShotgunDeployState();
+                gd.players_[playerID].handleState(sgState, gd);
+            }
+        } else if (gd.players_[playerID].character == SWORD) {
+            //SWORD DEPLOY
+            if(gd.players_[playerID].cooldownTimer.isTimeOut() && gd.players_[playerID].state_->stateVal != SWORD_DEPLOY) {
+                //Message telling players it was used
+                 std::string updateMessage = "SWORD " + std::to_string(playerID);
+                for(ENetPeer * c : clients){
+                    //Broadcast player states
+                    ENetPacket * packet = enet_packet_create(updateMessage.c_str(), updateMessage.size()+1, ENET_PACKET_FLAG_RELIABLE);             //0 means unreliable
+                    enet_peer_send(c, 0, packet);
+                    enet_host_flush(lobbyServer);
+                }
+
+                PlayerState* swState = new SwordDeployState();
+                gd.players_[playerID].handleState(swState, gd);
+
+
+            }
+        }
+    } else if (key == 2 && buttonDown) { // grapple
+        glm::vec2 pOffset = findCenterOfSprite(gd.players_[playerID]);
+        glm::vec2 hOffset = findCenterOfSprite(gd.players_[playerID].hook);
+        // float xDist = xMouse - (gd.players_[playerID].pos.x - xViewport + pOffset.x); // A
+        // float yDist = yMouse - (gd.players_[playerID].pos.y - yViewport + pOffset.y); // O
+        // float dist = std::sqrt(xDist * xDist + yDist * yDist); // distance formula, H
+        // float aH = xDist / dist; // cos
+        // float oH = yDist / dist; // sin
+
+        gd.players_[playerID].hook.pos = gd.players_[playerID].pos + hOffset;
+        gd.players_[playerID].hook.visible = true;
+        gd.players_[playerID].hook.vel = 500.0f * glm::vec2(aH, oH);
+        
+    
+    } else if (key == 2 && !buttonDown) { // grapple release 
+        gd.players_[gd.playerIndex].aH = -1;
+        gd.players_[gd.playerIndex].oH = -1;
+        
+        if (gd.players_[playerID].hook.collided) { // get out
+            PlayerState* jState = new JumpState();
+            gd.players_[playerID].handleState(jState, gd);
+        }
+        removeHook(gd.players_[playerID]);
+    
+    }
 }
 
 //
@@ -155,8 +184,9 @@ void handleKeyInput(const SDLState &state, GameData &gd,
             enet_host_flush(lobbyServer);
         }
         
-        
-        item->useItem(state, gd, gd.players_[playerID]);
+        if(item->type != FOG){
+            item->useItem(state, gd, gd.players_[playerID]);
+        }
         gd.players_[playerID].hasItem = false;
         clearItem(state, gd);
     }

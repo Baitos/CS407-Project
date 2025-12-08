@@ -134,6 +134,24 @@ void joinLobbyUpdate(const SDLState &state, GameData &gd, Resources &res, float 
     }
 }
 
+void resultsUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
+    if(gd.rd->resultsPhase == ResultData::RESULTS_NONE) {
+        return;
+    }
+    //check which round of placements to show
+    if(gd.rd->resultsPhase == ResultData::RESULTS_SHOW_ROUND) {
+        //step timer
+        gd.rd->resultsTimer -= deltaTime;
+        if(gd.rd->resultsTimer <= 0.0f) {
+            gd.rd->resultsPhase = ResultData::RESULTS_SHOW_CUMULATIVE;
+        }
+    }
+}
+
+void endResultsUpdate(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
+
+}
+
 //
 //INPUT FUNCTIONS
 //
@@ -313,6 +331,47 @@ void settingsInputs(SDLState &state, GameData &gd, Resources &res, float deltaTi
         }
 }
 //Input function for GAmeplaySettings Screen
+void endResultsInputs(SDLState &state, GameData &gd, Resources &res, float deltaTime){
+    SDL_Event event { 0 };
+        while (SDL_PollEvent(&event)) {
+            switch (event.type) {
+                case SDL_EVENT_QUIT:
+                {
+                    running = false;
+                    break;
+                }
+                case SDL_EVENT_WINDOW_RESIZED: 
+                {
+                    state.width = event.window.data1;
+                    state.height = event.window.data2;
+                    //printf("Width = %d, Height = %d", state.width, state.height);
+                    break;
+                }
+                case SDL_EVENT_KEY_DOWN:
+                {
+                    
+                    
+                    break;
+                }
+                case SDL_EVENT_KEY_UP:
+                {
+                    
+                    break;
+                }
+                case SDL_EVENT_MOUSE_BUTTON_DOWN:
+                {
+                    //handleGameplaySettingsClick(state,gd,res,deltaTime);
+                    handleEndResultsClick(state, gd, res, deltaTime);
+                    break;
+                    
+                }  case SDL_EVENT_MOUSE_BUTTON_UP:
+
+                {
+                    //gd.md.updatedDial = NULL;
+                }
+            }
+        }
+}
 void gameplaySettingsInput(SDLState &state, GameData &gd, Resources &res, float deltaTime){
     SDL_Event event { 0 };
         while (SDL_PollEvent(&event)) {
@@ -343,6 +402,7 @@ void gameplaySettingsInput(SDLState &state, GameData &gd, Resources &res, float 
                 case SDL_EVENT_MOUSE_BUTTON_DOWN:
                 {
                     handleGameplaySettingsClick(state,gd,res,deltaTime);
+                    //(state, gd, res, deltaTime);
                     break;
                     
                 }  case SDL_EVENT_MOUSE_BUTTON_UP:
@@ -512,9 +572,123 @@ void joinLobbyInput(SDLState &state, GameData &gd, Resources &res, float deltaTi
     }
 }
 
+void resultsInputs(SDLState &state, GameData &gd, Resources &res, float deltaTime){
+    SDL_Event event { 0 };
+        while (SDL_PollEvent(&event)) {
+            switch (event.type) {
+                case SDL_EVENT_QUIT:
+                {
+                    running = false;
+                    break;
+                }
+                case SDL_EVENT_WINDOW_RESIZED: 
+                {
+                    state.width = event.window.data1;
+                    state.height = event.window.data2;
+                    //printf("Width = %d, Height = %d", state.width, state.height);
+                    break;
+                }
+                case SDL_EVENT_KEY_DOWN:
+                {
+                    
+                    
+                    break;
+                }
+                case SDL_EVENT_KEY_UP:
+                {
+                    
+                    break;
+                }
+                case SDL_EVENT_MOUSE_BUTTON_DOWN:
+                {
+                    //handleGameplaySettingsClick(state,gd,res,deltaTime);
+                    handleResultsClick(state, gd, res, deltaTime);
+                    break;
+                    
+                }  case SDL_EVENT_MOUSE_BUTTON_UP:
+
+                {
+                    //gd.md.updatedDial = NULL;
+                }
+            }
+        }
+}
+
 //
 //INPUT HANDLERS
 //
+
+void handleEndResultsClick(const SDLState &state, GameData &gd, Resources &res, float deltaTime){
+    if((gd.mouseCoords.x >= 589 && gd.mouseCoords.x <= 767) && (gd.mouseCoords.y >= 368 && gd.mouseCoords.y <= 436)){         //Exit
+        currState->nextStateVal = TITLE;
+        currState = changeState(currState, gd);
+        currState->init(state, gd, res);
+    }
+}
+
+void handleResultsClick(const SDLState &state, GameData &gd, Resources &res, float deltaTime){
+    if((gd.mouseCoords.x >= 589 && gd.mouseCoords.x <= 767) && (gd.mouseCoords.y >= 368 && gd.mouseCoords.y <= 436)){         //Next Stage
+        if(currState->prevStateVal == GRASSLANDS){
+            currState->nextStateVal = SPACESHIP;
+        } else if (currState->prevStateVal == SPACESHIP){
+            currState->nextStateVal = SNOW;
+        } else if(currState->prevStateVal == SNOW){
+            //TODO ADD OTHER STAGES ELLIE
+        }
+        
+        currState = changeState(currState, gd);
+        currState->init(state, gd, res);
+    }
+}
+
+void handleMousePointerResults(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
+    SDL_GetMouseState(&gd.mouseCoords.x, &gd.mouseCoords.y);
+    float CROSSHAIR_SIZE = 15;
+    float OFFSET = 7;
+    gd.mouseCoords.x = gd.mouseCoords.x * state.xRatio;
+    gd.mouseCoords.y = gd.mouseCoords.y * state.yRatio;
+    SDL_FRect dst { 
+        .x = gd.mouseCoords.x - OFFSET,
+        .y = gd.mouseCoords.y - OFFSET,
+        .w = (float)TILE_SIZE,
+        .h = (float)TILE_SIZE
+    };
+    if ((gd.mouseCoords.x >= 583 && gd.mouseCoords.x <= 766) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)){ //Big border on Save
+        //printf("2\n");
+        gd.md.settingsBorder.pos = glm::vec2(586,366); 
+        gd.md.settingsBorder.texture = res.texBigBorder;
+    } else {
+        //printf("3\n");
+        gd.md.settingsBorder.pos = glm::vec2(500,500);
+    }
+
+    SDL_RenderTexture(state.renderer, res.texCursor, nullptr, &dst); // src is for sprite stripping, dest is for where sprite should be drawn*/ 
+    
+}
+void handleMousePointerEndResults(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
+    SDL_GetMouseState(&gd.mouseCoords.x, &gd.mouseCoords.y);
+    float CROSSHAIR_SIZE = 15;
+    float OFFSET = 7;
+    gd.mouseCoords.x = gd.mouseCoords.x * state.xRatio;
+    gd.mouseCoords.y = gd.mouseCoords.y * state.yRatio;
+    SDL_FRect dst { 
+        .x = gd.mouseCoords.x - OFFSET,
+        .y = gd.mouseCoords.y - OFFSET,
+        .w = (float)TILE_SIZE,
+        .h = (float)TILE_SIZE
+    };
+    if ((gd.mouseCoords.x >= 583 && gd.mouseCoords.x <= 766) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)){ //Big border on Save
+        //printf("2\n");
+        gd.md.settingsBorder.pos = glm::vec2(586,366); 
+        gd.md.settingsBorder.texture = res.texBigBorder;
+    } else {
+        //printf("3\n");
+        gd.md.settingsBorder.pos = glm::vec2(500,500);
+    }
+
+    SDL_RenderTexture(state.renderer, res.texCursor, nullptr, &dst); // src is for sprite stripping, dest is for where sprite should be drawn*/ 
+    
+}
 
 //Mouse Cursor for Title/Settings/Char Select/Etc.
 void handleMousePointerTitle(const SDLState &state, GameData &gd, Resources &res, float deltaTime){
@@ -868,6 +1042,7 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
         //Change to value Danny made
         int selectedStage = gd.md.currMapVote;
         std::string pendingMessage = "READY " + std::to_string(gd.playerIndex) + " " + std::to_string(selectedStage);
+        printf("%s\n", pendingMessage.c_str());
         ENetPacket * packet = enet_packet_create(pendingMessage.c_str(), pendingMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
         enet_peer_send(serverPeer, 0, packet);
         enet_host_flush(client);
@@ -914,6 +1089,7 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
                 map_preview_text.curAnimation = index; 
                 map_preview_text.animations[map_preview_text.curAnimation].reset();
             }
+            printf("Curr map vote: %d\n", gd.md.currMapVote);
             gd.md.currMapVote = gd.md.currMapVote - 1;
             if(gd.md.currMapVote<0) {
                 gd.md.currMapVote = 4;
@@ -1115,6 +1291,7 @@ void handleHostLobbyClick(const SDLState &state, GameData &gd, Resources &res, f
             newLobby->passwordHash = hash<string>{}(gd.md.password);
         //TELL SERVER TO MAKE LOBBY
         std::string createLobbyMessage = "HOST " + newLobby->to_string();
+        printf("%s\n", createLobbyMessage.c_str());
         ENetPacket * packet = enet_packet_create(createLobbyMessage.c_str(), createLobbyMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
         enet_peer_send(serverPeer, 0, packet);
         enet_host_flush(client);

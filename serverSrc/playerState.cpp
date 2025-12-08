@@ -85,9 +85,9 @@ void sharedGravity(Player &p, float deltaTime) { // call on airborne states
 
 void sharedUpdate(const SDLState &state, Player &p, float deltaTime, GameData &gd) { // basic animation and cooldown function, should always be called pretty much
     //if(p.index == gd.playerIndex){
-    //printf("1: %f\n", gd.players_[0].pos.y);
+    //printf("1: %f\n", gd.players_[gd.playerIndex].pos.y);
     sharedMovement(state, p);
-    //printf("2: %f\n", gd.players_[0].pos.y);
+    //printf("2: %f\n", gd.players_[gd.playerIndex].pos.y);
     //}
     
     p.cooldownTimer.step(deltaTime);
@@ -527,11 +527,13 @@ PlayerState* GrappleState::update(const SDLState &state, GameData &gd, Player &p
     glm::vec2 hOffset = findCenterOfSprite(p.hook);
     // this will go in helper function later
     float xDist = (p.hook.pos.x - gd.mapViewport.x + hOffset.x) - (p.pos.x - gd.mapViewport.x + pOffset.x); // A
-    float yDist = (p.hook.pos.y - gd.mapViewport.y + hOffset.y) - (p.pos.y - gd.mapViewport.y + pOffset.y); // O
+    float yDist = (p.hook.pos.y - gd.mapViewport.y + hOffset.y) - (p.pos.y - gd.mapViewport.y+ pOffset.y); // O
     float dist = std::sqrt(xDist * xDist + yDist * yDist); // distance formula, H
     float aH = xDist / dist; // cos
     float oH = yDist / dist; // sin
     p.vel = 500.0f * glm::vec2(aH, oH);
+    gd.mapViewport.x = (gd.players_[gd.playerIndex].pos.x + TILE_SIZE / 2) - (gd.mapViewport.w / 2); 
+    gd.mapViewport.y = (gd.players_[gd.playerIndex].pos.y + TILE_SIZE / 2) - (gd.mapViewport.h / 2);
     return nullptr;
 }
 

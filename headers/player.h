@@ -42,6 +42,7 @@ class Player : public AnimatedObject { // player
 
         bool canDoubleJump = true;
         bool usingSugar = false;
+        bool hasFog = false;
 
         int currentDirection;
         int position = -1;
@@ -60,6 +61,14 @@ class Player : public AnimatedObject { // player
         int lapsCompleted = 0;
         int lastCheckpoint = 0;
 
+        bool itemMessageReceived = false;
+
+        float aH = -1;
+        float oH = -1;
+
+        int points = 0;
+        int pointsBeforeRound = 0;
+
         void draw(const SDLState &state, GameData &gd, float width, float height);
         virtual void handleInput(const SDLState &state, GameData &gd, Resources &res, SDL_Event &event, float deltaTime);
         virtual void update(const SDLState &state, GameData &gd, Resources &res, float deltaTime);
@@ -68,7 +77,7 @@ class Player : public AnimatedObject { // player
  	                        float deltaTime);
         void collisionResponse(const SDLState &state, GameData &gd, Resources &res,
  	                           Object &o, SDL_FRect &rectA, SDL_FRect &rectB, glm::vec2 &resolution, float deltaTime);
-        void groundedCheck(Object &o, SDL_FRect &rectB);
+        void groundedCheck(Object &o, SDL_FRect &rectB, float deltaTime);
 
         void handleState(PlayerState* &pState, GameData &gd, Resources &res);
         //void draw(const SDLState &state, GameData &gs, float width, float height);

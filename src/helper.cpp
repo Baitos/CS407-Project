@@ -131,3 +131,35 @@ void sendJoinRequest(Lobby lobby) {
     // TODO send join message
 
 }
+
+void speedObject(glm::vec2 &vel, float deltaTime) {
+    if (abs(vel.x) <= 1000) {
+        if (vel.x > 0) {
+                vel.x += 1.f * vel.x * deltaTime;
+            } else {
+                vel.x -= 1.f * abs(vel.x) *deltaTime;
+            }
+        }
+    if (abs(vel.y) <= 1000) {
+        if (vel.y > 0) {
+            vel.y += 1.f * vel.y * deltaTime;
+        } else {
+            vel.y -= 1.f * abs(vel.y) * deltaTime;
+        }
+    }		
+}
+
+SDL_Texture* createTextTexture(SDL_Renderer* renderer, TTF_Font*font, const std::string &text, SDL_Color color, int &outW, int &outH) {
+    if(!font) {
+        return nullptr;
+    }
+    SDL_Surface* surface = TTF_RenderText_Blended(font, text.c_str(), text.length(), color);
+    if(!surface) {
+        return nullptr;
+    }
+    SDL_Texture* tex = SDL_CreateTextureFromSurface(renderer, surface);
+    outW = surface->w;
+    outH = surface->h;
+    SDL_DestroySurface(surface);
+    return tex;
+}

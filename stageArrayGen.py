@@ -50,7 +50,6 @@ with open(filename, 'w') as outputFile:
         outputFile.write(row_string + ',\n')
     
 
-
 #print("Here is your resulting array:")
 #print(resultArray)
 print("Here is your colorID Dictionary:")
