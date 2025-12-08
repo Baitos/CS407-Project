@@ -62,8 +62,9 @@ struct GameData {
     bool isGrandPrix = false;
     int laps_per_race = 1;
     bool round_is_over = false;
-    
-    GameData(const SDLState &state) : md(state) {
+    GameData(){}
+    GameData(const SDLState &state){
+        md = MenuData();
         playerIndex = -1; // will change when map is loaded
         numPlayers = 8;
         mapViewport = SDL_FRect {

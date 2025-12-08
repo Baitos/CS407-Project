@@ -8,7 +8,6 @@
 #include "../headers/state.h"
 #include "../headers/playerState.h"
 #include "../headers/controls.h"
-#include "../headers/sound.h"
 using namespace std;
 
 extern GameState * currState;
@@ -369,22 +368,22 @@ void handleCharSelectKeyInput(const SDLState &state, GameData &gd, Resources &re
         currState = changeState(currState, gd);
         currState->init(state,gd, res);
     }
-    if (key.scancode == SDL_SCANCODE_M) {
-        // play music file
-        printf("Master = %.1f, music = %.1f, sfx = %f\n", masterVolume, musicVolume, sfxVolume);
-        std::string filepath = "data/Audio/laser.wav";
-        Sound * sound = new Sound(filepath, true);
-        sound->SetupStream();
-        sound->PlaySound();
-    }   
-    if (key.scancode == SDL_SCANCODE_N) {
-        // play sfx file
-        std::string filepath = "data/Audio/laser.wav";
-        Sound * sound = new Sound(filepath, false);
-        sound->SetupStream();
-        sound->PlaySound();
-        delete sound;
-    }
+    // if (key.scancode == SDL_SCANCODE_M) {
+    //     // play music file
+    //     printf("Master = %.1f, music = %.1f, sfx = %f\n", masterVolume, musicVolume, sfxVolume);
+    //     std::string filepath = "data/Audio/laser.wav";
+    //     Sound * sound = new Sound(filepath, true);
+    //     sound->SetupStream();
+    //     sound->PlaySound();
+    // }   
+    // if (key.scancode == SDL_SCANCODE_N) {
+    //     // play sfx file
+    //     std::string filepath = "data/Audio/laser.wav";
+    //     Sound * sound = new Sound(filepath, false);
+    //     sound->SetupStream();
+    //     sound->PlaySound();
+    //     delete sound;
+    // }
 }
 
 //Handles Clicking for Character Select Screen
@@ -657,8 +656,8 @@ void handleMousePointerTitle(const SDLState &state, GameData &gd, Resources &res
         gd.md.settingsBorder.pos = glm::vec2(312,366);
         gd.md.settingsBorder.texture = res.texBigBorder;
     }else if((gd.mouseCoords.x >= 589 && gd.mouseCoords.x <= 767) && (gd.mouseCoords.y >= 368 && gd.mouseCoords.y <= 436)){         //Settings
-        gd.md.settingsBorder.pos = glm::vec2(586,366);
-        gd.md.settingsBorder.texture = res.texBigBorder;
+        // gd.md.settingsBorder.pos = glm::vec2(586,366);
+        // gd.md.settingsBorder.texture = res.texBigBorder;
     } else {
         gd.md.settingsBorder.pos = glm::vec2(500,500);
     }
