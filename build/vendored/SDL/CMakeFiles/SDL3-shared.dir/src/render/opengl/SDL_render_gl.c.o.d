@@ -1,0 +1,23 @@
+vendored/SDL/CMakeFiles/SDL3-shared.dir/src/render/opengl/SDL_render_gl.c.o: \
+ /home/rei/Documents/Code/CS407-Project/vendored/SDL/src/render/opengl/SDL_render_gl.c \
+ /usr/include/stdc-predef.h \
+ /home/rei/Documents/Code/CS407-Project/vendored/SDL/src/SDL_internal.h \
+ /home/rei/Documents/Code/CS407-Project/vendored/SDL/src/render/opengl/../../video/SDL_sysvideo.h \
+ /home/rei/Documents/Code/CS407-Project/vendored/SDL/include/SDL3/SDL_vulkan.h \
+ /home/rei/Documents/Code/CS407-Project/vendored/SDL/include/SDL3/SDL_stdinc.h \
+ /home/rei/Documents/Code/CS407-Project/vendored/SDL/include/SDL3/SDL_error.h \
+ /home/rei/Documents/Code/CS407-Project/vendored/SDL/include/SDL3/SDL_video.h \
+ /home/rei/Documents/Code/CS407-Project/vendored/SDL/include/SDL3/SDL_begin_code.h \
+ /home/rei/Documents/Code/CS407-Project/vendored/SDL/include/SDL3/SDL_close_code.h \
+ /home/rei/Documents/Code/CS407-Project/vendored/SDL/src/render/opengl/../../video/SDL_surface_c.h \
+ /home/rei/Documents/Code/CS407-Project/vendored/SDL/src/render/opengl/../../video/SDL_blit.h \
+ /home/rei/Documents/Code/CS407-Project/vendored/SDL/include/SDL3/SDL_opengl.h \
+ /home/rei/Documents/Code/CS407-Project/vendored/SDL/include/SDL3/SDL_platform.h \
+ /home/rei/Documents/Code/CS407-Project/vendored/SDL/include/SDL3/SDL_opengl_glext.h \
+ /usr/lib/gcc/x86_64-linux-gnu/15/include/stdint.h \
+ /home/rei/Documents/Code/CS407-Project/vendored/SDL/src/render/opengl/../SDL_sysrender.h \
+ /home/rei/Documents/Code/CS407-Project/vendored/SDL/src/render/opengl/../../video/SDL_surface_c.h \
+ /home/rei/Documents/Code/CS407-Project/vendored/SDL/src/render/opengl/../SDL_yuv_sw_c.h \
+ /home/rei/Documents/Code/CS407-Project/vendored/SDL/src/render/opengl/SDL_shaders_gl.h \
+ /home/rei/Documents/Code/CS407-Project/vendored/SDL/src/render/opengl/../../video/SDL_pixels_c.h \
+ /home/rei/Documents/Code/CS407-Project/vendored/SDL/src/render/opengl/SDL_glfuncs.h

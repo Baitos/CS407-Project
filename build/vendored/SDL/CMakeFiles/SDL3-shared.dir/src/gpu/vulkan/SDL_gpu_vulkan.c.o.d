@@ -1,0 +1,33 @@
+vendored/SDL/CMakeFiles/SDL3-shared.dir/src/gpu/vulkan/SDL_gpu_vulkan.c.o: \
+ /home/rei/Documents/Code/CS407-Project/vendored/SDL/src/gpu/vulkan/SDL_gpu_vulkan.c \
+ /usr/include/stdc-predef.h \
+ /home/rei/Documents/Code/CS407-Project/vendored/SDL/src/SDL_internal.h \
+ /home/rei/Documents/Code/CS407-Project/vendored/SDL/src/gpu/vulkan/../../video/khronos/vulkan/vulkan.h \
+ /home/rei/Documents/Code/CS407-Project/vendored/SDL/src/gpu/vulkan/../../video/khronos/vulkan/vk_platform.h \
+ /usr/lib/gcc/x86_64-linux-gnu/15/include/stddef.h \
+ /usr/lib/gcc/x86_64-linux-gnu/15/include/stdint.h \
+ /home/rei/Documents/Code/CS407-Project/vendored/SDL/src/gpu/vulkan/../../video/khronos/vulkan/vulkan_core.h \
+ /home/rei/Documents/Code/CS407-Project/vendored/SDL/src/gpu/vulkan/../../video/khronos/vulkan/../vk_video/vulkan_video_codec_h264std.h \
+ /home/rei/Documents/Code/CS407-Project/vendored/SDL/src/gpu/vulkan/../../video/khronos/vulkan/../vk_video/vulkan_video_codecs_common.h \
+ /home/rei/Documents/Code/CS407-Project/vendored/SDL/src/gpu/vulkan/../../video/khronos/vulkan/../vk_video/vulkan_video_codec_h264std_encode.h \
+ /home/rei/Documents/Code/CS407-Project/vendored/SDL/src/gpu/vulkan/../../video/khronos/vulkan/../vk_video/vulkan_video_codec_h264std.h \
+ /home/rei/Documents/Code/CS407-Project/vendored/SDL/src/gpu/vulkan/../../video/khronos/vulkan/../vk_video/vulkan_video_codec_h265std.h \
+ /home/rei/Documents/Code/CS407-Project/vendored/SDL/src/gpu/vulkan/../../video/khronos/vulkan/../vk_video/vulkan_video_codec_h265std_encode.h \
+ /home/rei/Documents/Code/CS407-Project/vendored/SDL/src/gpu/vulkan/../../video/khronos/vulkan/../vk_video/vulkan_video_codec_h265std.h \
+ /home/rei/Documents/Code/CS407-Project/vendored/SDL/src/gpu/vulkan/../../video/khronos/vulkan/../vk_video/vulkan_video_codec_h264std_decode.h \
+ /home/rei/Documents/Code/CS407-Project/vendored/SDL/src/gpu/vulkan/../../video/khronos/vulkan/../vk_video/vulkan_video_codec_h265std_decode.h \
+ /home/rei/Documents/Code/CS407-Project/vendored/SDL/src/gpu/vulkan/../../video/khronos/vulkan/../vk_video/vulkan_video_codec_av1std.h \
+ /home/rei/Documents/Code/CS407-Project/vendored/SDL/src/gpu/vulkan/../../video/khronos/vulkan/../vk_video/vulkan_video_codec_av1std_decode.h \
+ /home/rei/Documents/Code/CS407-Project/vendored/SDL/src/gpu/vulkan/../../video/khronos/vulkan/../vk_video/vulkan_video_codec_av1std.h \
+ /home/rei/Documents/Code/CS407-Project/vendored/SDL/src/gpu/vulkan/../../video/khronos/vulkan/vulkan_beta.h \
+ /home/rei/Documents/Code/CS407-Project/vendored/SDL/include/SDL3/SDL_vulkan.h \
+ /home/rei/Documents/Code/CS407-Project/vendored/SDL/include/SDL3/SDL_stdinc.h \
+ /home/rei/Documents/Code/CS407-Project/vendored/SDL/include/SDL3/SDL_error.h \
+ /home/rei/Documents/Code/CS407-Project/vendored/SDL/include/SDL3/SDL_video.h \
+ /home/rei/Documents/Code/CS407-Project/vendored/SDL/include/SDL3/SDL_begin_code.h \
+ /home/rei/Documents/Code/CS407-Project/vendored/SDL/include/SDL3/SDL_close_code.h \
+ /home/rei/Documents/Code/CS407-Project/vendored/SDL/src/gpu/vulkan/../SDL_sysgpu.h \
+ /home/rei/Documents/Code/CS407-Project/vendored/SDL/src/gpu/vulkan/../../video/SDL_sysvideo.h \
+ /home/rei/Documents/Code/CS407-Project/vendored/SDL/src/gpu/vulkan/../../video/SDL_surface_c.h \
+ /home/rei/Documents/Code/CS407-Project/vendored/SDL/src/gpu/vulkan/../../video/SDL_blit.h \
+ /home/rei/Documents/Code/CS407-Project/vendored/SDL/src/gpu/vulkan/SDL_gpu_vulkan_vkfuncs.h
