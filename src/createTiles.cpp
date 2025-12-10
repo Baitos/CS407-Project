@@ -13,7 +13,8 @@
 
 
 extern GameState *currState;
-
+extern std::string usernames[8];
+extern int pointsArray[8];
 
 void createPlayer(GameData &gd, const Resources &res, glm::vec2 pos) { // case for player put in one code block
     SDL_FRect collider = { 
@@ -50,7 +51,7 @@ void createPlayer(GameData &gd, const Resources &res, glm::vec2 pos) { // case f
                 player.cooldownTimer = Timer(1.0f);
                 player.character = JETPACK;
             }
-            
+            player.username = usernames[index];
             //player.character = SWORD;
             player.state_ = new IdleState();
             player.dir = 0;
@@ -1511,7 +1512,10 @@ void initTitle(const SDLState &state, GameData &gd, const Resources &res) {
         .w = 32,
         .h = 32
     };
-    
+    for(int i = 0; i < 8; i++){
+        usernames[i].clear();
+    }
+
     glm::vec2  pos = glm::vec2(0,0);
     // Background
     BackgroundObject bg(pos, collider, res.texTitle);
@@ -1632,7 +1636,9 @@ void initResults(const SDLState &state, GameData &gd, const Resources &res) {
         for(Player &p: gd.players_) {
             ResultData::ResultEntry e;
             e.player = &p;
-            e.pointsEarned = p.points;
+            pointsArray[p.index] += p.points;
+            printf("PointsArray: %d P.index: %d\n", pointsArray[p.index], p.index);
+            e.pointsEarned = pointsArray[p.index];
             e.placement = 0;
             gd.rd->cumulativeResults.push_back(e);
         }
@@ -1744,10 +1750,13 @@ void initEndResults(const SDLState &state, GameData &gd, const Resources &res) {
         for(Player &p: gd.players_) {
             ResultData::ResultEntry e;
             e.player = &p;
-            e.pointsEarned = p.points;
+            pointsArray[p.index] += p.points;
+            printf("PointsArray: %d P.index: %d\n", pointsArray[p.index], p.index);
+            e.pointsEarned = pointsArray[p.index];
             e.placement = 0;
             gd.rd->cumulativeResults.push_back(e);
         }
+
         //sort based on pointsEarned
         std::sort(gd.rd->cumulativeResults.begin(), gd.rd->cumulativeResults.end(), [](const ResultData::ResultEntry &a, const ResultData::ResultEntry &b) {
             if(a.pointsEarned != b.pointsEarned) {

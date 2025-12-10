@@ -71,6 +71,7 @@ struct GameData {
     int num_finished = 0;
     bool round_is_over = false;
     
+
     GameData(const SDLState &state): md(state) {
         for(int i = 0; i < 8; i++){
             playerTypes[i] = -1;

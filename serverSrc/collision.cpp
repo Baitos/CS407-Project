@@ -280,6 +280,7 @@ void Player::checkCollision(const SDLState &state, GameData &gd,
 			int numDone = 0;
 			for(Player &p: gd.players_) {
 				if(this->lapsCompleted >= gd.laps_per_race) {
+					printf("player is done\n");
 					numDone++;
 				}
 			}

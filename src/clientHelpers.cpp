@@ -8,11 +8,12 @@
 
 
 
-
+extern ENetPeer * serverPeer;
+extern ENetHost * client;
 extern int pendingLobby;
 extern GameState * currState;
 extern bool reconnectMatchmaker;
-
+extern std::string usernames[8];
 
 void charSelectMessageHandler(ENetEvent * event, GameData * gd, Resources &res, SDLState &state){
     //std::string message;
@@ -20,6 +21,7 @@ void charSelectMessageHandler(ENetEvent * event, GameData * gd, Resources &res, 
     switch(event->type){
         case ENET_EVENT_TYPE_CONNECT:{
             reconnectMatchmaker = false;
+            
             break;
         }
         case ENET_EVENT_TYPE_RECEIVE: {
@@ -51,7 +53,16 @@ void charSelectMessageHandler(ENetEvent * event, GameData * gd, Resources &res, 
                 if(gd->playerIndex ==-1){
                     gd->playerIndex = std::stoi((message).substr(10));
                 }
-                printf("New ID\n");
+                std::string pendingMessage = "USER " + std::to_string(gd->playerIndex)+ " " + username;
+                ENetPacket * packet = enet_packet_create(pendingMessage.c_str(), pendingMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
+                enet_peer_send(serverPeer, 0, packet);
+                enet_host_flush(client);
+                printf("New ID\n"); 
+            } else if(message.find("USER ") != std::string::npos){
+
+                std::string tempUsername = message.substr(7, message.size()-7);
+                usernames[std::stoi(message.substr(5,1))] = tempUsername;
+
             } else if(message.find("CHANGE_STATE ") != std::string::npos){
                 if ( std::stoi((message).substr(13)) == 0){
                     currState->nextStateVal = GRASSLANDS;
@@ -60,9 +71,7 @@ void charSelectMessageHandler(ENetEvent * event, GameData * gd, Resources &res, 
                 } else if (std::stoi((message).substr(13)) == 2){
                     currState->nextStateVal = SNOW;
                 }
-                printf("here\n");
                 currState = changeState(currState, *gd);
-                printf("here2\n");
                 currState->init(state,*gd,res);
             }
             break;
@@ -292,6 +301,36 @@ void joinMessageHandler(GameData * gd, std::string message){
         else {
             lobby->passwordHash = std::hash<std::string>{}(std::to_string(i));
             gd->md.privateLobbies_.push_back(lobby);
+        }
+    }
+}
+
+void resultsMessageHandler(ENetEvent * event, GameData * gd, Resources &res, SDLState &state){
+    switch(event->type){
+        case ENET_EVENT_TYPE_CONNECT:{
+            reconnectMatchmaker = false;
+            
+            break;
+        }
+        case ENET_EVENT_TYPE_RECEIVE: {
+            
+            std::string message((char *) event->packet->data, event->packet->dataLength);
+            enet_packet_destroy(event->packet);
+            if(message.find("CHANGE_STATE ") != std::string::npos){
+                if ( std::stoi((message).substr(13)) == GRASSLANDS){
+                    currState->nextStateVal = GRASSLANDS;
+                } else if (std::stoi((message).substr(13)) == SPACESHIP){
+                    currState->nextStateVal = SPACESHIP;
+                } else if (std::stoi((message).substr(13)) == SNOW){
+                    currState->nextStateVal = SNOW;
+                }
+                currState = changeState(currState, *gd);
+                currState->init(state,*gd,res);
+            }
+            break;
+        }
+        case ENET_EVENT_TYPE_DISCONNECT:{
+            break;
         }
     }
 }

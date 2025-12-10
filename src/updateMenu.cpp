@@ -628,16 +628,22 @@ void handleEndResultsClick(const SDLState &state, GameData &gd, Resources &res, 
 
 void handleResultsClick(const SDLState &state, GameData &gd, Resources &res, float deltaTime){
     if((gd.mouseCoords.x >= 589 && gd.mouseCoords.x <= 767) && (gd.mouseCoords.y >= 368 && gd.mouseCoords.y <= 436)){         //Next Stage
-        if(currState->prevStateVal == GRASSLANDS){
-            currState->nextStateVal = SPACESHIP;
-        } else if (currState->prevStateVal == SPACESHIP){
-            currState->nextStateVal = SNOW;
-        } else if(currState->prevStateVal == SNOW){
-            //TODO ADD OTHER STAGES ELLIE
-        }
+        std::string pendingMessage = "READY " + std::to_string(gd.playerIndex);
+        printf("%s\n", pendingMessage.c_str());
+        ENetPacket * packet = enet_packet_create(pendingMessage.c_str(), pendingMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
+        enet_peer_send(serverPeer, 0, packet);
+        enet_host_flush(client);
+
+        // if(currState->prevStateVal == GRASSLANDS){
+        //     currState->nextStateVal = SPACESHIP;
+        // } else if (currState->prevStateVal == SPACESHIP){
+        //     currState->nextStateVal = SNOW;
+        // } else if(currState->prevStateVal == SNOW){
+        //     //TODO ADD OTHER STAGES ELLIE
+        // }
         
-        currState = changeState(currState, gd);
-        currState->init(state, gd, res);
+        // currState = changeState(currState, gd);
+        // currState->init(state, gd, res);
     }
 }
 

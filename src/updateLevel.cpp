@@ -61,6 +61,13 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
                 currState->nextStateVal = RESULTS;
                 currState = changeState(currState,gd);
                 currState->init(state, gd, res);
+                
+                if(currState->prevStateVal==GRASSLANDS) {
+                    currState->nextStateVal = SPACESHIP;
+                } else if(currState->prevStateVal==SPACESHIP) {
+                    currState->nextStateVal = SNOW;
+                }
+                
             } else {
                 currState->nextStateVal = END_RESULTS;
                 currState = changeState(currState,gd);

@@ -43,6 +43,8 @@ int pendingLobby = -1;
 bool inLobby = false;
 ENetHost * client;
 bool reconnectMatchmaker = true;
+std::string usernames[8];
+int pointsArray[8] = {0};
 
 int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; include argv/argc
     
@@ -287,7 +289,6 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                     }
                 }
                 if(currState->currStateVal == CHAR_SELECT){
-                    
                     charSelectMessageHandler(&event, &gd, res, state);
                 } else if (currState->currStateVal == SPACESHIP){
                     levelMessageHandler(&event, &gd, res, state);
@@ -295,6 +296,8 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                     levelMessageHandler(&event, &gd, res, state);
                 } else if(currState->currStateVal == SNOW){
                     levelMessageHandler(&event, &gd, res, state);
+                }else if(currState->currStateVal == RESULTS){
+                    resultsMessageHandler(&event, &gd, res, state);
                 }else {
                     printf("Message fell through %d\n", currState->currStateVal);
                     switch(event.type){
@@ -336,6 +339,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                 gd.md.currMapVote = 0;
                 for(int i = 0; i < 8; i++){
                     gd.playerTypes[i] = -1;
+                    pointsArray[i] = 0;
                 }
                 
                 gd.numPlayers = 0;
