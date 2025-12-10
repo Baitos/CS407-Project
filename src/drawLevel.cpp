@@ -72,6 +72,25 @@ void drawLevel(const SDLState &state, GameData &gd, Resources res, float deltaTi
                 w.draw(state, gd, TILE_SIZE, TILE_SIZE);
                 break;
             }
+            case ICE_BLOCK:
+            {
+                Level& l = dynamic_cast<Level&>((*o));
+                l.draw(state, gd, TILE_SIZE, TILE_SIZE);
+                break;
+            }
+            case CACTUS:
+            {
+                Level& l = dynamic_cast<Level&>((*o));
+                l.draw(state, gd, TILE_SIZE, TILE_SIZE);
+                break;
+            }
+            case REVOLVER:
+            {
+                Revolver& r = dynamic_cast<Revolver&>((*o));
+                r.draw(state, gd, TILE_SIZE * 2, TILE_SIZE * 2);
+                break;
+            }
+            
             case ITEMBOX:
             {
                 ItemBox& box = dynamic_cast<ItemBox&>((*o));

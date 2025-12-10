@@ -33,6 +33,12 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
     for (Laser &laser : gd.lasers_) {
         laser.update(state, gd, res, deltaTime);
     }
+
+    // update revolvers
+    for (Revolver &revolver : gd.revolvers_) {
+        revolver.update(state, gd, res, deltaTime);
+    }
+
     for (ItemBox &box : gd.itemBoxes_) {
         if (!box.itemBoxActive) {
             box.update(state, gd, res, deltaTime);
@@ -68,16 +74,19 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
                     currState->nextStateVal = SNOW;
                 }
                 
+                sfxSound.playMusic("data/Audio/results.wav", false);
             } else {
                 currState->nextStateVal = END_RESULTS;
                 currState = changeState(currState,gd);
                 currState->init(state, gd, res);
+                sfxSound.playMusic("data/Audio/results.wav", false);
             }
         } else {
             printf("END RESULTS\n");
             currState->nextStateVal = END_RESULTS;
             currState = changeState(currState,gd);
             currState->init(state, gd, res);
+            sfxSound.playMusic("data/Audio/results.wav", false);
         }
         // if(gd.isGrandPrix) {
         //     if(currState->currStateVal==GRASSLANDS) {
@@ -152,6 +161,9 @@ void levelInputs(SDLState &state, GameData &gd, Resources &res, float deltaTime)
 
 //handler for clicking in the level
 void handleLevelClick(SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime, SDL_Event event, bool buttonDown) {
+    if (p.state_->stateVal == STUNNED || p.state_->stateVal == DEAD) { // dont let player grapple or use ability while stunned/dead
+        return;
+    }
     //LEFT CLICK FOR CHARACTER WEAPON DEPLOY
     //printf("Player %d Character Type %d\n", gd.playerIndex, gd.players_[gd.playerIndex].character);
     if(gd.controls->actionPerformed(ACTION_ABILITY, event) && buttonDown){
@@ -166,18 +178,22 @@ void handleLevelClick(SDLState &state, GameData &gd, Resources &res, Player &p, 
             if (p.cooldownTimer.isTimeOut() && p.state_->stateVal != JETPACK_DEPLOY) {
                 PlayerState* jpState = new JetpackDeployState();
                 p.handleState(jpState, gd, res);
+                //jetpack sound
+                sfxSound.playMusic("data/Audio/jetpack.wav", false);
             }
         } else if (p.character == SHOTGUN) {
             //SHOTGUN DEPLOY
             if(p.cooldownTimer.isTimeOut() && p.state_->stateVal != SHOTGUN_DEPLOY) {
                 PlayerState* sgState = new ShotgunDeployState();
                 p.handleState(sgState, gd, res);
+                sfxSound.playMusic("data/Audio/shotgun.wav", false);
             }
         } else if (p.character == SWORD) {
             //SWORD DEPLOY
             if(p.cooldownTimer.isTimeOut() && p.state_->stateVal != SWORD_DEPLOY) {
                 PlayerState* swState = new SwordDeployState();
                 p.handleState(swState, gd, res);
+                sfxSound.playMusic("data/Audio/sword.wav", false);
             }
         }
         
@@ -281,6 +297,14 @@ void handleKeyInput(const SDLState &state, GameData &gd, Resources &res,
     }
     if (key.scancode == SDL_SCANCODE_4) {
         selectedItem = (int)(ICE); // Ice
+    }
+    if (key.scancode == SDL_SCANCODE_5) {
+        selectedItem = (int)(BOUNCYBALL); // Ball
+    }
+
+    if (key.scancode == SDL_SCANCODE_GRAVE) { // fail-safe, tilde
+        PlayerState* dState = new DeadState();
+        gd.players_[0].handleState(dState, gd, res);
     }
 
     if (key.scancode == SDL_SCANCODE_F1) {

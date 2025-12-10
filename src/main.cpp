@@ -26,6 +26,11 @@
 #include "../headers/state.h"
 #include "../headers/playerState.h"
 #include "../headers/menu.h"
+#include "../headers/soundManager.h"
+#define MINIAUDIO_IMPLEMENTATION
+#include "../headers/miniaudio.h"
+
+
 
 #include "../headers/enet.h"
 #include "../headers/clientHelpers.h"
@@ -45,6 +50,9 @@ ENetHost * client;
 bool reconnectMatchmaker = true;
 std::string usernames[8];
 int pointsArray[8] = {0};
+
+SoundManager mSound;
+SoundManager sfxSound;
 
 int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; include argv/argc
     
@@ -75,11 +83,21 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     Resources res;
     res.load(state);
 
+    // set window icon
+    SDL_Surface *icon = IMG_Load("data/logo.png");
+    SDL_SetWindowIcon(state.window, icon);
+    SDL_DestroySurface(icon);
+
     //initialize SDL text
     if (TTF_Init() < 0) {
         SDL_Log("SDL_ttf init failed");
         return 1;
     }
+
+    //load and play music
+    if (!mSound.init()) return 1;
+    if (!sfxSound.init()) return 1;
+
     
     srand(time(0)); // randomize item generation
 
@@ -367,5 +385,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     res.unload();
     cleanup(state);
     enet_host_destroy(client);
+    mSound.cleanup();
+    sfxSound.cleanup();
     return 0;
 }

@@ -127,6 +127,7 @@ void Player::collisionResponse(const SDLState &state, GameData &gd, Resources &r
 			Laser& la = dynamic_cast<Laser&>(o);
 			if (la.laserActive){
 				//printf("FALLING");
+				sfxSound.playMusic("data/Audio/laser.wav", false);
 				PlayerState* stState = new StunnedState();
                 this->handleState(stState, gd, res);
 			
@@ -167,11 +168,61 @@ void Player::collisionResponse(const SDLState &state, GameData &gd, Resources &r
 			}
 			break;
 		}
+		case REVOLVER: 
+		{
+			//printf("player collided with laser\n");
+			Revolver& r = dynamic_cast<Revolver&>(o);
+			if (r.inUse) {
+				break;
+			}
+			// if a player touches a revolver not in use
+			this->pos = r.pos + glm::vec2(TILE_SIZE / 2);
+			this->grounded = false;
+			PlayerState* stState = new StunnedState(true); // put in hard stun
+			this->handleState(stState, gd, res);
+			this->visible = false; // make player invisible
+			r.inUse = true; // set in use to true
+			r.spinning = true; // start spinning
+			r.player = this; // set revolver pointer
+			break;
+		}
+		case CACTUS: 
+		{
+			if (resolution.x < resolution.y) {
+				
+				if (this->pos.x < o.pos.x) {
+					this->pos.x -= resolution.x;
+				} else {
+					this->pos.x += resolution.x;
+				}	
+				this->vel.x = 0;
+			} else {
+				if (this->pos.y < o.pos.y) {
+					this->pos.y -= resolution.y;
+				} else {
+					this->pos.y += resolution.y;
+				}
+				this->vel.y = 0;
+			}
+			PlayerState* stState = new StunnedState();
+			this->handleState(stState, gd, res);
+			this->vel.x = changeVel(-this->vel.x, (*this));
+			float shouldFlip = this->flip;
+			if(shouldFlip * o.pos.y < shouldFlip * this->pos.y){
+				this->vel.y = changeVel(200.f, (*this));
+			} else {
+				this->vel.y = changeVel(-400.f, (*this));
+			}
+
+			this->gravityScale = 1.0f;
+			break;
+		}
 		case ITEMBOX:
 		{
 			ItemBox& box = dynamic_cast<ItemBox&>(o);
 			if (box.itemBoxActive) {
 				printf("%d %d\n", this->pickingItem, this->hasItem);
+				sfxSound.playMusic("data/Audio/item.wav", false);
 				if (!this->pickingItem && !this->hasItem && this->index == gd.playerIndex) {
 					this->pickingItem = true;
         			//box.generateItem((*this), gd, res);
@@ -240,6 +291,7 @@ void Player::checkCollision(const SDLState &state, GameData &gd, Resources &res,
 		if(p2.index != this->index) {
 			//check if in shotgun player blast state
 			if(ShotgunDeployState *s = dynamic_cast<ShotgunDeployState*>(p2.state_)) {
+				sfxSound.playMusic("data/Audio/shotgun.wav", false);
 				//check if currently blocking/deploying sword
 				if(!dynamic_cast<SwordDeployState*> (this->state_)) {
 					SDL_FRect rectB{
@@ -263,6 +315,7 @@ void Player::checkCollision(const SDLState &state, GameData &gd, Resources &res,
 					//printf("Player %d BLOCKED shot by player %d\n", p.index, p2.index);
 				}
 			} else if (SwordDeployState *s = dynamic_cast<SwordDeployState*>(p2.state_)) {
+				sfxSound.playMusic("data/Audio/sword.wav", false);
 				//check if in sword player swing state
 				SDL_FRect rectB{
 					.x = p2.pos.x + this->collider.x - 5,
@@ -296,8 +349,11 @@ void Player::checkCollision(const SDLState &state, GameData &gd, Resources &res,
 					printf("Completed the %dth lap!\n", this->lapsCompleted);
 					//check if finished, add to placement
 					if(this->lapsCompleted == gd.laps_per_race) {
+						sfxSound.playMusic("data/Audio/race finish.wav", false);
 						gd.num_finished++;
 						gd.player_placement_.push_back(*this);
+					} else {
+						sfxSound.playMusic("data/Audio/lap finish.wav", false);
 					}
 				}
 				this->lastCheckpoint = (this->lastCheckpoint+1)%(gd.checkpoints_.size());
@@ -356,6 +412,7 @@ void Hook::checkCollision(const SDLState &state, GameData &gd, Resources &res, P
 			if (intersectAABB(rectA, rectB, resolution)) {
 				this->vel = glm::vec2(0);
 				if (!this->collided) {
+					sfxSound.playMusic("data/Audio/grapple.wav", false);
 					PlayerState* grappleState = new GrappleState();
 					p.handleState(grappleState, gd, res);
 					this->collided = true;
@@ -369,14 +426,23 @@ void Hook::checkCollision(const SDLState &state, GameData &gd, Resources &res, P
 				if (!p.pickingItem && !p.hasItem) {
         			p.pickingItem = true;
 					//box.generateItem(p, gd, res);
+					sfxSound.playMusic("data/Audio/item.wav", false);
+        		
 					gd.itemStorage_.texture = res.texItemRandomizer;
 					gd.itemStorage_.curAnimation = res.ANIM_ITEM_CYCLE;
 					gd.itemStorage_.animations[gd.itemStorage_.curAnimation].reset();
-    			}
+    			} else {
+					sfxSound.playMusic("data/Audio/grapple.wav", false);
+				}
 				box.itemBoxActive = false;
 				removeHook(p);
 			}
-			break;
+		}
+		else if (o->type == CACTUS) {
+			if (intersectAABB(rectA, rectB, resolution)) {
+				removeHook(p);
+			}
+			
 		}
 	}
 
@@ -389,6 +455,7 @@ void Hook::checkCollision(const SDLState &state, GameData &gd, Resources &res, P
                 .h = p2.collider.h
             };
             if (intersectAABB(rectA, rectB, resolution) && !this->collided) {
+				sfxSound.playMusic("data/Audio/grapple.wav", false);
                 p.vel = 0.7f * this->vel;
                 p2.vel = -0.3f * this->vel;
                 removeHook(p);
@@ -404,12 +471,14 @@ void Hook::checkCollision(const SDLState &state, GameData &gd, Resources &res, P
                 .h = h2.collider.h
             };
             if (intersectAABB(rectA, rectB, resolution) && !this->collided && h2.visible) { // Touching other hook
+				sfxSound.playMusic("data/Audio/grapple.wav", false);
                 removeHook(p);
                 removeHook(p2);
             }
         } 
     }
 }
+
 void Bomb::checkCollision(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
     SDL_FRect rectA{
 		.x = this->pos.x + this->collider.x,
@@ -424,6 +493,9 @@ void Bomb::checkCollision(const SDLState &state, GameData &gd, Resources &res, P
         if (p2.state_->stateVal == PlayerStateValue::STUNNED) {
             continue;
         }
+		if (&p == &p2 && !this->leniencyTimer.isTimeOut()) {// dont collide w/ player who placed at start
+			continue;
+		}
         rectB = {
             .x = p2.pos.x + p2.collider.x,
             .y = p2.pos.y + p2.collider.y,
@@ -431,6 +503,7 @@ void Bomb::checkCollision(const SDLState &state, GameData &gd, Resources &res, P
             .h = p2.collider.h
         };
         if (intersectAABB(rectA, rectB, resolution) && this->visible) {
+			sfxSound.playMusic("data/Audio/bomb.wav", false);
             p2.vel.y = -200.0f; 
             p2.vel.x = this->vel.x * 0.5;  
             p2.pos.y -= 1;              
@@ -493,6 +566,85 @@ void Boombox::checkCollision(const SDLState &state, GameData &gd, Resources &res
     }
 }
 
+void handleBallBounce(glm::vec2 &resolution, Ball &b, Object &o) {
+	if (resolution.x < resolution.y) { // horiz
+		if (b.pos.x < o.pos.x) {
+			//printf("left ball\n");
+			b.pos.x -= resolution.x + EPSILON;
+		} else {
+			//printf("right ball\n");
+			b.pos.x += resolution.x + EPSILON;
+		}	
+		b.vel.x *= -1; 
+		b.dir = b.dir * -1;
+	} else { // vert
+		if (b.pos.y < o.pos.y) {
+			//printf("above ball\n");
+			b.pos.y -= resolution.y + EPSILON;
+		} else {
+			//printf("below ball\n");
+			b.pos.y += resolution.y + EPSILON;
+		}
+		b.vel.y *= -1;
+	}
+}
+
+void Ball::checkCollision(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
+    SDL_FRect rectA{
+		.x = this->pos.x + this->collider.x,
+		.y = this->pos.y + this->collider.y,
+		.w = this->collider.w,
+		.h = this->collider.h
+	};
+    SDL_FRect rectB;
+    glm::vec2 resolution{ 0 };
+
+	std::vector<Object *> closeTiles_ = getCloseTiles(state, gd, this->pos);
+	for (auto &o : closeTiles_) { 
+		if (o->type == LEVEL || o->type == CACTUS || o->type == ICE_BLOCK) {
+			SDL_FRect rectB {
+				.x = o->pos.x + o->collider.x,
+				.y = o->pos.y + o->collider.y,
+				.w = o->collider.w,
+				.h = o->collider.h
+			};
+			if (intersectAABB(rectA, rectB, resolution)) {
+				sfxSound.playMusic("data/Audio/ball.wav", false);
+				handleBallBounce(resolution, (*this), (*o));
+			}
+		}
+	}
+
+    for (Player &p2 : gd.players_) {
+		if (&p == &p2 && !this->leniencyTimer.isTimeOut()) {// dont collide w/ player who threw at start
+			continue;
+		}
+		rectB = {
+			.x = p2.pos.x + p2.collider.x,
+			.y = p2.pos.y + p2.collider.y,
+			.w = p2.collider.w,
+			.h = p2.collider.h
+		};
+		if (intersectAABB(rectA, rectB, resolution)) {
+			if (p2.state_->stateVal == STUNNED) { // dont hit a stunned player again
+				continue;
+			}
+			p2.vel.y = -200.0f; 
+			p2.vel.x = this->vel.x * 0.5;  
+			p2.pos.y -= 1;              
+			p2.grounded = false;
+			PlayerState* stunState = new StunnedState(true); // hard stun
+			p2.handleState(stunState, gd, res); // stun player you hit
+			handleBallBounce(resolution, (*this), p);
+			this->bounces += 1;
+			//printf("ball bounce %d\n", this->bounces);
+			if (this->bounces >= this->MAX_BOUNCES) {
+				this->active = false;
+			}
+		}
+    }
+}
+
 void PieItem::checkCollision(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime) {
     SDL_FRect rectA{
 		.x = this->pos.x + this->collider.x,
@@ -505,7 +657,7 @@ void PieItem::checkCollision(const SDLState &state, GameData &gd, Resources &res
 
 	std::vector<Object *> closeTiles_ = getCloseTiles(state, gd, this->pos);
 	for (auto &o : closeTiles_) { 
-		if (o->type == LEVEL) {
+		if (o->type == LEVEL || o->type == CACTUS || o->type == ICE_BLOCK) {
 			SDL_FRect rectB {
 				.x = o->pos.x + o->collider.x,
 				.y = o->pos.y + o->collider.y,
@@ -513,6 +665,7 @@ void PieItem::checkCollision(const SDLState &state, GameData &gd, Resources &res
 				.h = o->collider.h
 			};
 			if (intersectAABB(rectA, rectB, resolution)) {
+				sfxSound.playMusic("data/Audio/pie.wav", false);
 				this->active = false;
 			}
 		}
@@ -527,6 +680,7 @@ void PieItem::checkCollision(const SDLState &state, GameData &gd, Resources &res
                 .h = p2.collider.h
             };
             if (intersectAABB(rectA, rectB, resolution)) {
+				sfxSound.playMusic("data/Audio/pie.wav", false);
                 p2.vel.y = -200.0f; 
                 p2.vel.x = this->vel.x * 0.5;  
                 p2.pos.y -= 1;              

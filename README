@@ -1,6 +1,6 @@
 Original base provided by https://www.youtube.com/watch?v=Wu2g-N5Z78Y
 
-In order to run this, you will need to download SDL3 and SDL3_image from their respective github links, and you will need to install the glm library as well and place it in a folder named ext (or modify the header file gameobject.h so that it can detect glm in a different directory) Then, with SDL3 and SDL3_image installed in their respective folders, modify the Makefile to apply to your SDL/SDL_image paths, and place the .dll files for both in this source directory.
+In order to run this, you will need to download SDL3, SDL3_image, and SDL3_TTF from their respective github links, and you will need to install the glm library as well and place it in a folder named ext (or modify the header file gameobject.h so that it can detect glm in a different directory) Then, with SDL3, SDL3_image, and SDL3_TTF installed in their respective folders, modify the Makefile to apply to your SDL/image/ttf paths, and place the .dll files for both in this source directory.
 
 main: src/*.cpp
 	g++ -o game src/*.cpp -I "*\SDL\x86_64-w64-mingw32\include" -I "*\SDL3_image\x86_64-w64-mingw32\include" -I "*\SDL3_ttf\x86_64-w64-mingw32\include"
@@ -8,3 +8,6 @@ main: src/*.cpp
 clean:
 	rm game.exe
 # Replace * in the quoted sections with wherever you placed your SDL files (makefile)
+
+
+Sound Effect Credits to users TechGkN, Mrthenoronha, LiamG_SFX, and DTheTech on Freesound.com

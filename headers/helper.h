@@ -28,3 +28,4 @@ void sendJoinRequest(Lobby lobby);
 void speedObject(glm::vec2 &vel, float deltaTime); // speed up object 
 
 SDL_Texture* createTextTexture(SDL_Renderer* renderer, TTF_Font*font, const std::string &text, SDL_Color color, int &outW, int &outH);
+void stepRevolverAnim(Revolver &r); // steps to odd length animation for diagonal revolver angle

@@ -2,6 +2,10 @@
 
 #include <string>
 #include <SDL3/SDL.h>
+#include "../headers/soundManager.h"
+#include "../headers/miniaudio.h"
+
+
 extern int TILE_SIZE;
 extern int HOOK_SIZE;
 extern int MINIMAP_DOT_SIZE;
@@ -17,3 +21,7 @@ extern float sfxVolume;
 extern Uint64 lastLobbyQuery;
 extern const Uint64 UPDATE_INTERVAL_MS;
 extern std::string username;
+
+extern std::string username;
+extern SoundManager mSound;
+extern SoundManager sfxSound;

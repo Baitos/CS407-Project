@@ -26,6 +26,7 @@ enum gameStates {
     SPACESHIP,
     GRASSLANDS,
     SNOW,
+    DESERT,
     RESULTS,
     CREDITS,
     GAMEPLAY_SETTINGS,

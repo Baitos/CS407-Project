@@ -213,6 +213,9 @@ void ItemBox::generateItem(Player &player, GameData &gd, Resources &res) {
         case itemType::BOOMBOX:
             newItem = new Boombox(player.pos, defaultCollider, res.texBoombox);
             break;
+        case itemType::BOUNCYBALL:
+            newItem = new Ball(player.pos, defaultCollider, res.texBoombox);
+            break;
         case itemType::SUGAR:
             newItem = new Sugar(player.pos, defaultCollider, res.texSugar);
             break;
@@ -227,7 +230,7 @@ void ItemBox::generateItem(Player &player, GameData &gd, Resources &res) {
             break;
         default:
             printf("Your item is in another castle\n");
-            newItem = new Ice(player.pos, defaultCollider, res.texIce);
+            newItem = new Sugar(player.pos, defaultCollider, res.texSugar);
             break;
     }
     if (player.heldItem != nullptr) {
@@ -237,6 +240,79 @@ void ItemBox::generateItem(Player &player, GameData &gd, Resources &res) {
     player.pickingItem = true;
 }
 
+void Revolver::draw(const SDLState &state, GameData &gd, float width, float height) {
+    if (!isOnscreen(state, gd, (*this))) {
+        return;
+    }
+    float srcX = this->curAnimation != -1 ? this->animations[this->curAnimation].currentFrame() * width : (this->spriteFrame - 1) * width;
+    SDL_FRect src {
+        .x = srcX,
+        .y = 0,
+        .w = width,
+        .h = height
+    };
+    SDL_FRect dst {
+        .x = this->pos.x - gd.mapViewport.x,
+        .y = this->pos.y - gd.mapViewport.y,
+        .w = width,
+        .h = height
+    };
+    SDL_FlipMode flipMode; // = obj.dir == -1 ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
+    if (this->dir == -1) {            
+        if (this->flip == -1) {
+            flipMode = (SDL_FlipMode)3; // FLIP_VERTICAL_AND_HORIZONTAL
+        } else {
+            flipMode = SDL_FLIP_HORIZONTAL;
+        }
+    } else {
+        if (this->flip == -1) {
+            flipMode = SDL_FLIP_VERTICAL;
+        } else {
+            flipMode = SDL_FLIP_NONE;
+        }
+    }
+    SDL_RenderTextureRotated(state.renderer, this->texture, &src, &dst, 360 - this->rotation, nullptr, flipMode); // this could probably be done using the flip variable but there's no way to rotate the image that way
+    this->drawDebug(state, gd, width, height);
+}
+
+void Revolver::update(const SDLState &state, GameData &gd, Resources &res, float deltaTime) { // just step the anims
+    if (this->inUse) { // if being used start running timer
+        this->useTimer.step(deltaTime);
+        if (this->curAnimation != -1 && this->spinning) { // default update
+            this->animations[this->curAnimation].step(deltaTime);
+            if (this->animations[this->curAnimation].isDone()) {
+                this->rotation = (this->rotation + 90) % 360;
+                this->animations[this->curAnimation].reset(); 
+                this->cycle += 1;
+            }
+            // 0 = right, 90 = down, 180 = left, 270 = up
+        }
+    }
+    if (this->useTimer.isTimeOut()) { // if timer empty not in use anymore
+        this->inUse = false;
+        this->cycle = 0;
+        this->useTimer.reset();
+    }
+
+    if (this->player == nullptr) {
+        return;
+    }
+    if (this->cycle == 8) { // let revolver spin twice
+        this->player->vel = this->launchVel; // set player velocity
+        this->player->visible = true; // let them be seen again
+        this->spinning = false; // stop rotation
+        this->player = nullptr; // null out this revolver's player pointer
+        if (this->orientation % 2 == 1) { // fix rotation if diagonal
+            stepRevolverAnim((*this));  
+        } 
+    } else {
+        this->player->pos = this->pos + glm::vec2(TILE_SIZE / 2); // center player on revolver
+        if (!this->player->state_->stateVal == STUNNED) { // maybe unnecessary
+            PlayerState* stState = new StunnedState(true); // hard stun
+		    this->player->handleState(stState, gd, res);
+        }
+    }
+}
 
 // void angledStun(AnimatedObject &obj, GameData &gd, Resources &res, Player &player) {
 //     // TODO properly implement angles
