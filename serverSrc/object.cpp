@@ -131,6 +131,7 @@ void ItemBox::generateItem(Player &player, GameData &gd) {
     //newItem = new PieItem(player.pos, defaultCollider);
     
     if (player.heldItem != nullptr) {
+        printf("delete player item\n");
         delete player.heldItem;
     }
     player.heldItem = newItem;
