@@ -314,7 +314,9 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                     levelMessageHandler(&event, &gd, res, state);
                 } else if(currState->currStateVal == SNOW){
                     levelMessageHandler(&event, &gd, res, state);
-                }else if(currState->currStateVal == RESULTS){
+                } else if(currState->currStateVal == DESERT){
+                    levelMessageHandler(&event, &gd, res, state);
+                } else if(currState->currStateVal == RESULTS){
                     resultsMessageHandler(&event, &gd, res, state);
                 }else {
                     printf("Message fell through %d\n", currState->currStateVal);
