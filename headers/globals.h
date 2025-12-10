@@ -1,6 +1,9 @@
 #pragma once
 
 #include <string>
+#include "../headers/soundManager.h"
+#include "../headers/miniaudio.h"
+
 
 extern int TILE_SIZE;
 extern int HOOK_SIZE;
@@ -16,3 +19,5 @@ extern float musicVolume;
 extern float sfxVolume;
 
 extern std::string username;
+extern SoundManager mSound;
+extern SoundManager sfxSound;

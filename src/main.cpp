@@ -23,9 +23,17 @@
 #include "../headers/state.h"
 #include "../headers/playerState.h"
 #include "../headers/menu.h"
+#include "../headers/soundManager.h"
+#define MINIAUDIO_IMPLEMENTATION
+#include "../headers/miniaudio.h"
+
+
 
 GameState * currState;
 using namespace std;
+
+SoundManager mSound;
+SoundManager sfxSound;
 
 int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; include argv/argc
     SDLState state;
@@ -54,6 +62,11 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         SDL_Log("SDL_ttf init failed");
         return 1;
     }
+
+    //load and play music
+    if (!mSound.init()) return 1;
+    if (!sfxSound.init()) return 1;
+
     
     srand(time(0)); // randomize item generation
 
@@ -143,5 +156,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     delete currState;
     res.unload();
     cleanup(state);
+    mSound.cleanup();
+    sfxSound.cleanup();
     return 0;
 }

@@ -78,16 +78,19 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
                 currState->nextStateVal = RESULTS;
                 currState = changeState(currState,gd);
                 currState->init(state, gd, res);
+                sfxSound.playMusic("data/Audio/results.wav", false);
             } else {
                 currState->nextStateVal = END_RESULTS;
                 currState = changeState(currState,gd);
                 currState->init(state, gd, res);
+                sfxSound.playMusic("data/Audio/results.wav", false);
             }
         } else {
             printf("END RESULTS\n");
             currState->nextStateVal = END_RESULTS;
             currState = changeState(currState,gd);
             currState->init(state, gd, res);
+            sfxSound.playMusic("data/Audio/results.wav", false);
         }
         // if(gd.isGrandPrix) {
         //     if(currState->currStateVal==GRASSLANDS) {
@@ -171,18 +174,22 @@ void handleLevelClick(SDLState &state, GameData &gd, Resources &res, Player &p, 
             if (p.cooldownTimer.isTimeOut() && p.state_->stateVal != JETPACK_DEPLOY) {
                 PlayerState* jpState = new JetpackDeployState();
                 p.handleState(jpState, gd, res);
+                //jetpack sound
+                sfxSound.playMusic("data/Audio/jetpack.wav", false);
             }
         } else if (((LevelState *)currState)->character == SHOTGUN) {
             //SHOTGUN DEPLOY
             if(p.cooldownTimer.isTimeOut() && p.state_->stateVal != SHOTGUN_DEPLOY) {
                 PlayerState* sgState = new ShotgunDeployState();
                 p.handleState(sgState, gd, res);
+                sfxSound.playMusic("data/Audio/shotgun.wav", false);
             }
         } else if (((LevelState *)currState)->character == SWORD) {
             //SWORD DEPLOY
             if(p.cooldownTimer.isTimeOut() && p.state_->stateVal != SWORD_DEPLOY) {
                 PlayerState* swState = new SwordDeployState();
                 p.handleState(swState, gd, res);
+                sfxSound.playMusic("data/Audio/sword.wav", false);
             }
         }
     } else if (buttonDown && gd.controls->actionPerformed(ACTION_GRAPPLE, event)) { // grapple
