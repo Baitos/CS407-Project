@@ -1349,6 +1349,7 @@ void handleHostLobbyClick(const SDLState &state, GameData &gd, Resources &res, f
 
 void handleJoinLobbyClick(const SDLState &state, GameData &gd, Resources &res, float deltaTime) {
 if ((gd.mouseCoords.x >= 40 && gd.mouseCoords.x <= 219) && (gd.mouseCoords.y >= 368 && gd.mouseCoords.y <= 436) && !gd.md.stringEditing){ //Back
+        sfxSound.playMusic("data/Audio/button.wav", false);
         currState->nextStateVal = TITLE;
         currState = changeState(currState, gd);
         currState->init(state, gd, res);
@@ -1375,9 +1376,11 @@ if ((gd.mouseCoords.x >= 40 && gd.mouseCoords.x <= 219) && (gd.mouseCoords.y >= 
         gd.md.password = "";
         gd.md.tempStr = "";
         gd.md.lobbySelectBorder->visible = false;
+        sfxSound.playMusic("data/Audio/button.wav", false);
     }
     else if((gd.mouseCoords.x >= 589 && gd.mouseCoords.x <= 767) && (gd.mouseCoords.y >= 368 && gd.mouseCoords.y <= 436) && !gd.md.stringEditing){   //Join
         // TODO check if lobby selected and password, then change state to char select after receiving response
+        sfxSound.playMusic("data/Audio/button.wav", false);
         ENetPacket * packet;
         int lobbyId = -1;
         Lobby * lobby;

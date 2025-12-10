@@ -70,6 +70,9 @@ void charSelectMessageHandler(ENetEvent * event, GameData * gd, Resources &res, 
                     currState->nextStateVal = SPACESHIP;
                 } else if (std::stoi((message).substr(13)) == 2){
                     currState->nextStateVal = SNOW;
+                } else if(std::stoi((message).substr(13)) == 3){
+                    printf("set to desert\n");
+                    currState->nextStateVal = DESERT;
                 }
                 currState = changeState(currState, *gd);
                 currState->init(state,*gd,res);
