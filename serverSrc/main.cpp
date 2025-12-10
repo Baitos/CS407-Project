@@ -33,6 +33,7 @@
 GameState * currState;
 using namespace std;
 
+
 //Globals for Networking
 struct Lobby{ // isGrandPrix, numLaps, ID, Port, playerCount, passHash, hostName
     bool isGrandPrix;
@@ -84,7 +85,7 @@ Lobby parseHostMessage(std::string message, int lobbyID, int lobbyPort) {
     // Get numLaps
     getline(stream, tmp, delim);
     numLaps = atoi(tmp.c_str());
-    printf("%s", message.c_str());
+    //printf("%s", message.c_str());
     printf("Creating lobby\n");
     //Fork and create lobby process
     printf("%d\n", lobbyPort);
@@ -92,10 +93,11 @@ Lobby parseHostMessage(std::string message, int lobbyID, int lobbyPort) {
     Lobby newLobby = {isGrandPrix, numLaps, lobbyID, lobbyPort, 1, passHash, hostName};
     return newLobby;
 }
+
 void createLobbyServer(int port){
     printf("Game lobby server\n");
-    
-    
+    srand(time(0));
+    std::string usernames[8];
     SDLState state;
     
     SDL_Init(0);
@@ -104,6 +106,8 @@ void createLobbyServer(int port){
     uint64_t lastTime = 0;
 
     GameData gd(state);
+    gd.laps_per_race = lobbies[lobbies.size()-1].numLaps;
+    gd.isGrandPrix = lobbies[lobbies.size()-1].isGrandPrix;
     printf("NUMPLAYERS: %d\n", gd.numPlayers);
     ENetAddress address;
     address.host = ENET_HOST_ANY;
@@ -125,6 +129,7 @@ void createLobbyServer(int port){
     
     bool ready = false;
     int readyPlayers[8] = {0};
+    int prixReadyPlayers[8] ={0};
     int mapVote[5] = {0};                       //Spaceship, Grasslands, Stage 3, stage 4, stage 5
     int playerClasses[8] ={0};
     for (int i =0; i < 8; i++){
@@ -158,6 +163,8 @@ void createLobbyServer(int port){
                         enet_peer_send(client, 0, packet);
                         enet_host_flush(lobbyServer);
 
+                        
+
                     }
                     
                     for(int j = 0; j < 8; j++){
@@ -166,6 +173,12 @@ void createLobbyServer(int port){
                             ENetPacket * packet = enet_packet_create(replyMessage.c_str(), replyMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
                             enet_peer_send(event.peer, 0, packet);
                             enet_host_flush(lobbyServer);
+                            enet_packet_destroy(packet);
+                            replyMessage = "USER " + std::to_string(j) + " " + usernames[j];
+                            packet = enet_packet_create(replyMessage.c_str(), replyMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
+                            enet_peer_send(event.peer, 0, packet);
+                            enet_host_flush(lobbyServer);
+                            enet_packet_destroy(packet);
                         }
                     }
 
@@ -175,7 +188,7 @@ void createLobbyServer(int port){
                  {   //Add conditionals to do what server says
                     std::string message((char *) event.packet->data, event.packet->dataLength);
                     enet_packet_destroy(event.packet);
-                    printf("%s\n", message.c_str());
+                    printf("1 Message: %s\n", message.c_str());
                     
                     //Check what the message was
                     if(message.find("READY ") != std::string::npos){            //Player indicated Ready - Format "READY player_id"
@@ -218,8 +231,6 @@ void createLobbyServer(int port){
 
                                 currState = changeState(currState, gd);
                                 currState->init(state, gd);
-                                
-                                 printf("READY FOR GAME\n");
                                 for(ENetPeer * client : clients){
                                     std::string replyMessage = "CHANGE_STATE " + std::to_string(mapWinner);
                                     ENetPacket * packet = enet_packet_create(replyMessage.c_str(), replyMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
@@ -232,7 +243,15 @@ void createLobbyServer(int port){
             
                             }
                         }
-                    } else if (message.find("CLASS ") != std::string::npos){     //Player indicated Class change - Format "CLASS player_id player_class"
+                    } else if(message.find("USER ") != std::string::npos){
+                        usernames[std::stoi(message.substr(5,1))] = message.substr(7, message.size()-7);
+                        std::string replyMessage = message;
+                        ENetPacket * packet = enet_packet_create(replyMessage.c_str(), replyMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
+                        for(ENetPeer * client : clients){
+                            enet_peer_send(client, 0, packet);
+                            enet_host_flush(lobbyServer);
+                        }
+                    }else if (message.find("CLASS ") != std::string::npos){     //Player indicated Class change - Format "CLASS player_id player_class"
                         gd.playerTypes[std::stoi(message.substr(6,1))] = std::stoi(message.substr(8,1));
                         playerClasses[std::stoi(message.substr(6,1))] = std::stoi(message.substr(8,1));
                         for(ENetPeer * client : clients){
@@ -292,6 +311,7 @@ void createLobbyServer(int port){
     prevTime = SDL_GetTicks();
     bool inGame =true;
     bool inLobby = true;
+    bool inResults = false;
     while(inLobby){
         while(inGame){
             uint64_t nowTime = SDL_GetTicks(); // take time from previous frame to calculate delta
@@ -316,7 +336,7 @@ void createLobbyServer(int port){
                     {   //Add conditionals to do what server says
                         std::string message((char *) event.packet->data, event.packet->dataLength);
                         enet_packet_destroy(event.packet);
-                        printf("%s\n", message.c_str());
+                        printf("2 Message: %s\n", message.c_str());
 
                         //If key input
                         if(message.find("INPUT ") != std::string::npos){                                //KEY INPUT
@@ -330,6 +350,7 @@ void createLobbyServer(int port){
                             }
                             //printf("1: %f\n", gd.players_[gd.playerIndex].pos.y);
                             handleKeyInput(state, gd, playerID, keyID, keyDown, deltaTime, lobbyServer, clients);
+                            printf("key handled\n");
                         } else {                                                                        //MOUSE INPUT 
                             playerID = std::stoi(message.substr(8, 1));                                 //2 IS LMB, 1 IS RMB
                             keyID = std::stoi(message.substr(10, 1));
@@ -437,22 +458,126 @@ void createLobbyServer(int port){
             }
             prevTime = nowTime;
             if(gd.round_is_over){
+                printf("round over\n");
                 inGame = false;
                 if(gd.isGrandPrix){
-                    if(currState->currStateVal == SNOW){
-                        //End Results
-                        inLobby = false;
+                   
+                    if(currState->currStateVal != SNOW){		//TODO ELLIE MAKE THIS THE LAST STAGE IN THE GRAND PRIX
+                        for(int i = 0; i < gd.numPlayers; i++){
+                            state.keys[i][4] = false;
+                            state.keys[i][7] = false;
+                        }
+                        currState->nextStateVal = RESULTS;
+                        currState = changeState(currState,gd);
+                        //currState->init(state, gd);
+                        inGame = false;
+                        inResults = true;
+                        
+                        if(currState->prevStateVal==GRASSLANDS) {
+                            currState->nextStateVal = SPACESHIP;
+                        } else if(currState->prevStateVal==SPACESHIP) {
+                            currState->nextStateVal = SNOW;
+                        }
+                        
                     } else {
-                        //Intermediate Results
+                        inGame = false;
+                        inLobby = false;
                     }
                 } else {
                     //End Results
+                    printf("Not grand prix not inLobby\n");
+                    inGame = false;
                     inLobby = false;
+                }
+                gd.round_is_over = false;
+            }
+        }
+        
+        if(gd.isGrandPrix){
+            
+            while(inResults){                 //Means that you are in interm. results screen
+                
+                while(enet_host_service(lobbyServer, &event, 0) > 0 && inResults){
+                    //std::string message;
+                    switch (event.type) {
+                        case ENET_EVENT_TYPE_CONNECT:
+                        {   //Do the things you do when you connect
+                            break;
+                        }
+                        case ENET_EVENT_TYPE_RECEIVE:
+                        {   //Add conditionals to do what server says
+                            std::string message((char *) event.packet->data, event.packet->dataLength);
+                            enet_packet_destroy(event.packet);
+                            //printf("T: %s\n", message.c_str());
+                                if(message.find("READY ") != std::string::npos){            //Player indicated Ready - Format "READY player_id"
+                                
+                                if(!prixReadyPlayers[std::stoi(message.substr(6,1))]){
+                                    prixReadyPlayers[std::stoi(message.substr(6,1))] = 1;
+                                    
+                                    
+                                    int totalReady = 0;
+                                    for(int ready: prixReadyPlayers){
+                                        
+                                        totalReady += ready;
+                                    }
+                                    //printf("%d %d\n", totalReady, gd.numPlayers);
+                                    printf("Total ready: %d NumPlayers: %d\n", totalReady, gd.numPlayers);
+                                    if(totalReady == gd.numPlayers){   //If all players agree to ready, they enter the game
+                                        //Send message to go to level
+                                        //Update Game Data
+                                        ready = true;
+                                        inGame = true;
+                                        inResults = false;
+                                        for(int i = 0; i < 8; i++){
+                                            prixReadyPlayers[i] = 0;
+                                        }
+                                        
+                                        //0 is grasslands, 1 is spaceship
+                                        if(currState->prevStateVal == GRASSLANDS){
+                                            currState->nextStateVal = SPACESHIP;
+                                        } else if (currState->prevStateVal == SPACESHIP){
+                                            currState->nextStateVal = SNOW;
+                                        } else if(currState->prevStateVal == SNOW){
+                                            //TODO ADD OTHER STAGES ELLIE
+                                        }
+
+                                        std::string replyMessage = "CHANGE_STATE " + std::to_string(currState->currStateVal);
+                                        ENetPacket * packet = enet_packet_create(replyMessage.c_str(), replyMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
+                                        currState = changeState(currState, gd);
+                                        currState->init(state, gd);
+                                        for(ENetPeer * client : clients){
+                                            enet_peer_send(client, 0, packet);
+                                            enet_host_flush(lobbyServer);
+                                        }
+                                        
+
+                                        
+                                        
+                                        
+                                        
+
+                                        break;
+                                        
+                    
+                                    }
+                                }
+                            } 
+
+                            break;
+                        }
+                        case ENET_EVENT_TYPE_DISCONNECT:
+                        {  //Do the things to do when disconnecting
+                            printf("player left game\n");
+                            inGame = false;
+                            break;
+                        }
+                        
+                    }
                 }
             }
         }
     }
-
+    printf("Lobby is over\n");
     //Leave Lobby
     cleanup(state);
 }
@@ -518,7 +643,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                         int lobbyPort = getAvailablePort();
                         Lobby newLobby = parseHostMessage(message, currLobbyID++, lobbyPort);
                         lobbies.push_back(newLobby);
-                        fflush(stdout);
+                        //fflush(stdout);
                         pid_t pid = fork();
 
                         if(pid == 0){ //Child Process
@@ -531,7 +656,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                             //Send new port to client
                             
                             std::string replyMessage = "LOBBY_PORT " + std::to_string(lobbyPort);
-                            printf("%s", replyMessage.c_str());
+                            //printf("%s", replyMessage.c_str());
                             ENetPacket * packet = enet_packet_create(replyMessage.c_str(), replyMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
                             enet_peer_send(event.peer, 0, packet);
                             enet_host_flush(matchmakerServer);
@@ -544,7 +669,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                         for (Lobby l : lobbies){
                             lobbiesReturnMessage += l.to_string();
                         }
-                        printf("%s\n", lobbiesReturnMessage);
+                        //printf("%s\n", lobbiesReturnMessage);
                             ENetPacket* packet = enet_packet_create(lobbiesReturnMessage.c_str(), lobbiesReturnMessage.size(), ENET_PACKET_FLAG_RELIABLE);
                             enet_peer_send(event.peer, 0, packet);
                             enet_host_flush(matchmakerServer);
@@ -585,6 +710,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
 
     }
 
+    printf("delete gameState\n");
     delete currState;
     
     enet_deinitialize();

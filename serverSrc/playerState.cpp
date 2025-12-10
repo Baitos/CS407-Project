@@ -446,6 +446,7 @@ void ShotgunDeployState::enter(GameData &gd, Player &p) {
 }
 
 void ShotgunDeployState::exit(GameData &gd, Player &p) {
+    printf("delete player shotgun\n");
     delete this->blast;
     this->blast = nullptr;
     p.cooldownTimer.reset();

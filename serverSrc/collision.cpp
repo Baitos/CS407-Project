@@ -74,6 +74,28 @@ void Player::collisionResponse(const SDLState &state, GameData &gd,
  	Object &o, SDL_FRect &rectA, SDL_FRect &rectB, glm::vec2 &resolution, float deltaTime)
 {
 	switch (o.type) {
+		case ICE_BLOCK:
+		{
+			//printf("player collided with ice\n");
+			Level& l = dynamic_cast<Level&>(o);
+			if (resolution.x < resolution.y) {
+				
+				if (this->pos.x < l.pos.x) {
+					this->pos.x -= resolution.x;
+				} else {
+					this->pos.x += resolution.x;
+				}	
+				this->vel.x = 0;
+			} else {
+				if (this->pos.y < l.pos.y) {
+					this->pos.y -= resolution.y;
+				} else {
+					this->pos.y += resolution.y;
+				}
+				this->vel.y = 0;
+			}
+			break;
+		}
 		case LEVEL:
 		{
 			//printf("player collided with level\n");
@@ -279,11 +301,16 @@ void Player::checkCollision(const SDLState &state, GameData &gd,
 		} else {
 			int numDone = 0;
 			for(Player &p: gd.players_) {
-				if(this->lapsCompleted >= gd.laps_per_race) {
+				if(p.lapsCompleted >= gd.laps_per_race) {
 					numDone++;
 				}
+				
 			}
 			if(numDone >= gd.players_.size()-1) {
+				for(Player &p: gd.players_) {	
+					printf("Player %d Laps %d Laps per Race:%d\n", p.index, p.lapsCompleted, gd.laps_per_race);
+				}
+				printf("NumDone %d Players_ Size %d\n", numDone, gd.players_.size());
 				printf("\n\nGAME OVER (multiple player)\n\n");
 				gd.round_is_over = true;
 			}else if(numDone==1) {
@@ -293,6 +320,7 @@ void Player::checkCollision(const SDLState &state, GameData &gd,
 			}
 		}
 	}
+	
 
 }
 

@@ -11,6 +11,7 @@
 void Player::handleState(PlayerState* &pState, GameData &gd) {
     if (pState != nullptr) {
         state_->exit(gd, (*this)); // exit fn for old state
+        printf("delete player state\n");
         delete state_;
         state_ = pState;
         state_->enter(gd, (*this)); // enter fn for new state
@@ -39,6 +40,7 @@ void Player::update(const SDLState &state, GameData &gd, float deltaTime, int ke
         item->update(state, gd, (*this), deltaTime); 
         item->checkCollision(state, gd, (*this), deltaTime);
         if (!item->active) {
+            printf("delete player item in update\n");
             delete item;
             i = this->items_.erase(i);
         } else {

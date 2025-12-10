@@ -88,6 +88,7 @@ GameState * changeState(GameState * tempState, GameData &gd){
 
         case RESULTS:
         {
+            newState = new ResultsState();
             break;
         }
     }
@@ -102,6 +103,7 @@ GameState * changeState(GameState * tempState, GameData &gd){
 }
 
 void GameState::unloadGameState(GameData &gd) {
+    printf("start unload\n");
     gd.mapTiles_.clear();
     gd.bgTiles_.clear();
     gd.lasers_.clear();
@@ -112,8 +114,10 @@ void GameState::unloadGameState(GameData &gd) {
     gd.itemBoxes_.clear();
 
     gd.checkpoints_.clear();
+    gd.players_.clear();
     
     gd.grid_.clear();
+    printf("end unload\n");
 
 
     //TTF_CloseFont(gd.font);

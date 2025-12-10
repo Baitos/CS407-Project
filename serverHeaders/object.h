@@ -21,7 +21,9 @@ enum ObjectType{
     ITEMBOX,
     SIGN,
     WATER,
-    LAVA
+    LAVA,
+    WIRE,
+    ICE_BLOCK
 };
 
 class Object { // generic obj type    
