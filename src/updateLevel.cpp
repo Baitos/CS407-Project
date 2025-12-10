@@ -63,7 +63,7 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
     if(gd.round_is_over) {
         gd.round_is_over = false;
         if(gd.isGrandPrix){
-            if(currState->currStateVal != SNOW){		//TODO ELLIE MAKE THIS THE LAST STAGE IN THE GRAND PRIX
+            if(currState->currStateVal != DESERT){		//TODO ELLIE MAKE THIS THE LAST STAGE IN THE GRAND PRIX
                 currState->nextStateVal = RESULTS;
                 currState = changeState(currState,gd);
                 currState->init(state, gd, res);
@@ -72,6 +72,8 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
                     currState->nextStateVal = SPACESHIP;
                 } else if(currState->prevStateVal==SPACESHIP) {
                     currState->nextStateVal = SNOW;
+                }else if(currState->prevStateVal==SNOW) {
+                    currState->nextStateVal = DESERT;
                 }
                 
                 sfxSound.playMusic("data/Audio/results.wav", false);
