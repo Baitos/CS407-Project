@@ -208,7 +208,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                 switch(event.type){
                     case ENET_EVENT_TYPE_CONNECT:{
                         printf("Connected to matchmaker!\n");
-                        bool connected = true;
+                        connected = true;
                         break;
                     }
                     case ENET_EVENT_TYPE_RECEIVE: {
@@ -288,7 +288,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                         break;
                     }
                     case ENET_EVENT_TYPE_DISCONNECT_TIMEOUT:{
-                        connected = true;
+                        connected = false;
                         printf("Timed Out\n");
                         Uint64 currTime = SDL_GetTicks();
                         if(currTime >= lastDisconnectCheck + 1000){
