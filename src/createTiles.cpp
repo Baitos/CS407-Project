@@ -1907,40 +1907,6 @@ void initHostLobby(const SDLState &state, GameData &gd, const Resources &res) {
     }
 }
 
-// void initTitle(const SDLState &state, GameData &gd, const Resources &res) {
-
-//     //music
-//     //mSound.playMusic("data/music.wav", true);
-
-//      SDL_FRect collider = {
-//             .x = 0,
-//             .y = 0,
-//             .w = 32,
-//             .h = 32
-//         };
-        
-//         glm::vec2  pos = glm::vec2(0,0);
-//         // Background
-//         BackgroundObject bg(pos, collider, res.texTitle);
-//         bg.collider.w = res.texTitle->w;
-//         bg.collider.h = res.texTitle->h;
-//         gd.bgTiles_.push_back(bg);
-
-//     Object border(pos, collider, res.texBigBorder);
-//     gd.md.border = border;
-//     gd.md.border.pos.y =  500;
-//     gd.md.isPrivate = false;
-//     gd.md.password = "";
-//     gd.md.tempStr = "";
-//     //initialize font
-//     if(!gd.md.font){
-//         gd.md.font = TTF_OpenFont("data/Fonts/retro.ttf", 16); // 16 = point size
-//         if (!gd.md.font) {
-//             SDL_Log("Failed to load font");
-//             return;
-//         }
-//     }
-// }
 
 void initJoinLobby(const SDLState &state, GameData &gd, const Resources &res) {
     lastLobbyQuery = 0;
