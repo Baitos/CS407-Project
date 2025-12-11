@@ -297,22 +297,22 @@ void joinMessageHandler(GameData * gd, std::string message){
         }
     }
     //JOIN LOBBY TESTING
-    Lobby * lobby;
-    for (int i = 0; i < 24; i++) {
-        lobby = new Lobby();
-        lobby->id = i;
-        lobby->port = 40000 + i;
-        lobby->hostName = "TestUser" + std::to_string(i);
-        lobby->playerCount = i;
-        if (i % 2 == 0) {
-            lobby->passwordHash = 0;
-             gd->md.publicLobbies_.push_back(lobby);
-        } 
-        else {
-            lobby->passwordHash = std::hash<std::string>{}(std::to_string(i));
-            gd->md.privateLobbies_.push_back(lobby);
-        }
-    }
+    // Lobby * lobby;
+    // for (int i = 0; i < 24; i++) {
+    //     lobby = new Lobby();
+    //     lobby->id = i;
+    //     lobby->port = 40000 + i;
+    //     lobby->hostName = "TestUser" + std::to_string(i);
+    //     lobby->playerCount = i;
+    //     if (i % 2 == 0) {
+    //         lobby->passwordHash = 0;
+    //          gd->md.publicLobbies_.push_back(lobby);
+    //     } 
+    //     else {
+    //         lobby->passwordHash = std::hash<std::string>{}(std::to_string(i));
+    //         gd->md.privateLobbies_.push_back(lobby);
+    //     }
+    // }
 }
 
 void resultsMessageHandler(ENetEvent * event, GameData * gd, Resources &res, SDLState &state){
