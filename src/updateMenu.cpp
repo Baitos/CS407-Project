@@ -723,7 +723,7 @@ void handleMousePointerTitle(const SDLState &state, GameData &gd, Resources &res
     };
 
     if(gd.md.usernameEditing){
-        gd.md.displayName = gd.md.tempStr;
+        gd.md.displayName = gd.md.tempUsername;
         if (gd.md.usernameEditing && gd.md.showCursor) {
             gd.md.displayName += '|';
         }
