@@ -91,3 +91,22 @@ void createCheckpointsSnow(const SDLState &state, GameData &gd) {
         printf("Checkppoint %d - x:%f y:%f h:%f\n", cp.index, cp.collider.x, cp.collider.y, cp.collider.h);
     }*/
 }
+
+void createCheckpointsDesert(const SDLState &state, GameData &gd) {
+    float tileSize = TILE_SIZE;
+    //initialize the Rects for each checkpoint in form {{x*tileSize, y*tileSize, w, h*tileSize}, indx}
+    courseCheckpoints = {
+        { {301*tileSize, 58*tileSize, tileSize, 2*tileSize}, 0 },
+        { {255*tileSize, 11*tileSize, 16, 49*tileSize}, 1 },
+        { {226*tileSize, 8*tileSize, 16, 46*tileSize}, 2 },
+        { {206*tileSize, 10*tileSize, 16, 50*tileSize}, 3 },
+        { {142*tileSize, 9*tileSize, 16, 20*tileSize}, 4 },
+        { {58*tileSize, 10*tileSize, 16, 44*tileSize}, 5 },
+        { {39*tileSize, 50*tileSize, tileSize, 2*tileSize}, 6 },
+    };
+    gd.checkpoints_ = courseCheckpoints;
+
+    /*for (const auto& cp : gd.checkpoints_) {
+        printf("Checkppoint %d - x:%f y:%f h:%f\n", cp.index, cp.collider.x, cp.collider.y, cp.collider.h);
+    }*/
+}

@@ -30,6 +30,11 @@ void levelUpdate(const SDLState &state, GameData &gd, float deltaTime, int keyID
     for (Laser &laser : gd.lasers_) {
         laser.update(state, gd, deltaTime);
     }
+
+    for (Revolver &revolver : gd.revolvers_) {
+        revolver.update(state, gd, deltaTime);
+    }
+
     for (ItemBox &box : gd.itemBoxes_) {
         if (!box.itemBoxActive) {
             box.update(state, gd, deltaTime);

@@ -78,6 +78,13 @@ GameState * changeState(GameState * tempState, GameData &gd){
             newState->init = createTilesSnow;   
             break;
         }
+        case DESERT: {
+            newState = new LevelState();
+            newState->input = levelInputs;
+            newState->update = levelUpdate;
+            newState->init = createTilesDesert;    
+            break;
+        } 
         case GAMEPLAY_SETTINGS:
         {
              //Creating LevelState with init of Spaceship

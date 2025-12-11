@@ -21,3 +21,5 @@ void createCheckpointsSpaceship(const SDLState &state, GameData &gd);
 
 void createCheckpointsSnow(const SDLState &state, GameData &gd);
 
+void createCheckpointsDesert(const SDLState &state, GameData &gd);
+
