@@ -40,15 +40,15 @@ void createPlayer(GameData &gd, const Resources &res, glm::vec2 pos) { // case f
         if(gd.playerTypes[index] != -1){
             if(gd.playerTypes[index]== SWORD){
                 player = Player(pos, collider, res.texIdle[SWORD], res.playerAnims, res.ANIM_PLAYER_IDLE, 250);         
-                player.cooldownTimer = Timer(3.0f);
+                player.cooldownTimer = Timer(0.75f);
                 player.character = SWORD;
             } else if(gd.playerTypes[index] == SHOTGUN){
                 player = Player(pos, collider, res.texIdle[SHOTGUN], res.playerAnims, res.ANIM_PLAYER_IDLE, 250);
-                player.cooldownTimer = Timer(5.0f);
+                player.cooldownTimer = Timer(1.5f);
                 player.character = SHOTGUN;
             } else {
                 player = Player(pos, collider, res.texIdle[JETPACK], res.playerAnims, res.ANIM_PLAYER_IDLE, 250);
-                player.cooldownTimer = Timer(1.0f);
+                player.cooldownTimer = Timer(5.0f);
                 player.character = JETPACK;
             }
             player.username = usernames[index];

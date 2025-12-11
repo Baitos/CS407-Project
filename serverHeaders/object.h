@@ -23,7 +23,9 @@ enum ObjectType{
     WATER,
     LAVA,
     WIRE,
-    ICE_BLOCK
+    ICE_BLOCK,
+    REVOLVER,
+    CACTUS
 };
 
 class Object { // generic obj type    
@@ -103,6 +105,61 @@ class Level : public Object { // the level type!
             type = LEVEL;
             debug = true;
         }
+};
+
+class Cactus: public Level {
+    public:
+        Cactus() : Level() { // default 
+            type = CACTUS;
+            debug = false;
+        }
+        Cactus(glm::vec2 pos_, SDL_FRect colliderRect) : // generic obj constructor
+        Level(pos_, colliderRect) {
+            type = CACTUS;
+            debug = false;
+        }
+};
+
+class Revolver : public AnimatedObject {
+    public:
+        Timer useTimer; // how long until usable again
+        Timer animationTempTimer;
+        bool inUse; // is someone using the revolver
+        glm::vec2 launchVel; // how much velocity to give the player using it
+        int orientation; // where is the revolver pointed
+        // 0 = R,  1 = DR, 2 = D
+        // 3 = DL, 4 = L,  5 = LU
+        // 6 = U,  7 = UR
+        int cycle; // used for determining when rotation should stop
+        bool spinning; // should it spin?
+        int rotation; // for spinning the revolver
+        Player *player; // the player being held currently
+        Revolver() : AnimatedObject(), useTimer(0.5f), animationTempTimer(0.025f) { // default 
+            inUse = false;
+            launchVel = glm::vec2(25.0f, -1000.0f);
+            orientation = 0;
+            rotation = 0; 
+            cycle = 0;
+            type = REVOLVER;
+            visible = true;
+            debug = true;
+            spinning = false;
+            player = nullptr;
+        }  
+        Revolver(glm::vec2 pos_, SDL_FRect colliderRect) : 
+        AnimatedObject(pos_, colliderRect), useTimer(0.5f) { // generic obj constructor
+            inUse = false;
+            launchVel = glm::vec2(25.0f, -1000.0f);
+            orientation = 0;
+            rotation = 0; 
+            cycle = 0;
+            type = REVOLVER;
+            visible = true;
+            debug = true;
+            spinning = false;
+            player = nullptr;
+        }
+        void update(const SDLState &state, GameData &gd, float deltaTime);
 };
 
 class Portal : public AnimatedObject { // portals

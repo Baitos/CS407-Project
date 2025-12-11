@@ -11,7 +11,7 @@
 void Player::handleState(PlayerState* &pState, GameData &gd) {
     if (pState != nullptr) {
         state_->exit(gd, (*this)); // exit fn for old state
-        printf("delete player state\n");
+        //printf("delete player state\n");
         delete state_;
         state_ = pState;
         state_->enter(gd, (*this)); // enter fn for new state

@@ -24,9 +24,11 @@ enum gameStates {
     SPACESHIP,
     GRASSLANDS,
     SNOW,
+    DESERT,
     RESULTS,
     CREDITS,
-    GAMEPLAY_SETTINGS
+    GAMEPLAY_SETTINGS,
+    END_RESULTS
 };
 
 class GameState{

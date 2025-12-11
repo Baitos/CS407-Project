@@ -164,6 +164,58 @@ void Player::collisionResponse(const SDLState &state, GameData &gd,
 			}
 			break;
 		}
+		case REVOLVER: 
+		{
+			//printf("player collided with laser\n");
+			
+			Revolver& r = dynamic_cast<Revolver&>(o);
+			if (r.inUse) {
+				break;
+			}
+			
+			// if a player touches a revolver not in use
+			this->pos = r.pos + glm::vec2(TILE_SIZE / 2);
+			this->grounded = false;
+			PlayerState* stState = new StunnedState(true); // put in hard stun
+			this->handleState(stState, gd);
+			this->visible = false; // make player invisible
+			r.inUse = true; // set in use to true
+			r.spinning = true; // start spinning
+			r.player = this; // set revolver pointer
+			break;
+		}
+		case CACTUS: 
+		{
+			if (resolution.x < resolution.y) {
+				
+				if (this->pos.x < o.pos.x) {
+					this->pos.x -= resolution.x;
+				} else {
+					this->pos.x += resolution.x;
+				}	
+				this->vel.x = 0;
+			} else {
+				if (this->pos.y < o.pos.y) {
+					this->pos.y -= resolution.y;
+				} else {
+					this->pos.y += resolution.y;
+				}
+				this->vel.y = 0;
+			}
+			PlayerState* stState = new StunnedState();
+			this->handleState(stState, gd);
+			this->vel.x = changeVel(-this->vel.x, (*this));
+			float shouldFlip = this->flip;
+			if(shouldFlip * o.pos.y < shouldFlip * this->pos.y){
+				this->vel.y = changeVel(200.f, (*this));
+			} else {
+				this->vel.y = changeVel(-400.f, (*this));
+			}
+
+			this->gravityScale = 1.0f;
+			break;
+		}
+
 		case ITEMBOX:
 		{
 			ItemBox& box = dynamic_cast<ItemBox&>(o);

@@ -11,3 +11,5 @@ void createTilesSpaceship(const SDLState &state, GameData &gd);
 void createTilesGrassland(const SDLState &state, GameData &gd);
 
 void createTilesSnow(const SDLState &state, GameData &gd);
+void createTilesDesert(const SDLState &state, GameData &gd);
+void customizeRevolvers(const SDLState &state, GameData &gd);

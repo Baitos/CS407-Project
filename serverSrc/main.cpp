@@ -227,10 +227,15 @@ void createLobbyServer(int port){
                                 } else if(mapWinner == 2){
                                     printf("Snowy Resort\n");
                                     currState->nextStateVal = SNOW;
+                                } else if(mapWinner == 3){
+                                    currState->nextStateVal = DESERT;
+                                    printf("DESERT\n");
                                 }
 
                                 currState = changeState(currState, gd);
+                                printf("about to init\n");
                                 currState->init(state, gd);
+                                printf("here\n");
                                 for(ENetPeer * client : clients){
                                     std::string replyMessage = "CHANGE_STATE " + std::to_string(mapWinner);
                                     ENetPacket * packet = enet_packet_create(replyMessage.c_str(), replyMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
@@ -336,7 +341,7 @@ void createLobbyServer(int port){
                     {   //Add conditionals to do what server says
                         std::string message((char *) event.packet->data, event.packet->dataLength);
                         enet_packet_destroy(event.packet);
-                        printf("2 Message: %s\n", message.c_str());
+                        //printf("2 Message: %s\n", message.c_str());
 
                         //If key input
                         if(message.find("INPUT ") != std::string::npos){                                //KEY INPUT
@@ -350,7 +355,7 @@ void createLobbyServer(int port){
                             }
                             //printf("1: %f\n", gd.players_[gd.playerIndex].pos.y);
                             handleKeyInput(state, gd, playerID, keyID, keyDown, deltaTime, lobbyServer, clients);
-                            printf("key handled\n");
+                            //printf("key handled\n");
                         } else {                                                                        //MOUSE INPUT 
                             playerID = std::stoi(message.substr(8, 1));                                 //2 IS LMB, 1 IS RMB
                             keyID = std::stoi(message.substr(10, 1));
@@ -381,7 +386,7 @@ void createLobbyServer(int port){
                                 handleLevelClick(state,gd,playerID, deltaTime, keyID, keyDown, aH, oH, lobbyServer, clients);
                             }
                         }
-                        printf("%d %d %d\n", playerID, keyID, keyDown);
+                        //printf("%d %d %d\n", playerID, keyID, keyDown);
                         
                         
                         //printf("2: %f\n", gd.players_[gd.playerIndex].pos.y);
@@ -462,7 +467,7 @@ void createLobbyServer(int port){
                 inGame = false;
                 if(gd.isGrandPrix){
                    
-                    if(currState->currStateVal != SNOW){		//TODO ELLIE MAKE THIS THE LAST STAGE IN THE GRAND PRIX
+                    if(currState->currStateVal != DESERT){		//TODO ELLIE MAKE THIS THE LAST STAGE IN THE GRAND PRIX
                         for(int i = 0; i < gd.numPlayers; i++){
                             state.keys[i][4] = false;
                             state.keys[i][7] = false;
@@ -477,6 +482,8 @@ void createLobbyServer(int port){
                             currState->nextStateVal = SPACESHIP;
                         } else if(currState->prevStateVal==SPACESHIP) {
                             currState->nextStateVal = SNOW;
+                        } else if(currState->prevStateVal == SNOW){
+                            currState->nextStateVal = DESERT;
                         }
                         
                     } else {
@@ -539,6 +546,7 @@ void createLobbyServer(int port){
                                             currState->nextStateVal = SNOW;
                                         } else if(currState->prevStateVal == SNOW){
                                             //TODO ADD OTHER STAGES ELLIE
+                                            currState->nextStateVal = DESERT;
                                         }
 
                                         std::string replyMessage = "CHANGE_STATE " + std::to_string(currState->currStateVal);

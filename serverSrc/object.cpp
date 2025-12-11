@@ -138,6 +138,48 @@ void ItemBox::generateItem(Player &player, GameData &gd) {
     player.pickingItem = true;
 }
 
+void Revolver::update(const SDLState &state, GameData &gd, float deltaTime) { // just step the anims
+    if (this->inUse) { // if being used start running timer
+        
+        this->useTimer.step(deltaTime);
+        if (this->spinning) { // default update
+            
+            this->animationTempTimer.step(deltaTime);
+            if (this->animationTempTimer.isTimeOut()) {
+                this->rotation = (this->rotation + 90) % 360;
+                this->animationTempTimer.reset(); 
+                this->cycle += 1;
+                
+            }
+            // 0 = right, 90 = down, 180 = left, 270 = up
+        }
+    }
+    if (this->useTimer.isTimeOut()) { // if timer empty not in use anymore
+        this->inUse = false;
+        this->cycle = 0;
+        this->useTimer.reset();
+    }
+
+    if (this->player == nullptr) {
+        return;
+    }
+    if (this->cycle == 8) { // let revolver spin twice
+        printf("increase velocity\n");
+        this->player->vel = this->launchVel; // set player velocity
+        this->player->visible = true; // let them be seen again
+        this->spinning = false; // stop rotation
+        this->player = nullptr; // null out this revolver's player pointer
+        // if (this->orientation % 2 == 1) { // fix rotation if diagonal
+        //     stepRevolverAnim((*this));  
+        // } 
+    } else {
+        this->player->pos = this->pos + glm::vec2(TILE_SIZE / 2); // center player on revolver
+        if (!this->player->state_->stateVal == STUNNED) { // maybe unnecessary
+            PlayerState* stState = new StunnedState(true); // hard stun
+		    this->player->handleState(stState, gd);
+        }
+    }
+}
 
 // void angledStun(AnimatedObject &obj, GameData &gd, Player &player) {
 //     // TODO properly implement angles
