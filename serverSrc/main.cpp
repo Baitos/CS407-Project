@@ -219,11 +219,11 @@ void createLobbyServer(int port){
                                 }
                                 //0 is grasslands, 1 is spaceship
                                 if(mapWinner == 0){
-                                    printf("Grasslands\n");
-                                    currState->nextStateVal =  GRASSLANDS;
-                                } else if( mapWinner == 1){
                                     printf("Spaceship\n");
-                                    currState->nextStateVal = SPACESHIP;
+                                    currState->nextStateVal =  SPACESHIP;
+                                } else if( mapWinner == 1){
+                                    printf("Grasslands\n");
+                                    currState->nextStateVal = GRASSLANDS;
                                 } else if(mapWinner == 2){
                                     printf("Snowy Resort\n");
                                     currState->nextStateVal = SNOW;
@@ -540,9 +540,9 @@ void createLobbyServer(int port){
                                         }
                                         
                                         //0 is grasslands, 1 is spaceship
-                                        if(currState->prevStateVal == GRASSLANDS){
-                                            currState->nextStateVal = SPACESHIP;
-                                        } else if (currState->prevStateVal == SPACESHIP){
+                                        if(currState->prevStateVal == SPACESHIP){
+                                            currState->nextStateVal = GRASSLANDS;
+                                        } else if (currState->prevStateVal == GRASSLANDS){
                                             currState->nextStateVal = SNOW;
                                         } else if(currState->prevStateVal == SNOW){
                                             //TODO ADD OTHER STAGES ELLIE
@@ -700,6 +700,21 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                         enet_host_flush(matchmakerServer);
 
 
+                    } else if(message.find("REMOVE ") != std::string::npos){
+                        printf("Remove sent: %s", message.c_str());
+                        int removedLobbyPort = std::stoi(message.substr(7, message.length() - 7));
+                        int index = 0;
+                        bool found = false;
+                        for (Lobby &l: lobbies){
+                            if(l.port == removedLobbyPort){
+                                found = true;
+                                break;
+                            }
+                            index++;
+                        }
+                        if(found){
+                            lobbies.erase(lobbies.begin() + index);
+                        }
                     }
                     break;
                 }
