@@ -123,6 +123,9 @@ void ItemBox::generateItem(Player &player, GameData &gd) {
         case itemType::FOG:
             newItem = new Fog(player.pos, defaultCollider);
             break;
+        case itemType::BOUNCYBALL:
+            newItem = new Ball(player.pos, defaultCollider);
+            break;
         default:
             printf("Your item is in another castle\n");
             newItem = new Ice(player.pos, defaultCollider);

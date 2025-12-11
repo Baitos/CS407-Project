@@ -8,8 +8,10 @@ struct SDLState;
 struct GameData;
 struct Object;
 struct Player;
+struct Ball;
 
 bool intersectAABB(const SDL_FRect &a, const SDL_FRect &b, glm::vec2 &overlap);
+void handleBallBounce(glm::vec2 &resolution, Ball &b, Object &o);
 
 // void playerCheckCollision(const SDLState &state, GameData &gd, Resources &res, Player &p, float deltaTime);
 // void playerCollisionResponse(const SDLState &state, GameData &gd, Resources &res,

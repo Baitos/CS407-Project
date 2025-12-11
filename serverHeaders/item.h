@@ -152,3 +152,23 @@ class ItemStorage : public AnimatedObject {
     }
     void update(const SDLState &state, GameData &gd, Player &p, float deltaTime);
 };
+
+class Ball : public Item {
+    public:
+        Timer leniencyTimer; // how long before the ball hits the player that threw it
+        Timer ballTimer; // life timer
+        int bounces;
+        int MAX_BOUNCES;
+        void useItem(const SDLState &state, GameData &gd,  Player &p);
+        void update(const SDLState &state, GameData &gd, Player &p, float deltaTime);
+        void checkCollision(const SDLState &state, GameData &gd, Player &p, float deltaTime);
+        Ball(glm::vec2 pos_, SDL_FRect colliderRect) :
+        Item(pos_, colliderRect), leniencyTimer(1.0f), ballTimer(15.0f) {
+            index = 2;
+            width = 32;
+            height = 32;
+            bounces = 0;
+            type = BOUNCYBALL;
+            MAX_BOUNCES = 8; 
+        }
+};

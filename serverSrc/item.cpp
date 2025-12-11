@@ -109,6 +109,35 @@ void PieItem::useItem(const SDLState &state, GameData &gd, Player &p) {
 }
 
 
+//BALL
+void Ball::update(const SDLState &state, GameData &gd, Player &p, float deltaTime) {
+    //Item::update(state, gd, res, p, deltaTime); // generic update
+    if (!this->leniencyTimer.isTimeOut()) {
+        this->leniencyTimer.step(deltaTime); 
+    }
+    this->ballTimer.step(deltaTime); 
+    if (this->ballTimer.isTimeOut()) {
+        this->active = false;
+    }
+    this->vel.x += 25.0f * deltaTime * this->dir; // increase horizontal speed every second
+    this->pos += updatePos((*this), deltaTime);
+    //printf("pie update\n");
+}
+
+void Ball::useItem(const SDLState &state, GameData &gd, Player &p) {
+    SDL_FRect ballCollider = {
+        .x = 6,
+        .y = 6,
+        .w = 20,
+        .h = 20
+    };
+    Ball* ball = new Ball(p.pos, ballCollider);
+    ball->dir = p.dir;
+    ball->vel.x = 350.0f * ball->dir;
+    ball->vel.y = 350.0f;
+    p.items_.push_back(ball);
+}
+
 // SUGAR
 void Sugar::update(const SDLState &state, GameData &gd, Player &p, float deltaTime) {
     if (p.usingSugar) {
