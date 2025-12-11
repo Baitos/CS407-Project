@@ -291,7 +291,7 @@ void Player::checkCollision(const SDLState &state, GameData &gd, Resources &res,
 		if(p2.index != this->index) {
 			//check if in shotgun player blast state
 			if(ShotgunDeployState *s = dynamic_cast<ShotgunDeployState*>(p2.state_)) {
-				sfxSound.playMusic("data/Audio/shotgun.wav", false);
+				
 				//check if currently blocking/deploying sword
 				if(!dynamic_cast<SwordDeployState*> (this->state_)) {
 					SDL_FRect rectB{
@@ -315,7 +315,7 @@ void Player::checkCollision(const SDLState &state, GameData &gd, Resources &res,
 					//printf("Player %d BLOCKED shot by player %d\n", p.index, p2.index);
 				}
 			} else if (SwordDeployState *s = dynamic_cast<SwordDeployState*>(p2.state_)) {
-				sfxSound.playMusic("data/Audio/sword.wav", false);
+				
 				//check if in sword player swing state
 				SDL_FRect rectB{
 					.x = p2.pos.x + this->collider.x - 5,

@@ -252,9 +252,11 @@ void levelMessageHandler(ENetEvent * event, GameData * gd, Resources &res, SDLSt
                     gd->players_[gd->playerIndex].itemMessageReceived = true;
                 }
             } else if(message.find("SHOT ") != std::string::npos){
+                sfxSound.playMusic("data/Audio/shotgun.wav", false);
                 PlayerState *newState = new ShotgunDeployState();
                 gd->players_[std::stoi(message.substr(5,1))].handleState(newState, *gd, res);            
             } else if (message.find("SWORD ") != std::string::npos){
+                sfxSound.playMusic("data/Audio/sword.wav", false);
                 PlayerState *newState = new SwordDeployState();
                 gd->players_[std::stoi(message.substr(6,1))].handleState(newState, *gd, res);     
 
