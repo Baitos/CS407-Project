@@ -320,6 +320,7 @@ PlayerState* StunnedState::update(const SDLState &state, GameData &gd, Player &p
     } else { // if hardStunned, disable control
         p.cooldownTimer.step(deltaTime);
         p.currentDirection = 0;
+        removeHook(p);
         if (!p.grounded) { 
             sharedGravity(p, deltaTime);
         }
@@ -345,6 +346,7 @@ PlayerState* DeadState::update(const SDLState &state, GameData &gd, Player &p, f
     //step forward timer if player currently dead
     p.respawnTimer.step(deltaTime);
     //check if player can respawn
+    removeHook(p);
     if (p.respawnTimer.isTimeOut()) {
         p.pos.x = gd.checkpoints_[p.lastCheckpoint].collider.x;
         p.pos.y = gd.checkpoints_[p.lastCheckpoint].collider.y + gd.checkpoints_[p.lastCheckpoint].collider.h - TILE_SIZE*2;

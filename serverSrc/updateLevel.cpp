@@ -76,6 +76,9 @@ void levelInputs(SDLState &state, GameData &gd, float deltaTime) {
 void handleLevelClick(SDLState &state, GameData &gd, int playerID, float deltaTime, int key, bool buttonDown, float aH, float oH, ENetHost* lobbyServer, std::vector<ENetPeer *> clients) {
     //LEFT CLICK FOR CHARACTER WEAPON DEPLOY
     //printf("Player %d Character Type %d\n", gd.playerIndex, gd.players_[gd.playerIndex].character);
+    if (gd.players_[playerID].state_->stateVal == STUNNED || gd.players_[playerID].state_->stateVal == DEAD) { // dont let player grapple or use ability while stunned/dead
+        return;
+    }
     if(key == 1 && buttonDown){
         
         //JETPACK DEPLOY
