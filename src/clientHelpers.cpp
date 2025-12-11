@@ -207,7 +207,10 @@ void levelMessageHandler(ENetEvent * event, GameData * gd, Resources &res, SDLSt
                         newItem = new Bomb(gd->players_[std::stoi(message.substr(2,1))].pos, collider, res.texBomb);
                     } else if (std::stoi(message.substr(4,1)) == FOG){
                         newItem = new Fog(gd->players_[std::stoi(message.substr(2,1))].pos, collider, res.texFog);
+                    } else if (std::stoi(message.substr(4,1)) == BOUNCYBALL){
+                        newItem = new Ball(gd->players_[std::stoi(message.substr(2,1))].pos, collider, res.texBall);
                     }
+
                     gd->players_[std::stoi(message.substr(2,1))].heldItem = newItem;
                     gd->players_[std::stoi(message.substr(2,1))].heldItem->useItem(state,*gd,res,gd->players_[std::stoi(message.substr(2,1))]);
                     gd->players_[std::stoi(message.substr(2,1))].hasItem = false;
@@ -236,8 +239,10 @@ void levelMessageHandler(ENetEvent * event, GameData * gd, Resources &res, SDLSt
                         newItem = new Bomb(gd->players_[gd->playerIndex].pos, collider, res.texBomb);
                     } else if(std::stoi(message.substr(5,1)) == FOG){
                         newItem = new Fog(gd->players_[gd->playerIndex].pos, collider, res.texFogStorage);
+                    } else if(std::stoi(message.substr(5,1)) == BOUNCYBALL){
+                        newItem = new Ball(gd->players_[gd->playerIndex].pos, collider, res.texFogStorage);
                     } else {
-                        printf("Bad item id\n");
+                        printf("Bad item id %d\n", (std::stoi(message.substr(5,1))));
                     }
                     if (gd->players_[gd->playerIndex].heldItem != nullptr) {
                         delete gd->players_[gd->playerIndex].heldItem;

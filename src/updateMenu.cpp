@@ -722,9 +722,9 @@ void handleMousePointerTitle(const SDLState &state, GameData &gd, Resources &res
         .h = (float)TILE_SIZE
     };
 
-    if(gd.md.stringEditing){
+    if(gd.md.usernameEditing){
         gd.md.displayName = gd.md.tempStr;
-        if (gd.md.stringEditing && gd.md.showCursor) {
+        if (gd.md.usernameEditing && gd.md.showCursor) {
             gd.md.displayName += '|';
         }
     } else if((gd.mouseCoords.x >= 363 && gd.mouseCoords.x <= 595) && (gd.mouseCoords.y >= 165 && gd.mouseCoords.y <= 200)) { 

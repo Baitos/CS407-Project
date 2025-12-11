@@ -220,7 +220,7 @@ void Fog::update(const SDLState &state, GameData &gd, Resources &res, Player &p,
     if (gd.players_[gd.playerIndex].hasFog) {
         //this->pos = glm::vec2(gd.mapViewport.x, gd.mapViewport.y);
         //sound effect - this one may cause issues moving to multiplayer
-        sfxSound.playMusic("data/Audio/foghorn.wav", false);
+        
         this->fogTimer.step(deltaTime);
         if(this->fogTimer.getTime() < 5.f){
             if (this->animations[curAnimation].currentFrame() != 6) {
@@ -250,6 +250,7 @@ void Fog::update(const SDLState &state, GameData &gd, Resources &res, Player &p,
 }
 
 void Fog::useItem(const SDLState &state, GameData &gd, Resources &res, Player &p){
+    
     this->fogTimer.reset();
     for(int i = 0; i < gd.players_.size(); i++){
         if(i != p.index){

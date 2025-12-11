@@ -503,7 +503,7 @@ void Bomb::checkCollision(const SDLState &state, GameData &gd, Resources &res, P
             .h = p2.collider.h
         };
         if (intersectAABB(rectA, rectB, resolution) && this->visible) {
-			sfxSound.playMusic("data/Audio/bomb.wav", false);
+			
             p2.vel.y = -200.0f; 
             p2.vel.x = this->vel.x * 0.5;  
             p2.pos.y -= 1;              
@@ -512,8 +512,10 @@ void Bomb::checkCollision(const SDLState &state, GameData &gd, Resources &res, P
             PlayerState* stunState = new StunnedState(true); // hard stun
             p2.handleState(stunState, gd, res); // stun player you hit
             if (this->exploded) {
+				
                 break;
             }
+			sfxSound.playMusic("data/Audio/bomb.wav", false);
             this->exploded = true;
             SDL_FRect expCollider = {
                 .x = 0,
