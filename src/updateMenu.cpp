@@ -19,6 +19,7 @@ extern GameState * currState;
 extern ENetPeer* serverPeer;
 extern ENetHost * client;
 extern ma_engine engine;
+extern bool host;
 
 //
 //UPDATE FUNCTIONS
@@ -734,6 +735,7 @@ void handleMousePointerTitle(const SDLState &state, GameData &gd, Resources &res
     }
 
     if ((gd.mouseCoords.x >= 40 && gd.mouseCoords.x <= 219) && (gd.mouseCoords.y >= 368 && gd.mouseCoords.y <= 436)) { //Host
+        host = true;
         gd.md.border.pos = glm::vec2(38,366);
         gd.md.border.texture = res.texBigBorder;
     } else if((gd.mouseCoords.x >= 315 && gd.mouseCoords.x <= 485) && (gd.mouseCoords.y >= 368 && gd.mouseCoords.y <= 436)){        //Join
@@ -1069,6 +1071,13 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
         sfxSound.playMusic("data/Audio/button.wav", false);
         //Change to value Danny made
         int selectedStage = gd.md.currMapVote;
+        if(!gd.isGrandPrix){
+            if(selectedStage == 0){
+                selectedStage = 1;
+            } else if (selectedStage == 1){
+                selectedStage = 0;
+            }
+        }
         std::string pendingMessage = "READY " + std::to_string(gd.playerIndex) + " " + std::to_string(selectedStage);
         printf("%s\n", pendingMessage.c_str());
         ENetPacket * packet = enet_packet_create(pendingMessage.c_str(), pendingMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
@@ -1102,7 +1111,7 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
                 int index = map_preview.curAnimation;
                 index--;
                 if(index<0) {
-                    index = 4;
+                    index = 3;
                 }
                 map_preview.texture = res.texMapPreviews[index];
                 map_preview.curAnimation = index; 
@@ -1113,7 +1122,7 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
                 int index = map_preview_text.curAnimation;
                 index--;
                 if(index<0) {
-                    index = 4;
+                    index = 3;
                 }
                 map_preview_text.texture = res.texMapTextPreviews[index];
                 map_preview_text.curAnimation = index; 
@@ -1132,7 +1141,7 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
             for (AnimatedObject &map_preview : gd.md.map_previews_) {
                 int index = map_preview.curAnimation;
                 index++;
-                if(index>4) {
+                if(index>3) {
                     index = 0;
                 }
                 map_preview.texture = res.texMapPreviews[index];
@@ -1143,7 +1152,7 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
             for (AnimatedObject &map_preview_text : gd.md.map_previews_text_) {
                 int index = map_preview_text.curAnimation;
                 index++;
-                if(index>4) {
+                if(index>3) {
                     index = 0;
                 }
                 map_preview_text.texture = res.texMapTextPreviews[index];
@@ -1151,7 +1160,7 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
                 map_preview_text.animations[map_preview_text.curAnimation].reset();
             }
             gd.md.currMapVote = gd.md.currMapVote + 1;
-            if(gd.md.currMapVote>4) {
+            if(gd.md.currMapVote>3) {
                 gd.md.currMapVote = 0;
             }
         }

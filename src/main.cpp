@@ -50,6 +50,7 @@ ENetHost * client;
 bool reconnectMatchmaker = true;
 std::string usernames[8];
 int pointsArray[8] = {0};
+bool host = false;
 
 SoundManager mSound;
 SoundManager sfxSound;
@@ -198,14 +199,16 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
             frames = 0;
         }
         float deltaTime = (nowTime - prevTime) / 1000.0f; // convert to seconds from ms
-        
+        bool connected = false;
         while (enet_host_service(client, &event, 0) > 0) {
             //std::string message;
             //printf("Handling message %d\n",event.type);
             if(!inLobby){                             //Message handling for Matchmaker Server Conection
+                
                 switch(event.type){
                     case ENET_EVENT_TYPE_CONNECT:{
                         printf("Connected to matchmaker!\n");
+                        bool connected = true;
                         break;
                     }
                     case ENET_EVENT_TYPE_RECEIVE: {
@@ -264,11 +267,12 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                         break;
                     }
                     case ENET_EVENT_TYPE_DISCONNECT: {
+                        connected = false;
                         printf("Disconnecting\n");
                         if(pendingLobby != -1){
                             address.port = pendingLobby;
                             serverPeer = enet_host_connect(client, &address,2,0);
-                            pendingLobby = -1;
+                            //pendingLobby = -1;
                             inLobby = true;
                         } else {
                             printf("Lost Connection\n");    
@@ -284,6 +288,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                         break;
                     }
                     case ENET_EVENT_TYPE_DISCONNECT_TIMEOUT:{
+                        connected = true;
                         printf("Timed Out\n");
                         Uint64 currTime = SDL_GetTicks();
                         if(currTime >= lastDisconnectCheck + 1000){
@@ -292,9 +297,27 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                             serverPeer = enet_host_connect(client, &address, 2, 0);
                             
                         }
+                        break;
                         
                     }
                 
+                }
+                if(host && !inLobby){
+                    printf("Host", host);
+                    if(pendingLobby != -1){
+                        printf("PendingLobby %d", pendingLobby);
+                        if(connected){
+                            printf("Connected");
+                            std::string replyMessage = "REMOVE " + std::to_string(pendingLobby);
+                            ENetPacket * packet = enet_packet_create(replyMessage.c_str(), replyMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
+                            enet_peer_send(serverPeer, 0, packet);
+                            enet_host_flush(client);
+                            enet_packet_destroy(packet);
+                            pendingLobby = -1;
+                            host = false;
+                        }
+                    }
+                    
                 }
             } else {                                            //Message handling for lobby
                 if(event.type == ENET_EVENT_TYPE_DISCONNECT_TIMEOUT){
@@ -355,7 +378,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                 reconnectMatchmaker = true;
                 gd.playerIndex = -1;
                 inLobby = false;
-                pendingLobby = -1;
+                //pendingLobby = -1;
                 gd.md.currMapVote = 0;
                 for(int i = 0; i < 8; i++){
                     gd.playerTypes[i] = -1;

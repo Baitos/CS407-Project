@@ -65,9 +65,9 @@ void charSelectMessageHandler(ENetEvent * event, GameData * gd, Resources &res, 
 
             } else if(message.find("CHANGE_STATE ") != std::string::npos){
                 if ( std::stoi((message).substr(13)) == 0){
-                    currState->nextStateVal = GRASSLANDS;
-                } else if (std::stoi((message).substr(13)) == 1){
                     currState->nextStateVal = SPACESHIP;
+                } else if (std::stoi((message).substr(13)) == 1){
+                    currState->nextStateVal = GRASSLANDS;
                 } else if (std::stoi((message).substr(13)) == 2){
                     currState->nextStateVal = SNOW;
                 } else if(std::stoi((message).substr(13)) == 3){

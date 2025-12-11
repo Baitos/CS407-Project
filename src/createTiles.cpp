@@ -15,6 +15,7 @@
 extern GameState *currState;
 extern std::string usernames[8];
 extern int pointsArray[8];
+extern bool host;
 
 void createPlayer(GameData &gd, const Resources &res, glm::vec2 pos) { // case for player put in one code block
     SDL_FRect collider = { 
@@ -1962,7 +1963,7 @@ void initTitle(const SDLState &state, GameData &gd, const Resources &res) {
     for(int i = 0; i < 8; i++){
         usernames[i].clear();
     }
-
+    
     glm::vec2  pos = glm::vec2(0,0);
     // Background
     BackgroundObject bg(pos, collider, res.texTitle);
