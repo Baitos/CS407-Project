@@ -284,6 +284,7 @@ void Revolver::update(const SDLState &state, GameData &gd, Resources &res, float
                 this->rotation = (this->rotation + 90) % 360;
                 this->animations[this->curAnimation].reset(); 
                 this->cycle += 1;
+                sfxSound.playMusic("data/Audio/revolverSpin.wav", false);
             }
             // 0 = right, 90 = down, 180 = left, 270 = up
         }
