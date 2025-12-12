@@ -160,7 +160,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     // Ryan IP = 100.90.167.105
 
     //Set IP Here
-    enet_address_set_host(&clientAddress, "100.90.167.105");
+    enet_address_set_host(&clientAddress, "100.111.250.61");
     clientAddress.port = 0; // OS chooses port
     client = enet_host_create(&clientAddress, 1, 2, 0, 0);
     if (!client) {
