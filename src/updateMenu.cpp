@@ -1148,7 +1148,7 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
             printf("Curr map vote: %d\n", gd.md.currMapVote);
             gd.md.currMapVote = gd.md.currMapVote - 1;
             if(gd.md.currMapVote<0) {
-                gd.md.currMapVote = 4;
+                gd.md.currMapVote = 3;
             }
         }
     } else if ((gd.mouseCoords.x >= 274 && gd.mouseCoords.x <= 292) && (gd.mouseCoords.y >= 286 && gd.mouseCoords.y <= 310)) {
