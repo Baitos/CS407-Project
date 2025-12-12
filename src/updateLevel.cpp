@@ -76,19 +76,19 @@ void levelUpdate(const SDLState &state, GameData &gd, Resources &res, float delt
                     currState->nextStateVal = DESERT;
                 }
                 
-                sfxSound.playMusic("data/Audio/results.wav", false);
+                mSound.playMusic("data/Audio/musicResults.wav", false);
             } else {
                 currState->nextStateVal = END_RESULTS;
                 currState = changeState(currState,gd);
                 currState->init(state, gd, res);
-                sfxSound.playMusic("data/Audio/results.wav", false);
+                mSound.playMusic("data/Audio/musicResults.wav", false);
             }
         } else {
             printf("END RESULTS\n");
             currState->nextStateVal = END_RESULTS;
             currState = changeState(currState,gd);
             currState->init(state, gd, res);
-            sfxSound.playMusic("data/Audio/results.wav", false);
+            mSound.playMusic("data/Audio/musicResults.wav", false);
         }
         // if(gd.isGrandPrix) {
         //     if(currState->currStateVal==GRASSLANDS) {

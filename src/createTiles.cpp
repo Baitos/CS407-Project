@@ -452,6 +452,8 @@ void createTilesSpaceship(const SDLState &state, GameData &gd, const Resources &
     createMinimap(state, gd, res, res.MAP_SPACESHIP, 1);
     createGrid(state, gd, MAP_ROWS, MAP_COLS);
     createCheckpointsSpaceship(state, gd, res);
+
+    mSound.playMusic("data/Audio/musicSpaceship.wav", false);
     //loadMap(foreground);
     //assert(gd.playerIndex != -1);
 
@@ -817,7 +819,7 @@ void createTilesGrassland(const SDLState &state, GameData &gd, const Resources &
     createCheckpointsGrassland(state, gd, res);
 
     //music
-    //mSound.playMusic("data/Music/grasslands.wav", true);
+    mSound.playMusic("data/Audio/musicSpaceship.wav", false);
 
     
     //loadMap(foreground);
@@ -1331,7 +1333,7 @@ void createTilesSnow(const SDLState &state, GameData &gd, const Resources &res) 
     createCheckpointsSnow(state, gd, res);
 
     //music
-    //mSound.playMusic("data/Music/snow.wav", true);
+    mSound.playMusic("data/Audio/musicSnow.wav", false);
 }
 
 // ill have to hardcode to custom set the positions and strength of the revolvers
@@ -1758,6 +1760,7 @@ void createTilesDesert(const SDLState &state, GameData &gd, const Resources &res
     createGrid(state, gd, MAP_ROWS, MAP_COLS);
     customizeRevolvers(state, gd, res);
     createCheckpointsDesert(state, gd, res);
+    mSound.playMusic("data/Audio/musicDesert.wav", false);
 }
 
 void initSettings(const SDLState &state, GameData &gd, const Resources &res) { // 280 x 60
@@ -1984,6 +1987,7 @@ void initTitle(const SDLState &state, GameData &gd, const Resources &res) {
         }
     }
         
+    mSound.playMusic("data/Audio/musicSettingsLobby.wav", false);
 }
 
 static const int POINTS_BY_PLACEMENT[] = {
