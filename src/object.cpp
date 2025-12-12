@@ -302,6 +302,7 @@ void Revolver::update(const SDLState &state, GameData &gd, Resources &res, float
         this->player->visible = true; // let them be seen again
         this->spinning = false; // stop rotation
         this->player = nullptr; // null out this revolver's player pointer
+        sfxSound.playMusic("data/Audio/revolver.wav", false);
         if (this->orientation % 2 == 1) { // fix rotation if diagonal
             stepRevolverAnim((*this));  
         } 
