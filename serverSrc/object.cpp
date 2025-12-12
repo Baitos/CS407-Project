@@ -86,20 +86,20 @@ void ItemBox::generateItem(Player &player, GameData &gd) {
     std::vector<itemType> itemOptions;
     int selected;
     // // Limit items for top 25% of players
-    // if ((player.position / (float)gd.numPlayers) <= 0.25) {
-    //     itemOptions = {itemType::BOMB, itemType::BOOMBOX, itemType::BOUNCYBALL, 
-    //         itemType::ICE, itemType::SUGAR, itemType::PIE};
-    // }
-    // // Limit items for bottom 25% of players
-    // else if ((player.position / (float)gd.numPlayers) >= 0.75) {
-    //     itemOptions = {itemType::BOOMBOX, itemType::BOUNCYBALL, 
-    //         itemType::FOG, itemType::MISSILE, itemType::SUGAR, itemType::PIE};
-    // }
-    // else {
+    if ((player.position / (float)gd.numPlayers) <= 0.25) {
+        itemOptions = {itemType::BOMB, itemType::BOOMBOX, itemType::BOUNCYBALL, 
+            itemType::ICE, itemType::PIE};
+    }
+    // Limit items for bottom 25% of players
+    else if ((player.position / (float)gd.numPlayers) >= 0.75) {
+        itemOptions = {itemType::BOOMBOX, itemType::BOUNCYBALL, 
+            itemType::FOG, itemType::SUGAR, itemType::PIE};
+    }
+    else {
         // All items are available
         itemOptions = {itemType::BOMB, itemType::BOOMBOX, itemType::BOUNCYBALL, 
-            itemType::FOG, itemType::ICE, itemType::MISSILE, itemType::SUGAR, itemType::PIE};
-    //}
+            itemType::FOG, itemType::ICE, itemType::SUGAR, itemType::PIE};
+    }
     selected = rand() % itemOptions.size();
 
 
