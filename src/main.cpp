@@ -51,6 +51,7 @@ bool reconnectMatchmaker = true;
 std::string usernames[8];
 int pointsArray[8] = {0};
 bool host = false;
+bool canClick = false;
 
 SoundManager mSound;
 SoundManager sfxSound;
@@ -209,6 +210,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                     case ENET_EVENT_TYPE_CONNECT:{
                         printf("Connected to matchmaker!\n");
                         connected = true;
+                        canClick = true;
                         break;
                     }
                     case ENET_EVENT_TYPE_RECEIVE: {
@@ -268,6 +270,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                     }
                     case ENET_EVENT_TYPE_DISCONNECT: {
                         connected = false;
+                        canClick = false;
                         printf("Disconnecting\n");
                         if(pendingLobby != -1){
                             address.port = pendingLobby;
@@ -289,6 +292,7 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
                     }
                     case ENET_EVENT_TYPE_DISCONNECT_TIMEOUT:{
                         connected = false;
+                        canClick = false;
                         printf("Timed Out\n");
                         Uint64 currTime = SDL_GetTicks();
                         if(currTime >= lastDisconnectCheck + 1000){

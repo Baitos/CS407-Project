@@ -20,6 +20,9 @@ extern ENetPeer* serverPeer;
 extern ENetHost * client;
 extern ma_engine engine;
 extern bool host;
+extern bool reconnectMatchmaker;
+extern bool inLobby;
+extern bool canClick;
 
 //
 //UPDATE FUNCTIONS
@@ -1100,6 +1103,20 @@ void handleCharSelectClick(const SDLState &state, GameData &gd, Resources &res, 
         // currState->init(state, gd, res);
     } else if ((gd.mouseCoords.x >= 35 && gd.mouseCoords.x <= 218) && (gd.mouseCoords.y >= 363 && gd.mouseCoords.y <= 434)) { // Exit
         sfxSound.playMusic("data/Audio/button.wav", false);
+        
+        enet_peer_disconnect(serverPeer, 0);
+
+
+        ENetAddress address;
+        //IP Address changes per person
+        enet_address_set_host(&address, "100.89.84.24");
+        address.port = 1233;
+        serverPeer = enet_host_connect(client, &address, 2, 0);
+        reconnectMatchmaker = true;
+        inLobby = false;
+        
+
+
         currState->nextStateVal = TITLE;
         currState = changeState(currState, gd);
         currState->init(state, gd, res);
@@ -1295,6 +1312,15 @@ void handleHostLobbyClick(const SDLState &state, GameData &gd, Resources &res, f
         gd.md.isPrivate = false;
         gd.md.password = "";
         gd.md.tempStr = "";
+
+        //enet_peer_disconnect(serverPeer, 0);
+        // ENetAddress address;
+        // //IP Address changes per person
+        // enet_address_set_host(&address, "100.89.84.24");
+        // address.port = 1233;
+        // serverPeer = enet_host_connect(client, &address, 2, 0);
+
+        sfxSound.playMusic("data/Audio/button.wav", false);
         currState->nextStateVal = TITLE;
         currState = changeState(currState, gd);
         currState->init(state, gd, res);
@@ -1310,6 +1336,7 @@ void handleHostLobbyClick(const SDLState &state, GameData &gd, Resources &res, f
         .w = (float)res.texHostLobbyPublic->w,
         .h = (float)res.texHostLobbyPublic->h
         };
+        sfxSound.playMusic("data/Audio/button.wav", false);
         BackgroundObject bg(glm::vec2(0,0), collider, res.texHostLobbyPublic);
         gd.bgTiles_.pop_back();
         gd.bgTiles_.push_back(bg);
@@ -1323,6 +1350,7 @@ void handleHostLobbyClick(const SDLState &state, GameData &gd, Resources &res, f
         .w = (float)res.texHostLobbyPrivate->w,
         .h = (float)res.texHostLobbyPrivate->h
         };
+        sfxSound.playMusic("data/Audio/button.wav", false);
         BackgroundObject bg(glm::vec2(0,0), collider, res.texHostLobbyPrivate);
         gd.bgTiles_.pop_back();
         gd.bgTiles_.push_back(bg);
@@ -1331,6 +1359,7 @@ void handleHostLobbyClick(const SDLState &state, GameData &gd, Resources &res, f
         gd.md.isPrivate = false;
         gd.md.password = "";
         gd.md.tempStr = "";
+        sfxSound.playMusic("data/Audio/button.wav", false);
         currState->nextStateVal = GAMEPLAY_SETTINGS;
         currState = changeState(currState, gd);
         currState->init(state, gd, res);
@@ -1343,6 +1372,7 @@ void handleHostLobbyClick(const SDLState &state, GameData &gd, Resources &res, f
         newLobby->passwordHash = 0;
         if (gd.md.isPrivate && gd.md.password != "") 
             newLobby->passwordHash = hash<string>{}(gd.md.password);
+        sfxSound.playMusic("data/Audio/button.wav", false);
         //TELL SERVER TO MAKE LOBBY
         std::string createLobbyMessage = "HOST " + newLobby->to_string();
         printf("%s\n", createLobbyMessage.c_str());
@@ -1443,14 +1473,14 @@ void handleTitleClick(const SDLState &state, GameData &gd, Resources &res, float
         //Text box   
 
     } else if ((gd.mouseCoords.x >= 40 && gd.mouseCoords.x <= 219) && (gd.mouseCoords.y >= 368 && gd.mouseCoords.y <= 436)){       //Host
-        if(gd.md.tempStr!="") {
+        if(gd.md.tempUsername!="" && canClick) {
             currState->nextStateVal = HOST;
             sfxSound.playMusic("data/Audio/button.wav", false);
             currState = changeState(currState, gd);
             currState->init(state, gd, res);
         }
     } else if((gd.mouseCoords.x >= 315 && gd.mouseCoords.x <= 485) && (gd.mouseCoords.y >= 368 && gd.mouseCoords.y <= 436)){        //Join
-        if(gd.md.tempStr!="") {    
+        if(gd.md.tempUsername !="" && canClick) {    
             currState->nextStateVal = JOIN;
             sfxSound.playMusic("data/Audio/button.wav", false);
             currState = changeState(currState, gd);
