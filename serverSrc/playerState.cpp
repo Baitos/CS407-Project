@@ -91,6 +91,7 @@ void sharedUpdate(const SDLState &state, Player &p, float deltaTime, GameData &g
     //}
     
     p.cooldownTimer.step(deltaTime);
+    
 
     if (p.currentDirection) { // update direction based on currentDirection
         p.dir = p.currentDirection;
@@ -515,7 +516,6 @@ void JetpackDeployState::enter(GameData &gd, Player &p) {
 }
 
 void JetpackDeployState::exit(GameData &gd, Player &p) {
-    p.cooldownTimer.step(5.0f); // temp, testing
 }
 
 // GRAPPLE

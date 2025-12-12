@@ -353,7 +353,7 @@ void createLobbyServer(int port){
                             //printf("1: %f\n", gd.players_[gd.playerIndex].pos.y);
                             handleKeyInput(state, gd, playerID, keyID, keyDown, deltaTime, lobbyServer, clients);
                             //printf("key handled\n");
-                        } else {                                                                        //MOUSE INPUT 
+                        } else if(message.find("INPUT_M ") != std::string::npos){                                                                        //MOUSE INPUT 
                             playerID = std::stoi(message.substr(8, 1));                                 //2 IS LMB, 1 IS RMB
                             keyID = std::stoi(message.substr(10, 1));
                             keyDown = std::stoi(message.substr(12,1));
