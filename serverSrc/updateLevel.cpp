@@ -84,6 +84,7 @@ void handleLevelClick(SDLState &state, GameData &gd, int playerID, float deltaTi
         //JETPACK DEPLOY
         if(gd.players_[playerID].character == JETPACK) {
             if (gd.players_[playerID].cooldownTimer.isTimeOut() && gd.players_[playerID].state_->stateVal != JETPACK_DEPLOY) {
+                
                 PlayerState* jpState = new JetpackDeployState();
                 gd.players_[playerID].handleState(jpState, gd);
             }
