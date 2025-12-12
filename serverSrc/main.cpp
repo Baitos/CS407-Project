@@ -157,28 +157,25 @@ void createLobbyServer(int port){
                     enet_peer_send(event.peer, 0, packet);
                     enet_host_flush(lobbyServer);
 
+                    replyMessage = "CLASS " + std::to_string(gd.numPlayers-1) + " " + std::to_string(SWORD);
+                    packet = enet_packet_create(replyMessage.c_str(), replyMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
                     for(ENetPeer * client: clients){
-                        std::string replyMessage = "CLASS " + std::to_string(gd.numPlayers-1) + " " + std::to_string(SWORD);
-                        ENetPacket * packet = enet_packet_create(replyMessage.c_str(), replyMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
-                        enet_peer_send(client, 0, packet);
-                        enet_host_flush(lobbyServer);
-
                         
-
+                        enet_peer_send(client, 0, packet);
                     }
-                    
+                    enet_host_flush(lobbyServer);
+
                     for(int j = 0; j < 8; j++){
                         if(playerClasses[j] != -1){
-                            std::string replyMessage = "CLASS " + std::to_string(j) + " " + std::to_string(playerClasses[j]);
+                            replyMessage = "CLASS " + std::to_string(j) + " " + std::to_string(playerClasses[j]);
                             ENetPacket * packet = enet_packet_create(replyMessage.c_str(), replyMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
                             enet_peer_send(event.peer, 0, packet);
                             enet_host_flush(lobbyServer);
-                            enet_packet_destroy(packet);
+
                             replyMessage = "USER " + std::to_string(j) + " " + usernames[j];
                             packet = enet_packet_create(replyMessage.c_str(), replyMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
                             enet_peer_send(event.peer, 0, packet);
                             enet_host_flush(lobbyServer);
-                            enet_packet_destroy(packet);
                         }
                     }
 
@@ -236,12 +233,12 @@ void createLobbyServer(int port){
                                 printf("about to init\n");
                                 currState->init(state, gd);
                                 printf("here\n");
+                                std::string replyMessage = "CHANGE_STATE " + std::to_string(mapWinner);
+                                ENetPacket * packet = enet_packet_create(replyMessage.c_str(), replyMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
                                 for(ENetPeer * client : clients){
-                                    std::string replyMessage = "CHANGE_STATE " + std::to_string(mapWinner);
-                                    ENetPacket * packet = enet_packet_create(replyMessage.c_str(), replyMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
                                     enet_peer_send(client, 0, packet);
-                                    enet_host_flush(lobbyServer);
                                 }
+                                enet_host_flush(lobbyServer);
                                 ready = true;
                                 break;
                                 //ready = true;
@@ -254,17 +251,18 @@ void createLobbyServer(int port){
                         ENetPacket * packet = enet_packet_create(replyMessage.c_str(), replyMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
                         for(ENetPeer * client : clients){
                             enet_peer_send(client, 0, packet);
-                            enet_host_flush(lobbyServer);
+                            
                         }
+                        enet_host_flush(lobbyServer);
                     }else if (message.find("CLASS ") != std::string::npos){     //Player indicated Class change - Format "CLASS player_id player_class"
                         gd.playerTypes[std::stoi(message.substr(6,1))] = std::stoi(message.substr(8,1));
                         playerClasses[std::stoi(message.substr(6,1))] = std::stoi(message.substr(8,1));
+                        std::string replyMessage = message;
+                        ENetPacket * packet = enet_packet_create(replyMessage.c_str(), replyMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
                         for(ENetPeer * client : clients){
-                            std::string replyMessage = message;
-                            ENetPacket * packet = enet_packet_create(replyMessage.c_str(), replyMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
                             enet_peer_send(client, 0, packet);
-                            enet_host_flush(lobbyServer);
                         }
+                        enet_host_flush(lobbyServer);
                     } else if(message.find("RECON ") != std::string::npos){
                         printf("here\n");
                         //printf("Message: \'%s\'", message.c_str());
@@ -297,22 +295,21 @@ void createLobbyServer(int port){
     if(gd.players_[gd.playerIndex].grounded == 0){
         //printf("not grounded");
     }
-
+    std::string updateMessage = "U";
+    for (Player p : gd.players_){
+        updateMessage += " " + std::to_string(p.index) + " ";
+        updateMessage += std::to_string((p.pos.x)) + " " + std::to_string((p.pos.y)) + " ";
+        updateMessage += std::to_string((p.vel.x)) + " " + std::to_string((p.vel.y)) + " ";
+        updateMessage += std::to_string(p.state_->stateVal) + " ";
+        updateMessage += std::to_string(p.dir) + " " + std::to_string(p.canDoubleJump) + " " + std::to_string(p.grounded) + " ";
+        updateMessage += std::to_string(p.isStunned) + " " + std::to_string(p.isDead) + " " + std::to_string(p.currentDirection);
+    }
+     ENetPacket * packet = enet_packet_create(updateMessage.c_str(), updateMessage.size()+1, 0);             //0 means unreliable
     for(ENetPeer * c : clients){
         //Broadcast player states
-        std::string updateMessage = "U";
-        for (Player p : gd.players_){
-            updateMessage += " " + std::to_string(p.index) + " ";
-            updateMessage += std::to_string((p.pos.x)) + " " + std::to_string((p.pos.y)) + " ";
-            updateMessage += std::to_string((p.vel.x)) + " " + std::to_string((p.vel.y)) + " ";
-            updateMessage += std::to_string(p.state_->stateVal) + " ";
-            updateMessage += std::to_string(p.dir) + " " + std::to_string(p.canDoubleJump) + " " + std::to_string(p.grounded) + " ";
-            updateMessage += std::to_string(p.isStunned) + " " + std::to_string(p.isDead) + " " + std::to_string(p.currentDirection);
-        }
-        ENetPacket * packet = enet_packet_create(updateMessage.c_str(), updateMessage.size()+1, 0);             //0 means unreliable
-        enet_peer_send(c, 0, packet);
-        enet_host_flush(lobbyServer);
+        enet_peer_send(c, 0, packet);     
     }
+    enet_host_flush(lobbyServer);
     prevTime = SDL_GetTicks();
     bool inGame =true;
     bool inLobby = true;
@@ -432,13 +429,14 @@ void createLobbyServer(int port){
                         updateMessage += std::to_string(p.hook.pos.x) + " " + std::to_string(p.hook.pos.y) + " " + std::to_string(p.hook.vel.x) + " " + std::to_string(p.hook.vel.y);
                         //printf("%s %s %s %s\n", std::to_string(p.pos.x).c_str(), std::to_string(p.pos.y).c_str(), std::to_string(p.vel.x).c_str(), std::to_string(p.vel.y).c_str());
                     }   
-                    
+                    ENetPacket * packet = enet_packet_create(updateMessage.c_str(), updateMessage.size()+1, 0);             //0 means unreliable
                 for(ENetPeer * c : clients){
                     //Broadcast player states
-                    ENetPacket * packet = enet_packet_create(updateMessage.c_str(), updateMessage.size()+1, 0);             //0 means unreliable
+                    
                     enet_peer_send(c, 0, packet);
-                    enet_host_flush(lobbyServer);
+                    
                 }
+                enet_host_flush(lobbyServer);
 
                 // std::string updateMessageItems = "I";
                 // for (Player p : gd.players_){
@@ -555,8 +553,9 @@ void createLobbyServer(int port){
                                         currState->init(state, gd);
                                         for(ENetPeer * client : clients){
                                             enet_peer_send(client, 0, packet);
-                                            enet_host_flush(lobbyServer);
+                                            
                                         }
+                                        enet_host_flush(lobbyServer);
                                         
 
                                         

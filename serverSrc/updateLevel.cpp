@@ -92,12 +92,15 @@ void handleLevelClick(SDLState &state, GameData &gd, int playerID, float deltaTi
             if(gd.players_[playerID].cooldownTimer.isTimeOut() && gd.players_[playerID].state_->stateVal != SHOTGUN_DEPLOY) {
                 //Message telling players it was used
                 std::string updateMessage = "SHOT " + std::to_string(playerID);
+                ENetPacket * packet = enet_packet_create(updateMessage.c_str(), updateMessage.size()+1, ENET_PACKET_FLAG_RELIABLE);             //0 means unreliable
                 for(ENetPeer * c : clients){
                     //Broadcast player states
-                    ENetPacket * packet = enet_packet_create(updateMessage.c_str(), updateMessage.size()+1, ENET_PACKET_FLAG_RELIABLE);             //0 means unreliable
+                    
                     enet_peer_send(c, 0, packet);
-                    enet_host_flush(lobbyServer);
+                    
+                   
                 }
+                enet_host_flush(lobbyServer);
 
                 PlayerState* sgState = new ShotgunDeployState();
                 gd.players_[playerID].handleState(sgState, gd);
@@ -106,13 +109,16 @@ void handleLevelClick(SDLState &state, GameData &gd, int playerID, float deltaTi
             //SWORD DEPLOY
             if(gd.players_[playerID].cooldownTimer.isTimeOut() && gd.players_[playerID].state_->stateVal != SWORD_DEPLOY) {
                 //Message telling players it was used
-                 std::string updateMessage = "SWORD " + std::to_string(playerID);
-                for(ENetPeer * c : clients){
+                std::string updateMessage = "SWORD " + std::to_string(playerID);
+                ENetPacket * packet = enet_packet_create(updateMessage.c_str(), updateMessage.size()+1, ENET_PACKET_FLAG_RELIABLE);             //0 means unreliable
+                 for(ENetPeer * c : clients){
                     //Broadcast player states
-                    ENetPacket * packet = enet_packet_create(updateMessage.c_str(), updateMessage.size()+1, ENET_PACKET_FLAG_RELIABLE);             //0 means unreliable
+                    
                     enet_peer_send(c, 0, packet);
-                    enet_host_flush(lobbyServer);
+                    
+                   
                 }
+                enet_host_flush(lobbyServer);
 
                 PlayerState* swState = new SwordDeployState();
                 gd.players_[playerID].handleState(swState, gd);
@@ -185,12 +191,15 @@ void handleKeyInput(const SDLState &state, GameData &gd,
         Item* item = gd.players_[playerID].heldItem;
 
         std::string itemMessage = "I " + std::to_string(playerID) + " " + std::to_string(item->type);
+         ENetPacket * packet = enet_packet_create(itemMessage.c_str(), itemMessage.size()+1, ENET_PACKET_FLAG_RELIABLE);
         for(ENetPeer * c : clients){
             //Send info about item
-            ENetPacket * packet = enet_packet_create(itemMessage.c_str(), itemMessage.size()+1, ENET_PACKET_FLAG_RELIABLE);
+           
             enet_peer_send(c, 0, packet);
-            enet_host_flush(lobbyServer);
+            
+            
         }
+        enet_host_flush(lobbyServer);
         
         if(item->type != FOG){
             item->useItem(state, gd, gd.players_[playerID]);
