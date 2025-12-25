@@ -439,7 +439,7 @@ void createTilesSpaceship(const SDLState &state, GameData &gd, const Resources &
     //assert(gd.playerIndex != -1);
 
     //music
-    //mSound.playMusic("data/Music/spaceship.wav", true);
+    mSound.playMusic("data/Audio/musicSpaceship.wav", true);
 }
 
 void createTilesGrassland(const SDLState &state, GameData &gd, const Resources &res) { // 600 x 80
@@ -800,7 +800,7 @@ void createTilesGrassland(const SDLState &state, GameData &gd, const Resources &
     createCheckpointsGrassland(state, gd, res);
 
     //music
-    //mSound.playMusic("data/Music/grasslands.wav", true);
+    mSound.playMusic("data/Audio/musicGrassland.wav", true);
 
     
     //loadMap(foreground);
@@ -1296,7 +1296,7 @@ void createTilesSnow(const SDLState &state, GameData &gd, const Resources &res) 
     createCheckpointsSnow(state, gd, res);
 
     //music
-    //mSound.playMusic("data/Music/snow.wav", true);
+    mSound.playMusic("data/Audio/musicSnow.wav", true);
 }
 
 // ill have to hardcode to custom set the positions and strength of the revolvers
@@ -1723,6 +1723,7 @@ void createTilesDesert(const SDLState &state, GameData &gd, const Resources &res
     createGrid(state, gd, MAP_ROWS, MAP_COLS);
     customizeRevolvers(state, gd, res);
     createCheckpointsDesert(state, gd, res);
+     mSound.playMusic("data/Audio/musicDesert.wav", true);
 }
 
 void initSettings(const SDLState &state, GameData &gd, const Resources &res) { // 280 x 60
@@ -1846,7 +1847,7 @@ void initGameplaySettings(const SDLState &state, GameData &gd, const Resources &
 void initTitle(const SDLState &state, GameData &gd, const Resources &res) {
 
     //music
-    //mSound.playMusic("data/music.wav", true);
+    mSound.playMusic("data/Audio/musicSettingsLobby.wav", true);
 
      SDL_FRect collider = {
             .x = 0,
@@ -1891,7 +1892,7 @@ static const int POINTS_BY_PLACEMENT[] = {
 void initResults(const SDLState &state, GameData &gd, const Resources &res) {
 
     //music
-    //mSound.playMusic("data/Music/results.wav", true);
+    mSound.playMusic("data/Audio/musicResults.wav", false);
 
      SDL_FRect collider = {
             .x = 0,
@@ -2007,7 +2008,7 @@ void initResults(const SDLState &state, GameData &gd, const Resources &res) {
 void initEndResults(const SDLState &state, GameData &gd, const Resources &res) {
 
     //music
-    //mSound.playMusic("data/Music/results.wav", true);
+    mSound.playMusic("data/Audio/musicResults.wav", false);
 
      SDL_FRect collider = {
             .x = 0,
