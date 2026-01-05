@@ -399,10 +399,10 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
         //printf("mouseX: %f, mouseY: %f\n", gd.mouseCoords.x, gd.mouseCoords.y);
         if (gd.debugMode) {
         // debug info
-            SDL_SetRenderDrawColor(state.renderer, 255, 255, 255, 255);
-            SDL_RenderDebugText(state.renderer, 5, 5,
-                            std::format("FPS: {}, State: {}, Grounded: {}, X: {}, Y: {}", 
-                            static_cast<int>(FPS), getStateFromEnum(gd.players_[gd.playerIndex].state_->stateVal), gd.players_[gd.playerIndex].grounded, gd.players_[gd.playerIndex].pos.x, gd.players_[gd.playerIndex].pos.y).c_str());
+            // SDL_SetRenderDrawColor(state.renderer, 255, 255, 255, 255);
+            // SDL_RenderDebugText(state.renderer, 5, 5,
+            //                 std::format("FPS: {}, State: {}, Grounded: {}, X: {}, Y: {}", 
+            //                 static_cast<int>(FPS), getStateFromEnum(gd.players_[gd.playerIndex].state_->stateVal), gd.players_[gd.playerIndex].grounded, gd.players_[gd.playerIndex].pos.x, gd.players_[gd.playerIndex].pos.y).c_str());
         }
 
         //swap buffers and present

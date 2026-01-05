@@ -252,7 +252,7 @@ void Resources::load(SDLState &state) { // First variable controls how many fram
     texFogExit = loadTexture(state.renderer, "data/ItemSprites/fog_overlay_exit.png");
     //Settings
     texSettingsBackground = loadTexture(state.renderer, "data/SettingsSprites/background.png");
-    texBigBorder = loadTexture(state.renderer, "data/SettingsSprites/lButtonOutline.png");
+    texBigBorder = loadTexture(state.renderer, "data/SettingsSprites/LButtonOutline.png");
     texSmallBorder = loadTexture(state.renderer, "data/SettingsSprites/sButtonOutline.png");
     texSlider = loadTexture(state.renderer, "data/SettingsSprites/Slider.png");
 

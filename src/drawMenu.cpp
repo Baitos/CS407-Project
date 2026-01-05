@@ -133,7 +133,7 @@ void drawTitle(const SDLState &state, GameData &gd, Resources res, float deltaTi
     for (BackgroundObject &bg : gd.bgTiles_) {
         bg.draw(state, gd, static_cast<float>(bg.texture->w), static_cast<float>(bg.texture->h)); 
     }
-    if(gd.md.border.pos.y != 500.f){
+    if(gd.md.border.pos.y != 500.f && gd.md.border.texture != nullptr){
         //printf("drawing, %f", gd.border->pos.y);
         gd.md.border.draw(state, gd,static_cast<float>(gd.md.border.texture->w) * 2, static_cast<float>(gd.md.border.texture->h)*2);
     }
