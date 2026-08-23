@@ -615,9 +615,9 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
 
     //Create your ENET Server
     ENetAddress address = {};
-    //Address of the Raspberry Pi
-    enet_address_set_host(&address, "100.89.84.24");
-    address.port = 1233;
+    //Address of the Raspberry Pi - changed  to 0.0.0.0 to allow connections from any IP address
+    enet_address_set_host(&address, "0.0.0.0");
+    address.port = 1234;
 
     ENetHost * matchmakerServer = enet_host_create(&address, 32, 2, 0, 0);
     

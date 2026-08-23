@@ -160,9 +160,10 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     // Ryan IP = 100.90.167.105
 
     //Set IP Here
-    enet_address_set_host(&clientAddress, "100.111.250.61");
+    enet_address_set_host(&clientAddress, "100.115.232.114");
     clientAddress.port = 0; // OS chooses port
-    client = enet_host_create(&clientAddress, 1, 2, 0, 0);
+    //Set address to null to let os decide address and port
+    client = enet_host_create(NULL, 1, 2, 0, 0);
     if (!client) {
         printf("Bad client creation\n");
         return -1;
@@ -171,8 +172,9 @@ int main(int argc, char** argv) { // SDL needs to hijack main to do stuff; inclu
     //Set your host values, including IP address and port
     ENetAddress address;
     //IP Address changes per person
-    enet_address_set_host(&address, "100.89.84.24");
-    address.port = 1233;
+    //change to 127.0.0.1 for testing on your own machine
+    enet_address_set_host(&address, "127.0.0.1");
+    address.port = 1234;
 
     //Attempt connection to the server
     serverPeer = enet_host_connect(client, &address, 2, 0);
