@@ -7,3 +7,7 @@
 Makefile
 *.onetoc2
 *.txt
+
+game
+*.log
+matchmaker
